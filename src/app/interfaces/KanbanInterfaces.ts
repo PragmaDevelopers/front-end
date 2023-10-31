@@ -23,7 +23,7 @@ export interface ColumnContainerProps {
 
 export interface CreateEditCardProps {
     showCreateCardForm: boolean;
-    createCardForm: (event: any, isEdition: boolean, editorText: string) => void;
+    createCardForm: (event: any, isEdition: boolean) => void;
     card: Card;
     updateListTitle: any;
     handleRemoveInput: any;

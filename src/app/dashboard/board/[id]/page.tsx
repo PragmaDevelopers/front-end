@@ -228,7 +228,7 @@ function ColumnContainer(props: ColumnContainerProps) {
 
 
 
-function CreateEditCard(props: CreateEditCardProps) {
+const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEditorMethods> | undefined) => {
     const { setShowCreateCardForm,
         showCreateCardForm,
         createCardForm,
@@ -249,7 +249,6 @@ function CreateEditCard(props: CreateEditCardProps) {
         setEditorText,
     } = props;
 
-    const editorRef = useRef<MDXEditorMethods>(null);
 
     const [color, setColor] = useState<string>("#aabbcc");
     const [viewAddTag, setViewAddTag] = useState<boolean>(false);
@@ -257,7 +256,7 @@ function CreateEditCard(props: CreateEditCardProps) {
     const [viewAddDate, setViewAddDate] = useState<boolean>(false);
 
     const handleCreateCardForm = (event: any) => {
-        createCardForm(event, isEdition, editorText);
+        createCardForm(event, isEdition);
     }
 
     const createNewTag = (event: any) => {
@@ -269,14 +268,6 @@ function CreateEditCard(props: CreateEditCardProps) {
         setColor("#aabbcc");
     }
 
-    const getMd = () => {
-        console.log("GETTING MD");
-        const md = editorRef.current?.getMarkdown();
-        console.log(md);
-        props.setEditorText(md);
-        console.log(editorText);
-    }
-
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-full h-full z-20 justify-center items-center bg-neutral-950/25'}>
             <div className='relative w-[80%] h-[80%] bg-neutral-50 rounded-lg flex justify-center items-center px-8 drop-shadow-lg'>
@@ -286,8 +277,7 @@ function CreateEditCard(props: CreateEditCardProps) {
                         <div className='flex my-2'>
                             <input className='form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
                         </div>
-                        <button onClick={getMd}>Get Text</button>
-                        <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={editorRef} />
+                        <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} />
                         <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
                             {card.tags?.map((items: Tag) => (
                                 <div key={items?.id} className='flex w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
@@ -395,7 +385,9 @@ function CreateEditCard(props: CreateEditCardProps) {
             </div>
         </div>
     );
-}
+});
+
+CreateEditCard.displayName = "CreateEditCard";
 
 export default function Page({ params }: { params: { id: string } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
@@ -416,6 +408,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [isEdition, setIsEdition] = useState<boolean>(false);
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
     const [editorText, setEditorText] = useState<string>("");
+    const editorRef = useRef<MDXEditorMethods>(null);
 
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
@@ -765,14 +758,16 @@ export default function Page({ params }: { params: { id: string } }) {
         } as Card);
         setIsEdition(false);
         setShowCreateCardForm(true);
+        editorRef.current?.setMarkdown("");
+        console.log("CREATING CARD");
     };
 
-    const createCardForm = (event: any, isEdition: boolean, textEditor: string) => {
+    const createCardForm = (event: any, isEdition: boolean) => {
         event.preventDefault();
         const cardTitle: string = event.target.title.value;
         //const cardDescription: string = event.target.description.value;
-        const cardDescription: string = textEditor;
-        console.log(cardDescription);
+        const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+        console.log("CARD TEXT", cardDescription);
 
         // Check if the card title is not empty before creating the card
         if (cardTitle.trim() !== "") {
@@ -1001,6 +996,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 setCardDate={setCardDate}
                 editorText={editorText}
                 setEditorText={setEditorText}
+                ref={editorRef}
             />
             <div className="">
                 <h1>{params.id}</h1>

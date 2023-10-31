@@ -144,7 +144,7 @@ function CardElement(props: CardElementProps) {
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <div className='p-2 w-full h-full' onClick={editCard}>
-                <h1>{card.title}</h1>
+                <h1 className='font-black font-lg'>{card.title}</h1>
             </div>
             <button className='absolute top-2 right-2' onClick={() => deleteCard(card.columnID, card.id)}>
                 <XCircleIcon className='w-6 aspect-square' />
@@ -981,7 +981,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     return (
-        <main className="w-full h-full overflow-x-auto overflow-y-hidden shrink-0">
+        <main className="w-full h-full overflow-auto shrink-0">
             <CreateEditCard
                 showCreateCardForm={showCreateCardForm}
                 setShowCreateCardForm={setShowCreateCardForm}

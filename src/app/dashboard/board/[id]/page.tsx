@@ -108,6 +108,7 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
         />
     );
 });
+RichEditor.displayName = "RichEditor";
 
 function CardElement(props: CardElementProps) {
     const { card, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID } = props;

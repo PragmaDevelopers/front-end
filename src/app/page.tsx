@@ -13,31 +13,7 @@ interface InfoScreenProps {
 function InfoScreen(props: InfoScreenProps) {
     const baseStyle: string = "w-max absolute top-0 z-10 select-none";
 
-    if (props.formSubmit) {
-        if (!props.passwordState) {
-            return (
-                <div className={baseStyle}>
-                    <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
-                    <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
-                    <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
-                        <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
-                        <h3>Sua senha está incorreta.</h3>
-                    </div>
-                </div>
-            );
-        } else if (!props.emailState) {
-            return (
-                <div className={baseStyle}>
-                    <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
-                    <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
-                    <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
-                        <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
-                        <h3>Seu email está incorreto.</h3>
-                    </div>
-                </div>
-            );
-        }
-    } else {
+    if (!props.passwordState && !props.emailState) {
         return (
             <div className={baseStyle}>
                 <h1 className="text-2xl font-semibold text-neutral-950">Bem-Vindo(a)!</h1>
@@ -45,6 +21,39 @@ function InfoScreen(props: InfoScreenProps) {
                 <div className="fill-blue-300 flex flex-row justify-start items-center mt-2 bg-blue-50 border-l-2 border-blue-300">
                     <InformationCircleIcon className="stroke-blue-400 fill-blue-100 aspect-square w-6 mr-2" />
                     <h3>Caso não esteja cadastrado, ultilize o botão <span className="bg-neutral-50 p-2 drop-shadow-md rounded-md ml-2 text-neutral-950">Cadastrar-se</span></h3>
+                </div>
+            </div>
+        );
+    } else if (!props.passwordState) {
+        return (
+            <div className={baseStyle}>
+                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
+                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
+                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
+                    <h3>Sua senha está incorreta.</h3>
+                </div>
+            </div>
+        );
+    } else if (!props.emailState) {
+        return (
+            <div className={baseStyle}>
+                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
+                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
+                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
+                    <h3>Seu email está incorreto.</h3>
+                </div>
+            </div>
+        );
+    } else {
+        return (
+            <div className={baseStyle}>
+                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
+                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
+                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
+                    <h3>Seu email e sua senha estão incorretos.</h3>
                 </div>
             </div>
         );

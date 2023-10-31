@@ -111,7 +111,7 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
 RichEditor.displayName = "RichEditor";
 
 function CardElement(props: CardElementProps) {
-    const { card, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID } = props;
+    const { card, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID, setEditorText } = props;
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
         data: {
@@ -135,6 +135,7 @@ function CardElement(props: CardElementProps) {
     const editCard = () => {
         setTempCard(card as Card);
         setTempColumnID(card.columnID);
+        setEditorText(card.description);
         setIsEdition(true);
         setShowCreateCardForm(true);
     }
@@ -153,7 +154,7 @@ function CardElement(props: CardElementProps) {
 }
 
 function ColumnContainer(props: ColumnContainerProps) {
-    const { column, deleteColumn, updateColumnTitle, createCard, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID } = props;
+    const { column, deleteColumn, updateColumnTitle, createCard, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID, setEditorText } = props;
     const [editMode, setEditMode] = useState<boolean>(false);
     const cardsIds = useMemo(() => { return column.cardsList.map((card: Card) => card.id) }, [column]);
 
@@ -214,7 +215,7 @@ function ColumnContainer(props: ColumnContainerProps) {
             <div>
                 <SortableContext items={cardsIds}>
                     {column.cardsList.map((card: Card) => {
-                        return <CardElement setTempColumnID={setTempColumnID} setTempCard={setTempCard} setShowCreateCardForm={setShowCreateCardForm} card={card} deleteCard={deleteCard} setIsEdition={setIsEdition} key={card.id} />
+                        return <CardElement setTempColumnID={setTempColumnID} setTempCard={setTempCard} setShowCreateCardForm={setShowCreateCardForm} card={card} deleteCard={deleteCard} setIsEdition={setIsEdition} key={card.id} setEditorText={setEditorText} />
                     })}
                 </SortableContext>
             </div>
@@ -975,6 +976,10 @@ export default function Page({ params }: { params: { id: string } }) {
         });
     }
 
+    const editEditorText = (text: string) => {
+        editorRef.current?.setMarkdown(text);
+    }
+
     return (
         <main className="w-full h-full overflow-x-auto overflow-y-hidden shrink-0">
             <CreateEditCard
@@ -995,7 +1000,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 cardDate={cardDate}
                 setCardDate={setCardDate}
                 editorText={editorText}
-                setEditorText={setEditorText}
+                setEditorText={editEditorText}
                 ref={editorRef}
             />
             <div className="">
@@ -1014,7 +1019,8 @@ export default function Page({ params }: { params: { id: string } }) {
                             setShowCreateCardForm={setShowCreateCardForm}
                             setTempCard={setTempCard}
                             setIsEdition={setIsEdition}
-                            setTempColumnID={setTempColumnID} />)}
+                            setTempColumnID={setTempColumnID}
+                            setEditorText={editEditorText} />)}
                     </SortableContext>
                     <button className='w-64 h-full rounded-md shadow-inner bg-[#F0F0F0] border-neutral-200 border-[1px] flex flex-col justify-center items-center' onClick={createNewColumn}>
                         <h1 className='mb-2'>Add Column</h1>
@@ -1032,7 +1038,8 @@ export default function Page({ params }: { params: { id: string } }) {
                             setTempCard={setTempCard}
                             setShowCreateCardForm={setShowCreateCardForm}
                             setIsEdition={setIsEdition}
-                            setTempColumnID={setTempColumnID} />}
+                            setTempColumnID={setTempColumnID}
+                            setEditorText={setEditorText} />}
                     </DragOverlay>,
                     document.body)}
             </DndContext>

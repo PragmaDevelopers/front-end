@@ -7,6 +7,7 @@ export interface CardElementProps {
     setTempCard: (card: Card) => void;
     setIsEdition: (state: boolean) => void;
     setTempColumnID: (id: string) => void;
+    setEditorText: any;
 }
 
 export interface ColumnContainerProps {
@@ -19,6 +20,7 @@ export interface ColumnContainerProps {
     setTempCard: (card: Card) => void;
     setIsEdition: (state: boolean) => void;
     setTempColumnID: (id: string) => void;
+    setEditorText: any;
 }
 
 export interface CreateEditCardProps {

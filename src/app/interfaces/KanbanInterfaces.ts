@@ -1,7 +1,4 @@
-import { MutableRefObject } from "react";
 import { Card, Column } from "../types/KanbanTypes";
-import { MDXEditorMethods } from "@mdxeditor/editor";
-
 
 export interface CardElementProps {
     card: Card,
@@ -47,7 +44,9 @@ export interface CreateEditCardProps {
 
 export interface RichEditorProps {
     markdown?: string;
-    onChange?: any;
     getMarkdown?: any;
+    setMarkdown?: any;
+    setMarkdownContent?: string;
+    onChange?: any;
 }
 

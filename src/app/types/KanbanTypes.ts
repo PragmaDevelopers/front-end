@@ -1,3 +1,45 @@
+export type DateValuePiece = Date | null;
+export type DateValue = DateValuePiece | [DateValuePiece, DateValuePiece];
+export type FieldInputTypes = 'number' | 'text';
+
+
+export type DropdownItem = {
+    name: string,
+    id: string,
+    dropdownID: string,
+    value: string,
+}
+
+export type Dropdown = {
+    name: string,
+    id: string,
+    items: DropdownItem[],
+}
+
+export type CustomFieldText = {
+    name: string,
+    value: string,
+    id: string,
+    type: FieldInputTypes,
+}
+
+export type CustomFieldNumber = {
+    name: string,
+    value: number,
+    id: string,
+    type: FieldInputTypes,
+}
+
+export type CustomFields = {
+    field: CustomFieldNumber | CustomFieldText;
+}
+
+export type Comment = {
+    userID: string,
+    date: number,
+    content: string,
+}
+
 export type CheckList = {
     name: string,
     id: string,
@@ -18,6 +60,10 @@ export type Card = {
     checklists: CheckList[],
     tags: Tag[],
     members: Member[],
+    comments: Comment[],
+    dropdowns: Dropdown[],
+    date: number,
+    customFields: CustomFields[],
 }
 
 export type Column = {
@@ -43,5 +89,10 @@ export type Member = {
     id: string,
 }
 
-export type DateValuePiece = Date | null;
-export type DateValue = DateValuePiece | [DateValuePiece, DateValuePiece];
+
+
+
+
+
+
+

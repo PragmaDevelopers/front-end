@@ -13,10 +13,12 @@ import {
 import {
     CSSProperties,
     MutableRefObject,
+    forwardRef,
     useEffect,
     useMemo,
     useRef,
-    useState
+    useState,
+    Ref,
 } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -68,17 +70,18 @@ import {
     ListsToggle,
     CreateLink,
     MDXEditor,
+    MDXEditorMethods,
 } from "@mdxeditor/editor";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-function RichEditor(props: RichEditorProps) {
-
+const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
     return (
         <MDXEditor
             className="MDXEditor"
             onChange={props.onChange}
             markdown={props.markdown != undefined ? props?.markdown : ""}
+            ref={ref}
             plugins={[
                 headingsPlugin(),
                 listsPlugin(),
@@ -104,7 +107,7 @@ function RichEditor(props: RichEditorProps) {
 
         />
     );
-}
+});
 
 function CardElement(props: CardElementProps) {
     const { card, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID } = props;
@@ -245,6 +248,8 @@ function CreateEditCard(props: CreateEditCardProps) {
         setEditorText,
     } = props;
 
+    const editorRef = useRef<MDXEditorMethods>(null);
+
     const [color, setColor] = useState<string>("#aabbcc");
     const [viewAddTag, setViewAddTag] = useState<boolean>(false);
     const [viewAddMember, setViewAddMember] = useState<boolean>(false);
@@ -263,6 +268,14 @@ function CreateEditCard(props: CreateEditCardProps) {
         setColor("#aabbcc");
     }
 
+    const getMd = () => {
+        console.log("GETTING MD");
+        const md = editorRef.current?.getMarkdown();
+        console.log(md);
+        props.setEditorText(md);
+        console.log(editorText);
+    }
+
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-full h-full z-20 justify-center items-center bg-neutral-950/25'}>
             <div className='relative w-[80%] h-[80%] bg-neutral-50 rounded-lg flex justify-center items-center px-8 drop-shadow-lg'>
@@ -272,7 +285,8 @@ function CreateEditCard(props: CreateEditCardProps) {
                         <div className='flex my-2'>
                             <input className='form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
                         </div>
-                        <RichEditor markdown={card?.description} onChange={setEditorText} />
+                        <button onClick={getMd}>Get Text</button>
+                        <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={editorRef} />
                         <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
                             {card.tags?.map((items: Tag) => (
                                 <div key={items?.id} className='flex w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
@@ -743,6 +757,10 @@ export default function Page({ params }: { params: { id: string } }) {
             checklists: [],
             tags: [],
             members: [],
+            comments: [],
+            dropdowns: [],
+            date: 0,
+            customFields: [],
         } as Card);
         setIsEdition(false);
         setShowCreateCardForm(true);
@@ -817,6 +835,11 @@ export default function Page({ params }: { params: { id: string } }) {
             checklists: [],
             tags: [],
             members: [],
+            comments: [],
+            dropdowns: [],
+            date: 0,
+            customFields: [],
+
         } as Card);
         setShowCreateCardForm(false);
     };

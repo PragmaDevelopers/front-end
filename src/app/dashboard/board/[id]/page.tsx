@@ -272,6 +272,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const handleCustomFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
         const value = event.target.value;
+        console.log(name, value);
         setCustomFieldsData((prevData) => {
             return {
                 ...prevData,
@@ -321,14 +322,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                     return (
                                         <div key={idx}>
                                             <h1>{item?.name}</h1>
-                                            <input type='text' name={item?.name} value={item?.value} onChange={handleCustomFieldChange} />
+                                            <input type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} />
                                         </div>
                                     );
                                 } else {
                                     return (
                                         <div key={idx}>
                                             <h1>{item?.name}</h1>
-                                            <input type='number' name={item?.name} value={item?.value} onChange={handleCustomFieldChange} />
+                                            <input type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} />
                                         </div>
                                     );
                                 }

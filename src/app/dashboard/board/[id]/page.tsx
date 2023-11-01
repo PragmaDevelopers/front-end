@@ -261,9 +261,17 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [viewAddMember, setViewAddMember] = useState<boolean>(false);
     const [viewAddDate, setViewAddDate] = useState<boolean>(false);
     const [viewAddField, setViewAddField] = useState<boolean>(false);
+    const [viewMoveCard, setViewMoveCard] = useState<boolean>(false);
     const [textFieldValue, setTextFieldValue] = useState<string>("");
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
     const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});
+    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([{ kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test Board" }]);
+    useEffect(() => {
+        fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
+    }, [setDashboards]);
+
+
+
 
     const handleCreateCardForm = (event: any) => {
         createCardForm(event, isEdition);
@@ -425,7 +433,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </button>
 
                     <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
-                        onClick={() => setViewAddField(!viewAddField)}>
+                        onClick={() => setViewMoveCard(!viewMoveCard)}>
                         <ArrowUpOnSquareIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
                     </button>
@@ -456,6 +464,21 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add Field</button>
                         </form>
                     </div>
+
+                    <div className={(viewMoveCard ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+                        <form onSubmit={() => setViewMoveCard(false)} className='flex flex-col items-center'>
+                            <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
+                                {dashboards?.map((kanban: { kanbanId: string, name: string }) => {
+                                    return <option value={kanban?.kanbanId}>{kanban?.name}</option>;
+                                })}
+                            </select>
+                            <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add Field</button>
+                        </form>
+                    </div>
+
+
+
+
 
 
                     <div className={(viewAddTag ? 'flex' : 'hidden') + ' absolute top-14 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>

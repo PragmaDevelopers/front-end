@@ -279,8 +279,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const createNewCustomField = (event: any) => {
         event.preventDefault();
         // (name: string, value: string | number, fieldType: "text" | "number")
-        const selectedValue = event?.target?.elements?.fieldType.value;
-        const fieldName = event?.target?.elements?.fieldTitle.value;
+        // const selectedValue = event?.target?.elements?.fieldType.value;
+        const selectedValue = event?.target?.elements?.fieldType?.value;
+        const fieldName = event?.target?.elements?.fieldTitle?.value;
         if (selectedValue === "text") {
             addCustomField(fieldName, "", "text");
         } else {

@@ -469,7 +469,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <form onSubmit={() => setViewMoveCard(false)} className='flex flex-col items-center'>
                             <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
                                 {dashboards?.map((kanban: { kanbanId: string, name: string }) => {
-                                    return <option value={kanban?.kanbanId}>{kanban?.name}</option>;
+                                    return <option value={kanban?.kanbanId} key={kanban?.kanbanId}>{kanban?.name}</option>;
                                 })}
                             </select>
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add Field</button>

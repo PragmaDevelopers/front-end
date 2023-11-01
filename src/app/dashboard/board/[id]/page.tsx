@@ -392,8 +392,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <PlusCircleIcon className='aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Date</h1>
                     </button>
+
                     <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
-                        onClick={() => setViewAddDate(!viewAddDate)}>
+                        onClick={() => setViewAddField(!viewAddField)}>
                         <PlusCircleIcon className='aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Field</h1>
                     </button>
@@ -412,7 +413,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         </form>
                     </div>
 
-                    <div className={(viewAddDate ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+                    <div className={(viewAddField ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={() => setViewAddField(false)}>
                             <input type='text' name='fieldTitle' placeholder='Field Name' />
                             <select name='fieldType'>

@@ -50,5 +50,6 @@ export interface RichEditorProps {
     setMarkdown?: any;
     setMarkdownContent?: string;
     onChange?: any;
+    display?: any;
 }
 

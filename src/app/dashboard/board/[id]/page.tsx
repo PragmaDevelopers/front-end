@@ -78,7 +78,7 @@ import 'react-calendar/dist/Calendar.css';
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
     return (
         <MDXEditor
-            className="MDXEditor"
+            className={"MDXEditor " + (props.display ? "block" : "hidden")}
             onChange={props.onChange}
             markdown={props.markdown != undefined ? props?.markdown : ""}
             ref={ref}
@@ -278,7 +278,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <div className='flex my-2'>
                             <input className='form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
                         </div>
-                        <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} />
+                        <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
                         <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
                             {card.tags?.map((items: Tag) => (
                                 <div key={items?.id} className='flex w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>

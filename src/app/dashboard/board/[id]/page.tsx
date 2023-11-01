@@ -76,14 +76,6 @@ import {
     CreateLink,
     MDXEditor,
     MDXEditorMethods,
-    CodeToggle,
-    InsertAdmonition,
-    ChangeAdmonitionType,
-    directivesPlugin,
-    AdmonitionDirectiveDescriptor,
-    InsertThematicBreak,
-    codeMirrorPlugin,
-    ChangeCodeMirrorLanguage,
 } from "@mdxeditor/editor";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -104,8 +96,6 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
                 linkDialogPlugin(),
                 tablePlugin(),
                 markdownShortcutPlugin(),
-                directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
-                codeMirrorPlugin(),
                 toolbarPlugin({
                     toolbarContents: () => (
                         <>
@@ -115,11 +105,6 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
                             <InsertTable />
                             <ListsToggle />
                             <CreateLink />
-                            <CodeToggle />
-                            <InsertAdmonition />
-                            <ChangeAdmonitionType />
-                            <InsertThematicBreak />
-                            <ChangeCodeMirrorLanguage />
                         </>
                     )
                 }),

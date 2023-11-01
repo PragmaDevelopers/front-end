@@ -293,7 +293,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         </div>
                         <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
                         <div className='p-2 grid grid-cols-6 auto-rows-auto gap-2'>
-                            {card.customFields.map((item: CustomFields, idx: any) => {
+                            {card?.customFields?.map((item: CustomFields, idx: any) => {
                                 if (item.field.fieldType === "text") {
                                     return (
                                         <div key={idx}>

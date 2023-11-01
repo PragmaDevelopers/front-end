@@ -265,7 +265,10 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [textFieldValue, setTextFieldValue] = useState<string>("");
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
     const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});
-    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([{ kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test Board" }]);
+    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
+        { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
+        { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
+    ]);
     useEffect(() => {
         fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
     }, [setDashboards]);
@@ -321,7 +324,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                 <form onSubmit={handleCreateCardForm} className='w-[80%] h-[85%] mt-[5%] relative'>
                     <div className='w-full h-[85%] overflow-y-auto pb-4'>
                         <div className='flex my-2'>
-                            <input className='form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
+                            <input className='font-bold text-xl form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
                         </div>
                         <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
                         <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>

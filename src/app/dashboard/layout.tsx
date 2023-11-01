@@ -35,7 +35,10 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 }
 
 export default function Layout({ children }: any) {
-    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([{ kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test Board" }]);
+    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
+        { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
+        { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
+    ]);
     const IconStyles: string = "w-8 aspect-square mr-2";
 
     useEffect(() => {

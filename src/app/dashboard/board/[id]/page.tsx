@@ -622,8 +622,8 @@ export default function Page({ params }: { params: { id: string } }) {
         if (active.data.current?.type === "COLUMN") {
             //console.log("ACTIVE COLUMN");
             setKanbanData((prevKanbanData: KanbanData) => {
-                const activeColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col.id === activeColumnID);
-                const overColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col.id === overColumnID);
+                const activeColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col?.id === activeColumnID);
+                const overColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col?.id === overColumnID);
                 const newColumnsArray: Column[] = arrayMove(prevKanbanData.columns, activeColumnIndex, overColumnIndex);
 
                 return {
@@ -639,7 +639,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     // Drop on other column
                     const cardEl: Card = active.data.current?.card;
                     const destCol: Column = over.data.current?.column;
-                    const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col.id === active.data.current?.card.columnID);
+                    const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
                     if (!srcCol) return;
 
                     const updatedCardsList = srcCol.cardsList.filter((card) => card.id !== cardEl.id);
@@ -660,10 +660,10 @@ export default function Page({ params }: { params: { id: string } }) {
                     }
 
                     const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
-                        column.id === updatedColumn.id ? updatedColumn : column
+                        column?.id === updatedColumn.id ? updatedColumn : column
                     );
 
-                    const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col.id === resultDestCol.id ? resultDestCol : col);
+                    const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
 
                     return {
                         ...prevKanbanData,
@@ -679,8 +679,8 @@ export default function Page({ params }: { params: { id: string } }) {
                     //console.log("CURRENT NOT EMPTY", event);
                     setKanbanData((prevKanbanData: KanbanData) => {
                         const cardEl: Card = active.data.current?.card;
-                        const destCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col.id === over.data.current?.card.columnID);
-                        const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col.id === active.data.current?.card.columnID);
+                        const destCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
+                        const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
                         if (!srcCol) return;
                         if (destCol === undefined) return;
 
@@ -702,10 +702,10 @@ export default function Page({ params }: { params: { id: string } }) {
                         }
 
                         const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
-                            column.id === updatedColumn.id ? updatedColumn : column
+                            column?.id === updatedColumn.id ? updatedColumn : column
                         );
 
-                        const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col.id === resultDestCol.id ? resultDestCol : col);
+                        const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
 
                         return {
                             ...prevKanbanData,
@@ -718,8 +718,8 @@ export default function Page({ params }: { params: { id: string } }) {
                     setKanbanData((prevKanbanData: KanbanData) => {
                         const tempEndDragState: DragEndEvent = tempDragState as DragEndEvent;
                         const cardEl: Card = tempEndDragState.active.data.current?.card;
-                        const destCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col.id === over.data.current?.card.columnID);
-                        const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col.id === tempEndDragState.active.data.current?.card.columnID);
+                        const destCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
+                        const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === tempEndDragState.active.data.current?.card.columnID);
                         if (!srcCol) return;
                         if (destCol === undefined) return;
 
@@ -740,10 +740,10 @@ export default function Page({ params }: { params: { id: string } }) {
                         }
 
                         const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
-                            column.id === updatedColumn.id ? updatedColumn : column
+                            column?.id === updatedColumn.id ? updatedColumn : column
                         );
 
-                        const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col.id === resultDestCol.id ? resultDestCol : col);
+                        const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
 
                         return {
                             ...prevKanbanData,
@@ -774,11 +774,11 @@ export default function Page({ params }: { params: { id: string } }) {
         if (isActiveCard && isOverCard) {
             setKanbanData((prevKanbanData: KanbanData) => {
                 if (active.data.current?.card.columnID === over.data.current?.card.columnID) {
-                    const targetColumn = prevKanbanData.columns.find((column) => column.id === active.data.current?.card.columnID);
+                    const targetColumn = prevKanbanData.columns.find((column) => column?.id === active.data.current?.card.columnID);
                     if (!targetColumn) return prevKanbanData;
 
-                    const activeCardIndex = targetColumn.cardsList.findIndex((card: Card) => card.id === activeID);
-                    const overCardIndex = targetColumn.cardsList.findIndex((card: Card) => card.id === overID);
+                    const activeCardIndex = targetColumn.cardsList.findIndex((card: Card) => card?.id === activeID);
+                    const overCardIndex = targetColumn.cardsList.findIndex((card: Card) => card?.id === overID);
 
                     const newCardArray: Card[] = arrayMove(targetColumn.cardsList, activeCardIndex, overCardIndex);
 
@@ -788,7 +788,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     };
 
                     const updatedColumns = prevKanbanData.columns.map((column: Column) =>
-                        column.id === active.data.current?.card.columnID ? updatedColumn : column
+                        column?.id === active.data.current?.card.columnID ? updatedColumn : column
                     );
 
                     return {
@@ -796,13 +796,13 @@ export default function Page({ params }: { params: { id: string } }) {
                         columns: updatedColumns,
                     };
                 } else {
-                    const sourceColumn = prevKanbanData.columns.find((column) => column.id === active.data.current?.card.columnID);
+                    const sourceColumn = prevKanbanData.columns.find((column) => column?.id === active.data.current?.card.columnID);
                     if (!sourceColumn) return prevKanbanData;
-                    const destColumn = prevKanbanData.columns.find((col: Column) => col.id === over.data.current?.card.columnID);
+                    const destColumn = prevKanbanData.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
                     if (!destColumn) return prevKanbanData;
 
-                    //const srcCardIndex = sourceColumn.cardsList.findIndex((card: Card) => card.id === activeID);
-                    //const destCardIndex = destColumn.cardsList.findIndex((card: Card) => card.id === overID);
+                    //const srcCardIndex = sourceColumn.cardsList.findIndex((card: Card) => card?.id === activeID);
+                    //const destCardIndex = destColumn.cardsList.findIndex((card: Card) => card?.id === overID);
 
                     const updatedSourceCardsList = sourceColumn.cardsList.filter((card) => card.id !== activeID);
 
@@ -812,7 +812,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     };
 
                     const updatedColumns = prevKanbanData.columns.map((column: Column) =>
-                        column.id === active.data.current?.card.columnID ? updatedSourceColumn : column
+                        column?.id === active.data.current?.card.columnID ? updatedSourceColumn : column
                     );
 
                     return {
@@ -877,7 +877,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     title: cardTitle,
                     description: cardDescription,
                 }
-                const targetColumn = prevData.columns.find((column) => column.id === tempColumnID);
+                const targetColumn = prevData.columns.find((column) => column?.id === tempColumnID);
                 if (!targetColumn) {
                     return prevData;
                 }
@@ -890,7 +890,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     };
 
                     const updatedColumns = prevData.columns.map((column) =>
-                        column.id === tempColumnID ? updatedColumn : column
+                        column?.id === tempColumnID ? updatedColumn : column
                     );
 
                     return {
@@ -899,9 +899,9 @@ export default function Page({ params }: { params: { id: string } }) {
                     };
                 } else {
                     console.log(`CARD ${newCard.id} EDITED.`);
-                    const cardIndex = targetColumn.cardsList.findIndex((card: Card) => card.id === newCard.id);
+                    const cardIndex = targetColumn.cardsList.findIndex((card: Card) => card?.id === newCard.id);
                     if (cardIndex !== -1) {
-                        const updatedColumnCardList = targetColumn.cardsList.map((card: Card) => card.id === newCard.id ? newCard : card)
+                        const updatedColumnCardList = targetColumn.cardsList.map((card: Card) => card?.id === newCard.id ? newCard : card)
                         console.log(updatedColumnCardList);
                         const updatedColumn = {
                             ...targetColumn,
@@ -909,7 +909,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         };
 
                         const updatedColumns = prevData.columns.map((column) =>
-                            column.id === tempColumnID ? updatedColumn : column
+                            column?.id === tempColumnID ? updatedColumn : column
                         );
 
                         return {
@@ -942,7 +942,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     const deleteCard = (columnID: string, cardID: string) => {
         setKanbanData((prevData: KanbanData) => {
-            const targetColumn = prevData.columns.find((column) => column.id === columnID);
+            const targetColumn = prevData.columns.find((column) => column?.id === columnID);
             if (!targetColumn) {
                 return prevData;
             }
@@ -955,7 +955,7 @@ export default function Page({ params }: { params: { id: string } }) {
             };
 
             const updatedColumns = prevData.columns.map((column) =>
-                column.id === columnID ? updatedColumn : column
+                column?.id === columnID ? updatedColumn : column
             );
 
             return {

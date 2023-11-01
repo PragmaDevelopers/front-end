@@ -45,6 +45,7 @@ import {
     CheckList,
     CheckListItem,
     Column,
+    CustomFields,
     DateValue,
     KanbanData,
     Tag
@@ -206,7 +207,6 @@ function ColumnContainer(props: ColumnContainerProps) {
                         className='form-input w-full bg-neutral-50 outline-none'
                     /> :
                         column.title}
-
                 </div>
                 <button onClick={handleRemove}>
                     <XCircleIcon className='w-6 aspect-square' />
@@ -255,6 +255,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [viewAddTag, setViewAddTag] = useState<boolean>(false);
     const [viewAddMember, setViewAddMember] = useState<boolean>(false);
     const [viewAddDate, setViewAddDate] = useState<boolean>(false);
+    const [viewAddField, setViewAddField] = useState<boolean>(false);
+    const [textFieldValue, setTextFieldValue] = useState<string>("");
+    const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
 
     const handleCreateCardForm = (event: any) => {
         createCardForm(event, isEdition);
@@ -279,6 +282,26 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             <input className='form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
                         </div>
                         <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
+                        <div className='p-2 grid grid-cols-6 auto-rows-auto gap-2'>
+                            {card.customFields.map((item: CustomFields) => {
+                                if (item.field.type === "text") {
+                                    return (
+                                        <div>
+                                            <h1>{item.field.name}</h1>
+                                            <input type='text' value={item.field.value} onChange={(e: any) => item.field.value = e.target.value} />
+                                        </div>
+                                    );
+                                } else {
+                                    return (
+                                        <div>
+                                            <h1>{item.field.name}</h1>
+                                            <input type='number' value={item.field.value} onChange={(e: any) => item.field.value = e.target.value} />
+                                        </div>
+                                    );
+                                }
+                            })}
+                        </div>
+
                         <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
                             {card.tags?.map((items: Tag) => (
                                 <div key={items?.id} className='flex w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
@@ -359,6 +382,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <PlusCircleIcon className='aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Date</h1>
                     </button>
+                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
+                        onClick={() => setViewAddDate(!viewAddDate)}>
+                        <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                        <h1 className="w-fit h-fit flex justify-center items-center">Add Field</h1>
+                    </button>
 
                     <div className={(viewAddMember ? 'flex' : 'hidden') + ' absolute top-28 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={() => setViewAddMember(false)}>
@@ -373,6 +401,18 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
                         </form>
                     </div>
+
+                    <div className={(viewAddDate ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+                        <form onSubmit={() => setViewAddField(false)}>
+                            <input type='text' name='fieldTitle' placeholder='Field Name' />
+                            <select name='fieldType'>
+                                <option value="text">Text</option>
+                                <option value="number">Number</option>
+                            </select>
+                            <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add</button>
+                        </form>
+                    </div>
+
 
                     <div className={(viewAddTag ? 'flex' : 'hidden') + ' absolute top-14 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={createNewTag}>

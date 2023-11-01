@@ -22,8 +22,8 @@
 .MDXEditor ._rootContentEditableWrapper_w1wlt_1022 { @apply font-poppins }
 .MDXEditor ._rootContentEditableWrapper_16b3d_991, .MDXEditor ._contentEditable_16b3d_340 { @apply max-h-32 overflow-auto }
 
-::-webkit-scrollbar { @apply bg-neutral-50 }
-::-webkit-scrollbar-thumb { @apply bg-neutral-200 }
+::-webkit-scrollbar { @apply bg-neutral-50 w-1.5 }
+::-webkit-scrollbar-thumb { @apply bg-neutral-200 w-1.5 }
 /*
 ::-webkit-scrollbar-track {}
 ::-webkit-scrollbar-button {}

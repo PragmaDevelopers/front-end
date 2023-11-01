@@ -292,6 +292,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const createNewCustomField = (event: any) => {
         event.preventDefault();
+        setViewAddField(false);
         // (name: string, value: string | number, fieldType: "text" | "number")
         // const selectedValue = event?.target?.elements?.fieldType.value;
         const selectedValue = event?.target?.elements?.fieldType?.value;
@@ -320,16 +321,16 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                 console.log("MAP LOOP", item?.fieldType);
                                 if (item?.fieldType === "text") {
                                     return (
-                                        <div key={idx} className='w-24 flex'>
+                                        <div key={idx} className='w-24 flex justify-center items-center'>
                                             <h1 className='mr-1'>{item?.name}:</h1>
-                                            <input className='w-28 bg-neutral-50 border-none outline-none' type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                                            <input className='w-32 bg-neutral-50 border-none outline-none' type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
                                         </div>
                                     );
                                 } else {
                                     return (
-                                        <div key={idx} className='w-24 flex'>
+                                        <div key={idx} className='w-24 flex justify-center items-center'>
                                             <h1 className='mr-1'>{item?.name}:</h1>
-                                            <input className='w-28 bg-neutral-50 border-none outline-none' type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                                            <input className='w-32 bg-neutral-50 border-none outline-none' type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
                                         </div>
                                     );
                                 }
@@ -423,6 +424,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Field</h1>
                     </button>
 
+                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
+                        onClick={() => setViewAddField(!viewAddField)}>
+                        <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                        <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
+                    </button>
+
+
+
                     <div className={(viewAddMember ? 'flex' : 'hidden') + ' absolute top-28 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={() => setViewAddMember(false)}>
                             <input type='text' placeholder='dummy' />
@@ -440,11 +449,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     <div className={(viewAddField ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={createNewCustomField} className='flex flex-col items-center'>
                             <input type='text' name='fieldTitle' placeholder='Field Name' className='bg-neutral-50 border-none outline-none' />
-                            <select name='fieldType' className='bg-neutral-50 border-none outline-none'>
+                            <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
                                 <option value="text">Text</option>
                                 <option value="number">Number</option>
                             </select>
-                            <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add</button>
+                            <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add Field</button>
                         </form>
                     </div>
 

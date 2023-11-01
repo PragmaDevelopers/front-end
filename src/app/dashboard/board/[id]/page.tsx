@@ -303,19 +303,19 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
                         <div className='p-2 grid grid-cols-6 auto-rows-auto gap-2'>
                             {card?.customFields?.map((item: CustomFields, idx: any) => {
-                                console.log("MAP LOOP", item?.field?.fieldType);
-                                if (item?.field?.fieldType === "text") {
+                                console.log("MAP LOOP", item?.fieldType);
+                                if (item?.fieldType === "text") {
                                     return (
                                         <div key={idx}>
-                                            <h1>{item?.field?.name}</h1>
-                                            <input type='text' value={item?.field?.value} onChange={(e: any) => item.field.value = e?.target?.value} />
+                                            <h1>{item?.name}</h1>
+                                            <input type='text' value={item?.value} onChange={(e: any) => item.value = e?.target?.value} />
                                         </div>
                                     );
                                 } else {
                                     return (
                                         <div key={idx}>
-                                            <h1>{item?.field?.name}</h1>
-                                            <input type='number' value={item?.field?.value} onChange={(e: any) => item.field.value = e?.target?.value} />
+                                            <h1>{item?.name}</h1>
+                                            <input type='number' value={item?.value} onChange={(e: any) => item.value = e?.target?.value} />
                                         </div>
                                     );
                                 }

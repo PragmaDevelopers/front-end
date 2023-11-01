@@ -20,19 +20,17 @@ export type CustomFieldText = {
     name: string,
     value: string,
     id: string,
-    fieldType: FieldInputTypes,
+    fieldType: "text",
 }
 
 export type CustomFieldNumber = {
     name: string,
     value: number,
     id: string,
-    fieldType: FieldInputTypes,
+    fieldType: "number",
 }
 
-export type CustomFields = {
-    field: CustomFieldNumber | CustomFieldText;
-}
+export type CustomFields = CustomFieldNumber | CustomFieldText;
 
 export type Comment = {
     userID: string,

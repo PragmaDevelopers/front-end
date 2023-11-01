@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
-import Header from './components/global/header';
+import Main from './components/global/Main';
 
 const interFont = Inter({
     subsets: ['latin'],
@@ -27,10 +27,9 @@ export default function RootLayout({
     return (
         <html lang="pt-br">
             <body className={`${interFont.variable} ${poppinsFont.variable} scrollbar-thin scrollbar-thumb-neutral-100 scrollbar-track-400 font-poppins w-screen h-screen bg-neutral-50 flex flex-col justify-start items-start transition-all text-neutral-950 `}>
-                <Header />
-                <div className='w-full h-full overflow-hidden'>
+                <Main>
                     {children}
-                </div>
+                </Main>
             </body>
         </html>
     )

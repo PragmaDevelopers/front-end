@@ -45,6 +45,8 @@ import {
     CheckList,
     CheckListItem,
     Column,
+    CustomFieldNumber,
+    CustomFieldText,
     CustomFields,
     DateValue,
     KanbanData,
@@ -75,6 +77,7 @@ import {
 } from "@mdxeditor/editor";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { GeneratedIdentifierFlags } from 'typescript';
 
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
     return (
@@ -248,6 +251,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         setCardDate,
         editorText,
         setEditorText,
+        addCustomField,
     } = props;
 
 
@@ -270,6 +274,12 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         event.target.reset();
         setViewAddTag(false);
         setColor("#aabbcc");
+    }
+
+    const createNewCustomField = (event: any) => {
+        event.preventDefault();
+        const selectedValue = event.target.elements.fieldType.value;
+        event.target.reset();
     }
 
     return (
@@ -1016,6 +1026,39 @@ export default function Page({ params }: { params: { id: string } }) {
         });
     }
 
+    const handleAddCustomField = (name: string, value: string | number, fieldType: "text" | "number") => {
+        setTempCard((prevCard: Card) => {
+            console.log(prevCard);
+            if (fieldType === "text") {
+                const Field: CustomFieldText = {
+                    name: name,
+                    value: value as string,
+                    id: generateRandomString(),
+                    fieldType: "text",
+                }
+                const newCustomFields: CustomFields[] = [...prevCard.customFields, Field as unknown as CustomFields];
+                return {
+                    ...prevCard,
+                    customFields: newCustomFields,
+                };
+            } else {
+                const Field: CustomFieldNumber = {
+                    name: name,
+                    value: value as number,
+                    id: generateRandomString(),
+                    fieldType: "number",
+                }
+                const newCustomFields: CustomFields[] = [...prevCard.customFields, Field as unknown as CustomFields];
+                return {
+                    ...prevCard,
+                    customFields: newCustomFields,
+                };
+            }
+        });
+    }
+
+
+
     const editEditorText = (text: string) => {
         editorRef.current?.setMarkdown(text);
     }
@@ -1042,6 +1085,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 editorText={editorText}
                 setEditorText={editEditorText}
                 ref={editorRef}
+                addCustomField={handleAddCustomField}
             />
             <div className="">
                 <h1>{params.id}</h1>

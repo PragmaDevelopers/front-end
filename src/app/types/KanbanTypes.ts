@@ -20,14 +20,14 @@ export type CustomFieldText = {
     name: string,
     value: string,
     id: string,
-    type: FieldInputTypes,
+    fieldType: FieldInputTypes,
 }
 
 export type CustomFieldNumber = {
     name: string,
     value: number,
     id: string,
-    type: FieldInputTypes,
+    fieldType: FieldInputTypes,
 }
 
 export type CustomFields = {

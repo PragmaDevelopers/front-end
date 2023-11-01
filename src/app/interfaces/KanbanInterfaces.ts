@@ -42,6 +42,7 @@ export interface CreateEditCardProps {
     setCardDate: any;
     editorText: any;
     setEditorText: any;
+    addCustomField: any;
 }
 
 export interface RichEditorProps {

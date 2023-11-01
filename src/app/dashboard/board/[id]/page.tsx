@@ -278,7 +278,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const createNewCustomField = (event: any) => {
         event.preventDefault();
-        const selectedValue = event.target.elements.fieldType.value;
+        // (name: string, value: string | number, fieldType: "text" | "number")
+        const selectedValue = event?.target?.elements?.fieldType.value;
+        const fieldName = event?.target?.elements?.fieldTitle.value;
+        if (selectedValue === "text") {
+            addCustomField(fieldName, "", "text");
+        } else {
+            addCustomField(fieldName, 0, "number");
+        }
         event.target.reset();
     }
 
@@ -414,7 +421,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </div>
 
                     <div className={(viewAddField ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={() => setViewAddField(false)}>
+                        <form onSubmit={createNewCustomField}>
                             <input type='text' name='fieldTitle' placeholder='Field Name' />
                             <select name='fieldType'>
                                 <option value="text">Text</option>

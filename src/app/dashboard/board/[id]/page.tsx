@@ -315,21 +315,21 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             <input className='form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
                         </div>
                         <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
-                        <div className='p-2 grid grid-cols-6 auto-rows-auto gap-2'>
+                        <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
                             {card?.customFields?.map((item: CustomFields, idx: any) => {
                                 console.log("MAP LOOP", item?.fieldType);
                                 if (item?.fieldType === "text") {
                                     return (
-                                        <div key={idx}>
-                                            <h1>{item?.name}</h1>
-                                            <input type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} />
+                                        <div key={idx} className='w-24 flex'>
+                                            <h1 className='mr-1'>{item?.name}:</h1>
+                                            <input className='w-fit bg-neutral-50 border-none outline-none' type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
                                         </div>
                                     );
                                 } else {
                                     return (
-                                        <div key={idx}>
-                                            <h1>{item?.name}</h1>
-                                            <input type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} />
+                                        <div key={idx} className='w-24 flex'>
+                                            <h1 className='mr-1'>{item?.name}:</h1>
+                                            <input className='w-fit bg-neutral-50 border-none outline-none' type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
                                         </div>
                                     );
                                 }
@@ -439,8 +439,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
                     <div className={(viewAddField ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={createNewCustomField}>
-                            <input type='text' name='fieldTitle' placeholder='Field Name' />
-                            <select name='fieldType'>
+                            <input type='text' name='fieldTitle' placeholder='Field Name' className='bg-neutral-50 border-none outline-none' />
+                            <select name='fieldType' className='bg-neutral-50 border-none outline-none'>
                                 <option value="text">Text</option>
                                 <option value="number">Number</option>
                             </select>

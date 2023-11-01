@@ -1,4 +1,5 @@
 "use client";
+import { BellIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 
@@ -17,13 +18,16 @@ export default function Header() {
     if (currentPath != '/') {
         return (
             <div className='w-full h-16 flex flex-row justify-between items-center p-2'>
-                <div className="p-0.5 w-8 rounded-full border-2 border-neutral-950 aspect-square">
-                    <VercelLogo className="ml-2 fill-neutral-950" />
+                <div className="ml-2 p-0.5 w-8 rounded-full border-2 border-neutral-950 aspect-square flex justify-center items-center">
+                    <VercelLogo className="fill-neutral-950" />
                 </div>
-                <nav className='flex flex-row'>
-                    <Link href="/dashboard" className='text-neutral-950 hover:text-blue-400 mx-2'>Dashboard</Link>
-                    <Link href="/login" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
-                </nav>
+                <div className="flex flex-row">
+                    <nav className='flex flex-row'>
+                        <Link href="/dashboard" className='text-neutral-950 hover:text-blue-400 mx-2'>Dashboard</Link>
+                        <Link href="/login" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
+                    </nav>
+                    <BellIcon className="aspect-square w-8 mr-2 ml-4" />
+                </div>
             </div>
         );
     }

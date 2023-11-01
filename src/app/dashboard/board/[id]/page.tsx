@@ -305,15 +305,15 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                 if (item?.field?.fieldType === "text") {
                                     return (
                                         <div key={idx}>
-                                            <h1>{item.field.name}</h1>
-                                            <input type='text' value={item.field.value} onChange={(e: any) => item.field.value = e.target.value} />
+                                            <h1>{item?.field?.name}</h1>
+                                            <input type='text' value={item?.field?.value} onChange={(e: any) => item.field.value = e?.target?.value} />
                                         </div>
                                     );
                                 } else {
                                     return (
                                         <div key={idx}>
-                                            <h1>{item.field.name}</h1>
-                                            <input type='number' value={item.field.value} onChange={(e: any) => item.field.value = e.target.value} />
+                                            <h1>{item?.field?.name}</h1>
+                                            <input type='number' value={item?.field?.value} onChange={(e: any) => item.field.value = e?.target?.value} />
                                         </div>
                                     );
                                 }

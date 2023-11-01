@@ -29,6 +29,7 @@ import {
 } from '@dnd-kit/sortable';
 import { createPortal } from 'react-dom';
 import {
+    ArrowUpOnSquareIcon,
     MinusCircleIcon,
     PlusCircleIcon,
     XCircleIcon
@@ -75,10 +76,17 @@ import {
     CreateLink,
     MDXEditor,
     MDXEditorMethods,
+    CodeToggle,
+    InsertAdmonition,
+    ChangeAdmonitionType,
+    directivesPlugin,
+    AdmonitionDirectiveDescriptor,
+    InsertThematicBreak,
+    codeMirrorPlugin,
+    ChangeCodeMirrorLanguage,
 } from "@mdxeditor/editor";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { GeneratedIdentifierFlags } from 'typescript';
 
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
     return (
@@ -94,18 +102,25 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
                 thematicBreakPlugin(),
                 linkPlugin(),
                 linkDialogPlugin(),
-                imagePlugin(),
                 tablePlugin(),
                 markdownShortcutPlugin(),
+                directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
+                codeMirrorPlugin(),
                 toolbarPlugin({
-                    toolbarContents: () => (<>
-                        <UndoRedo />
-                        <BlockTypeSelect />
-                        <BoldItalicUnderlineToggles />
-                        <InsertImage />
-                        <InsertTable />
-                        <ListsToggle />
-                        <CreateLink /></>
+                    toolbarContents: () => (
+                        <>
+                            <UndoRedo />
+                            <BlockTypeSelect />
+                            <BoldItalicUnderlineToggles />
+                            <InsertTable />
+                            <ListsToggle />
+                            <CreateLink />
+                            <CodeToggle />
+                            <InsertAdmonition />
+                            <ChangeAdmonitionType />
+                            <InsertThematicBreak />
+                            <ChangeCodeMirrorLanguage />
+                        </>
                     )
                 }),
             ]}
@@ -402,31 +417,31 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </div>
                 </form>
                 <div className='w-56 ml-4 flex flex-col items-center justify-start h-[75%] relative'>
-                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
+                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
                         onClick={() => setViewAddTag(!viewAddTag)}>
-                        <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                        <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Tag</h1>
                     </button>
-                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
+                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
                         onClick={() => setViewAddMember(!viewAddMember)}>
-                        <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                        <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Member</h1>
                     </button>
-                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
+                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
                         onClick={() => setViewAddDate(!viewAddDate)}>
-                        <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                        <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Date</h1>
                     </button>
 
-                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
+                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
                         onClick={() => setViewAddField(!viewAddField)}>
-                        <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                        <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Field</h1>
                     </button>
 
-                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48' type='button'
+                    <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
                         onClick={() => setViewAddField(!viewAddField)}>
-                        <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                        <ArrowUpOnSquareIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
                     </button>
 

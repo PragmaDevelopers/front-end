@@ -22,7 +22,7 @@ export default function Page() {
                         <h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>
                     </div>
                 </div>
-                <form className="m-4 w-96">
+                <form className="m-4 w-[28rem]">
                     <div className="bg-neutral-50 p-2 rounded-md m-4 drop-shadow-md">
                         <h1 className="font-bold text-xl mb-2 text-neutral-900">Sistema Push</h1>
                         <div className="flex flex-row justify-center items-center w-full">

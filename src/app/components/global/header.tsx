@@ -17,7 +17,9 @@ export default function Header() {
     if (currentPath != '/') {
         return (
             <div className='w-full h-16 flex flex-row justify-between items-center p-2'>
-                <VercelLogo className="ml-2 aspect-square w-8 fill-neutral-950" />
+                <div className="p-1 w-6 rounded-full border-2 border-neutral-950">
+                    <VercelLogo className="ml-2 fill-neutral-950" />
+                </div>
                 <nav className='flex flex-row'>
                     <Link href="/dashboard" className='text-neutral-950 hover:text-blue-400 mx-2'>Dashboard</Link>
                     <Link href="/login" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>

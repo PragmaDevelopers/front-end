@@ -22,13 +22,12 @@
 .MDXEditor ._rootContentEditableWrapper_w1wlt_1022 { @apply font-poppins }
 .MDXEditor ._rootContentEditableWrapper_16b3d_991, .MDXEditor ._contentEditable_16b3d_340 { @apply max-h-64 overflow-auto }
 ._selectContainer_16b3d_252,._toolbarButtonDropdownContainer_16b3d_250,._toolbarCodeBlockLanguageSelectContent_16b3d_251,._toolbarNodeKindSelectContainer_16b3d_249 {
-    /* z-index: 3; */
+    z-index: 50 !important;
     /* width: var(--spacing-36);
     border-bottom-left-radius: var(--radius-base);
     border-bottom-right-radius: var(--radius-base);
     background-color: var(--baseBgHover);
     font-size: var(--text-sm); */
-    @apply z-50;
 }
 
 

@@ -80,7 +80,7 @@ export default function Layout({ children }: any) {
     return (
         <main className="w-full h-full flex flex-row items-start justify-between">
             <div className="grow relative w-56 h-full flex flex-col justify-start items-start shrink-0">
-                <details className="p-2">
+                <details className="p-2 hidden">
                     <summary>Seções</summary>
                     <div className="">
                         <Link href="/" className="my-1 flex flex-row items-center">

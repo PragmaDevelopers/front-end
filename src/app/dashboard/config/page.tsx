@@ -22,11 +22,14 @@ export default function Page() {
                         <h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>
                     </div>
                 </div>
-                <form className="m-4 w-full">
+                <form className="m-4 w-96">
                     <div className="bg-neutral-50 p-2 rounded-md m-4 drop-shadow-md">
-                        <h1 className="font-bold text-xl mb-2">Sistema Push</h1>
-                        <label htmlFor="emailPush" className="mr-2">Email:</label>
-                        <input id="emailPush" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner" placeholder="Insira um email" />
+                        <h1 className="font-bold text-xl mb-2 text-neutral-900">Sistema Push</h1>
+                        <div className="flex flex-row justify-center items-center w-full">
+                            <label htmlFor="emailPush" className="mr-2">Email:</label>
+                            <input id="emailPush" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
+                            <button className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
+                        </div>
                     </div>
                 </form>
             </div>

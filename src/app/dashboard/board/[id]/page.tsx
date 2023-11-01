@@ -282,6 +282,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         // const selectedValue = event?.target?.elements?.fieldType.value;
         const selectedValue = event?.target?.elements?.fieldType?.value;
         const fieldName = event?.target?.elements?.fieldTitle?.value;
+        console.log("FUNCTION", "SELECTED VALUE:", selectedValue, "FIELD NAME:", fieldName);
         if (selectedValue === "text") {
             addCustomField(fieldName, "", "text");
         } else {
@@ -302,6 +303,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
                         <div className='p-2 grid grid-cols-6 auto-rows-auto gap-2'>
                             {card?.customFields?.map((item: CustomFields, idx: any) => {
+                                console.log("MAP LOOP", item?.field?.fieldType);
                                 if (item?.field?.fieldType === "text") {
                                     return (
                                         <div key={idx}>

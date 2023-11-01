@@ -115,7 +115,7 @@ export default function Layout({ children }: any) {
                             </form>
                         </div>
                     </details>
-                    <Link href="/" className="bg-neutral-50 p-2 flex flex-row items-center">
+                    <Link href="/dashboard/config" className="bg-neutral-50 p-2 flex flex-row items-center">
                         <CogIcon className={IconStyles} />
                         <h1>Configurações</h1>
                     </Link>

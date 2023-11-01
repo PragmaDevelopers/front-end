@@ -19,6 +19,7 @@ import {
     useRef,
     useState,
     Ref,
+    ChangeEvent,
 } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -262,9 +263,21 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [viewAddField, setViewAddField] = useState<boolean>(false);
     const [textFieldValue, setTextFieldValue] = useState<string>("");
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
+    const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});
 
     const handleCreateCardForm = (event: any) => {
         createCardForm(event, isEdition);
+    }
+
+    const handleCustomFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setCustomFieldsData((prevData) => {
+            return {
+                ...prevData,
+                [name]: value,
+            };
+        });
     }
 
     const createNewTag = (event: any) => {
@@ -308,14 +321,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                     return (
                                         <div key={idx}>
                                             <h1>{item?.name}</h1>
-                                            <input type='text' value={item?.value} onChange={(e: any) => item.value = e?.target?.value} />
+                                            <input type='text' name={item?.name} value={item?.value} onChange={handleCustomFieldChange} />
                                         </div>
                                     );
                                 } else {
                                     return (
                                         <div key={idx}>
                                             <h1>{item?.name}</h1>
-                                            <input type='number' value={item?.value} onChange={(e: any) => item.value = e?.target?.value} />
+                                            <input type='number' name={item?.name} value={item?.value} onChange={handleCustomFieldChange} />
                                         </div>
                                     );
                                 }

@@ -10,22 +10,22 @@ export default function Page() {
     return (
         <main className="w-full h-full bg-neutral-100">
             <div className="flex flex-row justify-center items-center relative my-2">
-                <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-2 stroke-neutral-900 fill-neutral-900" /></button>
+                <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
                 <h1 className="font-bold text-2xl text-neutral-900">Configurações</h1>
             </div>
-            <div className="mt-2 flex flex-col items-center justify-start">
-                <div className="bg-neutral-50 rounded-lg drop-shadow-lg p-4 flex flex-row justify-center items-center">
-                    <UserCircleIcon className="aspect-square w-16" />
+            <div className="mt-4 flex flex-col items-center justify-start">
+                <div className="bg-neutral-50 rounded-lg drop-shadow-md p-4 flex flex-row justify-center items-center">
+                    <UserCircleIcon className="aspect-square w-24 mr-4" />
                     <div>
-                        <h1 className="text-xl font-bold text-neutral-900">Fulano da Silva</h1>
-                        <h2 className="text-neutral-700 text-lg">usuario@exemplo.com</h2>
-                        <h3 className="text-blue-500 hover:text-blue-700 transition-all">Configurar perfil</h3>
+                        <h1 className="text-lg font-bold text-neutral-900 mb-1">Fulano da Silva</h1>
+                        <h2 className="text-neutral-700 text-sm my-0.5">usuario@exemplo.com</h2>
+                        <h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>
                     </div>
                 </div>
-                <form>
-                    <div className="bg-neutral-50 p-2 rounded-md m-4">
-                        <h1 className="font-bold text-xl">Sistema Push</h1>
-                        <label htmlFor="emailPush">Email:</label>
+                <form className="m-4 w-full">
+                    <div className="bg-neutral-50 p-2 rounded-md m-4 drop-shadow-md">
+                        <h1 className="font-bold text-xl mb-2">Sistema Push</h1>
+                        <label htmlFor="emailPush" className="mr-2">Email:</label>
                         <input id="emailPush" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner" placeholder="Insira um email" />
                     </div>
                 </form>

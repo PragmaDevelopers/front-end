@@ -7,7 +7,7 @@ export default function Page() {
     const router = useRouter();
 
     return (
-        <main className="w-full h-full bg-neutral-100">
+        <main className="w-full h-full bg-neutral-100 overflow-auto">
             <div className="flex flex-row justify-center items-center relative my-2">
                 <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
                 <h1 className="font-bold text-2xl text-neutral-900">Configurações</h1>
@@ -22,7 +22,7 @@ export default function Page() {
                     </div>
                 </div>
                 <form className="m-4 w-[28rem]">
-                    <div className="bg-neutral-50 px-2 pt-2 pb-8 rounded-md m-4 drop-shadow-md overflow-y-scroll">
+                    <div className="bg-neutral-50 px-2 pt-2 pb-8 rounded-lg m-4 drop-shadow-md overflow-y-scroll">
                         <h1 className="font-bold text-xl mb-2 text-neutral-900">Informações Pessoais</h1>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Email</h2>

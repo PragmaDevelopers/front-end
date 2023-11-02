@@ -8,9 +8,9 @@ function NotificationElement() {
         <Link href="#" className="w-full h-fit bg-neutral-200 hover:bg-neutral-100 transition-all">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
                 <UserCircleIcon className="w-12 mr-2 aspect-square" />
-                <div className="w-full h-full flex flex-col mx-2">
+                <div className="w-[96%] h-16 flex flex-col mx-2">
                     <h1 className="text-lg font-bold">Title</h1>
-                    <h2 className="truncate text-sm text-neutral-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Facilisis volutpat est velit egestas dui id ornare arcu odio. Nunc sed blandit libero volutpat sed cras. Commodo nulla facilisi nullam vehicula.</h2>
+                    <h2 className="truncate text-sm text-neutral-600 w-[90%]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Facilisis volutpat est velit egestas dui id ornare arcu odio. Nunc sed blandit libero volutpat sed cras. Commodo nulla facilisi nullam vehicula.</h2>
                 </div>
                 <ArrowTopRightOnSquareIcon className="w-12 ml-2 aspect-square" />
             </div>

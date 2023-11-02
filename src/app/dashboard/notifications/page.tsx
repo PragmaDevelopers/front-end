@@ -5,7 +5,7 @@ import Link from "next/link";
 
 function NotificationElement() {
     return (
-        <Link href="#" className="w-[96%] h-16 bg-neutral-200 hover:bg-neutral-100 transition-all">
+        <Link href="#" className="w-[96%] h-16 bg-neutral-200 hover:bg-neutral-100 transition-all block">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
                 <UserCircleIcon className="w-12 mr-2 aspect-square" />
                 <div className="w-full h-full flex flex-col mx-2">

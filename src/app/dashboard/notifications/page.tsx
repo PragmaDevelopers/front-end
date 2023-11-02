@@ -8,7 +8,7 @@ function NotificationElement() {
         <Link href="#" className="w-full h-16 bg-neutral-transparent hover:bg-neutral-50/25 transition-all block overflow-x-hidden">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
                 <UserCircleIcon className="aspect-square w-12 mr-4" />
-                <div className="flex flex-col mx-2 grow">
+                <div className="flex flex-col mx-2 grow w-12 overflow-hidden">
                     <h1 className="text-lg font-bold">Title</h1>
                     <h2 className="truncate text-sm text-neutral-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Facilisis volutpat est velit egestas dui id ornare arcu odio. Nunc sed blandit libero volutpat sed cras. Commodo nulla facilisi nullam vehicula.</h2>
                 </div>

@@ -31,7 +31,8 @@
 }
 
 
-::-webkit-scrollbar { @apply bg-neutral-50 w-1.5 }
+/* ::-webkit-scrollbar { @apply bg-neutral-50 w-1.5 } */
+::-webkit-scrollbar { @apply bg-transparent w-1.5 } 
 ::-webkit-scrollbar-thumb { @apply bg-neutral-200 w-1.5 }
 /*
 ::-webkit-scrollbar-track {}

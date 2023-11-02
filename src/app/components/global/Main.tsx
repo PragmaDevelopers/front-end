@@ -18,18 +18,18 @@ export default function Main({ children }: any) {
             <Header showNotifications={handleShowNotifications} />
             <div className={(showNotification ? "block" : "hidden") + " w-full h-full bg-transparent z-10 absolute top-[4.5rem] left-0 bg-neutral-950/50"}>
                 <div className="bg-transparent w-full h-full relative">
-                    <div className="bg-neutral-50 drop-shadow-lg rounded-md w-64 m-4 absolute top-0 right-4">
-                        <div className="p-2">
-                            <div className="h-full p-2 border-2 rounded-md border-neutral-400 my-2">
+                    <div className="bg-neutral-50 drop-shadow-lg rounded-md w-64 m-4 absolute top-0 right-4 p-2">
+                        <div className="divide-y divide-neutral-200">
+                            <div className="h-full p-2">
                                 <h1>Notificação #00</h1>
                             </div>
-                            <div className="w-full p-2 border-2 rounded-md border-neutral-400 my-2">
+                            <div className="w-full p-2">
                                 <h1>Notificação #01</h1>
                             </div>
-                            <div className="w-full p-2 border-2 rounded-md border-neutral-400 my-2">
+                            <div className="w-full p-2">
                                 <h1>Notificação #02</h1>
                             </div>
-                            <div className="w-full p-2 border-2 rounded-md border-neutral-400 my-2">
+                            <div className="w-full p-2">
                                 <h1>Notificação #03</h1>
                             </div>
                         </div>

@@ -2,11 +2,9 @@
 
 import { usePathname } from "next/navigation";
 import { CalendarIcon, ChartPieIcon, CogIcon, ServerStackIcon, UserGroupIcon } from "@heroicons/react/24/solid";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BuildingOffice2Icon } from "@heroicons/react/24/solid";
-import { throws } from "assert";
 import { generateRandomString } from "../utils/generators";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 

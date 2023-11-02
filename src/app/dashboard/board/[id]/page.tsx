@@ -318,6 +318,25 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         event.target.reset();
     }
 
+    const closeCalendar = (e: any) => {
+        e.preventDefault();
+        setViewAddDate(false);
+        e.target.reset();
+    }
+
+    const closeMoveCard = (e: any) => {
+        e.preventDefault();
+        setViewMoveCard(false);
+        e.target.reset();
+    }
+
+    const closeAddMember = (e: any) => {
+        e.preventDefault();
+        setViewAddMember(false);
+        e.target.reset();
+    }
+
+
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-full h-full z-20 justify-center items-center bg-neutral-950/25'}>
             <div className='relative w-[80%] h-[80%] bg-neutral-50 rounded-lg flex justify-center items-center px-8 drop-shadow-lg'>
@@ -443,16 +462,15 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </button>
 
 
-
                     <div className={(viewAddMember ? 'flex' : 'hidden') + ' absolute top-28 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={() => setViewAddMember(false)}>
+                        <form onSubmit={closeAddMember}>
                             <input type='text' placeholder='dummy' />
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
                         </form>
                     </div>
 
                     <div className={(viewAddDate ? 'flex' : 'hidden') + ' absolute top-44 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={() => setViewAddDate(false)}>
+                        <form onSubmit={closeCalendar}>
                             <Calendar value={cardDate} onChange={setCardDate} />
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
                         </form>
@@ -470,7 +488,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </div>
 
                     <div className={(viewMoveCard ? 'flex' : 'hidden') + ' absolute top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={() => setViewMoveCard(false)} className='flex flex-col items-center'>
+                        <form onSubmit={closeMoveCard} className='flex flex-col items-center'>
                             <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
                                 {dashboards?.map((kanban: { kanbanId: string, name: string }) => {
                                     return <option value={kanban?.kanbanId} key={kanban?.kanbanId}>{kanban?.name}</option>;
@@ -479,11 +497,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add Field</button>
                         </form>
                     </div>
-
-
-
-
-
 
                     <div className={(viewAddTag ? 'flex' : 'hidden') + ' absolute top-14 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={createNewTag}>

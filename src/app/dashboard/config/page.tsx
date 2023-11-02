@@ -2,6 +2,7 @@
 
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
@@ -19,7 +20,7 @@ export default function Page() {
                     <div>
                         <h1 className="text-lg font-bold text-neutral-900 mb-1">Fulano da Silva</h1>
                         <h2 className="text-neutral-700 text-sm my-0.5">usuario@exemplo.com</h2>
-                        <h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>
+                        <Link className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5" href="/dashboard/config/user">Configurar perfil</Link>
                     </div>
                 </div>
                 <form className="m-4 w-[28rem]">

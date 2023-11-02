@@ -23,10 +23,10 @@ export default function Page() {
         <main className="w-full h-full flex flex-col">
             <h1 className="font-bold text-xl my-4">Notificações</h1>
             <div className="w-full h-full flex flex-row justify-between items-center">
-                <div className="h-[80%] m-4 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
+                <div className="h-[90%] mx-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
                     <h1>Menu</h1>
                 </div>
-                <div className="w-[75%] h-[80%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 m-4 rounded-md divide-y divide-neutral-400 overflow-auto">
+                <div className="w-[65%] h-[90%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 mx-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
                     <NotificationElement />
                     <NotificationElement />
                     <NotificationElement />

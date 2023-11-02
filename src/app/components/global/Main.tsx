@@ -15,7 +15,7 @@ export default function Main({ children }: any) {
     return (
         <div className="w-full h-full relative">
             <Header showNotifications={handleShowNotifications} />
-            <div className={(showNotification ? "block" : "hidden") + " w-screen h-screen bg-transparent z-10 absolute"}>
+            <div className={(showNotification ? "block" : "hidden") + " w-screen h-screen bg-transparent z-10 absolute top-0 left-0 bg-neutral-950/50"}>
                 <div className="w-full h-full relative">
                     <div className="bg-neutral-50 drop-shadow-lg rounded-md w-96 m-4 absolute top-6 right-6 last:border-none">
                         <div className="border-b-[1px] border-neutral-400 w-full p-2 w-80">

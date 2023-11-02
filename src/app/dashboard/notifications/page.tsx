@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowTopRightOnSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowTopRightOnSquareIcon, TagIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 function NotificationElement() {
@@ -13,6 +13,7 @@ function NotificationElement() {
                     <h2 className="truncate text-sm text-neutral-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Facilisis volutpat est velit egestas dui id ornare arcu odio. Nunc sed blandit libero volutpat sed cras. Commodo nulla facilisi nullam vehicula.</h2>
                 </div>
                 <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square" />
+                <TrashIcon className="w-6 ml-2 aspect-square" />
             </div>
         </Link>
     );
@@ -21,12 +22,27 @@ function NotificationElement() {
 export default function Page() {
     return (
         <main className="w-full h-full flex flex-col">
-            <h1 className="font-bold text-xl my-4">Notificações</h1>
+            <h1 className="font-bold text-xl mt-4">Notificações</h1>
             <div className="w-full h-full flex flex-row justify-start items-start">
-                <div className="h-[85%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
-                    <h1>Menu</h1>
+                <div className="h-[88%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all my-2">
+                        <TagIcon className="w-6 aspect-square ml-4" />
+                        <h1>Notificações PUSH</h1>
+                    </div>
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4">
+                        <TagIcon className="w-6 aspect-square ml-4" />
+                        <h1>Movimentações de Processos</h1>
+                    </div>
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4">
+                        <TagIcon className="w-6 aspect-square ml-4" />
+                        <h1>Prazos Expirados</h1>
+                    </div>
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4">
+                        <TagIcon className="w-6 aspect-square ml-4" />
+                        <h1>Ações do Sistema</h1>
+                    </div>
                 </div>
-                <div className="w-[75%] h-[85%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
+                <div className="w-[75%] h-[88%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
                     <NotificationElement />
                     <NotificationElement />
                     <NotificationElement />

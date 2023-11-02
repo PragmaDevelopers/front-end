@@ -22,11 +22,11 @@ export default function Page() {
     return (
         <main className="w-full h-full flex flex-col">
             <h1 className="font-bold text-xl my-4">Notificações</h1>
-            <div className="w-full h-full flex flex-row justify-start items-center">
+            <div className="w-full h-full flex flex-row justify-start items-start">
                 <div className="h-[90%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
                     <h1>Menu</h1>
                 </div>
-                <div className="w-[65%] h-[90%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
+                <div className="w-[59%] h-[90%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
                     <NotificationElement />
                     <NotificationElement />
                     <NotificationElement />

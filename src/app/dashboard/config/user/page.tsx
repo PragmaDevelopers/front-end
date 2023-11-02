@@ -21,7 +21,7 @@ export default function Page() {
                         <h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>
                     </div>
                 </div>
-                <form className="m-4 w-[28rem] overflow-auto">
+                <form className="m-4 w-[28rem] overflow-auto max-h-full h-full">
                     <div className="bg-neutral-50 px-2 pt-2 pb-8 rounded-lg m-4 drop-shadow-md overflow-auto">
                         <h1 className="font-bold text-xl mb-2 text-neutral-900">Informações Pessoais</h1>
                         <div className="flex flex-col justify-center items-center w-full">

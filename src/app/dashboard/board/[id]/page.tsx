@@ -149,7 +149,7 @@ function CardElement(props: CardElementProps) {
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <div className='p-2 w-full h-full' onClick={editCard}>
-                <h1 className='font-black font-lg'>{card.title}</h1>
+                <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
             <button className='absolute top-2 right-2' onClick={() => deleteCard(card.columnID, card.id)}>
                 <XCircleIcon className='w-6 aspect-square' />
@@ -248,8 +248,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         isEdition,
         addNewTag,
         removeCurrentTag,
-        cardDate,
-        setCardDate,
+        //cardDate,
+        //setCardDate,
         editorText,
         setEditorText,
         addCustomField,
@@ -262,6 +262,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [viewAddDate, setViewAddDate] = useState<boolean>(false);
     const [viewAddField, setViewAddField] = useState<boolean>(false);
     const [viewMoveCard, setViewMoveCard] = useState<boolean>(false);
+    const [cardDate, setCardDate] = useState<DateValue>(new Date());
     const [textFieldValue, setTextFieldValue] = useState<string>("");
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
     const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});

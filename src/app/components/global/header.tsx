@@ -19,8 +19,8 @@ export default function Header(props: HeaderProps) {
     if (currentPath != '/') {
         return (
             <div className='w-full h-16 flex flex-row justify-between items-center p-2'>
-                <div className="ml-2 p-0.5 w-6 rounded-full border-2 border-neutral-950 aspect-square flex justify-center items-center">
-                    <VercelLogo className="fill-neutral-950 aspect-square w-3" />
+                <div className="ml-2 p-0.5 w-6 rounded-full border-[1px] border-neutral-950 aspect-square flex justify-center items-center overflow-hidden">
+                    <VercelLogo className="fill-neutral-950 aspect-square w-4" />
                 </div>
                 <div className="flex flex-row items-center">
                     <nav className='flex flex-row'>
@@ -28,7 +28,7 @@ export default function Header(props: HeaderProps) {
                         <Link href="/login" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
                     </nav>
                     <button type="button" onClick={props?.showNotifications}>
-                        <BellIcon className="aspect-square w-4 mr-2 ml-4" />
+                        <BellIcon className="aspect-square w-6 mr-2 ml-4" />
                     </button>
                 </div>
             </div>

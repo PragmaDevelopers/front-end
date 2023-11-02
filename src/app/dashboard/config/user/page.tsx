@@ -21,46 +21,37 @@ export default function Page() {
                         <h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>
                     </div>
                 </div>
-                <form className="m-4 w-[28rem]">
+                <form className="m-4 w-[28rem] overflow-auto">
                     <div className="bg-neutral-50 p-2 rounded-md m-4 drop-shadow-md">
                         <h1 className="font-bold text-xl mb-2 text-neutral-900">Informações Pessoais</h1>
-                        <div className="flex flex-row justify-center items-center w-full mb-4">
-                            <label htmlFor="emailPessoal" className="mr-2">Email:</label>
+                        <div className="flex flex-row justify-center items-center w-full">
+                            <h2 className="w-full text-left text-bold mb-1">Email</h2>
                             <input id="emailPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
                             <button className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
                         </div>
-                        <div className="flex w-full justify-center items-center">
-                            <hr className="w-[90%]" />
+                        <div className="flex w-full justify-center items-center my-4">
+                            <hr className="w-[90%] bg-neutral-100" />
                         </div>
-                        <div className="flex flex-row justify-center items-center w-full mb-4">
-                            <label htmlFor="emailPessoal" className="mr-2">Email:</label>
-                            <input id="emailPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
+                        <div className="flex flex-col justify-center items-center w-full">
+                            <h2 className="w-full text-left text-bold mb-1">Senha</h2>
+                            <input id="senhaPessoal" type="password" autoComplete="new-password" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Insira sua senha" />
+                            <input id="senhaPessoal" type="password" autoComplete="new-password" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Re-insira sua senha" />
                             <button className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
                         </div>
-                        <div className="flex w-full justify-center items-center">
-                            <hr className="w-[90%]" />
+                        <div className="flex w-full justify-center items-center my-4">
+                            <hr className="w-[90%] bg-neutral-100" />
                         </div>
-                        <div className="flex flex-col justify-center items-center w-full mb-4">
-                            <div className="flex flex-row justify-between items-center">
-                                <input id="senhaPessoal" type="password" autoComplete="new-password" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full ml-1" placeholder="Insira sua senha" />
-                                <input id="senhaPessoal" type="password" autoComplete="new-password" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full ml-1" placeholder="Re-insira sua senha" />
-                            </div>
+                        <div className="flex flex-row justify-center items-center w-full">
+                            <h2 className="w-full text-left text-bold mb-1">Nacionalidade</h2>
+                            <input id="nacionalidadePessoal" type="text" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira sua nacionalidade" />
                             <button className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
                         </div>
-                        <div className="flex w-full justify-center items-center">
-                            <hr className="w-[90%]" />
+                        <div className="flex w-full justify-center items-center my-4">
+                            <hr className="w-[90%] bg-neutral-100" />
                         </div>
-                        <div className="flex flex-row justify-center items-center w-full mb-4">
-                            <label htmlFor="nacionalidadePessoal" className="mr-2">Nacionalidade:</label>
-                            <input id="nacionalidadePessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira sua nacionalidade" />
-                            <button className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
-                        </div>
-                        <div className="flex w-full justify-center items-center">
-                            <hr className="w-[90%]" />
-                        </div>
-                        <div className="flex flex-row justify-center items-center w-full mb-4">
-                            <label htmlFor="generoPessoal" className="mr-2">Genero:</label>
-                            <input id="generoPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira seu genero" />
+                        <div className="flex flex-row justify-center items-center w-full">
+                            <h2 className="w-full text-left text-bold mb-1">Gênero</h2>
+                            <input id="generoPessoal" type="input" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira seu genero" />
                             <button className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
                         </div>
 

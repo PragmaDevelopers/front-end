@@ -25,19 +25,19 @@ export default function Page() {
             <h1 className="font-bold text-xl mt-4">Notificações</h1>
             <div className="w-full h-full flex flex-row justify-start items-start">
                 <div className="h-[88%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
-                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all my-2 flex flex-row">
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all my-2 flex flex-row justify-between items-center">
                         <TagIcon className="w-6 aspect-square ml-4" />
-                        <h1>Notificações PUSH</h1>
+                        <h1 className="text-sm font-semibold">Notificações PUSH</h1>
                     </div>
-                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row">
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-between items-center">
                         <TagIcon className="w-6 aspect-square ml-4" />
                         <h1 className="text-sm font-semibold">Movimentações de Processos</h1>
                     </div>
-                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row">
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-between items-center">
                         <TagIcon className="w-6 aspect-square ml-4" />
                         <h1 className="text-sm font-semibold">Prazos Expirados</h1>
                     </div>
-                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row">
+                    <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-between items-center">
                         <TagIcon className="w-6 aspect-square ml-4" />
                         <h1 className="text-sm font-semibold">Ações do Sistema</h1>
                     </div>

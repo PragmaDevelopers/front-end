@@ -9,7 +9,7 @@ import { ClockIcon } from "@heroicons/react/24/outline";
 function Notification() {
     return (
         <div className="w-full p-2 h-16 relative">
-            <h1 className="font-bold">Notificação</h1>
+            <h1 className="font-semibold">Notificação</h1>
             <div className="flex flex-row absolute top-1 right-1 w-fit h-fit p-0.5">
                 <h2 className="text-neutral-400 font-xs">Há 32min.</h2>
                 <ClockIcon className="stoke-neutral-400 w-4 aspect-square ml-1" />

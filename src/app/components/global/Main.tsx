@@ -35,7 +35,7 @@ export default function Main({ children }: any) {
                                 <h1>Notificação #03</h1>
                             </div>
                         </div>
-                        <Link href="/dashboard/notifications" className="ml-0 hover:ml-2 text-sm fill-blue-400 hover:fill-blue-500 text-blue-400 hover:text-blue-500 transition-all">Ver todas as notificações <ArrowRightIcon className="w-4" /></Link>
+                        <Link href="/dashboard/notifications" className="ml-0 hover:ml-2 text-sm fill-blue-400 hover:fill-blue-500 text-blue-400 hover:text-blue-500 transition-all flex flex-row items-center">Ver todas as notificações <ArrowRightIcon className="ml-2 w-4 aspect-square" /></Link>
                     </div>
                 </div>
             </div>

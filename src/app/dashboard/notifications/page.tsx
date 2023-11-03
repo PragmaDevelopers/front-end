@@ -12,8 +12,8 @@ function NotificationElement() {
                     <h1 className="text-lg font-bold">Title</h1>
                     <h2 className="truncate text-sm text-neutral-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Facilisis volutpat est velit egestas dui id ornare arcu odio. Nunc sed blandit libero volutpat sed cras. Commodo nulla facilisi nullam vehicula.</h2>
                 </div>
-                <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square fill-neutral-950 stroke-neutral-950 hover:fill-blue-500 hover:stroke-blue-500" />
-                <TrashIcon className="w-6 ml-2 aspect-square fill-neutral-950 stroke-neutral-950 hover:fill-red-500 hover:stroke-red-500" />
+                <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" />
+                <TrashIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" />
             </div>
         </Link>
     );
@@ -31,7 +31,7 @@ export default function Page() {
                     </div>
                     <div className="w-full h-14 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
-                        <h1 className="text-sm font-semibold">Movimentações de Processos</h1>
+                        <h1 className="text-sm font-semibold">Movimentações</h1>
                     </div>
                     <div className="w-full h-14 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />

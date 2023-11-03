@@ -22,7 +22,7 @@ function NotificationElement() {
 export default function Page() {
     return (
         <main className="w-full h-full flex flex-col">
-            <h1 className="font-bold text-xl mt-4">Central de notificações</h1>
+            <h1 className="font-bold text-xl mt-4 text-center">Central de notificações</h1>
             <div className="w-full h-full flex flex-row justify-start items-start">
                 <div className="h-[88%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
                     <div className="w-full h-14 ml-0 hover:ml-2 transition-all my-2 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">

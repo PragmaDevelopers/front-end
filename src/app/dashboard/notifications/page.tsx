@@ -12,8 +12,8 @@ function NotificationElement() {
                     <h1 className="text-lg font-bold">Title</h1>
                     <h2 className="truncate text-sm text-neutral-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Facilisis volutpat est velit egestas dui id ornare arcu odio. Nunc sed blandit libero volutpat sed cras. Commodo nulla facilisi nullam vehicula.</h2>
                 </div>
-                <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square" />
-                <TrashIcon className="w-6 ml-2 aspect-square" />
+                <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square fill-neutral-950 stroke-neutral-950 hover:fill-blue-500 hover:stroke-blue-500" />
+                <TrashIcon className="w-6 ml-2 aspect-square fill-neutral-950 stroke-neutral-950 hover:fill-red-500 hover:stroke-red-500" />
             </div>
         </Link>
     );
@@ -25,19 +25,19 @@ export default function Page() {
             <h1 className="font-bold text-xl mt-4">Central de notificações</h1>
             <div className="w-full h-full flex flex-row justify-start items-start">
                 <div className="h-[88%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
-                    <div className="w-full h-12 ml-0 hover:ml-2 transition-all my-2 flex flex-row justify-start items-center">
+                    <div className="w-full h-14 ml-0 hover:ml-2 transition-all my-2 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
                         <h1 className="text-sm font-semibold">Notificações PUSH</h1>
                     </div>
-                    <div className="w-full h-12 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center">
+                    <div className="w-full h-14 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
                         <h1 className="text-sm font-semibold">Movimentações de Processos</h1>
                     </div>
-                    <div className="w-full h-12 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center">
+                    <div className="w-full h-14 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
                         <h1 className="text-sm font-semibold">Prazos Expirados</h1>
                     </div>
-                    <div className="w-full h-12 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center">
+                    <div className="w-full h-14 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
                         <h1 className="text-sm font-semibold">Ações do Sistema</h1>
                     </div>

@@ -8,11 +8,16 @@ import { ClockIcon } from "@heroicons/react/24/outline";
 
 function Notification() {
     return (
-        <div className="w-full p-2 h-16 relative">
-            <h1 className="font-semibold">Notificação</h1>
-            <div className="flex flex-row absolute top-1 right-1 w-fit h-fit p-0.5">
-                <h2 className="text-neutral-400 font-xs">Há 32min.</h2>
-                <ClockIcon className="stoke-neutral-400 w-4 aspect-square ml-1" />
+        <div className="w-full p-2 h-16 relative flex flex-col justify-start items-start">
+            <div className="relative w-full h-fit flex flex-row items-center justify-start">
+                <h1 className="font-semibold">Notificação</h1>
+                <div className="flex flex-row absolute top-1 right-1 w-fit h-fit p-0.5">
+                    <h2 className="text-neutral-400 font-xs">Há 32min.</h2>
+                    <ClockIcon className="stoke-neutral-200 w-4 aspect-square ml-1" />
+                </div>
+            </div>
+            <div className="w-full h-fit truncate">
+                <h1 className="truncate font-sm">lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet </h1>
             </div>
         </div>
     );
@@ -32,7 +37,7 @@ export default function Main({ children }: any) {
                 <div className="bg-transparent w-full h-full relative">
                     <div className="bg-neutral-50 drop-shadow-lg rounded-md w-64 m-4 absolute top-0 right-4 p-2">
                         <h1 className="font-bold text-lg">Notificações</h1>
-                        <div className="divide-y divide-neutral-200 my-4 max-h-32 overflow-auto">
+                        <div className="divide-y divide-neutral-200 my-4 max-h-64 overflow-auto">
                             <Notification />
                             <Notification />
                             <Notification />

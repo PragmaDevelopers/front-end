@@ -77,7 +77,7 @@ export default function Page() {
                                 <option value="BO">BO - Bolívia</option>
                                 <option value="BA">BA - Bósnia e Herzegovina</option>
                                 <option value="BW">BW - Botsuana</option>
-                                <option value="BR">BR - Brasil</option>
+                                <option value="BR" selected={true}>BR - Brasil</option>
                                 <option value="BN">BN - Brunei</option>
                                 <option value="BG">BG - Bulgária</option>
                                 <option value="BF">BF - Burkina Faso</option>

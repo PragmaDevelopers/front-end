@@ -86,9 +86,9 @@ function ConfirmDelete(props: ConfirmDeleteProps) {
         <div className={(props.showPrompt ? 'block' : 'hidden') + ' absolute z-50 top-0 w-screen h-screen flex justify-center items-center'}>
             <div className='bg-neutral-50 drop-shadow-lg rounded-md p-4'>
                 <h1>{props.message}</h1>
-                <div>
-                    <button onClick={props?.yesFunction} className='p-2 rounded-md border-neutral-950 border-2 bg-neutral-50 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 transition-all'>{props.yesText}</button>
-                    <button onClick={props?.noFunction} className='p-2 rounded-md border-red-600 border-2 bg-neutral-50 text-red-600 hover:bg-red-600 hover:text-neutral-950 transition-all'>{props.noText}</button>
+                <div className='m-2'>
+                    <button onClick={props?.yesFunction} className='mx-2 p-2 rounded-md border-neutral-950 border-2 bg-neutral-50 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 transition-all'>{props.yesText}</button>
+                    <button onClick={props?.noFunction} className='mx-2 p-2 rounded-md border-red-600 border-2 bg-neutral-50 text-red-600 hover:bg-red-600 hover:text-neutral-950 transition-all'>{props.noText}</button>
                 </div>
             </div>
         </div>
@@ -166,17 +166,22 @@ function CardElement(props: CardElementProps) {
     }
 
     const hideConfirmDelete = () => {
+        console.log("HIDE CONFIRM DELETE");
         props.setViewConfirmDelete(false);
     }
 
-    const handleDeleteCard = () => {
+    const showConfirmDelete = () => {
+        console.log("SHOW CONFIRM DELETE");
+        props.setViewConfirmDelete(true);
+    }
 
+    const handleDeleteCard = () => {
         props.setConfirmDeleteYesFunction(delCard);
         props.setConfirmDeleteNoFunction(hideConfirmDelete);
         props.setConfirmDeleteMessage("Deseja remover o card?");
         props.setConfirmDeleteYesText("Sim");
         props.setConfirmDeleteNoText("Não");
-        props.setViewConfirmDelete(true);
+        showConfirmDelete();
     }
 
     return (
@@ -387,7 +392,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
 
     return (
-        <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-full h-full z-20 justify-center items-center bg-neutral-950/25'}>
+        <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
             <div className='relative w-[80%] h-[80%] bg-neutral-50 rounded-lg flex justify-center items-center px-8 drop-shadow-lg'>
                 <h1 className='absolute top-2 w-full text-center'>Card Creation</h1>
                 <form onSubmit={handleCreateCardForm} className='w-[80%] h-[85%] mt-[5%] relative'>

@@ -54,3 +54,12 @@ export interface RichEditorProps {
     display?: any;
 }
 
+export interface ConfirmDeleteProps {
+    message: string;
+    yesText: string;
+    noText: string;
+    yesFunction?: any;
+    noFunction?: any;
+    showPrompt: boolean;
+}
+

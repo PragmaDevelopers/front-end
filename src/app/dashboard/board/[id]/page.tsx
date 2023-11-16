@@ -39,6 +39,7 @@ import { HexColorPicker } from "react-colorful";
 import {
     CardElementProps,
     ColumnContainerProps,
+    ConfirmDeleteProps,
     CreateEditCardProps,
     RichEditorProps
 } from '@/app/interfaces/KanbanInterfaces';
@@ -80,6 +81,20 @@ import {
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
+function ConfirmDelete(props: ConfirmDeleteProps) {
+    return (
+        <div className={(props.showPrompt ? 'block' : 'hidden') + ' absolute z-50 top-0 w-screen h-screen flex justify-center items-center'}>
+            <div className='bg-neutral-50 drop-shadow-lg rounded-md p-4'>
+                <h1>{props.message}</h1>
+                <div>
+                    <button onClick={props?.yesFunction} className='p-2 rounded-md border-neutral-950 border-2 bg-neutral-50 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 transition-all'>{props.yesText}</button>
+                    <button onClick={props?.noFunction} className='p-2 rounded-md border-red-600 border-2 bg-neutral-50 text-red-600 hover:bg-red-600 hover:text-neutral-950 transition-all'>{props.noText}</button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
     return (
         <MDXEditor
@@ -117,6 +132,7 @@ RichEditor.displayName = "RichEditor";
 
 function CardElement(props: CardElementProps) {
     const { card, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID, setEditorText } = props;
+    const [viewRemovePrompt, setViewRemovePrompt] = useState<boolean>(false);
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
         data: {
@@ -145,15 +161,21 @@ function CardElement(props: CardElementProps) {
         setShowCreateCardForm(true);
     }
 
+    const handleDeleteCard = () => {
+        setViewRemovePrompt(false);
+        deleteCard(card.columnID, card.id)
+    }
+
     return (
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <div className='p-2 w-full h-full' onClick={editCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
-            <button className='absolute top-2 right-2' onClick={() => deleteCard(card.columnID, card.id)}>
+            <button className='absolute top-2 right-2' onClick={() => setViewRemovePrompt(true)}>
                 <XCircleIcon className='w-6 aspect-square' />
             </button>
+            <ConfirmDelete message='Deseja remover o card?' yesText='Sim' noText='Não' yesFunction={handleDeleteCard} showPrompt={viewRemovePrompt} />
         </div>
     );
 }

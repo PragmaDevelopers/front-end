@@ -145,6 +145,12 @@ function CardElement(props: CardElementProps) {
         transform: CSS.Transform.toString(transform),
     };
 
+    useEffect(() => {
+        props.setConfirmDeleteYesFunction(() => delCard());
+        props.setConfirmDeleteNoFunction(() => hideConfirmDelete());
+    }, [props]);
+
+
     if (isDragging) {
         return (
             <div className='bg-neutral-300 border-neutral-950 rounded-md w-64 h-16 border-2'
@@ -174,11 +180,6 @@ function CardElement(props: CardElementProps) {
         console.log("SHOW CONFIRM DELETE");
         props.setViewConfirmDelete(true);
     }
-
-    useEffect(() => {
-        props.setConfirmDeleteYesFunction(() => delCard());
-        props.setConfirmDeleteNoFunction(() => hideConfirmDelete());
-    }, [props]);
 
     const handleDeleteCard = () => {
         props.setConfirmDeleteMessage("Deseja remover o card?");

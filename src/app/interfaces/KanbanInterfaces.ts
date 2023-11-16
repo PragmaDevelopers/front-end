@@ -70,8 +70,8 @@ export interface ConfirmDeleteProps {
     message: string;
     yesText: string;
     noText: string;
-    yesFunction?: any;
-    noFunction?: any;
+    yesFunction: any;
+    noFunction: any;
     showPrompt: boolean;
 }
 

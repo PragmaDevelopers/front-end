@@ -132,7 +132,6 @@ RichEditor.displayName = "RichEditor";
 
 function CardElement(props: CardElementProps) {
     const { card, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID, setEditorText } = props;
-    const [viewRemovePrompt, setViewRemovePrompt] = useState<boolean>(false);
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
         data: {
@@ -161,9 +160,23 @@ function CardElement(props: CardElementProps) {
         setShowCreateCardForm(true);
     }
 
+    const delCard = () => {
+        props.setViewConfirmDelete(false);
+        deleteCard(card.columnID, card.id);
+    }
+
+    const hideConfirmDelete = () => {
+        props.setViewConfirmDelete(false);
+    }
+
     const handleDeleteCard = () => {
-        setViewRemovePrompt(false);
-        deleteCard(card.columnID, card.id)
+
+        props.setConfirmDeleteYesFunction(delCard);
+        props.setConfirmDeleteNoFunction(hideConfirmDelete);
+        props.setConfirmDeleteMessage("Deseja remover o card?");
+        props.setConfirmDeleteYesText("Sim");
+        props.setConfirmDeleteNoText("Não");
+        props.setViewConfirmDelete(true);
     }
 
     return (
@@ -172,10 +185,9 @@ function CardElement(props: CardElementProps) {
             <div className='p-2 w-full h-full' onClick={editCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
-            <button className='absolute top-2 right-2' onClick={() => setViewRemovePrompt(true)}>
+            <button className='absolute top-2 right-2' onClick={handleDeleteCard}>
                 <XCircleIcon className='w-6 aspect-square' />
             </button>
-            <ConfirmDelete message='Deseja remover o card?' yesText='Sim' noText='Não' yesFunction={handleDeleteCard} showPrompt={viewRemovePrompt} />
         </div>
     );
 }
@@ -241,7 +253,22 @@ function ColumnContainer(props: ColumnContainerProps) {
             <div>
                 <SortableContext items={cardsIds}>
                     {column.cardsList.map((card: Card) => {
-                        return <CardElement setTempColumnID={setTempColumnID} setTempCard={setTempCard} setShowCreateCardForm={setShowCreateCardForm} card={card} deleteCard={deleteCard} setIsEdition={setIsEdition} key={card.id} setEditorText={setEditorText} />
+                        return <CardElement
+                            setTempColumnID={setTempColumnID}
+                            setTempCard={setTempCard}
+                            setShowCreateCardForm={setShowCreateCardForm}
+                            card={card}
+                            deleteCard={deleteCard}
+                            setIsEdition={setIsEdition}
+                            key={card.id}
+                            setEditorText={setEditorText}
+                            setConfirmDeleteMessage={props.setConfirmDeleteMessage}
+                            setConfirmDeleteYesText={props.setConfirmDeleteYesText}
+                            setConfirmDeleteNoText={props.setConfirmDeleteNoText}
+                            setConfirmDeleteYesFunction={props.setConfirmDeleteYesFunction}
+                            setConfirmDeleteNoFunction={props.setConfirmDeleteNoFunction}
+                            setViewConfirmDelete={props.setViewConfirmDelete}
+                        />
                     })}
                 </SortableContext>
             </div>
@@ -555,7 +582,14 @@ export default function Page({ params }: { params: { id: string } }) {
     const [isEdition, setIsEdition] = useState<boolean>(false);
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
     const [editorText, setEditorText] = useState<string>("");
+    const [confirmDeleteYesFunc, setConfirmDeleteYesFunc] = useState<any>(null);
+    const [confirmDeleteNoFunc, setConfirmDeleteNoFunc] = useState<any>(null);
+    const [confirmDeleteYesText, setConfirmDeleteYesText] = useState<string>("");
+    const [confirmDeleteNoText, setConfirmDeleteNoText] = useState<string>("");
+    const [viewConfirmDelete, setViewConfirmDelete] = useState<boolean>(false);
+    const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
     const editorRef = useRef<MDXEditorMethods>(null);
+
 
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
@@ -1153,14 +1187,20 @@ export default function Page({ params }: { params: { id: string } }) {
         });
     }
 
-
-
     const editEditorText = (text: string) => {
         editorRef.current?.setMarkdown(text);
     }
 
     return (
         <main className="w-full h-full overflow-auto shrink-0">
+            <ConfirmDelete
+                message={confirmDeleteText}
+                yesText={confirmDeleteYesText}
+                noText={confirmDeleteNoText}
+                yesFunction={confirmDeleteYesFunc}
+                noFunction={confirmDeleteNoFunc}
+                showPrompt={viewConfirmDelete}
+            />
             <CreateEditCard
                 showCreateCardForm={showCreateCardForm}
                 setShowCreateCardForm={setShowCreateCardForm}
@@ -1200,7 +1240,14 @@ export default function Page({ params }: { params: { id: string } }) {
                             setTempCard={setTempCard}
                             setIsEdition={setIsEdition}
                             setTempColumnID={setTempColumnID}
-                            setEditorText={editEditorText} />)}
+                            setEditorText={editEditorText}
+                            setConfirmDeleteMessage={setConfirmDeleteText}
+                            setConfirmDeleteYesText={setConfirmDeleteYesText}
+                            setConfirmDeleteNoText={setConfirmDeleteNoText}
+                            setConfirmDeleteYesFunction={setConfirmDeleteYesFunc}
+                            setConfirmDeleteNoFunction={setConfirmDeleteNoFunc}
+                            setViewConfirmDelete={setViewConfirmDelete}
+                        />)}
                     </SortableContext>
                     <button className='w-64 h-full rounded-md shadow-inner bg-[#F0F0F0] border-neutral-200 border-[1px] flex flex-col justify-center items-center' onClick={createNewColumn}>
                         <h1 className='mb-2'>Add Column</h1>
@@ -1219,7 +1266,14 @@ export default function Page({ params }: { params: { id: string } }) {
                             setShowCreateCardForm={setShowCreateCardForm}
                             setIsEdition={setIsEdition}
                             setTempColumnID={setTempColumnID}
-                            setEditorText={setEditorText} />}
+                            setEditorText={setEditorText}
+                            setConfirmDeleteMessage={setConfirmDeleteText}
+                            setConfirmDeleteYesText={setConfirmDeleteYesText}
+                            setConfirmDeleteNoText={setConfirmDeleteNoText}
+                            setConfirmDeleteYesFunction={setConfirmDeleteYesFunc}
+                            setConfirmDeleteNoFunction={setConfirmDeleteNoFunc}
+                            setViewConfirmDelete={setViewConfirmDelete}
+                        />}
                     </DragOverlay>,
                     document.body)}
             </DndContext>

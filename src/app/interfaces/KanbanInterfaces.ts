@@ -8,6 +8,12 @@ export interface CardElementProps {
     setIsEdition: (state: boolean) => void;
     setTempColumnID: (id: string) => void;
     setEditorText: any;
+    setConfirmDeleteMessage: any;
+    setConfirmDeleteYesText: any;
+    setConfirmDeleteNoText: any;
+    setConfirmDeleteYesFunction: any;
+    setConfirmDeleteNoFunction: any;
+    setViewConfirmDelete: any;
 }
 
 export interface ColumnContainerProps {
@@ -21,6 +27,12 @@ export interface ColumnContainerProps {
     setIsEdition: (state: boolean) => void;
     setTempColumnID: (id: string) => void;
     setEditorText: any;
+    setConfirmDeleteMessage: any;
+    setConfirmDeleteYesText: any;
+    setConfirmDeleteNoText: any;
+    setConfirmDeleteYesFunction: any;
+    setConfirmDeleteNoFunction: any;
+    setViewConfirmDelete: any;
 }
 
 export interface CreateEditCardProps {

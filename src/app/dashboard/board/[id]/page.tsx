@@ -175,9 +175,12 @@ function CardElement(props: CardElementProps) {
         props.setViewConfirmDelete(true);
     }
 
-    const handleDeleteCard = () => {
+    useEffect(() => {
         props.setConfirmDeleteYesFunction(() => delCard());
         props.setConfirmDeleteNoFunction(() => hideConfirmDelete());
+    }, [props]);
+
+    const handleDeleteCard = () => {
         props.setConfirmDeleteMessage("Deseja remover o card?");
         props.setConfirmDeleteYesText("Sim");
         props.setConfirmDeleteNoText("Não");

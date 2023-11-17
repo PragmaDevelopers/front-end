@@ -87,8 +87,8 @@ function ConfirmDelete(props: ConfirmDeleteProps) {
             <div className='bg-neutral-50 drop-shadow-lg rounded-md p-4'>
                 <h1>{props.message}</h1>
                 <div className='m-2'>
-                    <button onClick={props.yesFunction} className='mx-2 p-2 rounded-md border-neutral-950 border-2 bg-neutral-50 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 transition-all'>{props.yesText}</button>
-                    <button onClick={props.noFunction} className='mx-2 p-2 rounded-md border-red-600 border-2 bg-neutral-50 text-red-600 hover:bg-red-600 hover:text-neutral-950 transition-all'>{props.noText}</button>
+                    <button type="button" onClick={props.yesFunction} className='mx-2 p-2 rounded-md border-neutral-950 border-2 bg-neutral-50 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 transition-all'>{props.yesText}</button>
+                    <button type="button" onClick={props.noFunction} className='mx-2 p-2 rounded-md border-red-600 border-2 bg-neutral-50 text-red-600 hover:bg-red-600 hover:text-neutral-950 transition-all'>{props.noText}</button>
                 </div>
             </div>
         </div>

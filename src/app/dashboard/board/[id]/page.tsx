@@ -189,6 +189,14 @@ function CardElement(props: CardElementProps) {
         setViewConfirmDelete(true);
     }
 
+    const handleDeleteCard = () => {
+        setConfirmDeleteNoFunction(() => { return hideConfirmDelete });
+        setConfirmDeleteYesFunction(() => { return delCard });
+        setConfirmDeleteMessage("Deseja remover o card?");
+        setConfirmDeleteYesText("Sim");
+        setConfirmDeleteNoText("Não");
+        showConfirmDelete();
+    };
 
 
     return (
@@ -197,14 +205,7 @@ function CardElement(props: CardElementProps) {
             <div className='p-2 w-full h-full' onClick={editCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
-            <button className='absolute top-2 right-2' onClick={() => {
-                setConfirmDeleteNoFunction(() => { return hideConfirmDelete });
-                setConfirmDeleteYesFunction(() => { return delCard });
-                setConfirmDeleteMessage("Deseja remover o card?");
-                setConfirmDeleteYesText("Sim");
-                setConfirmDeleteNoText("Não");
-                showConfirmDelete();
-            }}>
+            <button className='absolute top-2 right-2' onClick={handleDeleteCard}>
                 <XCircleIcon className='w-6 aspect-square' />
             </button>
         </div>
@@ -212,13 +213,57 @@ function CardElement(props: CardElementProps) {
 }
 
 function ColumnContainer(props: ColumnContainerProps) {
-    const { column, deleteColumn, updateColumnTitle, createCard, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID, setEditorText } = props;
+    const {
+        column,
+        deleteColumn,
+        updateColumnTitle,
+        createCard,
+        deleteCard,
+        setShowCreateCardForm,
+        setTempCard,
+        setIsEdition,
+        setTempColumnID,
+        setEditorText,
+        setViewConfirmDelete,
+        setConfirmDeleteNoText,
+        setConfirmDeleteMessage,
+        setConfirmDeleteYesText,
+        setConfirmDeleteNoFunction,
+        setConfirmDeleteYesFunction,
+    } = props;
     const [editMode, setEditMode] = useState<boolean>(false);
     const cardsIds = useMemo(() => { return column.cardsList.map((card: Card) => card.id) }, [column]);
 
-    const handleRemove = () => {
+    const delCol = () => {
         deleteColumn(column.id);
+        setViewConfirmDelete(false);
     }
+
+
+
+    const hideConfirmDelete = () => {
+        console.log("HIDE CONFIRM DELETE");
+        setViewConfirmDelete(false);
+    }
+
+    const showConfirmDelete = () => {
+        console.log("SHOW CONFIRM DELETE");
+        setViewConfirmDelete(true);
+    }
+
+    const handleDeleteColumn = () => {
+        setConfirmDeleteNoFunction(() => { return hideConfirmDelete });
+        setConfirmDeleteYesFunction(() => { return delCol });
+        setConfirmDeleteMessage("Deseja remover a coluna?");
+        setConfirmDeleteYesText("Sim");
+        setConfirmDeleteNoText("Não");
+        showConfirmDelete();
+    };
+
+
+
+
+
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: column.id,
@@ -265,7 +310,7 @@ function ColumnContainer(props: ColumnContainerProps) {
                     /> :
                         column.title}
                 </div>
-                <button onClick={handleRemove}>
+                <button onClick={handleDeleteColumn}>
                     <XCircleIcon className='w-6 aspect-square' />
                 </button>
             </div>

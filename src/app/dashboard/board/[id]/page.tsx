@@ -260,11 +260,6 @@ function ColumnContainer(props: ColumnContainerProps) {
         showConfirmDelete();
     };
 
-
-
-
-
-
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: column.id,
         data: {

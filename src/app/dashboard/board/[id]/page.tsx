@@ -83,9 +83,9 @@ import 'react-calendar/dist/Calendar.css';
 
 function ConfirmDelete(props: ConfirmDeleteProps) {
     return (
-        <div className={(props.showPrompt ? 'block' : 'hidden') + ' absolute z-50 top-0 w-screen h-screen flex justify-center items-center'}>
-            <div className='bg-neutral-50 drop-shadow-lg rounded-md p-4'>
-                <h1>{props.message}</h1>
+        <div className={(props.showPrompt ? 'block' : 'hidden') + ' absolute z-50 top-0 left-0 w-screen h-screen flex justify-center items-center'}>
+            <div className='bg-neutral-50 drop-shadow-lg rounded-md p-4 flex justify-center items-center'>
+                <h1 className='mb-4'>{props.message}</h1>
                 <div className='m-2'>
                     <button type="button" onClick={props.yesFunction} className='mx-2 p-2 rounded-md border-neutral-950 border-2 bg-neutral-50 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 transition-all'>{props.yesText}</button>
                     <button type="button" onClick={props.noFunction} className='mx-2 p-2 rounded-md border-red-600 border-2 bg-neutral-50 text-red-600 hover:bg-red-600 hover:text-neutral-950 transition-all'>{props.noText}</button>
@@ -198,7 +198,6 @@ function CardElement(props: CardElementProps) {
         showConfirmDelete();
     };
 
-
     return (
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -238,8 +237,6 @@ function ColumnContainer(props: ColumnContainerProps) {
         deleteColumn(column.id);
         setViewConfirmDelete(false);
     }
-
-
 
     const hideConfirmDelete = () => {
         console.log("HIDE CONFIRM DELETE");
@@ -363,7 +360,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         addCustomField,
     } = props;
 
-
     const [color, setColor] = useState<string>("#aabbcc");
     const [viewAddTag, setViewAddTag] = useState<boolean>(false);
     const [viewAddMember, setViewAddMember] = useState<boolean>(false);
@@ -381,9 +377,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     useEffect(() => {
         fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
     }, [setDashboards]);
-
-
-
 
     const handleCreateCardForm = (event: any) => {
         createCardForm(event, isEdition);
@@ -488,7 +481,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             {card.checklists?.map((list: CheckList, listIndex: number) => (
                                 <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-96 h-fit my-2'>
                                     <div className='flex items-center mb-4'>
-                                        <input type='text' className='form-input border-none outline-none p-1 shrink-0 mr-2 p-0.5 bg-neutral-50 outline-none w-80' placeholder='Digite um nome' onChange={(e) => updateListTitle(listIndex, e.target.value)} />
+                                        <input type='text'
+                                            className='form-input border-none outline-none p-1 shrink-0 mr-2 p-0.5 bg-neutral-50 outline-none w-80'
+                                            placeholder='Digite um nome' onChange={(e) => updateListTitle(listIndex, e.target.value)} />
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveList(listIndex)}

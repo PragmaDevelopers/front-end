@@ -190,6 +190,7 @@ function CardElement(props: CardElementProps) {
     }
 
 
+
     return (
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -197,8 +198,8 @@ function CardElement(props: CardElementProps) {
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
             <button className='absolute top-2 right-2' onClick={() => {
-                setConfirmDeleteNoFunction(() => hideConfirmDelete());
-                setConfirmDeleteYesFunction(() => delCard());
+                setConfirmDeleteNoFunction(() => { return hideConfirmDelete });
+                setConfirmDeleteYesFunction(() => { return delCard });
                 setConfirmDeleteMessage("Deseja remover o card?");
                 setConfirmDeleteYesText("Sim");
                 setConfirmDeleteNoText("Não");

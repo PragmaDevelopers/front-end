@@ -131,7 +131,21 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
 RichEditor.displayName = "RichEditor";
 
 function CardElement(props: CardElementProps) {
-    const { card, deleteCard, setShowCreateCardForm, setTempCard, setIsEdition, setTempColumnID, setEditorText } = props;
+    const {
+        card,
+        deleteCard,
+        setShowCreateCardForm,
+        setTempCard,
+        setIsEdition,
+        setTempColumnID,
+        setEditorText,
+        setViewConfirmDelete,
+        setConfirmDeleteNoText,
+        setConfirmDeleteMessage,
+        setConfirmDeleteYesText,
+        setConfirmDeleteNoFunction,
+        setConfirmDeleteYesFunction,
+    } = props;
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
         data: {
@@ -144,12 +158,6 @@ function CardElement(props: CardElementProps) {
         transition,
         transform: CSS.Transform.toString(transform),
     };
-
-    useEffect(() => {
-        props.setConfirmDeleteYesFunction(() => delCard());
-        props.setConfirmDeleteNoFunction(() => hideConfirmDelete());
-    }, [props]);
-
 
     if (isDragging) {
         return (
@@ -167,26 +175,20 @@ function CardElement(props: CardElementProps) {
     }
 
     const delCard = () => {
-        props.setViewConfirmDelete(false);
         deleteCard(card.columnID, card.id);
+        setViewConfirmDelete(false);
     }
 
     const hideConfirmDelete = () => {
         console.log("HIDE CONFIRM DELETE");
-        props.setViewConfirmDelete(false);
+        setViewConfirmDelete(false);
     }
 
     const showConfirmDelete = () => {
         console.log("SHOW CONFIRM DELETE");
-        props.setViewConfirmDelete(true);
+        setViewConfirmDelete(true);
     }
 
-    const handleDeleteCard = () => {
-        props.setConfirmDeleteMessage("Deseja remover o card?");
-        props.setConfirmDeleteYesText("Sim");
-        props.setConfirmDeleteNoText("Não");
-        showConfirmDelete();
-    }
 
     return (
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
@@ -194,7 +196,14 @@ function CardElement(props: CardElementProps) {
             <div className='p-2 w-full h-full' onClick={editCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
-            <button className='absolute top-2 right-2' onClick={handleDeleteCard}>
+            <button className='absolute top-2 right-2' onClick={() => {
+                setConfirmDeleteNoFunction(() => hideConfirmDelete());
+                setConfirmDeleteYesFunction(() => delCard());
+                setConfirmDeleteMessage("Deseja remover o card?");
+                setConfirmDeleteYesText("Sim");
+                setConfirmDeleteNoText("Não");
+                showConfirmDelete();
+            }}>
                 <XCircleIcon className='w-6 aspect-square' />
             </button>
         </div>

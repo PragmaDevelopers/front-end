@@ -35,8 +35,8 @@ export default function SwitchButton(props: SwitchButtonProps) {
             <span
                 className={`${enabled ? 'translate-x-6' : 'translate-x-1'
                     } inline-block h-4 w-4 transform rounded-full bg-white transition flex justify-center items-center drop-shadow-sm`}>
-                <CheckIcon className={`${enabled ? 'hidden' : 'block'} h-3 w-3 aspect-square full-green-500 stroke-green-500`} />
-                <XMarkIcon className={`${enabled ? 'block' : 'hidden'} h-3 w-3 aspect-square full-red-500 stroke-red-500`} />
+                <CheckIcon className={`${enabled ? 'hidden' : 'block'} transition-all h-3 w-3 aspect-square full-green-500 stroke-green-500`} />
+                <XMarkIcon className={`${enabled ? 'block' : 'hidden'} transition-all h-3 w-3 aspect-square full-red-500 stroke-red-500`} />
             </span>
         </Switch>
     );

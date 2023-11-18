@@ -1,4 +1,5 @@
 "use client";
+import SwitchButton from "@/app/components/ui/SwitchButton";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +12,7 @@ export default function Page() {
                 <h1 className="font-bold text-2xl text-neutral-900">Admin</h1>
             </div>
             <div className="mt-4 flex flex-col items-center justify-between relative p-4">
-                <h1>Content</h1>
+                <SwitchButton />
             </div>
         </main>
     );

@@ -53,11 +53,11 @@ export default function Page() {
                 <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
                 <h1 className="font-bold text-2xl text-neutral-900">Admin</h1>
             </div>
-            <div className="mt-4 flex flex-col items-center justify-start relative p-4 w-full h-[80%] overflow-hidden">
+            <div className="mt-4 flex flex-col items-center justify-start relative p-4 w-full h-[85%] overflow-hidden">
                 <div className="w-[50%] h-fit p-2 bg-neutral-50 drop-shadow-md rounded-md flex flex-col justify-start items-center overflow-auto">
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Cards</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Cards</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Criar Cards" srText="Alternar Permissão de Criar Cards"
                                 onFunction={() => console.log("Criar Cards ON")} offFunction={() => console.log("Criar Cards OFF")} />
                             <ToggleOption optionText="Mover Cards" srText="Alternar Permissão de Mover Cards"
@@ -69,9 +69,13 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="w-full flex justify-center items-center my-1">
+                        <hr className="w-[96%] h-0.5 bg-neutral-200" />
+                    </div>
+
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Colunas</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Colunas</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Criar Colunas" srText="Alternar Permissão de Criar Colunas"
                                 onFunction={() => console.log("Criar Colunas ON")} offFunction={() => console.log("Criar Colunas OFF")} />
                             <ToggleOption optionText="Mover Colunas" srText="Alternar Permissão de Mover Colunas"
@@ -83,9 +87,13 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="w-full flex justify-center items-center my-1">
+                        <hr className="w-[96%] h-0.5 bg-neutral-200" />
+                    </div>
+
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Checklists</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Checklists</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Criar Checklists" srText="Alternar Permissão de Criar Checklists"
                                 onFunction={() => console.log("Criar Checklists ON")} offFunction={() => console.log("Criar Checklists OFF")} />
                             <ToggleOption optionText="Deletar Checklists" srText="Alternar Permissão de Deletar Checklists"
@@ -95,9 +103,13 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="w-full flex justify-center items-center my-1">
+                        <hr className="w-[96%] h-0.5 bg-neutral-200" />
+                    </div>
+
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Dashboards</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Dashboards</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Criar Dashboards" srText="Alternar Permissão de Criar Dashboards"
                                 onFunction={() => console.log("Criar Dashboards ON")} offFunction={() => console.log("Criar Dashboards OFF")} />
                             <ToggleOption optionText="Deletar Dashboards" srText="Alternar Permissão de Deletar Dashboards"
@@ -107,9 +119,13 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="w-full flex justify-center items-center my-1">
+                        <hr className="w-[96%] h-0.5 bg-neutral-200" />
+                    </div>
+
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Prazos</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Prazos</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Criar Prazos" srText="Alternar Permissão de Criar Prazos"
                                 onFunction={() => console.log("Criar Prazos ON")} offFunction={() => console.log("Criar Prazos OFF")} />
                             <ToggleOption optionText="Deletar Prazos" srText="Alternar Permissão de Deletar Prazos"
@@ -119,9 +135,13 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="w-full flex justify-center items-center my-1">
+                        <hr className="w-[96%] h-0.5 bg-neutral-200" />
+                    </div>
+
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Comentários</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Comentários</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Criar Comentários" srText="Alternar Permissão de Criar Comentários"
                                 onFunction={() => console.log("Criar Comentários ON")} offFunction={() => console.log("Criar Comentários OFF")} />
                             <ToggleOption optionText="Editar Comentários Próprios" srText="Alternar Permissão de Editar Comentários Próprios"
@@ -133,9 +153,13 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="w-full flex justify-center items-center my-1">
+                        <hr className="w-[96%] h-0.5 bg-neutral-200" />
+                    </div>
+
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Notificações</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Notificações</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Receber Notificações de Sistema" srText="Receber Notificações de Sistema"
                                 onFunction={() => console.log("Notif Sis ON")} offFunction={() => console.log("Notif Sis OFF")} />
                             <ToggleOption optionText="Receber Notificações Push" srText="Receber Notificações Push"
@@ -143,9 +167,13 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="w-full flex justify-center items-center my-1">
+                        <hr className="w-[96%] h-0.5 bg-neutral-200" />
+                    </div>
+
                     <div className="my-4 w-full">
-                        <h1 className="font-semibold text-lg mb-2">Cargos Especiais</h1>
-                        <div className="flex flex-col justify-start items-center">
+                        <h1 className="font-semibold text-lg mb-2 text-center">Cargos Especiais</h1>
+                        <div className="flex flex-col justify-start items-end">
                             <ToggleOption optionText="Cargo Administrativo" srText="Alternar o Cargo Administrativo"
                                 onFunction={() => console.log("Admin ON")} offFunction={() => console.log("Admin OFF")} />
                             <ToggleOption optionText="Cargo Supervisor" srText="Alternar o Cargo de Supervisão"

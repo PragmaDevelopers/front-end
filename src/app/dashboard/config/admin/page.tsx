@@ -23,7 +23,7 @@ function ToggleOption(props: ToggleOptionProps) {
             </div>
             <div className="p-2 w-fit h-fit">
                 <div className="group relative flex flex-row justify-between items-center">
-                    <span className="text-xs text-neutral-200 group-hover:opacity-100 opacity-0">{srText}</span>
+                    <span className="text-sm text-neutral-400 group-hover:opacity-100 opacity-0">{srText}</span>
                     <InformationCircleIcon className="aspect-square w-6 fill-blue-300" />
                 </div>
             </div>
@@ -63,7 +63,7 @@ export default function Page() {
                 <h1 className="font-bold text-2xl text-neutral-900">Admin</h1>
             </div>
             <div className="mt-4 flex flex-col items-center justify-start relative p-4 w-full h-[85%] overflow-hidden">
-                <div className="w-[50%] h-fit p-2 bg-neutral-50 drop-shadow-md rounded-md flex flex-col justify-start items-center overflow-auto">
+                <div className="w-[65%] h-fit p-2 bg-neutral-50 drop-shadow-md rounded-md flex flex-col justify-start items-center overflow-auto">
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Cards</h1>
                         <div className="flex flex-col justify-start items-start">

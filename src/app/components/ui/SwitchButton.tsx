@@ -11,7 +11,7 @@ interface SwitchButtonProps {
 }
 
 export default function SwitchButton(props: SwitchButtonProps) {
-    const [enabled, setEnabled] = useState<boolean>(false);
+    const [enabled, setEnabled] = useState<boolean>(true);
 
     const { srText, onFunction, offFunction } = props;
 

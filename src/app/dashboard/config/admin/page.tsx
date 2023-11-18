@@ -1,5 +1,6 @@
 "use client";
 import SwitchButton from "@/app/components/ui/SwitchButton";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 
@@ -15,9 +16,19 @@ function ToggleOption(props: ToggleOptionProps) {
     const { optionText, offFunction, onFunction, srText, className } = props;
 
     return (
-        <div className={className + " my-1 flex justify-between items-center w-fit h-fit"}>
-            <p className="mr-4">{optionText}</p>
-            <SwitchButton srText={srText} onFunction={onFunction} offFunction={offFunction} />
+        <div className={className + " my-1 flex justify-between items-center w-full h-fit"}>
+            <div className="flex flex-row justify-between items-center w-fit h-fit">
+                <SwitchButton srText={srText} onFunction={onFunction} offFunction={offFunction} />
+                <p className="ml-4">{optionText}</p>
+            </div>
+            <div className="p-2 w-fit h-fit">
+                <div className="group relative">
+                    <InformationCircleIcon className="aspect-square w-6 fill-blue-300" />
+                    <span className="pointer-events-none absolute top-0 -right-8 w-max opacity-0 transition-opacity group-hover:opacity-100">
+                        {srText}
+                    </span>
+                </div>
+            </div>
         </div>
     );
 }
@@ -57,7 +68,7 @@ export default function Page() {
                 <div className="w-[50%] h-fit p-2 bg-neutral-50 drop-shadow-md rounded-md flex flex-col justify-start items-center overflow-auto">
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Cards</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Criar Cards" srText="Alternar Permissão de Criar Cards"
                                 onFunction={() => console.log("Criar Cards ON")} offFunction={() => console.log("Criar Cards OFF")} />
                             <ToggleOption optionText="Mover Cards" srText="Alternar Permissão de Mover Cards"
@@ -75,7 +86,7 @@ export default function Page() {
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Colunas</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Criar Colunas" srText="Alternar Permissão de Criar Colunas"
                                 onFunction={() => console.log("Criar Colunas ON")} offFunction={() => console.log("Criar Colunas OFF")} />
                             <ToggleOption optionText="Mover Colunas" srText="Alternar Permissão de Mover Colunas"
@@ -93,7 +104,7 @@ export default function Page() {
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Checklists</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Criar Checklists" srText="Alternar Permissão de Criar Checklists"
                                 onFunction={() => console.log("Criar Checklists ON")} offFunction={() => console.log("Criar Checklists OFF")} />
                             <ToggleOption optionText="Deletar Checklists" srText="Alternar Permissão de Deletar Checklists"
@@ -109,7 +120,7 @@ export default function Page() {
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Dashboards</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Criar Dashboards" srText="Alternar Permissão de Criar Dashboards"
                                 onFunction={() => console.log("Criar Dashboards ON")} offFunction={() => console.log("Criar Dashboards OFF")} />
                             <ToggleOption optionText="Deletar Dashboards" srText="Alternar Permissão de Deletar Dashboards"
@@ -125,7 +136,7 @@ export default function Page() {
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Prazos</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Criar Prazos" srText="Alternar Permissão de Criar Prazos"
                                 onFunction={() => console.log("Criar Prazos ON")} offFunction={() => console.log("Criar Prazos OFF")} />
                             <ToggleOption optionText="Deletar Prazos" srText="Alternar Permissão de Deletar Prazos"
@@ -141,12 +152,12 @@ export default function Page() {
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Comentários</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Criar Comentários" srText="Alternar Permissão de Criar Comentários"
                                 onFunction={() => console.log("Criar Comentários ON")} offFunction={() => console.log("Criar Comentários OFF")} />
-                            <ToggleOption optionText="Editar Comentários Próprios" srText="Alternar Permissão de Editar Comentários Próprios"
+                            <ToggleOption optionText="Editar Comentários Próprios" srText="Alternar Permissão de Editar os Próprios Comentários"
                                 onFunction={() => console.log("Editar Comentários Prop ON")} offFunction={() => console.log("Editar Comentários Prop OFF")} />
-                            <ToggleOption optionText="Editar Comentários Externos" srText="Alternar Permissão de Editar Comentários Externos"
+                            <ToggleOption optionText="Editar Comentários Externos" srText="Alternar Permissão de Editar Comentários de Outros Usuários"
                                 onFunction={() => console.log("Editar Comentários Ext ON")} offFunction={() => console.log("Editar Comentários Ext OFF")} />
                             <ToggleOption optionText="Deletar Comentários" srText="Alternar Permissão de Deletar Comentários"
                                 onFunction={() => console.log("Deletar Comentários ON")} offFunction={() => console.log("Deletar Comentários OFF")} />
@@ -159,7 +170,7 @@ export default function Page() {
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Notificações</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Receber Notificações de Sistema" srText="Receber Notificações de Sistema"
                                 onFunction={() => console.log("Notif Sis ON")} offFunction={() => console.log("Notif Sis OFF")} />
                             <ToggleOption optionText="Receber Notificações Push" srText="Receber Notificações Push"
@@ -173,7 +184,7 @@ export default function Page() {
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Cargos Especiais</h1>
-                        <div className="flex flex-col justify-start items-end">
+                        <div className="flex flex-col justify-start items-start">
                             <ToggleOption optionText="Cargo Administrativo" srText="Alternar o Cargo Administrativo"
                                 onFunction={() => console.log("Admin ON")} offFunction={() => console.log("Admin OFF")} />
                             <ToggleOption optionText="Cargo Supervisor" srText="Alternar o Cargo de Supervisão"

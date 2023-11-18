@@ -2,9 +2,11 @@
 import SwitchButton from "@/app/components/ui/SwitchButton";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Page() {
     const router = useRouter();
+    const [text, setText] = useState<string>("");
     return (
         <main className="w-full h-full bg-neutral-100 overflow-hidden">
             <div className="flex flex-row justify-center items-center relative my-2">
@@ -12,7 +14,8 @@ export default function Page() {
                 <h1 className="font-bold text-2xl text-neutral-900">Admin</h1>
             </div>
             <div className="mt-4 flex flex-col items-center justify-between relative p-4">
-                <SwitchButton />
+                <SwitchButton srText="Alternar Permissão" onFunction={() => setText("ON")} offFunction={() => setText("OFF")} />
+                <p>{text}</p>
             </div>
         </main>
     );

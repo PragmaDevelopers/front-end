@@ -22,11 +22,9 @@ function ToggleOption(props: ToggleOptionProps) {
                 <p className="ml-4">{optionText}</p>
             </div>
             <div className="p-2 w-fit h-fit">
-                <div className="group relative">
+                <div className="group relative flex flex-row justify-between items-center">
+                    <span className="text-xs text-neutral-200 group-hover:opacity-100 opacity-0">{srText}</span>
                     <InformationCircleIcon className="aspect-square w-6 fill-blue-300" />
-                    <span className="pointer-events-none absolute top-0 -right-8 w-max opacity-0 transition-opacity group-hover:opacity-100">
-                        {srText}
-                    </span>
                 </div>
             </div>
         </div>

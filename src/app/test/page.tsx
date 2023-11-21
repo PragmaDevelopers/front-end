@@ -30,12 +30,12 @@ function CommentEntry(props: CommentEntryProps) {
         <div className="flex flex-col justify-start items-start w-full h-fit">
             <div className="flex flex-row justify-between items-center w-full">
                 <div className="flex flex-row justify-start items-center p-1">
-                    <UserIcon className="w-8 aspect-square mr-2" />
-                    <h1 className="font-bold">{user.name}</h1>
+                    <UserIcon className="w-6 aspect-square mr-2" />
+                    <h1 className="font-bold text-sm">{user.name}</h1>
                 </div>
-                <h2>{sinceDate}</h2>
+                <h2 className="text-sm">{sinceDate}</h2>
             </div>
-            <p className="mt-4 text-justify">
+            <p className="mt-2 text-justify text-sm">
                 {content}
             </p>
         </div>
@@ -48,11 +48,11 @@ function CommentSection() {
     }
 
     const commentDate = dayjs('15-11-2023');
-    const commentContent: string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quisque non tellus orci ac. Tellus id interdum velit laoreet id donec ultrices. In nisl nisi scelerisque eu ultrices vitae auctor. Pellentesque habitant morbi tristique senectus.";
+    const commentContent: string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
     return (
-        <div className="flex flex-col justify-start items-start h-fit w-96">
-            <div className="h-48 overflow-auto">
+        <div className="flex flex-col justify-start items-start h-fit w-[50%]">
+            <div className="h-64 overflow-auto mb-1 shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2">
                 <CommentEntry user={newUser} content={commentContent} date={commentDate} />
                 <CommentEntry user={newUser} content={commentContent} date={commentDate} />
                 <CommentEntry user={newUser} content={commentContent} date={commentDate} />
@@ -60,7 +60,7 @@ function CommentSection() {
                 <CommentEntry user={newUser} content={commentContent} date={commentDate} />
             </div>
             <form>
-                <textarea placeholder="Insira um comentário" />
+                <textarea className="shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1" placeholder="Insira um comentário" />
                 <button type="submit">Enviar</button>
             </form>
         </div>
@@ -116,7 +116,7 @@ export default function Page() {
     };
 
     return (
-        <main className="w-full h-full bg-neutral-50">
+        <main className="w-full h-full bg-neutral-50 overflow-scroll flex flex-row">
             <CommentSection />
             <div>
                 <form onSubmit={handleSubmit}>

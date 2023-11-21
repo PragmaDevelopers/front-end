@@ -74,7 +74,9 @@ export default function Page() {
 
     const handleSetCardDate = (value: DateValue) => {
         setCardDate(value);
-        console.log(value?.valueOf());
+        const dayjsDate = dayjs(value?.valueOf() as number);
+        console.log(dayjsDate);
+        console.log(dayjsDate.fromNow());
     }
 
     const handleFileChange = (e: any) => {
@@ -103,6 +105,7 @@ export default function Page() {
             // const result = await response.json();
             // console.log(result);
             console.log(formData.get('file'));
+            console.log(formData.get('file')?.valueOf());
         } else if (url) {
             // // Handle URL submission
             // const response = await fetch('/api/upload?url=' + encodeURIComponent(url));

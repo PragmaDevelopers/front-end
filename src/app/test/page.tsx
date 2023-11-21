@@ -72,9 +72,9 @@ export default function Page() {
     const [file, setFile] = useState(null);
     const [url, setUrl] = useState('');
 
-    const handleSetCardDate = (value: any) => {
+    const handleSetCardDate = (value: DateValue) => {
         setCardDate(value);
-        console.log(value);
+        console.log(value?.valueOf());
     }
 
     const handleFileChange = (e: any) => {
@@ -102,7 +102,7 @@ export default function Page() {
 
             // const result = await response.json();
             // console.log(result);
-            console.log(formData);
+            console.log(formData.get('file'));
         } else if (url) {
             // // Handle URL submission
             // const response = await fetch('/api/upload?url=' + encodeURIComponent(url));

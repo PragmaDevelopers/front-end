@@ -59,9 +59,9 @@ function CommentSection() {
                 <CommentEntry user={newUser} content={commentContent} date={commentDate} />
                 <CommentEntry user={newUser} content={commentContent} date={commentDate} />
             </div>
-            <form>
+            <form className="w-full flex flex-row items-center">
                 <textarea className="resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1" placeholder="Insira um comentário" />
-                <button type="submit"><PaperAirplaneIcon className="w-8 aspect-square" /></button>
+                <button type="submit" className="ml-2 stroke-neutral-950 hover:stroke-green-600 transition-all"><PaperAirplaneIcon className="w-8 aspect-square" /></button>
             </form>
         </div>
     );

@@ -50,17 +50,30 @@ function CommentSection() {
     const commentDate = dayjs('15-11-2023');
     const commentContent: string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
+    const [comments, setComments] = useState<{ user: User, content: string, date: any }[]>([{ user: newUser, content: commentContent, date: commentDate }]);
+
+    const addComment = (e: any) => {
+        e.preventDefault();
+        const commentcont = e.target.commentarea.value;
+        setComments((prevComments) => {
+            return [
+                ...prevComments,
+                {
+                    user: newUser,
+                    content: commentcont,
+                    date: commentDate
+                }
+            ]
+        });
+    }
+
     return (
         <div className="flex flex-col justify-start items-start h-fit w-[50%]">
             <div className="h-64 overflow-auto mb-1 shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2">
-                <CommentEntry user={newUser} content={commentContent} date={commentDate} />
-                <CommentEntry user={newUser} content={commentContent} date={commentDate} />
-                <CommentEntry user={newUser} content={commentContent} date={commentDate} />
-                <CommentEntry user={newUser} content={commentContent} date={commentDate} />
-                <CommentEntry user={newUser} content={commentContent} date={commentDate} />
+                {comments.map((i: { user: User, content: string, date: any }) => <CommentEntry user={i.user} content={i.content} date={i.date} />)}
             </div>
-            <form className="w-full flex flex-row items-center">
-                <textarea className="w-full resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1" placeholder="Insira um comentário" />
+            <form onSubmit={addComment} className="w-full flex flex-row items-center">
+                <textarea name="commentarea" className="w-full resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1" placeholder="Insira um comentário" />
                 <button type="submit" className="ml-2"><PaperAirplaneIcon className="w-8 aspect-square stroke-neutral-950 hover:stroke-green-600 transition-all" /></button>
             </form>
         </div>

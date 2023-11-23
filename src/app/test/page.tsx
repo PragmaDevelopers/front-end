@@ -4,7 +4,7 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
-import { UserIcon } from "@heroicons/react/24/outline";
+import { PaperAirplaneIcon, UserIcon } from "@heroicons/react/24/outline";
 import { DateValue } from "../types/KanbanTypes";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -60,8 +60,8 @@ function CommentSection() {
                 <CommentEntry user={newUser} content={commentContent} date={commentDate} />
             </div>
             <form>
-                <textarea className="shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1" placeholder="Insira um comentário" />
-                <button type="submit">Enviar</button>
+                <textarea className="resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1" placeholder="Insira um comentário" />
+                <button type="submit"><PaperAirplaneIcon className="w-8 aspect-square" /></button>
             </form>
         </div>
     );

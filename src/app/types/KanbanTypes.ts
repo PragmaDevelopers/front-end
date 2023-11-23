@@ -32,11 +32,6 @@ export type CustomFieldNumber = {
 
 export type CustomFields = CustomFieldNumber | CustomFieldText;
 
-export type Comment = {
-    userID: string,
-    date: number,
-    content: string,
-}
 
 export type CheckList = {
     name: string,
@@ -84,13 +79,21 @@ export type Tag = {
 
 export type Member = {
     name: string,
-    id: string,
+    email: string,
+    nacionalidade: string,
+    password: string, // Hash
+    gender: string,
+    accountCreation: number, // Date
+    profilePicture: string,
+    pushEmail: string,
+    generalPermissions: number,
+    id: number | string,
 }
 
-
-
-
-
-
-
+export type Comment = {
+    content: string,
+    user: Member,
+    creationDate: number, // Date
+    cardID: number | string,
+}
 

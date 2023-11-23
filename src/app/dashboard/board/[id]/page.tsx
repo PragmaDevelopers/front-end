@@ -491,6 +491,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                             <MinusCircleIcon className='w-6 aspect-square' />
                                         </button>
                                     </div>
+
+
+
                                     {list.items?.map((inputValue: CheckListItem, inputIndex: number) => (
                                         <div key={inputIndex} className='flex items-center my-2'>
                                             <input

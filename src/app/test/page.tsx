@@ -8,6 +8,28 @@ import { PaperAirplaneIcon, UserIcon } from "@heroicons/react/24/outline";
 import { DateValue } from "../types/KanbanTypes";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import '@mdxeditor/editor/style.css';
+import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
+import {
+    headingsPlugin,
+    listsPlugin,
+    quotePlugin,
+    thematicBreakPlugin,
+    linkPlugin,
+    linkDialogPlugin,
+    imagePlugin,
+    tablePlugin,
+    markdownShortcutPlugin,
+    UndoRedo,
+    BoldItalicUnderlineToggles,
+    BlockTypeSelect,
+    InsertImage,
+    InsertTable,
+    ListsToggle,
+    CreateLink,
+    MDXEditor,
+    MDXEditorMethods,
+} from "@mdxeditor/editor";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -141,8 +163,34 @@ export default function Page() {
                     <button type="submit">Submit</button>
                 </form>
             </div>
-            <div>
+            <div className="flex flex-col justify-start items-start">
                 <Calendar value={cardDate} onChange={handleSetCardDate} />
+                <MDXEditor
+                    className="MDXEditor"
+                    markdown=""
+                    plugins={[
+                        headingsPlugin(),
+                        listsPlugin(),
+                        quotePlugin(),
+                        thematicBreakPlugin(),
+                        linkPlugin(),
+                        linkDialogPlugin(),
+                        tablePlugin(),
+                        markdownShortcutPlugin(),
+                        toolbarPlugin({
+                            toolbarContents: () => (
+                                <>
+                                    <UndoRedo />
+                                    <BlockTypeSelect />
+                                    <BoldItalicUnderlineToggles />
+                                    <InsertTable />
+                                    <ListsToggle />
+                                    <CreateLink />
+                                </>
+                            )
+                        }),
+                    ]}
+                />
             </div>
         </main>
     );

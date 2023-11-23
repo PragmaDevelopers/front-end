@@ -176,6 +176,7 @@ export default function Page() {
         <main className="w-full h-full bg-neutral-50 overflow-scroll flex flex-row">
             <Combobox value={selectedPerson} onChange={setSelectedPerson}>
                 <Combobox.Input
+                    className="form-input"
                     onChange={(event) => setQuery(event.target.value)}
                     displayValue={(person: any) => person.name}
                 />

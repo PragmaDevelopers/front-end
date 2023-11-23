@@ -65,6 +65,7 @@ function CommentSection() {
                 }
             ]
         });
+        e.target.commentarea.value = "";
     }
 
     return (

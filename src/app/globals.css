@@ -29,6 +29,9 @@
     background-color: var(--baseBgHover);
     font-size: var(--text-sm); */
 }
+.MDXEditor div[data-radix-popper-content-wrapper=""] {
+    z-index: 50 !important;
+}
 
 
 /* ::-webkit-scrollbar { @apply bg-neutral-50 w-1.5 } */

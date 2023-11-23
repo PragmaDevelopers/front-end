@@ -70,7 +70,7 @@ function CommentSection() {
     return (
         <div className="flex flex-col justify-start items-start h-fit w-[50%]">
             <div className="h-64 overflow-auto mb-1 shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2">
-                {comments.map((i: { user: User, content: string, date: any }) => <CommentEntry user={i.user} content={i.content} date={i.date} />)}
+                {comments.map((i: { user: User, content: string, date: any }, idx: number) => <CommentEntry key={idx} user={i.user} content={i.content} date={i.date} />)}
             </div>
             <form onSubmit={addComment} className="w-full flex flex-row items-center">
                 <textarea name="commentarea" className="w-full resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1" placeholder="Insira um comentário" />

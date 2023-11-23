@@ -20,6 +20,7 @@ import {
     useState,
     Ref,
     ChangeEvent,
+    Fragment
 } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -34,7 +35,7 @@ import {
     PlusCircleIcon,
     XCircleIcon
 } from '@heroicons/react/24/outline';
-import { CalendarDaysIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { CalendarDaysIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
 import { HexColorPicker } from "react-colorful";
 import {
     CardElementProps,
@@ -80,6 +81,7 @@ import {
 } from "@mdxeditor/editor";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { Combobox } from '@headlessui/react'
 
 function ConfirmDelete(props: ConfirmDeleteProps) {
     return (
@@ -360,6 +362,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         addCustomField,
     } = props;
 
+
+
     const [color, setColor] = useState<string>("#aabbcc");
     const [viewAddTag, setViewAddTag] = useState<boolean>(false);
     const [viewAddMember, setViewAddMember] = useState<boolean>(false);
@@ -377,6 +381,24 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     useEffect(() => {
         fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
     }, [setDashboards]);
+
+    const people = [
+        { id: 1, name: 'Durward Reynolds' },
+        { id: 2, name: 'Kenton Towne' },
+        { id: 3, name: 'Therese Wunsch' },
+        { id: 4, name: 'Benedict Kessler' },
+        { id: 5, name: 'Katelyn Rohan' },
+    ]
+
+    const [selectedPerson, setSelectedPerson] = useState(people[0])
+    const [query, setQuery] = useState('')
+
+    const filteredPeople =
+        query === ''
+            ? people
+            : people.filter((person) => {
+                return person.name.toLowerCase().includes(query.toLowerCase())
+            })
 
     const handleCreateCardForm = (event: any) => {
         createCardForm(event, isEdition);
@@ -570,7 +592,29 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
                     <div className={(viewAddMember ? 'flex' : 'hidden') + ' absolute top-28 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
                         <form onSubmit={closeAddMember}>
-                            <input type='text' placeholder='dummy' />
+
+                            <Combobox value={selectedPerson} onChange={setSelectedPerson}>
+                                <Combobox.Input
+                                    onChange={(event) => setQuery(event.target.value)}
+                                    displayValue={(person: any) => person.name}
+                                />
+                                <Combobox.Options>
+                                    {filteredPeople.map((person: any) => (
+                                        <Combobox.Option key={person.id} value={person} as={Fragment}>
+                                            {({ active, selected }) => (
+                                                <li
+                                                    className={`${active ? 'bg-blue-500 text-white' : 'bg-white text-black'
+                                                        }`}
+                                                >
+                                                    {selected && <CheckIcon />}
+                                                    {person.name}
+                                                </li>
+                                            )}
+                                        </Combobox.Option>
+                                    ))}
+                                </Combobox.Options>
+                            </Combobox>
+
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
                         </form>
                     </div>

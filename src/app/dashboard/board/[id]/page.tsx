@@ -81,7 +81,7 @@ import {
 } from "@mdxeditor/editor";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { Combobox } from '@headlessui/react'
+import { Combobox } from '@headlessui/react';
 
 function ConfirmDelete(props: ConfirmDeleteProps) {
     return (

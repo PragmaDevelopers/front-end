@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
@@ -30,6 +30,8 @@ import {
     MDXEditor,
     MDXEditorMethods,
 } from "@mdxeditor/editor";
+import { Combobox } from '@headlessui/react';
+import { CalendarDaysIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -151,47 +153,49 @@ export default function Page() {
         }
     };
 
+    const people = [
+        { id: 1, name: 'Durward Reynolds' },
+        { id: 2, name: 'Kenton Towne' },
+        { id: 3, name: 'Therese Wunsch' },
+        { id: 4, name: 'Benedict Kessler' },
+        { id: 5, name: 'Katelyn Rohan' },
+    ]
+
+    const [selectedPerson, setSelectedPerson] = useState(people[0])
+    const [query, setQuery] = useState('')
+
+    const filteredPeople =
+        query === ''
+            ? people
+            : people.filter((person) => {
+                return person.name.toLowerCase().includes(query.toLowerCase())
+            })
+
+
     return (
         <main className="w-full h-full bg-neutral-50 overflow-scroll flex flex-row">
-            <CommentSection />
-            <div>
-                <form onSubmit={handleSubmit}>
-                    <input type="file" onChange={handleFileChange} />
-                    <br />
-                    <input type="text" placeholder="Enter URL" value={url} onChange={handleUrlChange} />
-                    <br />
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
-            <div className="flex flex-col justify-start items-start">
-                <Calendar value={cardDate} onChange={handleSetCardDate} />
-                <MDXEditor
-                    className="MDXEditor"
-                    markdown=""
-                    plugins={[
-                        headingsPlugin(),
-                        listsPlugin(),
-                        quotePlugin(),
-                        thematicBreakPlugin(),
-                        linkPlugin(),
-                        linkDialogPlugin(),
-                        tablePlugin(),
-                        markdownShortcutPlugin(),
-                        toolbarPlugin({
-                            toolbarContents: () => (
-                                <>
-                                    <UndoRedo />
-                                    <BlockTypeSelect />
-                                    <BoldItalicUnderlineToggles />
-                                    <InsertTable />
-                                    <ListsToggle />
-                                    <CreateLink />
-                                </>
-                            )
-                        }),
-                    ]}
+            <Combobox value={selectedPerson} onChange={setSelectedPerson}>
+                <Combobox.Input
+                    onChange={(event) => setQuery(event.target.value)}
+                    displayValue={(person: any) => person.name}
                 />
-            </div>
+                <Combobox.Options>
+                    {filteredPeople.map((person: any) => (
+                        <Combobox.Option key={person.id} value={person} as={Fragment}>
+                            {({ active, selected }) => (
+                                <li
+                                    className={`${active ? 'bg-blue-500 text-white' : 'bg-white text-black'
+                                        }`}
+                                >
+                                    {selected && <CheckIcon />}
+                                    {person.name}
+                                </li>
+                            )}
+                        </Combobox.Option>
+                    ))}
+                </Combobox.Options>
+            </Combobox>
+
         </main>
     );
 }

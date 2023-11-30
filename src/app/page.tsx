@@ -94,7 +94,35 @@ export default function Page() {
                     "gender": usergender,
                 }
 
-                fetch(`${API_BASE_URL}/api/public/signup`, {
+                const sendData = () => {
+                    fetch(`${API_BASE_URL}/api/public/signup`, {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify(responseBody),
+                        headers: {
+                            "content-type": "application/json",
+                        },
+                    }).then(function(response: any) {
+                        if (response.status == 200 || response.ok) {
+                            setUserCanLogin(true);
+                            router.push("/dashboard");
+                            return;
+
+                        }
+                    }).catch((e: any) => console.log(e));
+                }
+                sendData();
+            }
+        } else {
+            const useremail: string = e?.target?.useremail?.value;
+            const userpassword: string = e?.target?.userpassword?.value;
+            const responseBody: { [Key: string]: string } = {
+                "email": useremail,
+                "password": userpassword,
+            }
+
+            const sendData = () => {
+                fetch(`${API_BASE_URL}/api/public/login`, {
                     method: "POST",
                     credentials: "include",
                     body: JSON.stringify(responseBody),
@@ -106,35 +134,13 @@ export default function Page() {
                         setUserCanLogin(true);
                         router.push("/dashboard");
                         return;
-
                     }
+                    response.json();
+                }).then(function(data: any) {
+                    console.log(data);
                 }).catch((e: any) => console.log(e));
             }
-        } else {
-            const useremail: string = e?.target?.useremail?.value;
-            const userpassword: string = e?.target?.userpassword?.value;
-            const responseBody: { [Key: string]: string } = {
-                "email": useremail,
-                "password": userpassword,
-            }
-
-            fetch(`${API_BASE_URL}/api/public/login`, {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(responseBody),
-                headers: {
-                    "content-type": "application/json",
-                },
-            }).then(function(response: any) {
-                if (response.status == 200 || response.ok) {
-                    setUserCanLogin(true);
-                    router.push("/dashboard");
-                    return;
-                }
-                response.json();
-            }).then(function(data: any) {
-                console.log(data);
-            }).catch((e: any) => console.log(e));
+            sendData();
 
             e.target.reset();
         }

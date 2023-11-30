@@ -135,16 +135,14 @@ export default function Page() {
                     console.log(response)
                     if (response.status == 200 || response.ok) {
                         setUserCanLogin(true);
+                        router.push("/dashboard");
+                        return response.text();
+
                     }
-                    return response.text();
                 }).then((data: any) => {
                     console.log(data);
                     setValue(data);
                     console.log(value);
-                    if (userCanLogin) {
-                        router.push("/dashboard");
-                        return;
-                    }
                 }).catch((e: any) => console.log(e));
             }
             sendData();

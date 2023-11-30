@@ -102,7 +102,8 @@ export default function Page() {
                         headers: {
                             "content-type": "application/json",
                         },
-                    }).then(function(response: any) {
+                    }).then((response: any) => {
+                        console.log(response);
                         if (response.status == 200 || response.ok) {
                             setUserCanLogin(true);
                             router.push("/dashboard");
@@ -129,14 +130,15 @@ export default function Page() {
                     headers: {
                         "content-type": "application/json",
                     },
-                }).then(function(response: any) {
+                }).then((response: any) => {
+                    console.log(response)
                     if (response.status == 200 || response.ok) {
                         setUserCanLogin(true);
                         router.push("/dashboard");
                         return;
                     }
                     response.json();
-                }).then(function(data: any) {
+                }).then((data: any) => {
                     console.log(data);
                 }).catch((e: any) => console.log(e));
             }

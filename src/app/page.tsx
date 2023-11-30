@@ -96,7 +96,7 @@ export default function Page() {
                 const sendData = () => {
                     fetch(`${API_BASE_URL}/api/public/signup`, {
                         method: "POST",
-                        credentials: "include",
+                        //credentials: "include",
                         body: JSON.stringify(responseBody),
                         headers: {
                             "content-type": "application/json",
@@ -124,7 +124,7 @@ export default function Page() {
             const sendData = () => {
                 fetch(`${API_BASE_URL}/api/public/login`, {
                     method: "POST",
-                    credentials: "include",
+                    //credentials: "include",
                     body: JSON.stringify(responseBody),
                     headers: {
                         "content-type": "application/json",

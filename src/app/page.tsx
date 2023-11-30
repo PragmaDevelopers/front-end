@@ -68,29 +68,58 @@ export default function Page() {
     const [formFirstSubmit, setFormFirstSubmit] = useState<boolean>(false);
     const switchCadastrarSe = () => setCadastrarSe(!cadastrarSe);
     const router = useRouter();
+    const API_BASE_URL: string = "https://sistema-rc-e0ef46aabaec.herokuapp.com";
 
     const loginUser = (e: any) => {
         e.preventDefault();
         setFormFirstSubmit(true);
 
-        const useremail: string = hashString(e?.target?.useremail?.value);
-        const userpassword: string = hashString(e?.target?.userpassword?.value);
-        let emailcheck: boolean = false;
-        let passwcheck: boolean = false;
-        if (useremail === "1e23d461552b906fea005f95e067816dc68124b4e9966d9898765a09b327e0ca") {
-            setEmailCheck(true);
-            emailcheck = true;
-        }
-        if (userpassword === "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646") {
-            setPasswordCheck(true);
-            passwcheck = true;
-        }
+        if (cadastrarSe) {
+            const useremail: string = e?.target?.useremail?.value;
+            const userpassword: string = e?.target?.userpassword?.value;
+            const userpasswordconf: string = e?.target?.userpasswordconf?.value;
+            const usernat: string = e?.target?.usernat?.value;
+            const username: string = e?.target?.username?.value;
+            const usergender: string = e?.target?.usergender?.value;
 
-        if (emailcheck && passwcheck) {
-            setUserCanLogin(true);
-        }
+            let passmatch: boolean = userpassword == userpasswordconf;
+            setPasswordCheck(passmatch);
 
-        e.target.reset();
+            if (passmatch) {
+                const sendData = () => {
+                    fetch("http://localhost:3001/api/todos", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            description,
+                        }),
+                        headers: {
+                            "content-type": "application/json",
+                        },
+                    }).catch((e) => console.log(e));
+                }
+            }
+
+        } else {
+
+            const useremail: string = hashString(e?.target?.useremail?.value);
+            const userpassword: string = hashString(e?.target?.userpassword?.value);
+            let emailcheck: boolean = false;
+            let passwcheck: boolean = false;
+            if (useremail === "1e23d461552b906fea005f95e067816dc68124b4e9966d9898765a09b327e0ca") {
+                setEmailCheck(true);
+                emailcheck = true;
+            }
+            if (userpassword === "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646") {
+                setPasswordCheck(true);
+                passwcheck = true;
+            }
+
+            if (emailcheck && passwcheck) {
+                setUserCanLogin(true);
+            }
+
+            e.target.reset();
+        }
     }
 
     if (userCanLogin) {
@@ -106,9 +135,9 @@ export default function Page() {
                     {cadastrarSe ? (
                         <div className="h-fit bg-neutral-50 drop-shadow-md rounded-md p-2 border-neutral-200 border-[1px]">
                             <div className="flex flex-col">
-                                <input type="text" placeholder="Insira seu nome" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
-                                <input type="email" placeholder="Insira seu email" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
-                                <select className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Selecione sua nacionalidade">
+                                <input name="username" type="text" placeholder="Insira seu nome" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
+                                <input name="useremail" type="email" placeholder="Insira seu email" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
+                                <select name="usernat" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Selecione sua nacionalidade">
                                     <option value="AF">AF - Afeganistão</option>
                                     <option value="ZA">ZA - África do Sul</option>
                                     <option value="AL">AL - Albânia</option>
@@ -305,11 +334,11 @@ export default function Page() {
                                 </select>
 
 
-                                <input type="text" placeholder="Insira seu genero" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
+                                <input name="usergender" type="text" placeholder="Insira seu genero" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
                             </div>
                             <div className="flex flex-row justify-between items-center">
-                                <input type="password" placeholder="Insira sua senha" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1 mr-1" autoComplete="current-password" />
-                                <input type="password" placeholder="Re-insira sua senha" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1 ml-1" autoComplete="current-password" />
+                                <input name="userpassword" type="password" placeholder="Insira sua senha" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1 mr-1" autoComplete="current-password" />
+                                <input name="userpasswordconf" type="password" placeholder="Re-insira sua senha" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1 ml-1" autoComplete="current-password" />
                             </div>
                         </div>
                     ) : (

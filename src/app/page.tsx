@@ -133,10 +133,10 @@ export default function Page() {
                     },
                 }).then((response: any) => {
                     console.log(response)
-                    response.text();
                     if (response.status == 200 || response.ok) {
                         setUserCanLogin(true);
                     }
+                    return response.text();
                 }).then((data: any) => {
                     console.log(data);
                     setValue(data);

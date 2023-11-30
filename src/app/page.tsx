@@ -136,7 +136,7 @@ export default function Page() {
                         router.push("/dashboard");
                         return;
                     }
-                    response.json();
+                    //response.json();
                 }).then((data: any) => {
                     console.log(data);
                 }).catch((e: any) => console.log(e));

@@ -77,9 +77,9 @@ export default function Page() {
             const useremail: string = e?.target?.useremail?.value;
             const userpassword: string = e?.target?.userpassword?.value;
             const userpasswordconf: string = e?.target?.userpasswordconf?.value;
-            const usernat: string = e?.target?.usernat?.value;
-            const username: string = e?.target?.username?.value;
-            const usergender: string = e?.target?.usergender?.value;
+            const usernat: string = e?.target?.usernat?.value.toLowerCase();
+            const username: string = e?.target?.username?.value.toLowerCase();
+            const usergender: string = e?.target?.usergender?.value.toLowerCase();
 
             let passmatch: boolean = userpassword == userpasswordconf;
             setPasswordCheck(passmatch);

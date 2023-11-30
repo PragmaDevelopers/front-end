@@ -183,8 +183,6 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Cargos Especiais</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption optionText="Cargo Administrativo" srText="Alternar o Cargo Administrativo"
-                                onFunction={() => console.log("Admin ON")} offFunction={() => console.log("Admin OFF")} />
                             <ToggleOption optionText="Cargo Supervisor" srText="Alternar o Cargo de Supervisão"
                                 onFunction={() => console.log("Supervisor ON")} offFunction={() => console.log("Supervisor OFF")} />
                         </div>

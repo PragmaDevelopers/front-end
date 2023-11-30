@@ -157,8 +157,11 @@ export default function Page() {
                                 onFunction={() => console.log("Editar Comentários Prop ON")} offFunction={() => console.log("Editar Comentários Prop OFF")} />
                             <ToggleOption optionText="Editar Comentários Externos" srText="Alternar Permissão de Editar Comentários de Outros Usuários"
                                 onFunction={() => console.log("Editar Comentários Ext ON")} offFunction={() => console.log("Editar Comentários Ext OFF")} />
-                            <ToggleOption optionText="Deletar Comentários" srText="Alternar Permissão de Deletar Comentários"
-                                onFunction={() => console.log("Deletar Comentários ON")} offFunction={() => console.log("Deletar Comentários OFF")} />
+                            <ToggleOption optionText="Deletar Comentários Próprios" srText="Alternar Permissão de Deletar Comentários Próprios"
+                                onFunction={() => console.log("Deletar Comentários Prop ON")} offFunction={() => console.log("Deletar Comentários Prop OFF")} />
+                            <ToggleOption optionText="Deletar Comentários Externos" srText="Alternar Permissão de Deletar Comentários Externos"
+                                onFunction={() => console.log("Deletar Comentários Ext ON")} offFunction={() => console.log("Deletar Comentários Ext OFF")} />
+
                         </div>
                     </div>
 

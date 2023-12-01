@@ -36,6 +36,7 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 
 export default function Layout({ children }: any) {
     const { userValue, updateUserValue } = useUserContext();
+    const router = useRouter();
 
     const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([]);
     const IconStyles: string = "w-8 aspect-square mr-2";
@@ -44,12 +45,15 @@ export default function Layout({ children }: any) {
         fetch(`${API_BASE_URL}/`, {}).then(response => response.json()).then(data => setDashboards(data))
     }, [setDashboards]);
 
+    const returnToHome = () => {
+        router.push("/");
+    }
+
     useEffect(() => {
         if (userValue === "") {
-            const router = useRouter();
-            router.push("/");
+            returnToHome();
         }
-    }, [userValue]);
+    }, [userValue, returnToHome]);
 
     const addDashBoard = (event: any) => {
         event.preventDefault();

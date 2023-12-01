@@ -211,7 +211,7 @@ export default function Page() {
                                     <Combobox.Option
                                         key={person.id}
                                         className={({ active }) =>
-                                            `relative cursor-default select-none py-2 pl-10 pr-4 rounded-md ${active ? 'bg-teal-100 text-white' : 'text-gray-900'
+                                            `relative cursor-default select-none py-2 pl-10 pr-4 rounded-md ${active ? 'bg-teal-50 text-neutral-900' : 'text-gray-900'
                                             }`
                                         }
                                         value={person}
@@ -226,7 +226,7 @@ export default function Page() {
                                                 </span>
                                                 {selected ? (
                                                     <span
-                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-teal-600'
+                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-neutral-900' : 'text-teal-600'
                                                             }`}
                                                     >
                                                         <CheckIcon className="h-5 w-5" aria-hidden="true" />

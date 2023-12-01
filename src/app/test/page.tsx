@@ -226,7 +226,7 @@ export default function Page() {
                                                 </span>
                                                 {selected ? (
                                                     <span
-                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-neutral-900' : 'text-teal-600'
+                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-teal-600' : 'text-teal-600'
                                                             }`}
                                                     >
                                                         <CheckIcon className="h-5 w-5" aria-hidden="true" />

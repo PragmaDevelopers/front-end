@@ -78,16 +78,18 @@ export type Tag = {
 }
 
 export type Member = {
-    name: string,
-    email: string,
-    nacionalidade: string,
-    password: string, // Hash
-    gender: string,
-    accountCreation: number, // Date
-    profilePicture: string,
-    pushEmail: string,
-    generalPermissions: number,
-    id: number | string,
+    name: string | null,
+    email: string | null,
+    nacionalidade: string | null,
+    password: string | null, // Hash
+    gender: string | null,
+    accountCreation: string | null, // Date
+    profilePicture: string | null,
+    pushEmail: string | null,
+    generalPermissions: string | null,
+    id: number | string | null,
+    role: string | null,
+    kanban_role: string | null,
 }
 
 export type Comment = {

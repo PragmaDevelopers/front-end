@@ -1,26 +1,34 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface UserContextProps {
-    value: string,
-    setValue: (newValue: string) => void;
+    userValue: string;
+    updateUserValue: (newValue: string) => void;
 }
 
-const UserContext = createContext<UserContextProps | any>({});
+const UserContext = createContext<UserContextProps | undefined>(undefined);
 
-export function useUserContext() {
-    return useContext(UserContext);
+interface UserContextProviderProps {
+    children: ReactNode;
 }
 
-export function UserContextWrapper({ children }: any) {
-    const [value, setValue] = useState<string>("");
+export const UserContextProvider: React.FC<UserContextProviderProps> = ({ children }) => {
+    const [userValue, setUserValue] = useState<string>('');
 
-    const updateValue = (newValue: string) => {
-        setValue(newValue);
-    }
+    const updateUserValue = (newValue: string) => {
+        setUserValue(newValue);
+    };
+
     return (
-        <UserContext.Provider value={{ value, updateValue }}>
+        <UserContext.Provider value={{ userValue, updateUserValue }}>
             {children}
-        </ UserContext.Provider>
+        </UserContext.Provider>
     );
-}
+};
 
+export const useUserContext = (): UserContextProps => {
+    const context = useContext(UserContext);
+    if (!context) {
+        throw new Error('useUserContext must be used within a UserContextProvider');
+    }
+    return context;
+};

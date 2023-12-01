@@ -1,12 +1,14 @@
 'use client';
 
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { CalendarIcon, ChartPieIcon, CogIcon, ServerStackIcon, UserGroupIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BuildingOffice2Icon } from "@heroicons/react/24/solid";
 import { generateRandomString } from "../utils/generators";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { useUserContext } from "../contexts/userContext";
+import { API_BASE_URL } from "../utils/variables";
 
 interface BoardMenuEntryProps {
     href: string;
@@ -33,15 +35,21 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 }
 
 export default function Layout({ children }: any) {
-    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
-        { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
-        { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
-    ]);
+    const { userValue, updateUserValue } = useUserContext();
+
+    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([]);
     const IconStyles: string = "w-8 aspect-square mr-2";
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
+        fetch(`${API_BASE_URL}/`, {}).then(response => response.json()).then(data => setDashboards(data))
     }, [setDashboards]);
+
+    useEffect(() => {
+        if (userValue === "") {
+            const router = useRouter();
+            router.push("/");
+        }
+    }, [userValue]);
 
     const addDashBoard = (event: any) => {
         event.preventDefault();

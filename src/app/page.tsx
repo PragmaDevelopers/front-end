@@ -3,6 +3,7 @@ import { ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/2
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
+import { API_BASE_URL } from "./utils/variables";
 
 interface InfoScreenProps {
     emailState: boolean;
@@ -68,8 +69,7 @@ export default function Page() {
     const [formFirstSubmit, setFormFirstSubmit] = useState<boolean>(false);
     const switchCadastrarSe = () => setCadastrarSe(!cadastrarSe);
     const router = useRouter();
-    const { value, setValue } = useUserContext();
-    const API_BASE_URL: string = "https://sistema-rc-e0ef46aabaec.herokuapp.com";
+    const { userValue, updateUserValue } = useUserContext();
 
     const loginUser = (e: any) => {
         e.preventDefault();
@@ -141,8 +141,8 @@ export default function Page() {
                     }
                 }).then((data: any) => {
                     console.log(data);
-                    setValue(data);
-                    console.log(value);
+                    updateUserValue(data);
+                    console.log(userValue);
                 }).catch((e: any) => console.log(e));
             }
             sendData();

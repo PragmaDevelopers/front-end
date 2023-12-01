@@ -5,7 +5,7 @@ import Header from "./header";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { ClockIcon } from "@heroicons/react/24/outline";
-import { UserContextWrapper } from "@/app/contexts/userContext";
+import { UserContextProvider } from "@/app/contexts/userContext";
 
 function Notification() {
     return (
@@ -32,7 +32,7 @@ export default function Main({ children }: any) {
     }
 
     return (
-        <UserContextWrapper>
+        <UserContextProvider>
             <div className="w-full h-full relative">
                 <Header showNotifications={handleShowNotifications} />
                 <div className={(showNotification ? "block" : "hidden") + " w-full h-full bg-transparent z-10 absolute top-[4.5rem] left-0 bg-neutral-950/50"}>
@@ -81,6 +81,6 @@ export default function Main({ children }: any) {
                     {children}
                 </div>
             </div>
-        </UserContextWrapper>
+        </UserContextProvider>
     );
 }

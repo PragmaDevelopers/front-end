@@ -1389,12 +1389,14 @@ export default function Page({ params }: { params: { id: string } }) {
         event.preventDefault();
         const cardTitle: string = event.target.title.value;
         const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+        console.log("createInnerCard", cardTitle, cardDescription);
+
         const newCard: Card = {
             ...tempCard,
             title: cardTitle,
             description: cardDescription,
         }
-
+        console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
         _appendToTempCardsArray(newCard);
         const tCard: Card = {
             id: generateRandomString(),
@@ -1421,12 +1423,14 @@ export default function Page({ params }: { params: { id: string } }) {
         event.preventDefault();
         const cardTitle: string = event.target.title.value;
         const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+        console.log("addInnerCard", cardTitle, cardDescription);
         const newCard: Card = {
             ...tempCard,
             title: cardTitle,
             description: cardDescription,
         }
         const _prevCard: Card = _popFromTempCardsArray();
+        console.log("addInnerCard", "PREVIOUS CARD", _prevCard)
         const _nInnerCardsArr: Card[] = [..._prevCard.innerCards, newCard];
         const ntCard: Card = {
             ..._prevCard,
@@ -1435,6 +1439,7 @@ export default function Page({ params }: { params: { id: string } }) {
         event.target.reset();
         setEditorText(ntCard.description);
         setTempCard(ntCard);
+        console.log("addInnerCard", "NEW TEMPCARD", ntCard);
         editorRef.current?.setMarkdown(ntCard.description);
     }
 

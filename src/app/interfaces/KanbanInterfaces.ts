@@ -58,6 +58,9 @@ export interface CreateEditCardProps {
     addInnerCard: any;
     createInnerCard: any;
     tempCardsArr: Card[];
+    isCreatingInnerCard: boolean;
+    setIsCreatingInnerCard: any;
+
 }
 
 export interface RichEditorProps {

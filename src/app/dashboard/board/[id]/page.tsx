@@ -364,6 +364,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         addInnerCard,
         createInnerCard,
         tempCardsArr,
+        isCreatingInnerCard,
+        setIsCreatingInnerCard
     } = props;
 
 
@@ -379,7 +381,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
     const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});
     const [members, setMembers] = useState<Member[]>([]);
-    const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
     const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
         { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
         { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
@@ -406,7 +407,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
             createInnerCard(event);
         } else {
             if (tempCardsArr.length > 0) {
-                addInnerCard(event, setIsCreatingInnerCard);
+                addInnerCard(event);
             } else {
                 createCardForm(event, isEdition);
             }
@@ -756,6 +757,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [viewConfirmDelete, setViewConfirmDelete] = useState<boolean>(false);
     const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
     const [tempCardsArr, setTempCardsArr] = useState<Card[]>([]);
+    const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
 
 
     const editorRef = useRef<MDXEditorMethods>(null);
@@ -1376,7 +1378,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    const createInnerCard = (event: any, setIsCreatingInnerCard: any) => {
+    const createInnerCard = (event: any) => {
         event.preventDefault();
         const cardTitle: string = event.target.title.value;
         const cardDescription: string | undefined = editorRef.current?.getMarkdown();
@@ -1403,7 +1405,6 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         event.target.reset();
         setEditorText("");
-        setIsCreatingInnerCard(false);
         setTempCard(tCard);
         editorRef.current?.setMarkdown("");
     }
@@ -1426,6 +1427,7 @@ export default function Page({ params }: { params: { id: string } }) {
         event.target.reset();
         setEditorText(ntCard.description);
         setTempCard(ntCard);
+        setIsCreatingInnerCard(false);
         editorRef.current?.setMarkdown(ntCard.description);
     }
 
@@ -1463,6 +1465,8 @@ export default function Page({ params }: { params: { id: string } }) {
                 addInnerCard={addInnerCard}
                 createInnerCard={createInnerCard}
                 tempCardsArr={tempCardsArr}
+                isCreatingInnerCard={isCreatingInnerCard}
+                setIsCreatingInnerCard={setIsCreatingInnerCard}
             />
             <div className="">
                 <h1>{params.id}</h1>

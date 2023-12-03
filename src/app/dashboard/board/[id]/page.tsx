@@ -404,14 +404,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const handleCreateCardForm = (event: any) => {
         if (isCreatingInnerCard) {
-            console.log(`SUBMIT CRETING INNER CARD ${tempCardsArr.length}`)
+            console.log(`SUBMIT CRETING INNER CARD ${tempCardsArr.length}`, tempCardsArr)
             createInnerCard(event);
         } else {
             if (tempCardsArr.length > 0) {
-                console.log(`SUBMIT ADDING INNER CARD ${tempCardsArr.length}`)
+                console.log(`SUBMIT ADDING INNER CARD ${tempCardsArr.length}`, tempCardsArr)
                 addInnerCard(event);
             } else {
-                console.log(`SUBMIT CRETING FINAL CARD ${tempCardsArr.length}`)
+                console.log(`SUBMIT CRETING FINAL CARD ${tempCardsArr.length}`, tempCardsArr)
                 createCardForm(event, isEdition);
             }
         }
@@ -474,7 +474,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
 
     const handleCreateInnerCard = () => {
-        console.log(`BUTTON PUSH CREATE INNER CARD ${tempCardsArr.length}`);
+        console.log(`BUTTON PUSH CREATE INNER CARD ${tempCardsArr.length}`, tempCardsArr);
         setIsCreatingInnerCard(true);
     }
 
@@ -1413,6 +1413,7 @@ export default function Page({ params }: { params: { id: string } }) {
         event.target.reset();
         setEditorText("");
         setTempCard(tCard);
+        setIsCreatingInnerCard(false);
         editorRef.current?.setMarkdown("");
     }
 
@@ -1434,7 +1435,6 @@ export default function Page({ params }: { params: { id: string } }) {
         event.target.reset();
         setEditorText(ntCard.description);
         setTempCard(ntCard);
-        setIsCreatingInnerCard(false);
         editorRef.current?.setMarkdown(ntCard.description);
     }
 

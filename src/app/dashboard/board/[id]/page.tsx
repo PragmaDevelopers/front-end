@@ -404,11 +404,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const handleCreateCardForm = (event: any) => {
         if (isCreatingInnerCard) {
+            console.log(`SUBMIT CRETING INNER CARD ${tempCardsArr.length}`)
             createInnerCard(event);
         } else {
             if (tempCardsArr.length > 0) {
+                console.log(`SUBMIT ADDING INNER CARD ${tempCardsArr.length}`)
                 addInnerCard(event);
             } else {
+                console.log(`SUBMIT CRETING FINAL CARD ${tempCardsArr.length}`)
                 createCardForm(event, isEdition);
             }
         }
@@ -470,6 +473,10 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         e.target.reset();
     }
 
+    const handleCreateInnerCard = () => {
+        console.log(`BUTTON PUSH CREATE INNER CARD ${tempCardsArr.length}`);
+        setIsCreatingInnerCard(true);
+    }
 
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
@@ -609,9 +616,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
                     </button>
                     <button type="submit" className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative'
-                        onClick={() => setIsCreatingInnerCard(true)}>
+                        onClick={handleCreateInnerCard}>
                         <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
-                        <h1 className="w-fit h-fit flex justify-center items-center">Create Inner Card</h1>
+                        <h1 className="w-fit h-fit flex justify-center items-center">Add Card</h1>
                     </button>
 
 

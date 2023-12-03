@@ -57,6 +57,7 @@ export type Card = {
     dropdowns: Dropdown[],
     date: number,
     customFields: CustomFields[],
+    innerCards: Card[],
 }
 
 export type Column = {

@@ -379,6 +379,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
     const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});
     const [members, setMembers] = useState<Member[]>([]);
+    const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
     const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
         { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
         { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
@@ -401,11 +402,16 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
 
     const handleCreateCardForm = (event: any) => {
-        if (tempCardsArr.length > 0) {
-            addInnerCard(event);
+        if (isCreatingInnerCard) {
+            createInnerCard(event);
         } else {
-            createCardForm(event, isEdition);
+            if (tempCardsArr.length > 0) {
+                addInnerCard(event, setIsCreatingInnerCard);
+            } else {
+                createCardForm(event, isEdition);
+            }
         }
+
     }
 
     const handleCustomFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -602,9 +608,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
                     </button>
                     <button type="submit" className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative'
-                        onClick={createInnerCard}>
+                        onClick={() => setIsCreatingInnerCard(true)}>
                         <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
-                        <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
+                        <h1 className="w-fit h-fit flex justify-center items-center">Create Inner Card</h1>
                     </button>
 
 
@@ -1370,7 +1376,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    const createInnerCard = (event: any) => {
+    const createInnerCard = (event: any, setIsCreatingInnerCard: any) => {
         event.preventDefault();
         const cardTitle: string = event.target.title.value;
         const cardDescription: string | undefined = editorRef.current?.getMarkdown();
@@ -1397,6 +1403,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         event.target.reset();
         setEditorText("");
+        setIsCreatingInnerCard(false);
         setTempCard(tCard);
         editorRef.current?.setMarkdown("");
     }

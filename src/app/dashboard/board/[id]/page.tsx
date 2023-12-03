@@ -404,15 +404,19 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const handleCreateCardForm = (event: any) => {
         if (isCreatingInnerCard) {
-            console.log(`SUBMIT CRETING INNER CARD ${tempCardsArr.length}`, tempCardsArr)
+            console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
             createInnerCard(event);
+            console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
+
         } else {
             if (tempCardsArr.length > 0) {
-                console.log(`SUBMIT ADDING INNER CARD ${tempCardsArr.length}`, tempCardsArr)
+                console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
                 addInnerCard(event);
+                console.log(`SUBMIT ADDING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
             } else {
-                console.log(`SUBMIT CRETING FINAL CARD ${tempCardsArr.length}`, tempCardsArr)
+                console.log(`SUBMIT CRETING FINAL CARD START ${tempCardsArr.length}`, tempCardsArr)
                 createCardForm(event, isEdition);
+                console.log(`SUBMIT CRETING FINAL CARD END ${tempCardsArr.length}`, tempCardsArr)
             }
         }
 
@@ -1372,13 +1376,16 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     const _appendToTempCardsArray = (newCard: Card) => {
+        console.log("APPENDING", newCard, "TO", tempCardsArr);
         setTempCardsArr(prevArr => [...prevArr, newCard]);
+        console.log(tempCardsArr, tempCardsArr.length);
     }
 
     const _popFromTempCardsArray = (): Card => {
         if (tempCardsArr.length > 0) {
             const retVal = tempCardsArr[tempCardsArr.length - 1];
             setTempCardsArr(prevArr => prevArr.slice(0, -1));
+            console.log("POPPING", retVal, "FROM", tempCardsArr);
             return retVal;
         } else {
             return {} as Card;
@@ -1389,8 +1396,7 @@ export default function Page({ params }: { params: { id: string } }) {
         event.preventDefault();
         const cardTitle: string = event.target.title.value;
         const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-        console.log("createInnerCard", cardTitle, cardDescription);
-
+        console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
         const newCard: Card = {
             ...tempCard,
             title: cardTitle,

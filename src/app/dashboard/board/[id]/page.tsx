@@ -403,7 +403,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
 
     const handleCreateCardForm = (event: any) => {
-        if (isCreatingInnerCard) {
+        const clickedButton = event.nativeEvent.submitter;
+        if (isCreatingInnerCard || clickedButton.id === "innerCard") {
             console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
             createInnerCard(event);
             console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
@@ -620,7 +621,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
                     </button>
                     <button type="submit" className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative'
-                        onClick={handleCreateInnerCard}>
+                        onClick={handleCreateInnerCard} id='innerCard'>
                         <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Add Card</h1>
                     </button>
@@ -693,7 +694,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                 </div>
                             </Combobox>
 
-                            <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
+                            <button id="outerCard" type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
                         </form>
                     </div>
 

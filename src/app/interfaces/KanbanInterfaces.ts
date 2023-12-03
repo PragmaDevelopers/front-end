@@ -55,6 +55,9 @@ export interface CreateEditCardProps {
     editorText: any;
     setEditorText: any;
     addCustomField: any;
+    addInnerCard: any;
+    createInnerCard: any;
+    tempCardsArr: Card[];
 }
 
 export interface RichEditorProps {
@@ -74,4 +77,3 @@ export interface ConfirmDeleteProps {
     noFunction: any;
     showPrompt: boolean;
 }
-

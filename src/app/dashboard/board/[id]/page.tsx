@@ -361,6 +361,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         editorText,
         setEditorText,
         addCustomField,
+        addInnerCard,
+        createInnerCard,
+        tempCardsArr,
     } = props;
 
 
@@ -398,7 +401,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
 
     const handleCreateCardForm = (event: any) => {
-        createCardForm(event, isEdition);
+        if (tempCardsArr.length > 0) {
+            addInnerCard(event);
+        } else {
+            createCardForm(event, isEdition);
+        }
     }
 
     const handleCustomFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -490,7 +497,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
                         <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
                             {card.tags?.map((items: Tag) => (
-                                <div key={items?.id} className='flex w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
+                                <div key={items?.id} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
                                     <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
                                     <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.title}</h1>
                                 </div>
@@ -501,7 +508,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                 <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-96 h-fit my-2'>
                                     <div className='flex items-center mb-4'>
                                         <input type='text'
-                                            className='form-input border-none outline-none p-1 shrink-0 mr-2 p-0.5 bg-neutral-50 outline-none w-80'
+                                            className='form-input border-none shrink-0 mr-2 p-0.5 bg-neutral-50 outline-none w-80'
                                             placeholder='Digite um nome' onChange={(e) => updateListTitle(listIndex, e.target.value)} />
                                         <button
                                             type="button"
@@ -553,6 +560,15 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             </button>
                         </div>
                     </div>
+                    <div className='flex flex-row'>
+                        {card.innerCards.map((card: Card, idx: number) => (
+                            <div className='mx-2 bg-neutral-50 drop-shadow rounded-md relative' key={idx}>
+                                <div className='p-2 w-full h-full'>
+                                    <h1 className='font-black font-lg truncate'>{card.title}</h1>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                     <div className='w-full absolute bottom-0 flex justify-center items-center'>
                         <button type='submit' className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'>Create Card</button>
                     </div>
@@ -583,6 +599,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
                         onClick={() => setViewMoveCard(!viewMoveCard)}>
                         <ArrowUpOnSquareIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                        <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
+                    </button>
+                    <button type="submit" className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative'
+                        onClick={createInnerCard}>
+                        <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                         <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
                     </button>
 
@@ -728,6 +749,9 @@ export default function Page({ params }: { params: { id: string } }) {
     const [confirmDeleteNoText, setConfirmDeleteNoText] = useState<string>("");
     const [viewConfirmDelete, setViewConfirmDelete] = useState<boolean>(false);
     const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
+    const [tempCardsArr, setTempCardsArr] = useState<Card[]>([]);
+
+
     const editorRef = useRef<MDXEditorMethods>(null);
 
 
@@ -1076,6 +1100,7 @@ export default function Page({ params }: { params: { id: string } }) {
             dropdowns: [],
             date: 0,
             customFields: [],
+            innerCards: [],
         } as Card);
         setIsEdition(false);
         setShowCreateCardForm(true);
@@ -1156,7 +1181,7 @@ export default function Page({ params }: { params: { id: string } }) {
             dropdowns: [],
             date: 0,
             customFields: [],
-
+            innerCards: [],
         } as Card);
         setShowCreateCardForm(false);
     };
@@ -1331,6 +1356,72 @@ export default function Page({ params }: { params: { id: string } }) {
         editorRef.current?.setMarkdown(text);
     }
 
+    const _appendToTempCardsArray = (newCard: Card) => {
+        setTempCardsArr(prevArr => [...prevArr, newCard]);
+    }
+
+    const _popFromTempCardsArray = (): Card => {
+        if (tempCardsArr.length > 0) {
+            const retVal = tempCardsArr[tempCardsArr.length - 1];
+            setTempCardsArr(prevArr => prevArr.slice(0, -1));
+            return retVal;
+        } else {
+            return {} as Card;
+        }
+    }
+
+    const createInnerCard = (event: any) => {
+        event.preventDefault();
+        const cardTitle: string = event.target.title.value;
+        const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+        const newCard: Card = {
+            ...tempCard,
+            title: cardTitle,
+            description: cardDescription,
+        }
+
+        _appendToTempCardsArray(newCard);
+        const tCard: Card = {
+            id: generateRandomString(),
+            title: "",
+            columnID: tempCard.columnID,
+            description: "",
+            checklists: [],
+            tags: [],
+            members: [],
+            comments: [],
+            dropdowns: [],
+            date: 0,
+            customFields: [],
+            innerCards: [],
+        }
+        event.target.reset();
+        setEditorText("");
+        setTempCard(tCard);
+        editorRef.current?.setMarkdown("");
+    }
+
+    const addInnerCard = (event: any) => {
+        event.preventDefault();
+        const cardTitle: string = event.target.title.value;
+        const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+        const newCard: Card = {
+            ...tempCard,
+            title: cardTitle,
+            description: cardDescription,
+        }
+        const _prevCard: Card = _popFromTempCardsArray();
+        const _nInnerCardsArr: Card[] = [..._prevCard.innerCards, newCard];
+        const ntCard: Card = {
+            ..._prevCard,
+            innerCards: _nInnerCardsArr,
+        }
+        event.target.reset();
+        setEditorText(ntCard.description);
+        setTempCard(ntCard);
+        editorRef.current?.setMarkdown(ntCard.description);
+    }
+
     return (
         <main className="w-full h-full overflow-auto shrink-0">
             <ConfirmDelete
@@ -1362,6 +1453,9 @@ export default function Page({ params }: { params: { id: string } }) {
                 setEditorText={editEditorText}
                 ref={editorRef}
                 addCustomField={handleAddCustomField}
+                addInnerCard={addInnerCard}
+                createInnerCard={createInnerCard}
+                tempCardsArr={tempCardsArr}
             />
             <div className="">
                 <h1>{params.id}</h1>
@@ -1419,4 +1513,4 @@ export default function Page({ params }: { params: { id: string } }) {
             </DndContext>
         </main>
     );
-}	
+}

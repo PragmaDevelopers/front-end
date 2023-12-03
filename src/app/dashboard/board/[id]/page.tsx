@@ -561,7 +561,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         </div>
                     </div>
                     <div className='flex flex-row'>
-                        {card.innerCards.map((card: Card, idx: number) => (
+                        {card?.innerCards?.map((card: Card, idx: number) => (
                             <div className='mx-2 bg-neutral-50 drop-shadow rounded-md relative' key={idx}>
                                 <div className='p-2 w-full h-full'>
                                     <h1 className='font-black font-lg truncate'>{card.title}</h1>

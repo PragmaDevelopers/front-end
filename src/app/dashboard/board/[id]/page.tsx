@@ -1490,28 +1490,30 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    const addInnerCard = (event: any) => {
-        event.preventDefault();
-        const cardTitle: string = event.target.title.value;
-        const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-        console.log("addInnerCard", cardTitle, cardDescription);
-        const newCard: Card = {
-            ...tempCard,
-            title: cardTitle,
-            description: cardDescription,
+    const addInnerCard = (event: any, isEdittingInnerCard: boolean) => {
+        if (!isEdittingInnerCard) {
+            event.preventDefault();
+            const cardTitle: string = event.target.title.value;
+            const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+            console.log("addInnerCard", cardTitle, cardDescription);
+            const newCard: Card = {
+                ...tempCard,
+                title: cardTitle,
+                description: cardDescription,
+            }
+            const _prevCard: Card = _popFromTempCardsArray();
+            console.log("addInnerCard", "PREVIOUS CARD", _prevCard)
+            const _nInnerCardsArr: Card[] = [..._prevCard.innerCards, newCard];
+            const ntCard: Card = {
+                ..._prevCard,
+                innerCards: _nInnerCardsArr,
+            }
+            event.target.reset();
+            setEditorText(ntCard.description);
+            setTempCard(ntCard);
+            console.log("addInnerCard", "NEW TEMPCARD", ntCard);
+            editorRef.current?.setMarkdown(ntCard.description);
         }
-        const _prevCard: Card = _popFromTempCardsArray();
-        console.log("addInnerCard", "PREVIOUS CARD", _prevCard)
-        const _nInnerCardsArr: Card[] = [..._prevCard.innerCards, newCard];
-        const ntCard: Card = {
-            ..._prevCard,
-            innerCards: _nInnerCardsArr,
-        }
-        event.target.reset();
-        setEditorText(ntCard.description);
-        setTempCard(ntCard);
-        console.log("addInnerCard", "NEW TEMPCARD", ntCard);
-        editorRef.current?.setMarkdown(ntCard.description);
     }
 
     return (

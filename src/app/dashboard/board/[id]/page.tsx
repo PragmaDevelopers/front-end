@@ -1478,10 +1478,11 @@ export default function Page({ params }: { params: { id: string } }) {
             console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
             _appendToTempCardsArray(newCard);
             //const targetCard = newCard.innerCards.findIndex((card: Card) => card?.id === tempCard.id);
-            setTempCard(selectedInnerCard);
             event.target.reset();
-            setEditorText("");
-            editorRef.current?.setMarkdown("");
+            setTempCard(selectedInnerCard);
+            event.target.title.value = selectedInnerCard.title;
+            setEditorText(selectedInnerCard.description);
+            editorRef.current?.setMarkdown(selectedInnerCard.description);
             setIsCreatingInnerCard(false);
             setIsEdittingInnerCard(false);
         }

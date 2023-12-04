@@ -60,7 +60,10 @@ export interface CreateEditCardProps {
     tempCardsArr: Card[];
     isCreatingInnerCard: boolean;
     setIsCreatingInnerCard: any;
-
+    isEdittingInnerCard: boolean;
+    setIsEdittingInnerCard: any;
+    _appendToTempCardsArray: any;
+    _popFromTempCardsArray: any;
 }
 
 export interface RichEditorProps {
@@ -79,4 +82,17 @@ export interface ConfirmDeleteProps {
     yesFunction: any;
     noFunction: any;
     showPrompt: boolean;
+}
+
+export interface InnerCardElementProps {
+    card: Card;
+    addInnerCard: any;
+    createInnerCard: any;
+    tempCardsArr: Card[];
+    isCreatingInnerCard: boolean;
+    setIsCreatingInnerCard: any;
+    isEdittingInnerCard: boolean;
+    setIsEdittingInnerCard: any;
+    _appendToTempCardsArray: any;
+    _popFromTempCardsArray: any;
 }

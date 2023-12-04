@@ -42,6 +42,7 @@ import {
     ColumnContainerProps,
     ConfirmDeleteProps,
     CreateEditCardProps,
+    InnerCardElementProps,
     RichEditorProps
 } from '@/app/interfaces/KanbanInterfaces';
 import {
@@ -132,6 +133,34 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
     );
 });
 RichEditor.displayName = "RichEditor";
+
+function InnerCardElemnt(props: InnerCardElementProps) {
+    const {
+        card,
+        addInnerCard,
+        createInnerCard,
+        tempCardsArr,
+        isCreatingInnerCard,
+        setIsCreatingInnerCard,
+        setIsEdittingInnerCard,
+        isEdittingInnerCard,
+        _appendToTempCardsArray,
+        _popFromTempCardsArray,
+    } = props;
+
+    const handleEditCard = () => {
+        _appendToTempCardsArray(card);
+    }
+
+    return (
+        <div className='mx-2 bg-neutral-50 drop-shadow rounded-md relative'>
+            <div className='p-2 w-full h-full' onClick={handleEditCard}>
+                <h1 className='font-black font-lg truncate'>{card.title}</h1>
+            </div>
+        </div>
+    );
+
+}
 
 function CardElement(props: CardElementProps) {
     const {
@@ -365,7 +394,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         createInnerCard,
         tempCardsArr,
         isCreatingInnerCard,
-        setIsCreatingInnerCard
+        setIsCreatingInnerCard,
+        setIsEdittingInnerCard,
+        isEdittingInnerCard,
+        _appendToTempCardsArray,
+        _popFromTempCardsArray,
     } = props;
 
 
@@ -406,7 +439,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         const clickedButton = event.nativeEvent.submitter;
         if (isCreatingInnerCard || clickedButton.id === "innerCard") {
             console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
-            createInnerCard(event);
+            createInnerCard(event, isEdittingInnerCard);
             console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
 
         } else {
@@ -582,11 +615,20 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         </div>
                         <div className='flex flex-row'>
                             {card?.innerCards?.map((card: Card, idx: number) => (
-                                <div className='mx-2 bg-neutral-50 drop-shadow rounded-md relative' key={idx}>
-                                    <div className='p-2 w-full h-full'>
-                                        <h1 className='font-black font-lg truncate'>{card.title}</h1>
-                                    </div>
-                                </div>
+                                <InnerCardElemnt
+                                    key={idx}
+                                    card={card}
+                                    tempCardsArr={tempCardsArr}
+                                    _appendToTempCardsArray={_appendToTempCardsArray}
+                                    _popFromTempCardsArray={_popFromTempCardsArray}
+                                    addInnerCard={addInnerCard}
+                                    createInnerCard={createInnerCard}
+                                    isCreatingInnerCard={isCreatingInnerCard}
+                                    setIsCreatingInnerCard={setIsCreatingInnerCard}
+                                    setIsEdittingInnerCard={setIsEdittingInnerCard}
+                                    isEdittingInnerCard={isEdittingInnerCard}
+
+                                />
                             ))}
                         </div>
                         <div className='w-full absolute bottom-0 flex justify-center items-center'>
@@ -771,6 +813,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
     const [tempCardsArr, setTempCardsArr] = useState<Card[]>([]);
     const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
+    const [isEdittingInnerCard, setIsEdittingInnerCard] = useState<boolean>(false);
 
 
     const editorRef = useRef<MDXEditorMethods>(null);
@@ -1394,37 +1437,59 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    const createInnerCard = (event: any) => {
-        event.preventDefault();
-        const cardTitle: string = event.target.title.value;
-        const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-        console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
-        const newCard: Card = {
-            ...tempCard,
-            title: cardTitle,
-            description: cardDescription,
+    const createInnerCard = (event: any, isEdittingInnerCard: boolean) => {
+        if (!isEdittingInnerCard) {
+            event.preventDefault();
+            const cardTitle: string = event.target.title.value;
+            const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+            console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
+            const newCard: Card = {
+                ...tempCard,
+                title: cardTitle,
+                description: cardDescription,
+            }
+            console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
+            _appendToTempCardsArray(newCard);
+            const tCard: Card = {
+                id: generateRandomString(),
+                title: "",
+                columnID: tempCard.columnID,
+                description: "",
+                checklists: [],
+                tags: [],
+                members: [],
+                comments: [],
+                dropdowns: [],
+                date: 0,
+                customFields: [],
+                innerCards: [],
+            }
+            event.target.reset();
+            setEditorText("");
+            setTempCard(tCard);
+            setIsCreatingInnerCard(false);
+            editorRef.current?.setMarkdown("");
+        } else {
+            const selectedInnerCard: Card = _popFromTempCardsArray();
+            event.preventDefault();
+            const cardTitle: string = event.target.title.value;
+            const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+            console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
+            const newCard: Card = {
+                ...tempCard,
+                title: cardTitle,
+                description: cardDescription,
+            }
+            console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
+            _appendToTempCardsArray(newCard);
+            //const targetCard = newCard.innerCards.findIndex((card: Card) => card?.id === tempCard.id);
+            setTempCard(selectedInnerCard);
+            event.target.reset();
+            setEditorText("");
+            editorRef.current?.setMarkdown("");
+            setIsCreatingInnerCard(false);
+            setIsEdittingInnerCard(false);
         }
-        console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
-        _appendToTempCardsArray(newCard);
-        const tCard: Card = {
-            id: generateRandomString(),
-            title: "",
-            columnID: tempCard.columnID,
-            description: "",
-            checklists: [],
-            tags: [],
-            members: [],
-            comments: [],
-            dropdowns: [],
-            date: 0,
-            customFields: [],
-            innerCards: [],
-        }
-        event.target.reset();
-        setEditorText("");
-        setTempCard(tCard);
-        setIsCreatingInnerCard(false);
-        editorRef.current?.setMarkdown("");
     }
 
     const addInnerCard = (event: any) => {
@@ -1487,6 +1552,10 @@ export default function Page({ params }: { params: { id: string } }) {
                 tempCardsArr={tempCardsArr}
                 isCreatingInnerCard={isCreatingInnerCard}
                 setIsCreatingInnerCard={setIsCreatingInnerCard}
+                isEdittingInnerCard={isEdittingInnerCard}
+                setIsEdittingInnerCard={setIsEdittingInnerCard}
+                _appendToTempCardsArray={_appendToTempCardsArray}
+                _popFromTempCardsArray={_popFromTempCardsArray}
             />
             <div className="">
                 <h1>{params.id}</h1>

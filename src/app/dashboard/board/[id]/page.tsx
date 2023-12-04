@@ -520,7 +520,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
             <div className='relative w-[80%] h-[80%] bg-neutral-50 rounded-lg flex justify-center items-start px-8 drop-shadow-lg'>
                 <h1 className='absolute top-2 w-full text-center'>Card Creation</h1>
-                <form onSubmit={handleCreateCardForm} className='flex justify-center items-center mt-8'>
+                <form onSubmit={handleCreateCardForm} className='w-full h-full flex justify-center items-center mt-8 relative'>
                     <div className='w-[80%] h-[85%] relative'>
                         <div className='w-full h-[85%] overflow-y-auto pb-4'>
                             <div className='flex my-2'>
@@ -631,9 +631,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                 />
                             ))}
                         </div>
-                        <div className='w-full absolute bottom-0 flex justify-center items-center'>
-                            <button id="outerCard" type='submit' className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'>Create Card</button>
-                        </div>
                     </div>
                     <div className='w-56 ml-4 flex flex-col items-center justify-start h-[75%] relative'>
                         <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
@@ -668,6 +665,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                             <h1 className="w-fit h-fit flex justify-center items-center">Add Card</h1>
                         </button>
+                    </div>
+                    <div className='w-full absolute bottom-0 flex justify-center items-center'>
+                        <button id="outerCard" type='submit' className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'>Create Card</button>
                     </div>
                 </form>
                 <div className='ml-4 flex flex-col items-center justify-start h-[75%] relative'>

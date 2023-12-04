@@ -1,5 +1,12 @@
 "use client";
 
+/* ==========================================================================================
+
+BUG:
+    The outer card is being assigned as a inner card of the inner card, breaking the system.
+
+============================================================================================= */
+
 import {
     DndContext,
     DragEndEvent,

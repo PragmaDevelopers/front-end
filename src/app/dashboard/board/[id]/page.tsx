@@ -1438,6 +1438,7 @@ export default function Page({ params }: { params: { id: string } }) {
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();
             console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
+            console.log(tempCard);
             const newCard: Card = {
                 ...tempCard,
                 title: cardTitle,
@@ -1470,6 +1471,7 @@ export default function Page({ params }: { params: { id: string } }) {
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();
             console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
+            console.log(tempCard, selectedInnerCard);
             const newCard: Card = {
                 ...tempCard,
                 title: cardTitle,

@@ -155,11 +155,11 @@ function InnerCardElemnt(props: InnerCardElementProps) {
     }
 
     return (
-        <div className='mx-2 bg-neutral-50 drop-shadow rounded-md relative'>
-            <div className='p-2 w-full h-full' onClick={handleEditCard}>
+        <button type='submit' className='mx-2 bg-neutral-50 drop-shadow rounded-md relative' onClick={handleEditCard}>
+            <div className='p-2 w-full h-full'>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
-        </div>
+        </button>
     );
 
 }
@@ -1479,10 +1479,10 @@ export default function Page({ params }: { params: { id: string } }) {
             _appendToTempCardsArray(newCard);
             //const targetCard = newCard.innerCards.findIndex((card: Card) => card?.id === tempCard.id);
             event.target.reset();
-            setTempCard(selectedInnerCard);
             event.target.title.value = selectedInnerCard.title;
             setEditorText(selectedInnerCard.description);
             editorRef.current?.setMarkdown(selectedInnerCard.description);
+            setTempCard(selectedInnerCard);
             setIsCreatingInnerCard(false);
             setIsEdittingInnerCard(false);
         }

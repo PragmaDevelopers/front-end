@@ -149,6 +149,8 @@ function InnerCardElemnt(props: InnerCardElementProps) {
     } = props;
 
     const handleEditCard = () => {
+        console.log("editing inner card", card);
+        setIsEdittingInnerCard(true);
         _appendToTempCardsArray(card);
     }
 
@@ -1274,13 +1276,6 @@ export default function Page({ params }: { params: { id: string } }) {
             };
         });
     };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    //                                                                       //
-    //                          CHECKLISTS LOGIC                             //
-    //                                                                       //
-    ///////////////////////////////////////////////////////////////////////////
 
     const handleInputChange = (listIndex: any, inputIndex: any, value: any) => {
         setTempCard((prevCard: Card) => {

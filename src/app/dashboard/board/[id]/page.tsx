@@ -450,7 +450,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
             console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
             createInnerCard(event, isEdittingInnerCard);
             console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
-
         } else {
             if (tempCardsArr.length > 0) {
                 console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
@@ -1501,6 +1500,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const addInnerCard = (event: any, _isEdittingInnerCard: boolean) => {
         if (!_isEdittingInnerCard) {
             event.preventDefault();
+            console.log("_isEdittingInnerCard: FALSE", _isEdittingInnerCard);
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();
             console.log("addInnerCard", cardTitle, cardDescription);
@@ -1523,6 +1523,7 @@ export default function Page({ params }: { params: { id: string } }) {
             editorRef.current?.setMarkdown(ntCard.description);
         } else {
             event.preventDefault();
+            console.log("_isEdittingInnerCard: TRUE", _isEdittingInnerCard);
             // Inner Card
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();

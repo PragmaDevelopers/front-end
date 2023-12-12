@@ -1,18 +1,27 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import { CalendarIcon, ChartPieIcon, CogIcon, ServerStackIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import { CalendarIcon, ChartPieIcon, ServerStackIcon, UserGroupIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BuildingOffice2Icon } from "@heroicons/react/24/solid";
 import { generateRandomString } from "../utils/generators";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { Cog6ToothIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { useUserContext } from "../contexts/userContext";
 import { API_BASE_URL } from "../utils/variables";
+import ConfirmDelete from "../components/ui/ConfirmDelete";
 
 interface BoardMenuEntryProps {
     href: string;
     name: string;
+    deleteKanban: any;
+    kanbanID: string;
+    setConfirmDeleteMessage: any;
+    setConfirmDeleteYesText: any;
+    setConfirmDeleteNoText: any;
+    setConfirmDeleteYesFunction: any;
+    setConfirmDeleteNoFunction: any;
+    setViewConfirmDelete: any;
     //picture: string;
 }
 
@@ -26,16 +35,52 @@ interface BoardMenuEntryProps {
 //}
 
 function BoardMenuEntry(props: BoardMenuEntryProps) {
+    const deleteCurrEntry = () => {
+        props.deleteKanban(props.kanbanID);
+        props.setViewConfirmDelete(false);
+    }
+
+    const hideConfirmDelete = () => {
+        console.log("HIDE CONFIRM DELETE");
+        props.setViewConfirmDelete(false);
+    }
+
+    const showConfirmDelete = () => {
+        console.log("SHOW CONFIRM DELETE");
+        props.setViewConfirmDelete(true);
+    }
+
+    const handleDeleteEntry = () => {
+        props.setConfirmDeleteNoFunction(() => { return hideConfirmDelete });
+        props.setConfirmDeleteYesFunction(() => { return deleteCurrEntry });
+        props.setConfirmDeleteMessage("Deseja remover a dashboard?");
+        props.setConfirmDeleteYesText("Sim");
+        props.setConfirmDeleteNoText("Não");
+        showConfirmDelete();
+    };
+
     return (
-        <Link href={props.href} className="my-2 flex flex-row items-center">
-            <BuildingOffice2Icon className="w-6 aspect-square mr-2" />
-            <h1>{props.name}</h1>
-        </Link>
+        <div className="flex flex-row items-center relative">
+            <Link href={props.href} className="my-2 flex flex-row items-center">
+                <BuildingOffice2Icon className="w-6 aspect-square mr-2" />
+                <h1>{props.name}</h1>
+            </Link>
+            <button className="absolute right-0" type="button"><XCircleIcon className="aspect-square w-6" onClick={handleDeleteEntry} /></button>
+        </div>
     );
 }
 
 export default function Layout({ children }: any) {
     const { userValue, updateUserValue } = useUserContext();
+
+
+    const [confirmDeleteYesFunc, setConfirmDeleteYesFunc] = useState<any>(null);
+    const [confirmDeleteNoFunc, setConfirmDeleteNoFunc] = useState<any>(null);
+    const [confirmDeleteYesText, setConfirmDeleteYesText] = useState<string>("");
+    const [confirmDeleteNoText, setConfirmDeleteNoText] = useState<string>("");
+    const [viewConfirmDelete, setViewConfirmDelete] = useState<boolean>(false);
+    const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
+
     const router = useRouter();
 
     const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([]);
@@ -87,8 +132,23 @@ export default function Layout({ children }: any) {
         }
     }
 
+    const deleteKanban = (kanbanID: string) => {
+        setDashboards((dash: { kanbanId: string, name: string }[]) => {
+            const newDashboardList: { kanbanId: string, name: string }[] = dash.filter((ds: { kanbanId: string, name: string }) => ds.kanbanId != kanbanID);
+            return newDashboardList as { kanbanId: string, name: string }[];
+        });
+    }
+
     return (
         <main className="w-full h-full flex flex-row items-start justify-between overflow-hidden">
+            <ConfirmDelete
+                message={confirmDeleteText}
+                yesText={confirmDeleteYesText}
+                noText={confirmDeleteNoText}
+                yesFunction={confirmDeleteYesFunc}
+                noFunction={confirmDeleteNoFunc}
+                showPrompt={viewConfirmDelete}
+            />
             <div className="grow relative w-56 h-full flex flex-col justify-start items-start shrink-0">
                 <details className="p-2 hidden">
                     <summary>Seções</summary>
@@ -115,7 +175,18 @@ export default function Layout({ children }: any) {
                     <details className="p-2 overflow-x-hidden overflow-y-auto">
                         <summary>Areas de Trabalho</summary>
                         <div className="">
-                            {dashboards?.map((element, index) => <BoardMenuEntry key={index} href={`/dashboard/board/${element.kanbanId}`} name={element.name} />)}
+                            {dashboards?.map((element, index) => <BoardMenuEntry
+                                setConfirmDeleteMessage={setConfirmDeleteText}
+                                setConfirmDeleteYesText={setConfirmDeleteYesText}
+                                setConfirmDeleteNoText={setConfirmDeleteNoText}
+                                setConfirmDeleteYesFunction={setConfirmDeleteYesFunc}
+                                setConfirmDeleteNoFunction={setConfirmDeleteNoFunc}
+                                setViewConfirmDelete={setViewConfirmDelete}
+                                kanbanID={element.kanbanId}
+                                key={index}
+                                href={`/dashboard/board/${element.kanbanId}`}
+                                name={element.name}
+                                deleteKanban={deleteKanban} />)}
                         </div>
                         <div>
 
@@ -126,7 +197,7 @@ export default function Layout({ children }: any) {
                         </div>
                     </details>
                     <Link href="/dashboard/config" className="bg-neutral-50 p-2 flex flex-row items-center">
-                        <CogIcon className={IconStyles} />
+                        <Cog6ToothIcon className={`${IconStyles} hover:rotate-180 transition-all rotate-0`} />
                         <h1>Configurações</h1>
                     </Link>
                 </div>

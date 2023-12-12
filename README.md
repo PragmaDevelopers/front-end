@@ -1,3 +1,16 @@
+# To Do
+
+1. combinar a checagem de permissoes do usuario \
+    apos a checagem de cada permissao implementar o fetch pra rota necessaria \
+    e criar o UI do modal de alertas.
+2. adicionar o ComboBox Select na tela de permissoes.
+3. combinar o UI de comentarios no card.
+4. Tela de configurações do kanban. \
+    adicionar usuarios ao kanban.
+5. tela de exclusao kanban.
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

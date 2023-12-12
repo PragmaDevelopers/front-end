@@ -38,6 +38,7 @@ import {
 import { createPortal } from 'react-dom';
 import {
     ArrowUpOnSquareIcon,
+    Cog6ToothIcon,
     MinusCircleIcon,
     PlusCircleIcon,
     XCircleIcon
@@ -47,7 +48,6 @@ import { HexColorPicker } from "react-colorful";
 import {
     CardElementProps,
     ColumnContainerProps,
-    ConfirmDeleteProps,
     CreateEditCardProps,
     InnerCardElementProps,
     RichEditorProps
@@ -91,20 +91,10 @@ import {
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Combobox, Transition } from '@headlessui/react';
+import ConfirmDelete from '@/app/components/ui/ConfirmDelete';
+import Link from 'next/link';
 
-function ConfirmDelete(props: ConfirmDeleteProps) {
-    return (
-        <div className={(props.showPrompt ? 'block' : 'hidden') + ' absolute z-50 top-0 left-0 w-screen h-screen flex justify-center items-center'}>
-            <div className='bg-neutral-50 drop-shadow-lg rounded-md p-4 flex justify-center items-center flex-col'>
-                <h1 className='mb-4'>{props.message}</h1>
-                <div className='m-2'>
-                    <button type="button" onClick={props.yesFunction} className='mx-2 p-2 rounded-md border-neutral-950 border-2 bg-neutral-50 text-neutral-950 hover:bg-neutral-950 hover:text-neutral-50 transition-all'>{props.yesText}</button>
-                    <button type="button" onClick={props.noFunction} className='mx-2 p-2 rounded-md border-red-600 border-2 bg-neutral-50 text-red-600 hover:bg-red-600 hover:text-neutral-950 transition-all'>{props.noText}</button>
-                </div>
-            </div>
-        </div>
-    );
-}
+
 
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
     return (
@@ -455,6 +445,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         } else {
             if (tempCardsArr.length > 0 || isEdittingInnerCard) {
                 console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
+                createInnerCard(event, isEdittingInnerCard);
                 addInnerCard(event, isEdittingInnerCard);
                 console.log(`SUBMIT ADDING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
             } else {
@@ -1144,8 +1135,6 @@ export default function Page({ params }: { params: { id: string } }) {
 
     }
 
-
-
     const updateColumnTitle = (columnID: string, title: string) => {
         setKanbanData((prevKanbanData: KanbanData) => {
             const newColumns: Column[] = prevKanbanData.columns.map((col: Column) => {
@@ -1509,8 +1498,8 @@ export default function Page({ params }: { params: { id: string } }) {
             editorRef.current?.setMarkdown(selectedInnerCard.description);
             setTempCard(selectedInnerCard);
             setTempCardsArr(localTempCardsArray)
-            setIsCreatingInnerCard(false);
-            setIsEdittingInnerCard(false);
+            //setIsCreatingInnerCard(false);
+            //setIsEdittingInnerCard(false);
         }
     }
 
@@ -1548,6 +1537,7 @@ export default function Page({ params }: { params: { id: string } }) {
             event.preventDefault();
             let localTempCard: Card = tempCard;
             let localTempCardsArray: Card[] = tempCardsArr;
+            console.log("====================================", localTempCardsArray);
             // console.log("_isEdittingInnerCard: TRUE", _isEdittingInnerCard);
             // Inner Card
             console.log("addInnerCard INNER_tempCard", localTempCard);
@@ -1576,7 +1566,6 @@ export default function Page({ params }: { params: { id: string } }) {
             setTempCardsArr(localTempCardsArray);
             console.log("addInnerCard", "NEW TEMPCARD", ntCard);
             event.target.reset();
-
         }
     }
 
@@ -1621,8 +1610,9 @@ export default function Page({ params }: { params: { id: string } }) {
                 _appendToTempCardsArray={_appendToTempCardsArray}
                 _popFromTempCardsArray={_popFromTempCardsArray}
             />
-            <div className="">
+            <div className="flex justify-between items-center w-full px-2">
                 <h1>{params.id}</h1>
+                <Link href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
             <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-[95%] overflow-auto shrink-0">

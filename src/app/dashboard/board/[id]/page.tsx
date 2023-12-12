@@ -3,7 +3,7 @@
 /* ==========================================================================================
 
 BUG:
-    Go to Line 1565;
+    Go to Line 1540;
 
 ============================================================================================= */
 
@@ -144,17 +144,23 @@ RichEditor.displayName = "RichEditor";
 function InnerCardElemnt(props: InnerCardElementProps) {
     const {
         card,
+        addInnerCard,
+        createInnerCard,
         tempCardsArr,
+        isCreatingInnerCard,
+        setIsCreatingInnerCard,
         setIsEdittingInnerCard,
+        isEdittingInnerCard,
         _appendToTempCardsArray,
+        _popFromTempCardsArray,
     } = props;
 
     const handleEditCard = () => {
-        console.log("line: 159; Editing Inner Card: ", card);
-        console.log("line: 160; Checking Array State: ", tempCardsArr);
+        console.log("editing inner card", card);
+        console.log(`BEFORE appending`, card, "to", tempCardsArr);
         setIsEdittingInnerCard(true);
         _appendToTempCardsArray(card);
-        console.log("line: 163; Checking Array State: ", tempCardsArr);
+        console.log(`AFTER appending to`, tempCardsArr);
     }
 
     return (
@@ -1417,64 +1423,42 @@ export default function Page({ params }: { params: { id: string } }) {
         editorRef.current?.setMarkdown(text);
     }
 
-    const __appendCard = (cards: Card[], newCard: Card): { success: boolean; updatedCards: Card[] } => {
-        const updatedCards = [...cards, newCard];
-        return { success: true, updatedCards };
-    };
-
-
-    const __popLastCard = (cards: Card[]): { success: boolean; poppedCard?: Card; updatedCards: Card[] } => {
-        if (cards.length === 0) {
-            return { success: false, updatedCards: cards };
-        }
-
-        const poppedCard = cards[cards.length - 1];
-        const updatedCards = cards.slice(0, -1);
-
-        return { success: true, poppedCard, updatedCards };
-    };
-
-
     const _appendToTempCardsArray = (newCard: Card) => {
-        const result = __appendCard(tempCardsArr, newCard);
-
-        if (result.success) {
-            setTempCardsArr(result.updatedCards);
-            console.log('Card appended successfully!', newCard, tempCardsArr, result.updatedCards);
-        } else {
-            console.error('Failed to append card.', newCard, tempCardsArr);
-        }
+        console.log("APPENDING", newCard, "TO", tempCardsArr);
+        setTempCardsArr((prevArr: Card[]) => {
+            console.log(prevArr);
+            console.log(tempCardsArr);
+            return [...prevArr, newCard] as Card[];
+        });
+        console.log(tempCardsArr);
     }
 
-    const _popFromTempCardsArray = (linenumber: number): Card | undefined => {
-        const result = __popLastCard(tempCardsArr);
-
-        if (result.success) {
-            setTempCardsArr(result.updatedCards);
-            console.log('Last card popped successfully:', result.poppedCard, result.updatedCards);
-            return result?.poppedCard;
-        } else {
-            console.error(`Failed to pop last card. Array is empty. On line: ${linenumber}`);
-        }
+    const _popFromTempCardsArray = (): Card => {
+        const retVal = tempCardsArr[tempCardsArr.length - 1];
+        setTempCardsArr((prevArr: Card[]) => {
+            console.log(prevArr);
+            console.log(tempCardsArr);
+            const tPrevArr: Card[] = prevArr.slice(0, -1);
+            return tPrevArr;
+        });
+        console.log("POPPING", retVal, "FROM", tempCardsArr);
+        return retVal;
     }
 
     const createInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        let localArray: Card[] = tempCardsArr;
-        let localTempCard: Card = tempCard;
         if (!isEdittingInnerCard) {
             event.preventDefault();
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-
-            console.log("line: 1473; Checking Temp Card Value:", localTempCard);
+            // console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
+            console.log(tempCard);
             const newCard: Card = {
-                ...localTempCard,
+                ...tempCard,
                 title: cardTitle,
-                description: cardDescription as unknown as string,
+                description: cardDescription,
             }
-
-            //_appendToTempCardsArray(newCard);
-            localArray.push(newCard);
+            // console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
+            _appendToTempCardsArray(newCard);
             const tCard: Card = {
                 id: generateRandomString(),
                 title: "",
@@ -1491,38 +1475,32 @@ export default function Page({ params }: { params: { id: string } }) {
             }
             event.target.reset();
             setEditorText("");
-            setTempCardsArr(localArray);
             setTempCard(tCard);
             setIsCreatingInnerCard(false);
             editorRef.current?.setMarkdown("");
         } else {
-            let localArray: Card[] = tempCardsArr;
-            let localTempCard: Card = tempCard;
-            console.log("line: 1501; Checking Temp Card Value:", tempCard);
-            let selectedInnerCard = localArray.pop() as unknown as Card;
-            //const selectedInnerCard: Card = _popFromTempCardsArray(1501) as Card;
+            const selectedInnerCard: Card = _popFromTempCardsArray();
             event.preventDefault();
             //Outer Card
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-
-            const newCard: Card = {
-                ...localTempCard,
+            // console.log("createInnerCard tempCard", tempCard);
+            // console.log("createInnerCard", "OLD OUTER CARD", cardTitle, cardDescription);
+            // console.log(tempCard, selectedInnerCard);
+            const newCard: Card = { // OUTER CARD
+                ...tempCard,
                 title: cardTitle,
-                description: cardDescription as unknown as string,
+                description: cardDescription,
             }
-            console.log("line: 1515; Checking newCard Value and Array State:", newCard, localArray);
-            localArray.push(newCard);
-            console.log("line: 1517; Checking Array State:", localArray);
-
+            console.log("createInnerCard", `APPENDING OUTER CARD TO THE TEMPS CARD ARRAY`, tempCardsArr, newCard);
+            _appendToTempCardsArray(newCard);
+            console.log("createInnerCard", `APPENDED OUTER CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
+            //const targetCard = newCard.innerCards.findIndex((card: Card) => card?.id === tempCard.id);
             event.target.reset();
             event.target.title.value = selectedInnerCard.title;
             setEditorText(selectedInnerCard.description);
             editorRef.current?.setMarkdown(selectedInnerCard.description);
-            setTempCardsArr(localArray);
             setTempCard(selectedInnerCard);
-            console.log("line: 1524; Checking Temp Card Value:", tempCard);
-            console.log("line: 1525; Temp Card Value MUST BE:", selectedInnerCard);
             setIsCreatingInnerCard(false);
             setIsEdittingInnerCard(false);
         }
@@ -1530,77 +1508,57 @@ export default function Page({ params }: { params: { id: string } }) {
 
     const addInnerCard = (event: any, _isEdittingInnerCard: boolean) => {
         if (!_isEdittingInnerCard) {
-
-            let localArray: Card[] = tempCardsArr;
-            let localTempCard: Card = tempCard;
             event.preventDefault();
-            console.log("line: 1534; Checking Temp Card Value:", localTempCard);
-
+            // console.log("_isEdittingInnerCard: FALSE", _isEdittingInnerCard);
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-
+            // console.log("addInnerCard", cardTitle, cardDescription);
             const newCard: Card = {
-                ...localTempCard,
+                ...tempCard,
                 title: cardTitle,
-                description: cardDescription as unknown as string,
+                description: cardDescription,
             }
-
-            const _prevCard: Card = localArray.pop() as unknown as Card;
-            console.log("line: 1546; Checking Previous Card in Array Value:", _prevCard);
-
-
+            // console.log("addInnerCard tempCardsArr", tempCardsArr)
+            const _prevCard: Card = _popFromTempCardsArray();
+            // console.log("addInnerCard _prevCard", _prevCard)
+            // console.log("addInnerCard", "PREVIOUS CARD", _prevCard)
             const _nInnerCardsArr: Card[] = [..._prevCard.innerCards, newCard];
             const ntCard: Card = {
                 ..._prevCard,
                 innerCards: _nInnerCardsArr,
             }
-            console.log("line: 1554; Checking Value of New Temp Card:", ntCard);
             event.target.reset();
             setEditorText(ntCard.description);
-            setTempCardsArr(localArray);
             setTempCard(ntCard);
-
+            // console.log("addInnerCard", "NEW TEMPCARD", ntCard);
             editorRef.current?.setMarkdown(ntCard.description);
         } else {
             event.preventDefault();
-            let localArray: Card[] = tempCardsArr;
-            let localTempCard: Card = tempCard;
-            const _prevInnerCard: Card = localArray.pop() as unknown as Card;
-
-            setTempCard(_prevInnerCard);
-            console.log("line: 1564; Checking Previous Card in Array (INNER CARD):", _prevInnerCard);
-            console.log("line: 1565; Checking Temp Card Value:", localTempCard);
-            console.log("line: 1566; Checking Array State:", localArray);
-
-            console.log("line: 1568; Checking Temp Card Value:", localArray);
-            console.log("line: 1569; Temp Card Value Must Be:", localArray);
+            // console.log("_isEdittingInnerCard: TRUE", _isEdittingInnerCard);
             // Inner Card
-
-            console.log("line: 1572; Checking Temp Card Value:", localTempCard);
-            console.log("line: 1573; Checking Array State:", localArray);
+            console.log("addInnerCard INNER_tempCard", tempCard);
+            console.log("AAAAAAAAAAAAAAAAA", tempCardsArr); // tempCardsArr is empty for some reason.
             const cardTitle: string = event.target.title.value;
             const cardDescription: string | undefined = editorRef.current?.getMarkdown();
             const newCard: Card = { // EDITED INNER CARD
-                ..._prevInnerCard,
+                ...tempCard,
                 title: cardTitle,
-                description: cardDescription as unknown as string,
+                description: cardDescription,
             }
-            const _prevOuterCard: Card = tempCard;
-
-            console.log("line: 1581; Checking Previous Card in Array (OUTER CARD):", _prevOuterCard);
+            const _prevOuterCard: Card = _popFromTempCardsArray();
+            console.log("addInnerCard _prevOuterCard", _prevOuterCard)
             const updatedInnerCardsList = _prevOuterCard?.innerCards?.map((card: Card) => card?.id === newCard?.id ? newCard : card)
+            console.log("updatedInnerCardsList", updatedInnerCardsList)
             const ntCard: Card = { // Previous Outer Card
                 ..._prevOuterCard,
                 innerCards: updatedInnerCardsList,
             }
-            console.log("line: 1587; Checking Value of New Temp Card:", ntCard);
+            console.log("ntCard", ntCard);
             setEditorText(ntCard.description);
             event.target.title.value = ntCard.title;
             editorRef.current?.setMarkdown(ntCard.description);
             setTempCard(ntCard);
-            setTempCardsArr(localArray);
-            console.log("line: 1592; Checking Temp Card Value:", tempCard);
-            console.log("line: 1593; Temp Card Value Must Be:", ntCard);
+            console.log("addInnerCard", "NEW TEMPCARD", ntCard);
             event.target.reset();
 
         }

@@ -946,7 +946,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
     const createNewColumn = () => {
-        if (!isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
+        if (isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
                     text: "Entendido.",
@@ -1036,7 +1036,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const noButtonRef = useRef<any>(null);
     const onDragStart = (event: DragStartEvent) => {
         //console.log("DRAG START", event);
-        if (!isFlagSet(userValue.userData, "MOVER_COLUNAS") && !isFlagSet(userValue.userData, "MOVER_CARDS")) {
+        if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
                     text: "Entendido.",
@@ -1058,7 +1058,7 @@ export default function Page({ params }: { params: { id: string } }) {
             setModalOptions(modalOpt);
             setModalOpen(true);
             return;
-        }
+        } else {
 
         setTempDragState(event);
 
@@ -1139,10 +1139,35 @@ export default function Page({ params }: { params: { id: string } }) {
         //         return;
         //     }
         // }
+	}
     }
 
     const onDragEnd = (event: DragEndEvent) => {
-        setActiveColumn(null);
+        if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        } else {
+
+	setActiveColumn(null);
         setActiveCard(null);
 
         const { active, over } = event;
@@ -1154,6 +1179,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
         //console.log("ON DRAG END EVENT", event);
         if (active.data.current?.type === "COLUMN") {
+	if (isFlagSet(userValue.userData, "MOVER_COLUNAS")) { 
             //console.log("ACTIVE COLUMN");
             setKanbanData((prevKanbanData: KanbanData) => {
                 const activeColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col?.id === activeColumnID);
@@ -1165,8 +1191,34 @@ export default function Page({ params }: { params: { id: string } }) {
                     columns: newColumnsArray,
                 };
             });
+	    } else {
+const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+
+	    }
         } else {
             //console.log("ACTIVE CARD", active.data.current?.type);
+	    
+	if (isFlagSet(userValue.userData, "MOVER_COLUNAS")) { 
             if (over.data.current?.type === "COLUMN") {
                 //console.log("OVER COLUMN");
                 setKanbanData((prevKanbanData: KanbanData) => {
@@ -1207,8 +1259,35 @@ export default function Page({ params }: { params: { id: string } }) {
                     // drop on card in other column
 
                 })
+} else {
+const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+
+	    }
+
             } else if (over.data.current?.type === "CARD") {
                 //console.log("OVER CARD");
+	if (isFlagSet(userValue.userData, "MOVER_CARDS")) { 
+
                 if (Object.keys(active.data.current as any).length !== 0) {
                     //console.log("CURRENT NOT EMPTY", event);
                     setKanbanData((prevKanbanData: KanbanData) => {
@@ -1247,8 +1326,36 @@ export default function Page({ params }: { params: { id: string } }) {
                         };
 
                     });
+		
+} else {
+const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+
+	    }
+
                 } else {
                     //console.log("CURRENT EMPTY");
+		    
+	if (isFlagSet(userValue.userData, "MOVER_CARDS")) { 
                     setKanbanData((prevKanbanData: KanbanData) => {
                         const tempEndDragState: DragEndEvent = tempDragState as DragEndEvent;
                         const cardEl: Card = tempEndDragState.active.data.current?.card;
@@ -1285,11 +1392,36 @@ export default function Page({ params }: { params: { id: string } }) {
                         };
 
                     });
+} else {
+const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+
+	    }
                 }
             }
         }
 
         //console.log("DRAG END", event);
+}
     }
 
     const onDragOver = (event: DragOverEvent) => {
@@ -1373,7 +1505,7 @@ export default function Page({ params }: { params: { id: string } }) {
     };
 
     const createCard = (columnID: string) => {
-        if (!isFlagSet(userValue.userData, "CRIAR_CARDS")) {
+        if (isFlagSet(userValue.userData, "CRIAR_CARDS")) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
                     text: "Entendido.",

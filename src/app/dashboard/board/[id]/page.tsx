@@ -63,7 +63,8 @@ import {
     DateValue,
     KanbanData,
     Member,
-    Tag
+    Tag,
+    userData
 } from '@/app/types/KanbanTypes';
 import { generateRandomString } from '@/app/utils/generators';
 import '@mdxeditor/editor/style.css';
@@ -93,7 +94,15 @@ import 'react-calendar/dist/Calendar.css';
 import { Combobox, Transition } from '@headlessui/react';
 import { CustomModal, CustomModalButtonAttributes } from '@/app/components/ui/CustomModal';
 import Link from 'next/link';
+import { SYSTEM_PERMISSIONS } from '@/app/utils/variables';
+import { useUserContext } from '@/app/contexts/userContext';
 
+
+function isFlagSet(userValue: userData, flag: string): boolean {
+    let bitMask: number = SYSTEM_PERMISSIONS[flag];
+    let binaryValue: number = parseInt(userValue.permissionLevel, 2);
+    return (binaryValue & bitMask) !== 0;
+}
 
 
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
@@ -181,6 +190,8 @@ function CardElement(props: CardElementProps) {
         setModalText,
     } = props;
     const noButtonRef = useRef<any>(null);
+    const { userValue, updateUserValue } = useUserContext();
+
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
         data: {
@@ -235,14 +246,39 @@ function CardElement(props: CardElementProps) {
     const modalOptsElements: any = modalOpts.map(
         (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
 
+
+
     const handleDeleteCard = () => {
-        setModalTitle("Deletar Card");
-        setModalDescription("Esta ação é irreversivel.");
-        setModalText("Tem certeza que deseja continuar?");
-        setModalBorderColor("border-red-500");
-        setModalFocusRef(noButtonRef);
-        setModalOptions(modalOptsElements);
-        setModalOpen(true);
+        if (isFlagSet(userValue.userData, "DELETAR_CARDS")) {
+            setModalTitle("Deletar Card");
+            setModalDescription("Esta ação é irreversivel.");
+            setModalText("Tem certeza que deseja continuar?");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOptsElements);
+            setModalOpen(true);
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+        }
     };
 
     return (
@@ -279,6 +315,7 @@ function ColumnContainer(props: ColumnContainerProps) {
         setModalText,
     } = props;
     const [editMode, setEditMode] = useState<boolean>(false);
+    const { userValue, updateUserValue } = useUserContext();
     const cardsIds = useMemo(() => { return column.cardsList.map((card: Card) => card.id) }, [column]);
 
     const delCol = () => {
@@ -308,13 +345,36 @@ function ColumnContainer(props: ColumnContainerProps) {
         (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
 
     const handleDeleteColumn = () => {
-        setModalTitle("Deletar Coluna");
-        setModalDescription("Esta ação é irreversivel.");
-        setModalText("Tem certeza que deseja continuar?");
-        setModalBorderColor("border-red-500");
-        setModalFocusRef(noButtonRef);
-        setModalOptions(modalOptsElements);
-        setModalOpen(true);
+        if (isFlagSet(userValue.userData, "DELETAR_COLUNAS")) {
+            setModalTitle("Deletar Coluna");
+            setModalDescription("Esta ação é irreversivel.");
+            setModalText("Tem certeza que deseja continuar?");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOptsElements);
+            setModalOpen(true);
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+        }
     };
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -866,6 +926,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [modalFocusRef, setModalFocusRef] = useState<any>();
 
 
+    const { userValue, updateUserValue } = useUserContext();
 
 
     const editorRef = useRef<MDXEditorMethods>(null);
@@ -885,6 +946,30 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
     const createNewColumn = () => {
+        if (!isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+
         if (kanbanData.columns !== undefined) {
             const newColumn = {
                 id: generateRandomString(),
@@ -948,24 +1033,112 @@ export default function Page({ params }: { params: { id: string } }) {
         }));
     }
 
-
+    const noButtonRef = useRef<any>(null);
     const onDragStart = (event: DragStartEvent) => {
         //console.log("DRAG START", event);
+        if (!isFlagSet(userValue.userData, "MOVER_COLUNAS") && !isFlagSet(userValue.userData, "MOVER_CARDS")) {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+
         setTempDragState(event);
 
         if (event.active.data.current !== undefined) {
             if (event.active.data.current.type === "COLUMN") {
-                setActiveColumn(event.active.data.current.column);
-                return;
+                if (isFlagSet(userValue.userData, "MOVER_COLUNAS")) {
+                    setActiveColumn(event.active.data.current.column);
+                    return;
+                }
+                else {
+                    const optAttrs: CustomModalButtonAttributes[] = [
+                        {
+                            text: "Entendido.",
+                            onclickfunc: () => setModalOpen(false),
+                            ref: noButtonRef,
+                            type: "button",
+                            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                        }
+                    ];
+
+                    const modalOpt: any = optAttrs.map(
+                        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+                    setModalTitle("Ação Negada.");
+                    setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                    setModalText("Fale com seu administrador se isto é um engano.");
+                    setModalBorderColor("border-red-500");
+                    setModalFocusRef(noButtonRef);
+                    setModalOptions(modalOpt);
+                    setModalOpen(true);
+                    return;
+                }
             }
         }
 
         if (event.active.data.current !== undefined) {
             if (event.active.data.current.type === "CARD") {
-                setActiveCard(event.active.data.current.card);
-                return;
+                if (isFlagSet(userValue.userData, "MOVER_CARDS")) {
+                    setActiveCard(event.active.data.current.card);
+                    return;
+                }
+                else {
+                    const optAttrs: CustomModalButtonAttributes[] = [
+                        {
+                            text: "Entendido.",
+                            onclickfunc: () => setModalOpen(false),
+                            ref: noButtonRef,
+                            type: "button",
+                            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                        }
+                    ];
+
+                    const modalOpt: any = optAttrs.map(
+                        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+                    setModalTitle("Ação Negada.");
+                    setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                    setModalText("Fale com seu administrador se isto é um engano.");
+                    setModalBorderColor("border-red-500");
+                    setModalFocusRef(noButtonRef);
+                    setModalOptions(modalOpt);
+                    setModalOpen(true);
+                    return;
+                }
             }
         }
+
+        // if (event.active.data.current !== undefined) {
+        //     if (event.active.data.current.type === "COLUMN") {
+        //         setActiveColumn(event.active.data.current.column);
+        //         return;
+        //     }
+        // }
+
+        // if (event.active.data.current !== undefined) {
+        //     if (event.active.data.current.type === "CARD") {
+        //         setActiveCard(event.active.data.current.card);
+        //         return;
+        //     }
+        // }
     }
 
     const onDragEnd = (event: DragEndEvent) => {
@@ -1200,6 +1373,30 @@ export default function Page({ params }: { params: { id: string } }) {
     };
 
     const createCard = (columnID: string) => {
+        if (!isFlagSet(userValue.userData, "CRIAR_CARDS")) {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+
         setTempColumnID(columnID);
         setEditorText("");
         setTempCard({

@@ -91,7 +91,7 @@ import {
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Combobox, Transition } from '@headlessui/react';
-import {CustomModal} from '@/app/components/ui/CustomModal';
+import { CustomModal, CustomModalButtonAttributes } from '@/app/components/ui/CustomModal';
 import Link from 'next/link';
 
 
@@ -172,13 +172,15 @@ function CardElement(props: CardElementProps) {
         setIsEdition,
         setTempColumnID,
         setEditorText,
-        setViewConfirmDelete,
-        setConfirmDeleteNoText,
-        setConfirmDeleteMessage,
-        setConfirmDeleteYesText,
-        setConfirmDeleteNoFunction,
-        setConfirmDeleteYesFunction,
+        setModalTitle,
+        setModalDescription,
+        setModalOptions,
+        setModalOpen,
+        setModalBorderColor,
+        setModalFocusRef,
+        setModalText,
     } = props;
+    const noButtonRef = useRef<any>(null);
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
         data: {
@@ -207,28 +209,37 @@ function CardElement(props: CardElementProps) {
         setShowCreateCardForm(true);
     }
 
+
     const delCard = () => {
         deleteCard(card.columnID, card.id);
-        setViewConfirmDelete(false);
+        setModalOpen(false);
     }
 
-    const hideConfirmDelete = () => {
-        console.log("HIDE CONFIRM DELETE");
-        setViewConfirmDelete(false);
-    }
 
-    const showConfirmDelete = () => {
-        console.log("SHOW CONFIRM DELETE");
-        setViewConfirmDelete(true);
-    }
+    const modalOpts: CustomModalButtonAttributes[] = [
+        {
+            text: "Sim",
+            onclickfunc: delCard,
+            type: "button",
+            className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+        },
+        {
+            text: "Não",
+            onclickfunc: () => setModalOpen(false),
+            ref: noButtonRef,
+            type: "button",
+            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+        }
+    ]
 
     const handleDeleteCard = () => {
-        setConfirmDeleteNoFunction(() => { return hideConfirmDelete });
-        setConfirmDeleteYesFunction(() => { return delCard });
-        setConfirmDeleteMessage("Deseja remover o card?");
-        setConfirmDeleteYesText("Sim");
-        setConfirmDeleteNoText("Não");
-        showConfirmDelete();
+        setModalTitle("Deletar Card");
+        setModalDescription("Esta ação é irreversivel.");
+        setModalText("Tem certeza que deseja continuar?");
+        setModalBorderColor("border-red-500");
+        setModalFocusRef(noButtonRef);
+        setModalOptions(modalOpts);
+        setModalOpen(true);
     };
 
     return (
@@ -256,38 +267,48 @@ function ColumnContainer(props: ColumnContainerProps) {
         setIsEdition,
         setTempColumnID,
         setEditorText,
-        setViewConfirmDelete,
-        setConfirmDeleteNoText,
-        setConfirmDeleteMessage,
-        setConfirmDeleteYesText,
-        setConfirmDeleteNoFunction,
-        setConfirmDeleteYesFunction,
+        setModalTitle,
+        setModalDescription,
+        setModalOptions,
+        setModalOpen,
+        setModalBorderColor,
+        setModalFocusRef,
+        setModalText,
     } = props;
     const [editMode, setEditMode] = useState<boolean>(false);
     const cardsIds = useMemo(() => { return column.cardsList.map((card: Card) => card.id) }, [column]);
 
     const delCol = () => {
         deleteColumn(column.id);
-        setViewConfirmDelete(false);
+        setModalTitle(false);
     }
 
-    const hideConfirmDelete = () => {
-        console.log("HIDE CONFIRM DELETE");
-        setViewConfirmDelete(false);
-    }
+    const noButtonRef = useRef<any>(null);
 
-    const showConfirmDelete = () => {
-        console.log("SHOW CONFIRM DELETE");
-        setViewConfirmDelete(true);
-    }
+    const modalOpts: CustomModalButtonAttributes[] = [
+        {
+            text: "Sim",
+            onclickfunc: delCol,
+            type: "button",
+            className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+        },
+        {
+            text: "Não",
+            onclickfunc: () => setModalOpen(false),
+            ref: noButtonRef,
+            type: "button",
+            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+        }
+    ]
 
     const handleDeleteColumn = () => {
-        setConfirmDeleteNoFunction(() => { return hideConfirmDelete });
-        setConfirmDeleteYesFunction(() => { return delCol });
-        setConfirmDeleteMessage("Deseja remover a coluna?");
-        setConfirmDeleteYesText("Sim");
-        setConfirmDeleteNoText("Não");
-        showConfirmDelete();
+        setModalTitle("Deletar Coluna");
+        setModalDescription("Esta ação é irreversivel.");
+        setModalText("Tem certeza que deseja continuar?");
+        setModalBorderColor("border-red-500");
+        setModalFocusRef(noButtonRef);
+        setModalOptions(modalOpts);
+        setModalOpen(true);
     };
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -351,12 +372,13 @@ function ColumnContainer(props: ColumnContainerProps) {
                             setIsEdition={setIsEdition}
                             key={card.id}
                             setEditorText={setEditorText}
-                            setConfirmDeleteMessage={props.setConfirmDeleteMessage}
-                            setConfirmDeleteYesText={props.setConfirmDeleteYesText}
-                            setConfirmDeleteNoText={props.setConfirmDeleteNoText}
-                            setConfirmDeleteYesFunction={props.setConfirmDeleteYesFunction}
-                            setConfirmDeleteNoFunction={props.setConfirmDeleteNoFunction}
-                            setViewConfirmDelete={props.setViewConfirmDelete}
+                            setModalOptions={props.setModalOptions}
+                            setModalOpen={props.setModalOpen}
+                            setModalDescription={props.setModalDescription}
+                            setModalFocusRef={props.setModalFocusRef}
+                            setModalBorderColor={props.setModalBorderColor}
+                            setModalTitle={props.setModalTitle}
+                            setModalText={props.setModalText}
                         />
                     })}
                 </SortableContext>
@@ -815,9 +837,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
     // const [confirmDeleteYesFunc, setConfirmDeleteYesFunc] = useState<any>(null);
     // const [confirmDeleteNoFunc, setConfirmDeleteNoFunc] = useState<any>(null);
-    // const [confirmDeleteYesText, setConfirmDeleteYesText] = useState<string>("");
-    // const [confirmDeleteNoText, setConfirmDeleteNoText] = useState<string>("");
-    // const [viewConfirmDelete, setViewConfirmDelete] = useState<boolean>(false);
+    // const [confirmDeleteYesText, setModalOpen] = useState<string>("");
+    // const [confirmDeleteNoText, setModalDescription] = useState<string>("");
+    // const [viewConfirmDelete, setModalTitle] = useState<boolean>(false);
     // const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
 
     // title: string,
@@ -1595,14 +1617,14 @@ export default function Page({ params }: { params: { id: string } }) {
     return (
         <main className="w-full h-full overflow-auto shrink-0">
             <CustomModal
-            title={}
-            description={}
-            text={}
-            options={}
-            isOpen={}
-            setIsOpen={}
-            borderColor={}
-            focusRef={}
+                title={modalTitle}
+                description={modalDescription}
+                text={modalText}
+                options={modalOptions}
+                isOpen={modalOpen}
+                setIsOpen={setModalOpen}
+                borderColor={modalBorderColor}
+                focusRef={modalFocusRef}
             />
             <CreateEditCard
                 showCreateCardForm={showCreateCardForm}
@@ -1654,12 +1676,13 @@ export default function Page({ params }: { params: { id: string } }) {
                             setIsEdition={setIsEdition}
                             setTempColumnID={setTempColumnID}
                             setEditorText={editEditorText}
-                            setConfirmDeleteMessage={setConfirmDeleteText}
-                            setConfirmDeleteYesText={setConfirmDeleteYesText}
-                            setConfirmDeleteNoText={setConfirmDeleteNoText}
-                            setConfirmDeleteYesFunction={setConfirmDeleteYesFunc}
-                            setConfirmDeleteNoFunction={setConfirmDeleteNoFunc}
-                            setViewConfirmDelete={setViewConfirmDelete}
+                            setModalOptions={setModalOptions}
+                            setModalOpen={setModalOpen}
+                            setModalDescription={setModalDescription}
+                            setModalFocusRef={setModalFocusRef}
+                            setModalBorderColor={setModalBorderColor}
+                            setModalTitle={setModalTitle}
+                            setModalText={setModalText}
                         />)}
                     </SortableContext>
                     <button className='w-64 h-full rounded-md shadow-inner bg-[#F0F0F0] border-neutral-200 border-[1px] flex flex-col justify-center items-center' onClick={createNewColumn}>
@@ -1680,12 +1703,13 @@ export default function Page({ params }: { params: { id: string } }) {
                             setIsEdition={setIsEdition}
                             setTempColumnID={setTempColumnID}
                             setEditorText={setEditorText}
-                            setConfirmDeleteMessage={setConfirmDeleteText}
-                            setConfirmDeleteYesText={setConfirmDeleteYesText}
-                            setConfirmDeleteNoText={setConfirmDeleteNoText}
-                            setConfirmDeleteYesFunction={setConfirmDeleteYesFunc}
-                            setConfirmDeleteNoFunction={setConfirmDeleteNoFunc}
-                            setViewConfirmDelete={setViewConfirmDelete}
+                            setModalOptions={setModalOptions}
+                            setModalOpen={setModalOpen}
+                            setModalDescription={setModalDescription}
+                            setModalFocusRef={setModalFocusRef}
+                            setModalBorderColor={setModalBorderColor}
+                            setModalTitle={setModalTitle}
+                            setModalText={setModalText}
                         />}
                     </DragOverlay>,
                     document.body)}

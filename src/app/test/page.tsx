@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { useState, Fragment, useRef } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
-import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PaperAirplaneIcon, UserIcon } from "@heroicons/react/24/outline";
+import { XCircleIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ExclamationTriangleIcon, PaperAirplaneIcon, UserIcon } from "@heroicons/react/24/outline";
 import { DateValue } from "../types/KanbanTypes";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -32,6 +32,7 @@ import {
 } from "@mdxeditor/editor";
 import { Combobox, Transition } from '@headlessui/react';
 import { CalendarDaysIcon, XMarkIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
+import { CustomModal, CustomModalButtonAttributes } from "../components/ui/CustomModal";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -104,6 +105,9 @@ function CommentSection() {
         </div>
     );
 }
+
+
+
 
 export default function Page() {
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
@@ -194,9 +198,42 @@ export default function Page() {
         setPermsNumber(1);
     }
 
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const closeModalRef = useRef(null);
+
+    const optionsmeta: CustomModalButtonAttributes[] = [
+        {
+            text: "Sim",
+            onclickfunc: () => console.log("deleted element"),
+            type: "button",
+            className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+        },
+        {
+            text: "Não",
+            onclickfunc: () => setIsModalOpen(false),
+            ref: closeModalRef,
+            type: "button",
+            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+        }
+    ]
+    const options: any = optionsmeta.map(
+        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
     return (
         <main className="w-full h-full bg-neutral-50 overflow-scroll flex flex-row">
-            <div>
+            <CustomModal
+                description="Essa ação irá deletar o elemento para sempre."
+                text="Tem certeza que deseja continuar?"
+                title="Deletar Elemento"
+                isOpen={isModalOpen}
+                setIsOpen={setIsModalOpen}
+                focusRef={closeModalRef}
+                options={options}
+                borderColor="border-red-500"
+            />
+            <button onClick={() => setIsModalOpen(true)}>Toggle Modal</button>
+
+            {/* <div>
                 <div className="flex flex-col justify-center items-center p-2">
                     <h1>{permsNumber.toString(2)}</h1>
                     <div className="flex">
@@ -282,7 +319,7 @@ export default function Page() {
                     </div>
                 </Combobox>
 
-            </div>
+            </div> */}
         </main>
     );
 }

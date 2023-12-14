@@ -108,7 +108,7 @@ export default function Page() {
     const router = useRouter();
     const { userValue, updateUserValue } = useUserContext();
     const [usrPermsVal, setUsrPermsVal] = useState<{ [Key: string]: boolean }>({});
-
+    const [isUserSupervisor, setIsUserSupervisor] = useState<boolean>(false);
 
     const handleUpdateSelectedUser = (selectedUser: userData) => {
         updateSelectedUser(userValue, updateUserValue, selectedUser);
@@ -127,13 +127,9 @@ export default function Page() {
             })
 
     const handleToggleFlag = (flagName: string, value: boolean) => {
-
         ToggleBitFlag(value, flagName, handleUpdateSelectedUser, selected);
     }
 
-    const hzandleIsFlagSet = (flagName: string): boolean => {
-        return usrPermsVal[flagName];
-    }
     const handleSetSelect = (value: userData): void => {
         console.log(value);
         setSelected(value);
@@ -225,13 +221,13 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Cards</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={hzandleIsFlagSet("CRIAR_CARDS")} optionText="Criar Cards" srText="Alternar Permissão de Criar Cards"
+                            <ToggleOption defaultValue={usrPermsVal["CRIAR_CARDS"]} optionText="Criar Cards" srText="Alternar Permissão de Criar Cards"
                                 onFunction={() => handleToggleFlag("CRIAR_CARDS", true)} offFunction={() => handleToggleFlag("CRIAR_CARDS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("MOVER_CARDS")} optionText="Mover Cards" srText="Alternar Permissão de Mover Cards"
+                            <ToggleOption defaultValue={usrPermsVal["MOVER_CARDS"]} optionText="Mover Cards" srText="Alternar Permissão de Mover Cards"
                                 onFunction={() => handleToggleFlag("MOVER_CARDS", true)} offFunction={() => handleToggleFlag("MOVER_CARDS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("DELETAR_CARDS")} optionText="Deletar Cards" srText="Alternar Permissão de Deletar Cards"
+                            <ToggleOption defaultValue={usrPermsVal["DELETAR_CARDS"]} optionText="Deletar Cards" srText="Alternar Permissão de Deletar Cards"
                                 onFunction={() => handleToggleFlag("DELETAR_CARDS", true)} offFunction={() => handleToggleFlag("DELETAR_CARDS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("EDITAR_CARDS")} optionText="Editar Cards" srText="Alternar Permissão de Editar Cards"
+                            <ToggleOption defaultValue={usrPermsVal["EDITAR_CARDS"]} optionText="Editar Cards" srText="Alternar Permissão de Editar Cards"
                                 onFunction={() => handleToggleFlag("EDITAR_CARDS", true)} offFunction={() => handleToggleFlag("EDITAR_CARDS", false)} />
                         </div>
                     </div>
@@ -243,13 +239,13 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Colunas</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={hzandleIsFlagSet("CRIAR_COLUNAS")} optionText="Criar Colunas" srText="Alternar Permissão de Criar Colunas"
+                            <ToggleOption defaultValue={usrPermsVal["CRIAR_COLUNAS"]} optionText="Criar Colunas" srText="Alternar Permissão de Criar Colunas"
                                 onFunction={() => handleToggleFlag("CRIAR_COLUNAS", true)} offFunction={() => handleToggleFlag("CRIAR_COLUNAS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("MOVER_COLUNAS")} optionText="Mover Colunas" srText="Alternar Permissão de Mover Colunas"
+                            <ToggleOption defaultValue={usrPermsVal["MOVER_COLUNAS"]} optionText="Mover Colunas" srText="Alternar Permissão de Mover Colunas"
                                 onFunction={() => handleToggleFlag("MOVER_COLUNAS", true)} offFunction={() => handleToggleFlag("MOVER_COLUNAS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("DELETAR_COLUNAS")} optionText="Deletar Colunas" srText="Alternar Permissão de Deletar Colunas"
+                            <ToggleOption defaultValue={usrPermsVal["DELETAR_COLUNAS"]} optionText="Deletar Colunas" srText="Alternar Permissão de Deletar Colunas"
                                 onFunction={() => handleToggleFlag("DELETAR_COLUNAS", true)} offFunction={() => handleToggleFlag("DELETAR_COLUNAS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("EDITAR_COLUNAS")} optionText="Editar Colunas" srText="Alternar Permissão de Editar Colunas"
+                            <ToggleOption defaultValue={usrPermsVal["EDITAR_COLUNAS"]} optionText="Editar Colunas" srText="Alternar Permissão de Editar Colunas"
                                 onFunction={() => handleToggleFlag("EDITAR_COLUNAS", true)} offFunction={() => handleToggleFlag("EDITAR_COLUNAS", false)} />
                         </div>
                     </div>
@@ -261,11 +257,11 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Checklists</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={hzandleIsFlagSet("CRIAR_CHECKLISTS")} optionText="Criar Checklists" srText="Alternar Permissão de Criar Checklists"
+                            <ToggleOption defaultValue={usrPermsVal["CRIAR_CHECKLISTS"]} optionText="Criar Checklists" srText="Alternar Permissão de Criar Checklists"
                                 onFunction={() => handleToggleFlag("CRIAR_CHECKLISTS", true)} offFunction={() => handleToggleFlag("CRIAR_CHECKLISTS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("DELETAR_CHECKLISTS")} optionText="Deletar Checklists" srText="Alternar Permissão de Deletar Checklists"
+                            <ToggleOption defaultValue={usrPermsVal["DELETAR_CHECKLISTS"]} optionText="Deletar Checklists" srText="Alternar Permissão de Deletar Checklists"
                                 onFunction={() => handleToggleFlag("DELETAR_CHECKLISTS", true)} offFunction={() => handleToggleFlag("DELETAR_CHECKLISTS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("EDITAR_CHECKLISTS")} optionText="Editar Checklists" srText="Alternar Permissão de Editar Checklists"
+                            <ToggleOption defaultValue={usrPermsVal["EDITAR_CHECKLISTS"]} optionText="Editar Checklists" srText="Alternar Permissão de Editar Checklists"
                                 onFunction={() => handleToggleFlag("EDITAR_CHECKLISTS", true)} offFunction={() => handleToggleFlag("EDITAR_CHECKLISTS", false)} />
                         </div>
                     </div>
@@ -277,15 +273,15 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Dashboards</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={hzandleIsFlagSet("CRIAR_DASHBOARDS")} optionText="Criar Dashboards" srText="Alternar Permissão de Criar Dashboards"
+                            <ToggleOption defaultValue={usrPermsVal["CRIAR_DASHBOARDS"]} optionText="Criar Dashboards" srText="Alternar Permissão de Criar Dashboards"
                                 onFunction={() => handleToggleFlag("CRIAR_DASHBOARDS", true)} offFunction={() => handleToggleFlag("CRIAR_DASHBOARDS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("DELETAR_DASHBOARDS")} optionText="Deletar Dashboards" srText="Alternar Permissão de Deletar Dashboards"
+                            <ToggleOption defaultValue={usrPermsVal["DELETAR_DASHBOARDS"]} optionText="Deletar Dashboards" srText="Alternar Permissão de Deletar Dashboards"
                                 onFunction={() => handleToggleFlag("DELETAR_DASHBOARDS", true)} offFunction={() => handleToggleFlag("DELETAR_DASHBOARDS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("EDITAR_DASHBOARDS")} optionText="Editar Dashboards" srText="Alternar Permissão de Editar Dashboards"
+                            <ToggleOption defaultValue={usrPermsVal["EDITAR_DASHBOARDS"]} optionText="Editar Dashboards" srText="Alternar Permissão de Editar Dashboards"
                                 onFunction={() => handleToggleFlag("EDITAR_DASHBOARDS", true)} offFunction={() => handleToggleFlag("EDITAR_DASHBOARDS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("CONVIDAR_PARA_O_KANBAN")} optionText="Convidar para Dashboards" srText="Alternar Permissão de Convidar para Dashboards"
+                            <ToggleOption defaultValue={usrPermsVal["CONVIDAR_PARA_O_KANBAN"]} optionText="Convidar para Dashboards" srText="Alternar Permissão de Convidar para Dashboards"
                                 onFunction={() => handleToggleFlag("CONVIDAR_PARA_O_KANBAN", true)} offFunction={() => handleToggleFlag("CONVIDAR_PARA_O_KANBAN", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("RETIRAR_DO_KANBAN")} optionText="Remover da Dashboards" srText="Alternar Permissão de Remover da Dashboards"
+                            <ToggleOption defaultValue={usrPermsVal["RETIRAR_DO_KANBAN"]} optionText="Remover da Dashboards" srText="Alternar Permissão de Remover da Dashboards"
                                 onFunction={() => handleToggleFlag("RETIRAR_DO_KANBAN", true)} offFunction={() => handleToggleFlag("RETIRAR_DO_KANBAN", false)} />
                         </div>
                     </div>
@@ -297,11 +293,11 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Prazos</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={hzandleIsFlagSet("CRIAR_PRAZOS")} optionText="Criar Prazos" srText="Alternar Permissão de Criar Prazos"
+                            <ToggleOption defaultValue={usrPermsVal["CRIAR_PRAZOS"]} optionText="Criar Prazos" srText="Alternar Permissão de Criar Prazos"
                                 onFunction={() => handleToggleFlag("CRIAR_PRAZOS", true)} offFunction={() => handleToggleFlag("CRIAR_PRAZOS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("DELETAR_PRAZOS")} optionText="Deletar Prazos" srText="Alternar Permissão de Deletar Prazos"
+                            <ToggleOption defaultValue={usrPermsVal["DELETAR_PRAZOS"]} optionText="Deletar Prazos" srText="Alternar Permissão de Deletar Prazos"
                                 onFunction={() => handleToggleFlag("DELETAR_PRAZOS", true)} offFunction={() => handleToggleFlag("DELETAR_PRAZOS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("EDITAR_PRAZOS")} optionText="Editar Prazos" srText="Alternar Permissão de Editar Prazos"
+                            <ToggleOption defaultValue={usrPermsVal["EDITAR_PRAZOS"]} optionText="Editar Prazos" srText="Alternar Permissão de Editar Prazos"
                                 onFunction={() => handleToggleFlag("EDITAR_PRAZOS", true)} offFunction={() => handleToggleFlag("EDITAR_PRAZOS", false)} />
                         </div>
                     </div>
@@ -313,15 +309,15 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Comentários</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={hzandleIsFlagSet("CRIAR_COMENTÁRIOS")} optionText="Criar Comentários" srText="Alternar Permissão de Criar Comentários"
+                            <ToggleOption defaultValue={usrPermsVal["CRIAR_COMENTÁRIOS"]} optionText="Criar Comentários" srText="Alternar Permissão de Criar Comentários"
                                 onFunction={() => handleToggleFlag("CRIAR_COMENTÁRIOS", true)} offFunction={() => handleToggleFlag("CRIAR_COMENTÁRIOS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("EDITAR_COMENTÁRIOS_PRÓPRIOS")} optionText="Editar Comentários Próprios" srText="Alternar Permissão de Editar os Próprios Comentários"
+                            <ToggleOption defaultValue={usrPermsVal["EDITAR_COMENTÁRIOS_PRÓPRIOS"]} optionText="Editar Comentários Próprios" srText="Alternar Permissão de Editar os Próprios Comentários"
                                 onFunction={() => handleToggleFlag("EDITAR_COMENTÁRIOS_PRÓPRIOS", true)} offFunction={() => handleToggleFlag("EDITAR_COMENTÁRIOS_PRÓPRIOS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("EDITAR_COMENTÁRIOS_EXTERNOS")} optionText="Editar Comentários Externos" srText="Alternar Permissão de Editar Comentários de Outros Usuários"
+                            <ToggleOption defaultValue={usrPermsVal["EDITAR_COMENTÁRIOS_EXTERNOS"]} optionText="Editar Comentários Externos" srText="Alternar Permissão de Editar Comentários de Outros Usuários"
                                 onFunction={() => handleToggleFlag("EDITAR_COMENTÁRIOS_EXTERNOS", true)} offFunction={() => handleToggleFlag("EDITAR_COMENTÁRIOS_EXTERNOS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("DELETAR_COMENTÁRIOS_PRÓPRIOS")} optionText="Deletar Comentários Próprios" srText="Alternar Permissão de Deletar Comentários Próprios"
+                            <ToggleOption defaultValue={usrPermsVal["DELETAR_COMENTÁRIOS_PRÓPRIOS"]} optionText="Deletar Comentários Próprios" srText="Alternar Permissão de Deletar Comentários Próprios"
                                 onFunction={() => handleToggleFlag("DELETAR_COMENTÁRIOS_PRÓPRIOS", true)} offFunction={() => handleToggleFlag("DELETAR_COMENTÁRIOS_PRÓPRIOS", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("DELETAR_COMENTÁRIOS_EXTERNOS")} optionText="Deletar Comentários Externos" srText="Alternar Permissão de Deletar Comentários Externos"
+                            <ToggleOption defaultValue={usrPermsVal["DELETAR_COMENTÁRIOS_EXTERNOS"]} optionText="Deletar Comentários Externos" srText="Alternar Permissão de Deletar Comentários Externos"
                                 onFunction={() => handleToggleFlag("DELETAR_COMENTÁRIOS_EXTERNOS", true)} offFunction={() => handleToggleFlag("DELETAR_COMENTÁRIOS_EXTERNOS", false)} />
 
                         </div>
@@ -334,24 +330,24 @@ export default function Page() {
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Notificações</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={hzandleIsFlagSet("RECEBER_NOTIFICAÇÕES_DE_SISTEMA")} optionText="Receber Notificações de Sistema" srText="Receber Notificações de Sistema"
+                            <ToggleOption defaultValue={usrPermsVal["RECEBER_NOTIFICAÇÕES_DE_SISTEMA"]} optionText="Receber Notificações de Sistema" srText="Receber Notificações de Sistema"
                                 onFunction={() => handleToggleFlag("RECEBER_NOTIFICAÇÕES_DE_SISTEMA", true)} offFunction={() => handleToggleFlag("RECEBER_NOTIFICAÇÕES_DE_SISTEMA", false)} />
-                            <ToggleOption defaultValue={hzandleIsFlagSet("RECEBER_NOTIFICAÇÕES_PUSH")} optionText="Receber Notificações Push" srText="Receber Notificações Push"
+                            <ToggleOption defaultValue={usrPermsVal["RECEBER_NOTIFICAÇÕES_PUSH"]} optionText="Receber Notificações Push" srText="Receber Notificações Push"
                                 onFunction={() => handleToggleFlag("RECEBER_NOTIFICAÇÕES_PUSH", true)} offFunction={() => handleToggleFlag("RECEBER_NOTIFICAÇÕES_PUSH", false)} />
                         </div>
                     </div>
 
-                    {/* <div className="w-full flex justify-center items-center my-1">
+                    <div className="w-full flex justify-center items-center my-1">
                         <hr className="w-[96%] h-0.5 bg-neutral-200" />
                     </div>
 
                     <div className="my-4 w-full">
                         <h1 className="font-semibold text-lg mb-2 text-center">Cargos Especiais</h1>
                         <div className="flex flex-col justify-start items-start">
-                            <ToggleOption defaultValue={handleIsFlagSetusrPermsVal[ optionText=]Cargo Supervisor" srText="Alternar o Cargo de Supervisão"
-                                onFunction={() => handleToggleFlag("", true)} offFunction={() => handleToggleFlag("", false)} />
+                            <ToggleOption defaultValue={isUserSupervisor} optionText="Cargo Supervisor" srText="Alternar o Cargo de Supervisão"
+                                onFunction={() => setIsUserSupervisor(true)} offFunction={() => setIsUserSupervisor(true)} />
                         </div>
-                    </div> */}
+                    </div>
                 </div>
                 <button type="button"
                     className="mt-4 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">

@@ -232,13 +232,16 @@ function CardElement(props: CardElementProps) {
         }
     ]
 
+    const modalOptsElements: any = modalOpts.map(
+        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
     const handleDeleteCard = () => {
         setModalTitle("Deletar Card");
         setModalDescription("Esta ação é irreversivel.");
         setModalText("Tem certeza que deseja continuar?");
         setModalBorderColor("border-red-500");
         setModalFocusRef(noButtonRef);
-        setModalOptions(modalOpts);
+        setModalOptions(modalOptsElements);
         setModalOpen(true);
     };
 
@@ -301,13 +304,16 @@ function ColumnContainer(props: ColumnContainerProps) {
         }
     ]
 
+    const modalOptsElements: any = modalOpts.map(
+        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
     const handleDeleteColumn = () => {
         setModalTitle("Deletar Coluna");
         setModalDescription("Esta ação é irreversivel.");
         setModalText("Tem certeza que deseja continuar?");
         setModalBorderColor("border-red-500");
         setModalFocusRef(noButtonRef);
-        setModalOptions(modalOpts);
+        setModalOptions(modalOptsElements);
         setModalOpen(true);
     };
 

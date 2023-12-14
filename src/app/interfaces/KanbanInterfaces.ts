@@ -8,12 +8,15 @@ export interface CardElementProps {
     setIsEdition: (state: boolean) => void;
     setTempColumnID: (id: string) => void;
     setEditorText: any;
-    setConfirmDeleteMessage: any;
-    setConfirmDeleteYesText: any;
-    setConfirmDeleteNoText: any;
-    setConfirmDeleteYesFunction: any;
-    setConfirmDeleteNoFunction: any;
-    setViewConfirmDelete: any;
+
+    setModalTitle: any;
+    setModalDescription: any;
+    setModalText: any;
+    setModalOptions: any;
+    setModalOpen: any;
+    setModalBorderColor: any;
+    setModalFocusRef: any;
+    
 }
 
 export interface ColumnContainerProps {

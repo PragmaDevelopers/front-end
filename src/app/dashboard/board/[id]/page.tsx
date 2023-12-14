@@ -91,7 +91,7 @@ import {
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Combobox, Transition } from '@headlessui/react';
-import ConfirmDelete from '@/app/components/ui/ConfirmDelete';
+import {CustomModal} from '@/app/components/ui/CustomModal';
 import Link from 'next/link';
 
 
@@ -806,15 +806,38 @@ export default function Page({ params }: { params: { id: string } }) {
     const [isEdition, setIsEdition] = useState<boolean>(false);
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
     const [editorText, setEditorText] = useState<string>("");
-    const [confirmDeleteYesFunc, setConfirmDeleteYesFunc] = useState<any>(null);
-    const [confirmDeleteNoFunc, setConfirmDeleteNoFunc] = useState<any>(null);
-    const [confirmDeleteYesText, setConfirmDeleteYesText] = useState<string>("");
-    const [confirmDeleteNoText, setConfirmDeleteNoText] = useState<string>("");
-    const [viewConfirmDelete, setViewConfirmDelete] = useState<boolean>(false);
-    const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
     const [tempCardsArr, setTempCardsArr] = useState<Card[]>([]);
     const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
     const [isEdittingInnerCard, setIsEdittingInnerCard] = useState<boolean>(false);
+
+
+
+
+    // const [confirmDeleteYesFunc, setConfirmDeleteYesFunc] = useState<any>(null);
+    // const [confirmDeleteNoFunc, setConfirmDeleteNoFunc] = useState<any>(null);
+    // const [confirmDeleteYesText, setConfirmDeleteYesText] = useState<string>("");
+    // const [confirmDeleteNoText, setConfirmDeleteNoText] = useState<string>("");
+    // const [viewConfirmDelete, setViewConfirmDelete] = useState<boolean>(false);
+    // const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
+
+    // title: string,
+    // description: string,
+    // text: string,
+    // options: any,
+    // isOpen: boolean,
+    // setIsOpen: any,
+    // borderColor: string,
+    // focusRef: any,
+
+    const [modalTitle, setModalTitle] = useState<string>("");
+    const [modalDescription, setModalDescription] = useState<string>("");
+    const [modalText, setModalText] = useState<string>("");
+    const [modalOptions, setModalOptions] = useState<any>();
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [modalBorderColor, setModalBorderColor] = useState<string>("");
+    const [modalFocusRef, setModalFocusRef] = useState<any>();
+
+
 
 
     const editorRef = useRef<MDXEditorMethods>(null);
@@ -1571,13 +1594,15 @@ export default function Page({ params }: { params: { id: string } }) {
 
     return (
         <main className="w-full h-full overflow-auto shrink-0">
-            <ConfirmDelete
-                message={confirmDeleteText}
-                yesText={confirmDeleteYesText}
-                noText={confirmDeleteNoText}
-                yesFunction={confirmDeleteYesFunc}
-                noFunction={confirmDeleteNoFunc}
-                showPrompt={viewConfirmDelete}
+            <CustomModal
+            title={}
+            description={}
+            text={}
+            options={}
+            isOpen={}
+            setIsOpen={}
+            borderColor={}
+            focusRef={}
             />
             <CreateEditCard
                 showCreateCardForm={showCreateCardForm}

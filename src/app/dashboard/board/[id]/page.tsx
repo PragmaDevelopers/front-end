@@ -283,7 +283,7 @@ function ColumnContainer(props: ColumnContainerProps) {
 
     const delCol = () => {
         deleteColumn(column.id);
-        setModalTitle(false);
+        setModalOpen(false);
     }
 
     const noButtonRef = useRef<any>(null);

@@ -68,7 +68,7 @@ export function CustomModal(props: CustomModalProps) {
                                 </p>
                             </div>
                             <div className="mt-4 flex flex-row justify-evenly items-center">
-                                {options.map((el: any) => el)}
+                                {options?.map((el: any) => el)}
                             </div>
                         </div>
                     </Dialog.Panel>

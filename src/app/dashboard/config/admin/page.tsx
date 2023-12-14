@@ -109,33 +109,6 @@ export default function Page() {
     const { userValue, updateUserValue } = useUserContext();
     const [usrPermsVal, setUsrPermsVal] = useState<{ [Key: string]: boolean }>({});
 
-    const [criarCards, setCriarCards] = useState<boolean>(false);
-    const [moverCards, setMoverCards] = useState<boolean>(false);
-    const [deletarCards, setDeletarCards] = useState<boolean>(false);
-    const [editarCards, setEditarCards] = useState<boolean>(false);
-    const [criarColunas, setCriarColunas] = useState<boolean>(false);
-    const [moverColunas, setMoverColunas] = useState<boolean>(false);
-    const [deletarColunas, setDeletarColunas] = useState<boolean>(false);
-    const [editarColunas, setEditarColunas] = useState<boolean>(false);
-    const [criarDashboards, setCriarDashboards] = useState<boolean>(false);
-    const [deletarDashboards, setDeletarDashboards] = useState<boolean>(false);
-    const [editarDashboards, setEditarDashboards] = useState<boolean>(false);
-    const [criarChecklists, setCriarChecklists] = useState<boolean>(false);
-    const [deletarChecklists, setDeletarChecklists] = useState<boolean>(false);
-    const [editarChecklists, setEditarChecklists] = useState<boolean>(false);
-    const [criarPrazos, setCriarPrazos] = useState<boolean>(false);
-    const [deletarPrazos, setDeletarPrazos] = useState<boolean>(false);
-    const [editarPrazos, setEditarPrazos] = useState<boolean>(false);
-    const [criarComentarios, setCriarComentarios] = useState<boolean>(false);
-    const [editarComentariosProprios, setEditarComentariosProprios] = useState<boolean>(false);
-    const [editarComentariosExternos, setEditarComentariosExternos] = useState<boolean>(false);
-    const [deletarComentariosProprios, setDeletarComentariosProprios] = useState<boolean>(false);
-    const [deletarComentariosExternos, setDeletarComentariosExternos] = useState<boolean>(false);
-    const [receberNotificacoesSistema, setReceberNotificacoesSistema] = useState<boolean>(false);
-    const [receberNotificacoesPush, setReceberNotificacoesPush] = useState<boolean>(false);
-    const [convidarDashboard, setConvidarDashboard] = useState<boolean>(false);
-    const [retirarDashboard, setRetirarDashboard] = useState<boolean>(false);
-
 
     const handleUpdateSelectedUser = (selectedUser: userData) => {
         updateSelectedUser(userValue, updateUserValue, selectedUser);

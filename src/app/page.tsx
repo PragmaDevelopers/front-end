@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
 import { API_BASE_URL } from "./utils/variables";
+import { userValueDT } from "./types/KanbanTypes";
 
 interface InfoScreenProps {
     emailState: boolean;
@@ -70,6 +71,10 @@ export default function Page() {
     const switchCadastrarSe = () => setCadastrarSe(!cadastrarSe);
     const router = useRouter();
     const { userValue, updateUserValue } = useUserContext();
+    const [userData, setUserData] = useState<userValueDT>({} as userValueDT);
+    const [collectedUserToken, setCollectedUserToken] = useState<boolean>(false);
+    const [collectedUserData, setCollectedUserData] = useState<boolean>(false);
+    const [collectedUsersList, setCollectedUsersList] = useState<boolean>(false);
 
     const loginUser = (e: any) => {
         e.preventDefault();
@@ -123,32 +128,159 @@ export default function Page() {
                 "password": userpassword,
             }
 
-            const sendData = () => {
+            const getUserList = (token: string, userTempData: userValueDT) => {
+                if (token != "") {
+                    fetch(`${API_BASE_URL}/api/private/users/search`, {
+                        method: "GET",
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }).then((response: Response) => {
+                        const RESP: Response = response;
+                        console.log(RESP);
+                        if (RESP.status == 200 || RESP.ok) {
+                            setCollectedUsersList(true);
+                            return RESP.json();
+
+                        }
+                    }).then((data: any) => {
+                        setCollectedUsersList(true);
+                        let dt: any = data;
+                        userTempData.usersList = dt;
+                        setUserData((prevData: userValueDT) => {
+                            return {
+                                ...prevData,
+                                usersList: dt,
+                            };
+                        });
+                        console.log(userTempData);
+                        console.log(dt);
+                        console.log(userValue, userData);
+                        updateUserValue(userData);
+
+                        if (JSON.stringify(userValue) != JSON.stringify(userTempData)) {
+                            updateUserValue(userTempData);
+                            setUserData(userTempData);
+
+                        }
+
+
+                        if (JSON.stringify(userTempData.usersList) == JSON.stringify(dt)) {
+                            router.push("/dashboard");
+                            return;
+                        }
+
+                        setUserCanLogin(collectedUserToken && collectedUserData && collectedUsersList);
+                        console.log(collectedUserToken, collectedUserData, collectedUsersList, userCanLogin);
+                        if (userCanLogin || (collectedUserToken && collectedUserData && collectedUsersList)) {
+                            router.push("/dashboard");
+                            return;
+                        }
+
+                    }).catch((e: any) => console.log(e));
+                }
+
+
+            }
+
+            const getUserData = (token: string, userTempData: userValueDT) => {
+                console.log(`Bearer ${token}`);
+                if (token != "") {
+                    fetch(`${API_BASE_URL}/api/private/user/profile`, {
+                        method: "GET",
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }).then((response: Response) => {
+                        const RESP: Response = response;
+                        console.log(RESP);
+                        if (RESP.status == 200 || RESP.ok) {
+                            setCollectedUserData(true);
+                            return RESP.json();
+
+                        }
+                    }).then((data: any) => {
+                        setCollectedUserData(true);
+                        let dt: any = data;
+                        userTempData.userData = dt;
+                        setUserData((prevData: userValueDT) => {
+                            return {
+                                ...prevData,
+                                userData: dt,
+                            };
+                        });
+                        console.log(userTempData);
+                        console.log(dt);
+                        console.log(userValue, userData);
+                        updateUserValue(userData);
+
+                        if (JSON.stringify(userValue) != JSON.stringify(userTempData)) {
+                            updateUserValue(userTempData);
+                            setUserData(userTempData);
+
+                        }
+
+                        getUserList(token, userTempData);
+
+                    }).catch((e: any) => console.log(e));
+                }
+            }
+
+            const getUserToken = () => {
+                let userTempData: userValueDT = {
+                    token: '',
+                    userData: {
+                        email: '',
+                        gender: '',
+                        id: 0,
+                        name: '',
+                        nationality: '',
+                        permissionLevel: '',
+                        profilePicture: null,
+                        pushEmail: null,
+                        registrationDate: '',
+                        role: '',
+                    },
+                    usersList: [],
+                };
                 fetch(`${API_BASE_URL}/api/public/login`, {
                     method: "POST",
                     //credentials: "include",
                     body: JSON.stringify(responseBody),
                     headers: {
-                        "content-type": "application/json",
+                        "Content-Type": "application/json",
                     },
-                }).then((response: any) => {
-                    console.log(response)
+                }).then((response: Response) => {
                     if (response.status == 200 || response.ok) {
-                        setUserCanLogin(true);
-                        router.push("/dashboard");
+                        setCollectedUserToken(true);
                         return response.text();
 
                     }
                 }).then((data: any) => {
-                    console.log(data);
-                    updateUserValue(data);
-                    console.log(userValue);
+                    setCollectedUserToken(true);
+                    const dt: any = data;
+                    userTempData.token = dt;
+                    console.log(userTempData);
+                    setUserData((prevData: userValueDT) => {
+                        return {
+                            ...prevData,
+                            token: dt,
+                        };
+                    });
+                    console.log(dt);
+                    console.log(userValue, userData);
+                    if (userTempData.token != "") {
+                        getUserData(dt, userTempData);
+                    }
                 }).catch((e: any) => console.log(e));
             }
-            sendData();
 
+            getUserToken();
             e.target.reset();
         }
+
 
         if (userCanLogin) {
             router.push("/dashboard");

@@ -100,3 +100,27 @@ export type Comment = {
     cardID: number | string,
 }
 
+
+export type userData = {
+    id: number;
+    name: string;
+    email: string;
+    pushEmail: string | null;
+    registrationDate: string;
+    nationality: string;
+    gender: string;
+    role: string;
+    permissionLevel: string;
+    profilePicture: string | null;
+}
+
+export type userValueDT = {
+    token: string;
+    userData: userData;
+    usersList: userData[];
+};
+
+export interface UserContextProps {
+    userValue: userValueDT;
+    updateUserValue: (newValue: userValueDT) => void;
+}

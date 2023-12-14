@@ -35,7 +35,7 @@ export default function Main({ children }: any) {
         <UserContextProvider>
             <div className="w-full h-full relative">
                 <Header showNotifications={handleShowNotifications} />
-                <div className={(showNotification ? "block" : "hidden") + " w-full h-full bg-transparent z-10 absolute top-[4.5rem] left-0 bg-neutral-950/50"}>
+                <div className={(showNotification ? "block" : "hidden") + " w-full h-full bg-transparent z-10 absolute top-[4.5rem] left-0"}>
                     <div className="bg-transparent w-full h-full relative">
                         <div className="bg-neutral-50 drop-shadow-lg rounded-md w-64 m-4 absolute top-0 right-4 p-2">
                             <h1 className="font-bold text-lg">Notificações</h1>

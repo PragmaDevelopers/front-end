@@ -2,18 +2,19 @@
 
 import { Switch } from "@headlessui/react";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SwitchButtonProps {
     srText: string;
     onFunction: any;
     offFunction: any;
+    defaultValue: boolean;
 }
 
 export default function SwitchButton(props: SwitchButtonProps) {
-    const [enabled, setEnabled] = useState<boolean>(true);
-
-    const { srText, onFunction, offFunction } = props;
+    const { srText, onFunction, offFunction, defaultValue } = props;
+    const [enabled, setEnabled] = useState<boolean>(false);
+    setEnabled(defaultValue);
 
     const handleSwitch = () => {
         setEnabled(!enabled);
@@ -34,7 +35,7 @@ export default function SwitchButton(props: SwitchButtonProps) {
             <span className="sr-only">{srText}</span>
             <span
                 className={`${enabled ? 'translate-x-6' : 'translate-x-1'
-                    } inline-block h-4 w-4 transform rounded-full bg-white transition flex justify-center items-center drop-shadow-sm`}>
+                    } h-4 w-4 transform rounded-full bg-white transition flex justify-center items-center drop-shadow-sm`}>
                 <CheckIcon className={`${enabled ? 'hidden' : 'block'} transition-all h-3 w-3 aspect-square full-green-500 stroke-green-500`} />
                 <XMarkIcon className={`${enabled ? 'block' : 'hidden'} transition-all h-3 w-3 aspect-square full-red-500 stroke-red-500`} />
             </span>

@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { UserContextProps, userValueDT } from '../types/KanbanTypes';
 
-interface UserContextProps {
-    userValue: string;
-    updateUserValue: (newValue: string) => void;
-}
+
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
@@ -12,9 +10,24 @@ interface UserContextProviderProps {
 }
 
 export const UserContextProvider: React.FC<UserContextProviderProps> = ({ children }) => {
-    const [userValue, setUserValue] = useState<string>('');
+    const [userValue, setUserValue] = useState<userValueDT>({
+        token: '',
+        userData: {
+            email: '',
+            gender: '',
+            id: 0,
+            name: '',
+            nationality: '',
+            permissionLevel: '',
+            profilePicture: null,
+            pushEmail: null,
+            registrationDate: '',
+            role: '',
+        },
+        usersList: [],
+    });
 
-    const updateUserValue = (newValue: string) => {
+    const updateUserValue = (newValue: userValueDT) => {
         setUserValue(newValue);
     };
 

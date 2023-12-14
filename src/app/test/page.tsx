@@ -4,7 +4,7 @@ import { useState, Fragment } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
-import { PaperAirplaneIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PaperAirplaneIcon, UserIcon } from "@heroicons/react/24/outline";
 import { DateValue } from "../types/KanbanTypes";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -177,70 +177,112 @@ export default function Page() {
             })
 
 
+
+    const [permsNumber, setPermsNumber] = useState<number>(0b1);
+
+    const leftShiftValue = () => {
+        const res: number = permsNumber << 4;
+        setPermsNumber(res);
+    }
+
+    const rightShiftValue = () => {
+        const res: number = permsNumber >> 1;
+        setPermsNumber(res);
+    }
+
+    const resetValue = () => {
+        setPermsNumber(1);
+    }
+
     return (
         <main className="w-full h-full bg-neutral-50 overflow-scroll flex flex-row">
-            <Combobox value={selected} onChange={setSelected}>
-                <div className="relative mt-1">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-                        <Combobox.Input
-                            className="form-input w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                            displayValue={(person: Person) => person.name}
-                            onChange={(event: any) => setQuery(event.target.value)}
-                        />
-                        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronUpDownIcon
-                                className="h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                            />
-                        </Combobox.Button>
+            <div>
+                <div className="flex flex-col justify-center items-center p-2">
+                    <h1>{permsNumber.toString(2)}</h1>
+                    <div className="flex">
+                        <h2 className="mr-2">{permsNumber}</h2>
+                        <h2 className="ml-2">{permsNumber.toString(2).length}</h2>
                     </div>
-                    <Transition
-                        as={Fragment}
-                        leave="transition ease-in duration-100"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                        afterLeave={() => setQuery('')}
-                    >
-                        <Combobox.Options className="form-select absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                            {filteredPeople.length === 0 && query !== '' ? (
-                                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
-                                    Nothing found.
-                                </div>
-                            ) : (
-                                filteredPeople.map((person) => (
-                                    <Combobox.Option
-                                        key={person.id}
-                                        className={({ active }) =>
-                                            `relative cursor-default select-none py-2 pl-10 pr-4 rounded-md ${active ? 'bg-teal-50 text-neutral-900' : 'text-gray-900'
-                                            }`
-                                        }
-                                        value={person}
-                                    >
-                                        {({ selected, active }) => (
-                                            <>
-                                                <span
-                                                    className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                                                        }`}
-                                                >
-                                                    {person.name}
-                                                </span>
-                                                {selected ? (
+                </div>
+                <div className="flex flex-row justify-center items-center">
+                    <button type="button" onClick={leftShiftValue} className="mr-4">
+                        <ChevronDoubleLeftIcon className="aspect-square w-8" />
+                    </button>
+                    <button type="button" onClick={resetValue} className="mx-4">
+                        Reset
+                    </button>
+                    <button type="button" onClick={rightShiftValue} className="ml-4">
+                        <ChevronDoubleRightIcon className="aspect-square w-8" />
+                    </button>
+                </div>
+            </div>
+
+            <div className="hidden ">
+
+                <Combobox value={selected} onChange={setSelected}>
+                    <div className="relative mt-1">
+                        <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                            <Combobox.Input
+                                className="form-input w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                                displayValue={(person: Person) => person.name}
+                                onChange={(event: any) => setQuery(event.target.value)}
+                            />
+                            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                />
+                            </Combobox.Button>
+                        </div>
+                        <Transition
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                            afterLeave={() => setQuery('')}
+                        >
+                            <Combobox.Options className="form-select absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                {filteredPeople.length === 0 && query !== '' ? (
+                                    <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                                        Nothing found.
+                                    </div>
+                                ) : (
+                                    filteredPeople.map((person) => (
+                                        <Combobox.Option
+                                            key={person.id}
+                                            className={({ active }) =>
+                                                `relative cursor-default select-none py-2 pl-10 pr-4 rounded-md ${active ? 'bg-teal-50 text-neutral-900' : 'text-gray-900'
+                                                }`
+                                            }
+                                            value={person}
+                                        >
+                                            {({ selected, active }) => (
+                                                <>
                                                     <span
-                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-teal-600' : 'text-teal-600'
+                                                        className={`block truncate ${selected ? 'font-medium' : 'font-normal'
                                                             }`}
                                                     >
-                                                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                                        {person.name}
                                                     </span>
-                                                ) : null}
-                                            </>
-                                        )}
-                                    </Combobox.Option>
-                                ))
-                            )}
-                        </Combobox.Options>
-                    </Transition>
-                </div>
-            </Combobox>
+                                                    {selected ? (
+                                                        <span
+                                                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-teal-600' : 'text-teal-600'
+                                                                }`}
+                                                        >
+                                                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                                        </span>
+                                                    ) : null}
+                                                </>
+                                            )}
+                                        </Combobox.Option>
+                                    ))
+                                )}
+                            </Combobox.Options>
+                        </Transition>
+                    </div>
+                </Combobox>
+
+            </div>
         </main>
     );
 }

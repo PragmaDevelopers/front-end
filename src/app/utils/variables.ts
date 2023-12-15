@@ -36,7 +36,7 @@ export const SYSTEM_PERMISSIONS: { [Key: string]: number } = {
 }
 
 export const SYSTEM_PERMISSIONS_BOOLEAN: { [Key: string]: boolean } = {
-    "CRIAR_CARDS": false,                       //
+    "CRIAR_CARDS": false,                       //  //
     "MOVER_CARDS": false,                       //
     "DELETAR_CARDS": false,                     //
     "EDITAR_CARDS": false,                      //
@@ -47,9 +47,9 @@ export const SYSTEM_PERMISSIONS_BOOLEAN: { [Key: string]: boolean } = {
     "CRIAR_DASHBOARDS": false,                  //  //
     "DELETAR_DASHBOARDS": false,                //  //
     "EDITAR_DASHBOARDS": false,
-    "CRIAR_CHECKLISTS": false,
-    "DELETAR_CHECKLISTS": false,
-    "EDITAR_CHECKLISTS": false,
+    "CRIAR_CHECKLISTS": false,                  //
+    "DELETAR_CHECKLISTS": false,                //
+    "EDITAR_CHECKLISTS": false,                 //
     "CRIAR_PRAZOS": false,                      //
     "DELETAR_PRAZOS": false,
     "EDITAR_PRAZOS": false,

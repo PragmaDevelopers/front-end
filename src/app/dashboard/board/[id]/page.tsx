@@ -66,7 +66,6 @@ import {
     Tag,
     userData
 } from '@/app/types/KanbanTypes';
-import { generateRandomString } from '@/app/utils/generators';
 import '@mdxeditor/editor/style.css';
 import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
 import {
@@ -94,15 +93,12 @@ import 'react-calendar/dist/Calendar.css';
 import { Combobox, Transition } from '@headlessui/react';
 import { CustomModal, CustomModalButtonAttributes } from '@/app/components/ui/CustomModal';
 import Link from 'next/link';
-import { SYSTEM_PERMISSIONS } from '@/app/utils/variables';
+import { API_BASE_URL, SYSTEM_PERMISSIONS } from '@/app/utils/variables';
 import { useUserContext } from '@/app/contexts/userContext';
+import { isFlagSet } from '@/app/utils/checkers';
 
 
-function isFlagSet(userValue: userData, flag: string): boolean {
-    let bitMask: number = SYSTEM_PERMISSIONS[flag];
-    let binaryValue: number = parseInt(userValue.permissionLevel, 2);
-    return (binaryValue & bitMask) !== 0;
-}
+
 
 
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
@@ -550,9 +546,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const { userValue, updateUserValue } = useUserContext();
     const noButtonRef = useRef<any>(null);
-
-
-
 
     const [color, setColor] = useState<string>("#aabbcc");
     const [viewAddTag, setViewAddTag] = useState<boolean>(false);
@@ -1117,7 +1110,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }, [kanbanData]);
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
     const [tempColumnID, setTempColumnID] = useState<string>("");
-    const [lists, setLists] = useState([{ title: 'New List', inputs: [{ name: '', checked: false }], id: generateRandomString() }]);
+    const [lists, setLists] = useState([]);
     const [tempCard, setTempCard] = useState<any>({});
     const [isEdition, setIsEdition] = useState<boolean>(false);
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
@@ -1171,11 +1164,11 @@ export default function Page({ params }: { params: { id: string } }) {
         fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
 
         })
-    }, [params.id]);
+    }, [params]);
 
 
     const createNewColumn = () => {
-        if (isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
+        if (!isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
                     text: "Entendido.",
@@ -1200,48 +1193,44 @@ export default function Page({ params }: { params: { id: string } }) {
         }
 
         if (kanbanData.columns !== undefined) {
-            const newColumn = {
-                id: generateRandomString(),
+            let newColumn = {
+                id: "",                                         /////////////////////////////////////////////////////////////////////////////
                 type: 0,
                 title: `Column ${kanbanData.columns.length}`,
                 cardsList: [],
             };
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
+                body: JSON.stringify({
+                    title: newColumn.title,
+                    kanbanId: params.id,
+                }),
+            };
+
+            fetch(`${API_BASE_URL}/api/private/user/kanban/column`, requestOptions).then(response => response.text()).then(data => newColumn.id = data)
 
             setKanbanData((prevData: KanbanData) => ({
                 ...prevData,
                 columns: [...prevData.columns, newColumn],
             }));
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    columnId: newColumn.id,
-                    title: newColumn.title,
-                    columnType: newColumn.type,
-                    kanbanId: params.id,
-                }),
-            };
-
-            fetch(`http://localhost:8080/api/dashboard/column/create/${params.id}`, requestOptions).then(response => response.json).then(data => console.log(data))
         } else {
-            const newColumn = {
-                id: generateRandomString(),
+            let newColumn = {
+                id: "",                                         /////////////////////////////////////////////////////////////////////////////
                 type: 0,
                 title: 'Column 0',
                 cardsList: [],
             };
             const requestOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
                 body: JSON.stringify({
-                    id: newColumn.id,
                     title: newColumn.title,
-                    columnType: newColumn.type,
                     kanbanId: params.id,
                 }),
             };
+            fetch(`${API_BASE_URL}/api/private/user/kanban/column`, requestOptions).then(response => response.text()).then(data => newColumn.id = data)
 
-            fetch(`http://localhost:8080/api/dashboard/column/create/${params.id}`, requestOptions).then(response => response.json).then(data => console.log(data))
 
             setKanbanData((prevData: KanbanData) => ({
                 ...prevData,
@@ -1251,6 +1240,11 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     const removeColumn = (columnIDToRemove: string) => {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
+        };
+        fetch(`${API_BASE_URL}/api/private/user/kanban/column/${columnIDToRemove}`, requestOptions).then(response => response.text()).then(data => console.log(data))
         const updatedColumns = kanbanData.columns.filter(
             (column: Column) => column.id !== columnIDToRemove
         );
@@ -1413,6 +1407,17 @@ export default function Page({ params }: { params: { id: string } }) {
                         const activeColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col?.id === activeColumnID);
                         const overColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col?.id === overColumnID);
                         const newColumnsArray: Column[] = arrayMove(prevKanbanData.columns, activeColumnIndex, overColumnIndex);
+
+                        const requestOptions = {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
+                            body: JSON.stringify({
+                                "columnId": prevKanbanData.columns[activeColumnIndex].id,
+                                "toIndex": overColumnIndex,
+                            }),
+                        };
+                        fetch(`${API_BASE_URL}/api/private/user/kanban/move/column`, requestOptions).then(response => response.text()).then(data => console.log(data))
+
 
                         return {
                             ...prevKanbanData,
@@ -1792,6 +1797,16 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     const updateColumnTitle = (columnID: string, title: string) => {
+        const requestOptions = {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
+            body: JSON.stringify({
+                title: title,
+            }),
+        };
+
+        fetch(`${API_BASE_URL}/api/private/user/kanban/column/${columnID}`, requestOptions).then(response => response.text()).then(data => console.log(data))
+
         setKanbanData((prevKanbanData: KanbanData) => {
             const newColumns: Column[] = prevKanbanData.columns.map((col: Column) => {
                 if (col.id !== columnID) return col;
@@ -1805,7 +1820,7 @@ export default function Page({ params }: { params: { id: string } }) {
     };
 
     const createCard = (columnID: string) => {
-        if (isFlagSet(userValue.userData, "CRIAR_CARDS")) {
+        if (!isFlagSet(userValue.userData, "CRIAR_CARDS")) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
                     text: "Entendido.",
@@ -1831,8 +1846,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
         setTempColumnID(columnID);
         setEditorText("");
+
         setTempCard({
-            id: generateRandomString(),
+            id: "",
             title: "",
             columnID: columnID,
             description: "",
@@ -1844,6 +1860,7 @@ export default function Page({ params }: { params: { id: string } }) {
             date: 0,
             customFields: [],
             innerCards: [],
+            backendID: 0,
         } as Card);
         setIsEdition(false);
         setShowCreateCardForm(true);
@@ -1861,7 +1878,7 @@ export default function Page({ params }: { params: { id: string } }) {
         // Check if the card title is not empty before creating the card
         if (cardTitle.trim() !== "") {
             setKanbanData((prevData: KanbanData) => {
-                const newCard: Card = {
+                let newCard: Card = {
                     ...tempCard,
                     title: cardTitle,
                     description: cardDescription,
@@ -1872,7 +1889,19 @@ export default function Page({ params }: { params: { id: string } }) {
                 }
 
                 if (!isEdition) {
+
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userValue.token}`,
+                        },
+                        body: JSON.stringify(newCard),
+                    };
+
+                    fetch(`${API_BASE_URL}/api/private/user/kanban/column/card`, requestOptions).then(response => response.text()).then(data => newCard.id = data);
                     console.log(`CARD ${newCard.id} CREATED.`);
+
                     const updatedColumn = {
                         ...targetColumn,
                         cardsList: [...targetColumn.cardsList, newCard],
@@ -1913,7 +1942,7 @@ export default function Page({ params }: { params: { id: string } }) {
         setEditorText("");
         setTempColumnID("");
         setTempCard({
-            id: generateRandomString(),
+            id: "",                                         /////////////////////////////////////////////////////////////////////////////
             title: "",
             columnID: "",
             description: "",
@@ -1978,7 +2007,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     const handleAddList = () => {
-        const checklistId = generateRandomString();
+        const checklistId = "";                                         /////////////////////////////////////////////////////////////////////////////
         setTempCard((prevCard: Card) => ({
             ...prevCard,
             checklists: [
@@ -2038,7 +2067,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
     const handleAddTag = (tagTitle: string, tagColor: string) => {
         setTempCard((prevCard: Card) => {
-            const newTag: Tag = { title: tagTitle, color: tagColor, id: generateRandomString() };
+            const newTag: Tag = {
+                title: tagTitle, color: tagColor, id: ""
+            };
             const newTagsList: Tag[] = [...prevCard.tags, newTag];
             return {
                 ...prevCard,
@@ -2064,7 +2095,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 const Field: CustomFieldText = {
                     name: name,
                     value: value as string,
-                    id: generateRandomString(),
+                    id: "",                                         /////////////////////////////////////////////////////////////////////////////
                     fieldType: "text",
                 }
                 const newCustomFields: CustomFields[] = [...prevCard.customFields, Field as unknown as CustomFields];
@@ -2076,7 +2107,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 const Field: CustomFieldNumber = {
                     name: name,
                     value: value as number,
-                    id: generateRandomString(),
+                    id: "",                                         /////////////////////////////////////////////////////////////////////////////
                     fieldType: "number",
                 }
                 const newCustomFields: CustomFields[] = [...prevCard.customFields, Field as unknown as CustomFields];
@@ -2131,7 +2162,7 @@ export default function Page({ params }: { params: { id: string } }) {
             // console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
             localTempCardsArray.push(newCard);
             const tCard: Card = {
-                id: generateRandomString(),
+                id: "",                                         /////////////////////////////////////////////////////////////////////////////
                 title: "",
                 columnID: tempCard.columnID,
                 description: "",

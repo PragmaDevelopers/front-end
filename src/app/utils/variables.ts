@@ -40,12 +40,12 @@ export const SYSTEM_PERMISSIONS_BOOLEAN: { [Key: string]: boolean } = {
     "MOVER_CARDS": false,                       //
     "DELETAR_CARDS": false,                     //
     "EDITAR_CARDS": false,                      //
-    "CRIAR_COLUNAS": false,                     //
-    "MOVER_COLUNAS": false,                     //
-    "DELETAR_COLUNAS": false,                   //
-    "EDITAR_COLUNAS": false,                    //
-    "CRIAR_DASHBOARDS": false,
-    "DELETAR_DASHBOARDS": false,
+    "CRIAR_COLUNAS": false,                     //  //
+    "MOVER_COLUNAS": false,                     //  //
+    "DELETAR_COLUNAS": false,                   //  //
+    "EDITAR_COLUNAS": false,                    //  //
+    "CRIAR_DASHBOARDS": false,                  //  //
+    "DELETAR_DASHBOARDS": false,                //  //
     "EDITAR_DASHBOARDS": false,
     "CRIAR_CHECKLISTS": false,
     "DELETAR_CHECKLISTS": false,

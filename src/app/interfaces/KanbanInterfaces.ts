@@ -69,6 +69,16 @@ export interface CreateEditCardProps {
     setIsEdittingInnerCard: any;
     _appendToTempCardsArray: any;
     _popFromTempCardsArray: any;
+
+
+
+    setModalTitle: any;
+    setModalDescription: any;
+    setModalText: any;
+    setModalOptions: any;
+    setModalOpen: any;
+    setModalBorderColor: any;
+    setModalFocusRef: any;
 }
 
 export interface RichEditorProps {

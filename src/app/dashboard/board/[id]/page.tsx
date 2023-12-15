@@ -213,11 +213,34 @@ function CardElement(props: CardElementProps) {
     }
 
     const editCard = () => {
-        setTempCard(card as Card);
-        setTempColumnID(card.columnID);
-        setEditorText(card.description);
-        setIsEdition(true);
-        setShowCreateCardForm(true);
+        if (isFlagSet(userValue.userData, "EDITAR_CARDS")) {
+            setTempCard(card as Card);
+            setTempColumnID(card.columnID);
+            setEditorText(card.description);
+            setIsEdition(true);
+            setShowCreateCardForm(true);
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+        }
     }
 
 
@@ -402,12 +425,39 @@ function ColumnContainer(props: ColumnContainerProps) {
         createCard(column.id);
     }
 
+    const handleEditMode: () => void = () => {
+        if (isFlagSet(userValue.userData, "EDITAR_COLUNAS")) {
+            setEditMode(true);
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+        }
+    }
+
     return (
         <div className='relative w-64 h-full overflow-auto p-1'
             ref={setNodeRef} style={style} {...attributes} {...listeners} >
             <div className='w-full bg-neutral-50 rounded-md drop-shadow p-2 mb-4 flex flex-row justify-between items-center'>
                 <div
-                    onClick={() => setEditMode(true)}>
+                    onClick={handleEditMode}>
                     {editMode ? <input
                         type='text'
                         autoFocus
@@ -488,7 +538,19 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         isEdittingInnerCard,
         _appendToTempCardsArray,
         _popFromTempCardsArray,
+
+        setModalTitle,
+        setModalDescription,
+        setModalOptions,
+        setModalOpen,
+        setModalBorderColor,
+        setModalFocusRef,
+        setModalText,
     } = props;
+
+    const { userValue, updateUserValue } = useUserContext();
+    const noButtonRef = useRef<any>(null);
+
 
 
 
@@ -601,9 +663,175 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
 
     const handleCreateInnerCard = () => {
-        console.log(`BUTTON PUSH CREATE INNER CARD ${tempCardsArr}`, tempCardsArr);
-        setIsCreatingInnerCard(true);
+        if (isFlagSet(userValue.userData, "CRIAR_CARDS")) {
+            console.log(`BUTTON PUSH CREATE INNER CARD ${tempCardsArr}`, tempCardsArr);
+            setIsCreatingInnerCard(true);
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
     }
+
+    const handleShowDate = () => {
+        if (isFlagSet(userValue.userData, "CRIAR_PRAZOS")) {
+            setViewAddDate(!viewAddDate)
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+    };
+
+    const handleShowField = () => {
+        if (isFlagSet(userValue.userData, "CRIAR_CAMPO")) {
+            setViewAddField(!viewAddField)
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+    };
+
+    const handleShowMember = () => {
+        if (isFlagSet(userValue.userData, "CONVIDAR_PARA_O_KANBAN")) {
+            setViewAddMember(!viewAddMember)
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+    };
+
+    const handleShowMoveCard = () => {
+        if (isFlagSet(userValue.userData, "MOVER_CARDS")) {
+            setViewMoveCard(!viewMoveCard)
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+    };
+
+    const handleShowTag = () => {
+        if (isFlagSet(userValue.userData, "CRIAR_TAG")) {
+            setViewAddTag(!viewAddTag)
+        } else {
+            const optAttrs: CustomModalButtonAttributes[] = [
+                {
+                    text: "Entendido.",
+                    onclickfunc: () => setModalOpen(false),
+                    ref: noButtonRef,
+                    type: "button",
+                    className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                }
+            ];
+
+            const modalOpt: any = optAttrs.map(
+                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+
+            setModalTitle("Ação Negada.");
+            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            setModalText("Fale com seu administrador se isto é um engano.");
+            setModalBorderColor("border-red-500");
+            setModalFocusRef(noButtonRef);
+            setModalOptions(modalOpt);
+            setModalOpen(true);
+            return;
+        }
+    };
+
+
 
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
@@ -723,29 +951,29 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </div>
                     <div className='w-56 ml-4 flex flex-col items-center justify-start h-[75%] relative'>
                         <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
-                            onClick={() => setViewAddTag(!viewAddTag)}>
+                            onClick={handleShowTag}>
                             <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                             <h1 className="w-fit h-fit flex justify-center items-center">Add Tag</h1>
                         </button>
                         <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
-                            onClick={() => setViewAddMember(!viewAddMember)}>
+                            onClick={handleShowMember}>
                             <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                             <h1 className="w-fit h-fit flex justify-center items-center">Add Member</h1>
                         </button>
                         <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
-                            onClick={() => setViewAddDate(!viewAddDate)}>
+                            onClick={handleShowDate}>
                             <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                             <h1 className="w-fit h-fit flex justify-center items-center">Add Date</h1>
                         </button>
 
                         <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
-                            onClick={() => setViewAddField(!viewAddField)}>
+                            onClick={handleShowField}>
                             <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
                             <h1 className="w-fit h-fit flex justify-center items-center">Add Field</h1>
                         </button>
 
                         <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
-                            onClick={() => setViewMoveCard(!viewMoveCard)}>
+                            onClick={handleShowMoveCard}>
                             <ArrowUpOnSquareIcon className='absolute right-2 aspect-square w-6 mr-2' />
                             <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
                         </button>
@@ -930,6 +1158,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
     const editorRef = useRef<MDXEditorMethods>(null);
+    const noButtonRef = useRef<any>(null);
 
 
     const sensors = useSensors(useSensor(PointerSensor, {
@@ -1033,7 +1262,6 @@ export default function Page({ params }: { params: { id: string } }) {
         }));
     }
 
-    const noButtonRef = useRef<any>(null);
     const onDragStart = (event: DragStartEvent) => {
         //console.log("DRAG START", event);
         if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
@@ -2063,6 +2291,13 @@ export default function Page({ params }: { params: { id: string } }) {
                 setIsEdittingInnerCard={setIsEdittingInnerCard}
                 _appendToTempCardsArray={_appendToTempCardsArray}
                 _popFromTempCardsArray={_popFromTempCardsArray}
+                setModalOptions={setModalOptions}
+                setModalOpen={setModalOpen}
+                setModalDescription={setModalDescription}
+                setModalFocusRef={setModalFocusRef}
+                setModalBorderColor={setModalBorderColor}
+                setModalTitle={setModalTitle}
+                setModalText={setModalText}
             />
             <div className="flex justify-between items-center w-full px-2">
                 <h1>{params.id}</h1>

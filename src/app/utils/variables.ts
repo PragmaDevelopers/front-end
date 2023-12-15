@@ -28,24 +28,29 @@ export const SYSTEM_PERMISSIONS: { [Key: string]: number } = {
     "RECEBER_NOTIFICAÇÕES_PUSH": 1 << 23,
     "CONVIDAR_PARA_O_KANBAN": 1 << 24,
     "RETIRAR_DO_KANBAN": 1 << 25,
+    "CRIAR_TAG": 1 << 26,
+    "EDITAR_TAG": 1 << 27,
+    "DELETAR_TAG": 1 << 28,
+    "CRIAR_CAMPO": 1 << 29,
+    "DELETAR_CAMPO": 1 << 30,
 }
 
 export const SYSTEM_PERMISSIONS_BOOLEAN: { [Key: string]: boolean } = {
-    "CRIAR_CARDS": false,
-    "MOVER_CARDS": false,
-    "DELETAR_CARDS": false,
-    "EDITAR_CARDS": false,
-    "CRIAR_COLUNAS": false,
-    "MOVER_COLUNAS": false,
-    "DELETAR_COLUNAS": false,
-    "EDITAR_COLUNAS": false,
+    "CRIAR_CARDS": false,                       //
+    "MOVER_CARDS": false,                       //
+    "DELETAR_CARDS": false,                     //
+    "EDITAR_CARDS": false,                      //
+    "CRIAR_COLUNAS": false,                     //
+    "MOVER_COLUNAS": false,                     //
+    "DELETAR_COLUNAS": false,                   //
+    "EDITAR_COLUNAS": false,                    //
     "CRIAR_DASHBOARDS": false,
     "DELETAR_DASHBOARDS": false,
     "EDITAR_DASHBOARDS": false,
     "CRIAR_CHECKLISTS": false,
     "DELETAR_CHECKLISTS": false,
     "EDITAR_CHECKLISTS": false,
-    "CRIAR_PRAZOS": false,
+    "CRIAR_PRAZOS": false,                      //
     "DELETAR_PRAZOS": false,
     "EDITAR_PRAZOS": false,
     "CRIAR_COMENTÁRIOS": false,
@@ -57,4 +62,9 @@ export const SYSTEM_PERMISSIONS_BOOLEAN: { [Key: string]: boolean } = {
     "RECEBER_NOTIFICAÇÕES_PUSH": false,
     "CONVIDAR_PARA_O_KANBAN": false,
     "RETIRAR_DO_KANBAN": false,
+    "CRIAR_TAG": false,                         //
+    "EDITAR_TAG": false,
+    "DELETAR_TAG": false,
+    "CRIAR_CAMPO": false,                       //
+    "DELETAR_CAMPO": false,
 }

@@ -25,7 +25,7 @@ export default function Header(props: HeaderProps) {
                 <div className="flex flex-row items-center">
                     <nav className='flex flex-row'>
                         <Link href="/dashboard" className='text-neutral-950 hover:text-blue-400 mx-2'>Dashboard</Link>
-                        <Link href="/login" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
+                        <Link href="/register/client" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
                     </nav>
                     <button type="button" onClick={props?.showNotifications}>
                         <BellIcon className="aspect-square w-6 mr-2 ml-4" />

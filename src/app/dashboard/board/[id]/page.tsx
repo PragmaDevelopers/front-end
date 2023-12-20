@@ -562,9 +562,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
         { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
     ]);
-    useEffect(() => {
-        fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
-    }, [setDashboards]);
+    //useEffect(() => {
+    //    fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
+    //}, [setDashboards]);
 
 
     const [selected, setSelected] = useState(members[0])
@@ -1160,11 +1160,10 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }));
 
-    useEffect(() => {
-        fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
-
-        })
-    }, [params]);
+    //useEffect(() => {
+    //    fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
+    //    })
+    //}, [params]);
 
 
     const createNewColumn = () => {
@@ -1900,9 +1899,11 @@ export default function Page({ params }: { params: { id: string } }) {
                         },
                         body: JSON.stringify(newCard),
                     };
-
+                    // NOTE: WORKING ON. working on.
                     fetch(`${API_BASE_URL}/api/private/user/kanban/column/card`, requestOptions).then(response => response.text()).then(data => newCard.id = data);
                     console.log(`CARD ${newCard.id} CREATED.`);
+                    
+                    
 
                     const updatedColumn = {
                         ...targetColumn,

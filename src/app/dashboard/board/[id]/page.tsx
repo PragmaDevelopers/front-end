@@ -1983,7 +1983,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         };
                     }
                 }
-            }); | number
+            });
         }
         event.target.reset();
         setEditorText("");

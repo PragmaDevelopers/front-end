@@ -1891,18 +1891,44 @@ export default function Page({ params }: { params: { id: string } }) {
 
                 if (!isEdition) {
 
-                    const requestOptions = {
+
+                    // CheckList      Fetch
+                    // CheckListItem  Fetch
+                    // Comment        Fetch
+                    // Comment Answer Fetch
+                    // InnerCard      Fetch
+                    // Prazo          Fetch
+                    // Membro         Fetch
+                    // Custom Fields  Fetch
+   
+                    fetch();
+                    fetch();
+                    fetch();
+                    fetch();
+                    fetch();
+                    fetch();
+                    fetch();
+                    fetch();
+
+                    const fetchCard: Card = {
+                      title: newCard.title,
+                      description: newCard.description,
+                      :
+                    }
+
+                    const cardRequestOptions = {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${userValue.token}`,
                         },
-                        body: JSON.stringify(newCard),
+                        body: JSON.stringify(fetchCard),
                     };
                     // NOTE: WORKING ON. working on.
-                    fetch(`${API_BASE_URL}/api/private/user/kanban/column/card`, requestOptions).then(response => response.text()).then(data => newCard.id = data);
+                    fetch(`${API_BASE_URL}/api/private/user/kanban/column/card`, cardRequestOptions).then(response => response.text()).then(data => newCard.id = data);
                     console.log(`CARD ${newCard.id} CREATED.`);
                     
+
                     
 
                     const updatedColumn = {

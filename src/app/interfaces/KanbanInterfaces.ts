@@ -2,11 +2,11 @@ import { Card, Column } from "../types/KanbanTypes";
 
 export interface CardElementProps {
     card: Card,
-    deleteCard: (columnID: string, cardID: string) => void;
+    deleteCard: (columnID: string | number, cardID: string | number) => void;
     setShowCreateCardForm: (state: boolean) => void;
     setTempCard: (card: Card) => void;
     setIsEdition: (state: boolean) => void;
-    setTempColumnID: (id: string) => void;
+    setTempColumnID: (id: string | number) => void;
     setEditorText: any;
 
     setModalTitle: any;
@@ -21,14 +21,14 @@ export interface CardElementProps {
 
 export interface ColumnContainerProps {
     column: Column;
-    deleteColumn: (id: string) => void;
-    updateColumnTitle: (id: string, title: string) => void;
-    createCard: (columnID: string) => void;
-    deleteCard: (columnID: string, cardID: string) => void;
+    deleteColumn: (id: string | number) => void;
+    updateColumnTitle: (id: string | number, title: string) => void;
+    createCard: (columnID: string | number) => void;
+    deleteCard: (columnID: string | number, cardID: string | number) => void;
     setShowCreateCardForm: (state: boolean) => void;
     setTempCard: (card: Card) => void;
     setIsEdition: (state: boolean) => void;
-    setTempColumnID: (id: string) => void;
+    setTempColumnID: (id: string | number) => void;
     setEditorText: any;
 
     setModalTitle: any;

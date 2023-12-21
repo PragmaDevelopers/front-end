@@ -1238,7 +1238,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    const removeColumn = (columnIDToRemove: string) => {
+    const removeColumn = (columnIDToRemove: string | number) => {
         const requestOptions = {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
@@ -1797,7 +1797,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    const updateColumnTitle = (columnID: string, title: string) => {
+    const updateColumnTitle = (columnID: string | number, title: string) => {
         const requestOptions = {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
@@ -1820,7 +1820,7 @@ export default function Page({ params }: { params: { id: string } }) {
         })
     };
 
-    const createCard = (columnID: string) => {
+    const createCard = (columnID: string | number) => {
         if (!isFlagSet(userValue.userData, "CRIAR_CARDS")) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
@@ -1983,7 +1983,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         };
                     }
                 }
-            });
+            }); | number
         }
         event.target.reset();
         setEditorText("");
@@ -2005,7 +2005,7 @@ export default function Page({ params }: { params: { id: string } }) {
         setShowCreateCardForm(false);
     };
 
-    const deleteCard = (columnID: string, cardID: string) => {
+    const deleteCard = (columnID: string | number, cardID: string | number) => {
         setKanbanData((prevData: KanbanData) => {
             const targetColumn = prevData.columns.find((column) => column?.id === columnID);
             if (!targetColumn) {
@@ -2301,7 +2301,7 @@ export default function Page({ params }: { params: { id: string } }) {
         });
     }
 
-    const removeCurrentTag = (tagID: string) => {
+    const removeCurrentTag = (tagID: string | number) => {
         setTempCard((prevCard: Card) => {
             const newTagsList: Tag[] = prevCard.tags.filter((tag: Tag) => tag.id != tagID);
             return {
@@ -2346,6 +2346,14 @@ export default function Page({ params }: { params: { id: string } }) {
         editorRef.current?.setMarkdown(text);
     }
 
+
+
+
+
+
+    //
+    // INNER CARD LOGIC
+    //
     const _appendToTempCardsArray = (newCard: Card) => {
         console.log("APPENDING", newCard, "TO", tempCardsArr);
         setTempCardsArr((prevArr: Card[]) => {

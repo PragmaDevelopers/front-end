@@ -2,9 +2,13 @@ import { userData } from "../types/KanbanTypes";
 import { PERMISSIONS_LIST, SYSTEM_PERMISSIONS } from "./variables";
 
 export function isFlagSet(userValue: userData, flag: string): boolean {
-    let bitMask: number = SYSTEM_PERMISSIONS[flag];
-    let binaryValue: number = parseInt(userValue.permissionLevel, 2);
-    return (binaryValue & bitMask) !== 0;
+    //let bitMask: number = SYSTEM_PERMISSIONS[flag];
+    //let binaryValue: number = parseInt(userValue.permissionLevel, 2);
+    //return (binaryValue & bitMask) !== 0;
+    let flagVal: boolean = checkUserPermission(flag, userValue.permissionLevel);
+    let isUserAdmin: boolean = userValue.role === "ROLE_ADMIN"; 
+    let retVal: boolean = flagVal || isUserAdmin;
+    return retVal;
 }
 
 export function getkUserPerms(userPerms: string): { [Key: string]: boolean } {

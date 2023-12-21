@@ -133,7 +133,7 @@ export default function Layout({ children }: any) {
 
     const router = useRouter();
 
-    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([]);
+    const [dashboards, setDashboards] = useState<{ kanbanId: string | number, name: string }[]>([]);
 
     const [kanbanID, setKanbanID] = useState<string>("");
 
@@ -200,13 +200,13 @@ export default function Layout({ children }: any) {
 
             fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.text()).then(data => setKanbanID(data));
 
-            const dashboardItem: { name: string, kanbanId: string } = {
+            const dashboardItem: { name: string, kanbanId: string | number } = {
                 name: event.target.boardname.value, kanbanId: kanbanID
             }
 
             if (dashboards !== undefined) {
                 if (dashboards?.length >= 0) {
-                    setDashboards([...dashboards as unknown as { name: string, kanbanId: string }[], dashboardItem]);
+                    setDashboards([...dashboards as unknown as { name: string, kanbanId: string | number}[], dashboardItem]);
                 } else {
                     setDashboards([dashboardItem]);
                 }
@@ -216,7 +216,7 @@ export default function Layout({ children }: any) {
         }
     }
 
-    const deleteKanban = (kanbanID: string) => {
+    const deleteKanban = (kanbanID: string | number) => {
         const requestOptions = {
             method: 'DELETE',
             headers: {
@@ -227,9 +227,9 @@ export default function Layout({ children }: any) {
 
         fetch(`${API_BASE_URL}/api/private/user/kanban/${kanbanID}`, requestOptions).then(response => response.text()).then(data => console.log(data));
 
-        setDashboards((dash: { kanbanId: string, name: string }[]) => {
-            const newDashboardList: { kanbanId: string, name: string }[] = dash.filter((ds: { kanbanId: string, name: string }) => ds.kanbanId != kanbanID);
-            return newDashboardList as { kanbanId: string, name: string }[];
+        setDashboards((dash: { kanbanId: string | number, name: string }[]) => {
+            const newDashboardList: { kanbanId: string | number, name: string }[] = dash.filter((ds: { kanbanId: string | number, name: string }) => ds.kanbanId != kanbanID);
+            return newDashboardList as { kanbanId: string | number, name: string }[];
         });
     }
 

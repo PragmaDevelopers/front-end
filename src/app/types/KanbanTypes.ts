@@ -4,28 +4,28 @@ export type FieldInputTypes = 'number' | 'text';
 
 export type DropdownItem = {
     name: string;
-    id: string;
+    id: string | number;
     dropdownID: string;
     value: string;
 }
 
 export type Dropdown = {
     name: string;
-    id: string;
+    id: string | number;
     items: DropdownItem[];
 }
 
 export type CustomFieldText = {
     name: string;
     value: string;
-    id: string;
+    id: string | number;
     fieldType: "text";
 }
 
 export type CustomFieldNumber = {
     name: string;
     value: number;
-    id: string;
+    id: string | number;
     fieldType: "number";
 }
 
@@ -34,19 +34,20 @@ export type CustomFields = CustomFieldNumber | CustomFieldText;
 
 export type CheckList = {
     name: string;
-    id: string;
+    id: string | number;
     items: CheckListItem[];
 }
 
 export type CheckListItem = {
     name: string;
     completed: boolean;
-    checklistId: string;
+    checklistId: string | number;
+    id: string | number;
 }
 
 export type Card = {
     title: string;
-    id: string;
+    id: string | number;
     columnID: string;
     description: string;
     checklists: CheckList[];
@@ -62,19 +63,19 @@ export type Card = {
 export type Column = {
     title: string;
     columnType: number;
-    id: string;
+    id: string | number;
     cardsList: Card[];
 }
 
 export type KanbanData = {
     columns: Column[];
-    kanbanId: string;
+    kanbanId: string | number;
 }
 
 export type Tag = {
     title: string;
     color: string;
-    id: string;
+    id: string | number;
 }
 
 export type Member = {
@@ -95,8 +96,9 @@ export type Member = {
 export type Comment = {
     content: string;
     user: Member;
-    creationDate: number; // Date
+    creationDate: string | number; // Date
     cardID: number | string;
+    id: string | number;
 }
 
 

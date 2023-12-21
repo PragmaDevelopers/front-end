@@ -1901,6 +1901,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     // Membro         Fetch
                     // Custom Fields  Fetch
    
+                    /*
                     fetch();
                     fetch();
                     fetch();
@@ -1909,12 +1910,29 @@ export default function Page({ params }: { params: { id: string } }) {
                     fetch();
                     fetch();
                     fetch();
+                    */
 
                     const fetchCard: Card = {
                       title: newCard.title,
                       description: newCard.description,
-                      :
+                      //:
                     }
+
+                    let tnCard: Card = newCard;
+                    tnCard.checklists.forEach((element) => {
+                      checklistRequest = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userValue.token}`,
+                        },
+                        body: JSON.stringify({cardId: newCard.id, name: element.name}),
+                      }
+                      fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/checkList`, checklistRequest).then(
+                        response => response.text()
+                      ).then((data) => element.id = data);
+                      console.log(`[INFO]\tPOST Request for CheckList [${element.name}] #${element.id} was sucessfully made.`);
+                    });
 
                     const cardRequestOptions = {
                         method: 'POST',

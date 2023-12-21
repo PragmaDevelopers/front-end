@@ -48,7 +48,7 @@ export type CheckListItem = {
 export type Card = {
     title: string;
     id: string | number;
-    columnID: string;
+    columnID: string | number;
     description: string;
     checklists: CheckList[];
     tags: Tag[];
@@ -97,13 +97,13 @@ export type Comment = {
     content: string;
     user: Member;
     creationDate: string | number; // Date
-    cardID: number | string;
+    cardID: string | number;
     id: string | number;
 }
 
 
 export type userData = {
-    id: number;
+    id: string | number;
     name: string;
     email: string;
     pushEmail: string | null;

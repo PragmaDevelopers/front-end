@@ -1109,7 +1109,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }, [kanbanData]);
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
-    const [tempColumnID, setTempColumnID] = useState<string>("");
+    const [tempColumnID, setTempColumnID] = useState<string | number>("");
     const [lists, setLists] = useState([]);
     const [tempCard, setTempCard] = useState<any>({});
     const [isEdition, setIsEdition] = useState<boolean>(false);
@@ -1900,7 +1900,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     // Prazo          Fetch
                     // Membro         Fetch
                     // Custom Fields  Fetch
-   
+
                     /*
                     fetch();
                     fetch();
@@ -1912,26 +1912,26 @@ export default function Page({ params }: { params: { id: string } }) {
                     fetch();
                     */
 
-                    const fetchCard: Card = {
-                      title: newCard.title,
-                      description: newCard.description,
-                      //:
+                    const fetchCard: any = {
+                        title: newCard.title,
+                        description: newCard.description,
+                        //:
                     }
 
                     let tnCard: Card = newCard;
                     tnCard.checklists.forEach((element) => {
-                      checklistRequest = {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${userValue.token}`,
-                        },
-                        body: JSON.stringify({cardId: newCard.id, name: element.name}),
-                      }
-                      fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/checkList`, checklistRequest).then(
-                        response => response.text()
-                      ).then((data) => element.id = data);
-                      console.log(`[INFO]\tPOST Request for CheckList [${element.name}] #${element.id} was sucessfully made.`);
+                        let checklistRequest = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${userValue.token}`,
+                            },
+                            body: JSON.stringify({ cardId: newCard.id, name: element.name }),
+                        }
+                        fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/checkList`, checklistRequest).then(
+                            response => response.text()
+                        ).then((data) => element.id = data);
+                        console.log(`[INFO]\tPOST Request for CheckList [${element.name}] #${element.id} was sucessfully made.`);
                     });
 
                     const cardRequestOptions = {
@@ -1945,9 +1945,9 @@ export default function Page({ params }: { params: { id: string } }) {
                     // NOTE: WORKING ON. working on.
                     fetch(`${API_BASE_URL}/api/private/user/kanban/column/card`, cardRequestOptions).then(response => response.text()).then(data => newCard.id = data);
                     console.log(`CARD ${newCard.id} CREATED.`);
-                    
 
-                    
+
+
 
                     const updatedColumn = {
                         ...targetColumn,

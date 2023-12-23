@@ -1942,6 +1942,9 @@ export default function Page({ params }: { params: { id: string } }) {
                         },
                         body: JSON.stringify(fetchCard),
                     };
+
+
+
                     // NOTE: WORKING ON. working on.
                     fetch(`${API_BASE_URL}/api/private/user/kanban/column/card`, cardRequestOptions).then(response => response.text()).then(data => newCard.id = data);
                     console.log(`CARD ${newCard.id} CREATED.`);

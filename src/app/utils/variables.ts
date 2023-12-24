@@ -1,5 +1,6 @@
 export const API_BASE_URL: string = "https://sistema-rc-e0ef46aabaec.herokuapp.com";
 
+export const BACKEND_DATE_FORMAT: string = 'YYYY-MM-DDTHH:mm:ss.SSSSSS';
 
 export const SYSTEM_PERMISSIONS: { [Key: string]: number } = {
     "CRIAR_CARDS": 1 << 0,

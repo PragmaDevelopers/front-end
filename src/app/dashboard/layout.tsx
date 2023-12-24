@@ -17,7 +17,7 @@ interface BoardMenuEntryProps {
     href: string;
     name: string;
     deleteKanban: any;
-    kanbanID: string;
+    kanbanID: string | number;
     setModalTitle: any;
     setModalDescription: any;
     setModalText: any;
@@ -206,7 +206,7 @@ export default function Layout({ children }: any) {
 
             if (dashboards !== undefined) {
                 if (dashboards?.length >= 0) {
-                    setDashboards([...dashboards as unknown as { name: string, kanbanId: string | number}[], dashboardItem]);
+                    setDashboards([...dashboards as unknown as { name: string, kanbanId: string | number }[], dashboardItem]);
                 } else {
                     setDashboards([dashboardItem]);
                 }

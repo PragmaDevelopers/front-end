@@ -1,31 +1,32 @@
 export type DateValuePiece = Date | null;
 export type DateValue = DateValuePiece | [DateValuePiece, DateValuePiece];
 export type FieldInputTypes = 'number' | 'text';
+export type SystemID = string | number;
 
 export type DropdownItem = {
     name: string;
-    id: string | number;
+    id: SystemID;
     dropdownID: string;
     value: string;
 }
 
 export type Dropdown = {
     name: string;
-    id: string | number;
+    id: SystemID;
     items: DropdownItem[];
 }
 
 export type CustomFieldText = {
     name: string;
     value: string;
-    id: string | number;
+    id: SystemID;
     fieldType: "text";
 }
 
 export type CustomFieldNumber = {
     name: string;
     value: number;
-    id: string | number;
+    id: SystemID;
     fieldType: "number";
 }
 
@@ -34,21 +35,21 @@ export type CustomFields = CustomFieldNumber | CustomFieldText;
 
 export type CheckList = {
     name: string;
-    id: string | number;
+    id: SystemID;
     items: CheckListItem[];
 }
 
 export type CheckListItem = {
     name: string;
     completed: boolean;
-    checklistId: string | number;
-    id: string | number;
+    checklistId: SystemID;
+    id: SystemID;
 }
 
 export type Card = {
     title: string;
-    id: string | number;
-    columnID: string | number;
+    id: SystemID;
+    columnID: SystemID;
     description: string;
     checklists: CheckList[];
     tags: Tag[];
@@ -63,19 +64,19 @@ export type Card = {
 export type Column = {
     title: string;
     columnType: number;
-    id: string | number;
+    id: SystemID;
     cardsList: Card[];
 }
 
 export type KanbanData = {
     columns: Column[];
-    kanbanId: string | number;
+    kanbanId: SystemID;
 }
 
 export type Tag = {
     title: string;
     color: string;
-    id: string | number;
+    id: SystemID;
 }
 
 export type Member = {
@@ -88,22 +89,23 @@ export type Member = {
     profilePicture: string | null;
     pushEmail: string | null;
     generalPermissions: string | null;
-    id: number | string | null;
+    id: SystemID | null;
     role: string | null;
     kanban_role: string | null;
 }
 
 export type Comment = {
-    content: string;
     user: Member;
-    creationDate: string | number; // Date
-    cardID: string | number;
-    id: string | number;
+    content: string;
+    id: SystemID;
+    answers: Comment[] | null;
+    edited: boolean;
+    date: string;
 }
 
 
 export type userData = {
-    id: string | number;
+    id: SystemID;
     name: string;
     email: string;
     pushEmail: string | null;

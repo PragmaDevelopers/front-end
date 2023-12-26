@@ -28,6 +28,9 @@ export function CreateNewColumn(
       }
     
   }
+
+    console.log("[INFO]\t@ Create New Column Function USER PERMISSONS", "permissionLevel", userValue.userData.permissionLevel);
+
     if (!isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {

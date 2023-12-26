@@ -11,7 +11,7 @@ export function isFlagSet(userValue: userData, flag: string): boolean {
     return retVal;
 }
 
-export function getkUserPerms(userPerms: string): { [Key: string]: boolean } {
+export function getUserPerms(userPerms: string): { [Key: string]: boolean } {
     let userPermissions: { [Key: string]: boolean } = {
         "CRIAR_CARDS": false,
         "MOVER_CARDS": false,
@@ -56,6 +56,6 @@ export function getkUserPerms(userPerms: string): { [Key: string]: boolean } {
 }
 
 export function checkUserPermission(permission: string, userPerms: string): boolean {
-    const userPermsObj: { [Key: string]: boolean } = getkUserPerms(userPerms);
+    const userPermsObj: { [Key: string]: boolean } = getUserPerms(userPerms);
     return userPermsObj[permission];
 }

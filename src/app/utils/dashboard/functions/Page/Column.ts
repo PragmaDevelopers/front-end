@@ -18,6 +18,7 @@ export function CreateNewColumn(
     kanbanData: KanbanData,
     params: { id: SystemID; },
     ) {
+    console.log("@ Create New Column Function:", userValue);
     if (!isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {

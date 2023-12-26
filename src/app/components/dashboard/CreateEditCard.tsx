@@ -11,6 +11,7 @@ import { HexColorPicker } from "react-colorful";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { InnerCardElement } from "./InnerCard";
 import RichEditor from "./RichEditor";
+import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
 
 const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEditorMethods> | undefined) => {
     const { setShowCreateCardForm,
@@ -108,11 +109,136 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
 
 
-
-
-
-
-
+    const handleShowTag = () => {
+        ShowTag(
+            userValue.userData,
+            setViewAddTag,
+            viewAddTag,
+            setModalOpen,
+            noButtonRef,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+        )
+    }
+    const handleShowDate = () => {
+        ShowDate(
+            userValue.userData,
+            setModalOpen,
+            noButtonRef,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setViewAddDate,
+            viewAddDate,
+        )
+    }
+    const handleShowField = () => {
+        ShowField(
+            userValue.userData,
+            setModalOpen,
+            noButtonRef,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setViewAddField,
+            viewAddField,
+        )
+    }
+    const handleShowMember = () => {
+        ShowMember(
+            userValue.userData,
+            setModalOpen,
+            noButtonRef,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setViewAddMember,
+            viewAddMember,
+        )
+    }
+    const handleShowMoveCard = () => {
+        ShowMoveCard(
+            userValue.userData,
+            setModalOpen,
+            noButtonRef,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setViewMoveCard,
+            viewMoveCard,
+        )
+    }
+    const handleCustomFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+        CustomFieldChange(
+            event, 
+            setCustomFieldsData,
+        )
+    }
+    const handleCreateNewTag = (event: any) => {
+        createNewTag(
+            event, 
+            setViewAddTag, 
+            addNewTag, 
+            setColor, 
+            color
+        )
+    }
+    const handleCreateNewCustomField = (event: any) => {
+        createNewCustomField(
+            event, 
+            setViewAddField,
+            addCustomField,
+        )
+    }
+    const handleCloseCalendar = (e: any) => {
+        closeCalendar(
+            e, 
+            setViewAddDate
+        )
+    }
+    const handleCloseMoveCard = (e: any) => {
+        closeMoveCard(
+            e,
+            setViewMoveCard
+        )
+    }
+    const handleCloseAddMember = (e: any) => {
+        closeAddMember(
+            e,
+            setViewAddMember
+        )
+    }
+    const handleCreateInnerCard = () => {
+        CreateInnerCard(
+        userValue.userData, 
+        setModalOpen,
+        noButtonRef,
+        setModalTitle,
+        setModalDescription,
+        setModalText,
+        setModalBorderColor,
+        setModalFocusRef,
+        setModalOptions,
+        setIsCreatingInnerCard,
+        tempCardsArr,
+        )
+    }
 
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
@@ -270,7 +396,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                 </form>
                 <div className='ml-4 flex flex-col items-center justify-start h-[75%] relative'>
                     <div className={(viewAddMember ? 'flex' : 'hidden') + ' absolute -left-56 top-28 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={closeAddMember}>
+                        <form onSubmit={handleCloseAddMember}>
                             <Combobox value={selected} onChange={setSelected}>
                                 <div className="relative mt-1">
                                     <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
@@ -339,14 +465,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </div>
 
                     <div className={(viewAddDate ? 'flex' : 'hidden') + ' absolute -left-56 top-44 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={closeCalendar}>
+                        <form onSubmit={handleCloseCalendar}>
                             <Calendar value={cardDate} onChange={setCardDate} />
                             <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
                         </form>
                     </div>
 
                     <div className={(viewAddField ? 'flex' : 'hidden') + ' absolute  -left-56 top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={createNewCustomField} className='flex flex-col items-center'>
+                        <form onSubmit={handleCreateNewCustomField} className='flex flex-col items-center'>
                             <input type='text' name='fieldTitle' placeholder='Field Name' className='bg-neutral-50 border-none outline-none' />
                             <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
                                 <option value="text">Text</option>
@@ -357,7 +483,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </div>
 
                     <div className={(viewMoveCard ? 'flex' : 'hidden') + ' absolute  -left-56 top-72 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={closeMoveCard} className='flex flex-col items-center'>
+                        <form onSubmit={handleCloseMoveCard} className='flex flex-col items-center'>
                             <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
                                 {dashboards?.map((kanban: { kanbanId: string, name: string }) => {
                                     return <option value={kanban?.kanbanId} key={kanban?.kanbanId}>{kanban?.name}</option>;
@@ -368,7 +494,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     </div>
 
                     <div className={(viewAddTag ? 'flex' : 'hidden') + ' absolute -left-56 top-14 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                        <form onSubmit={createNewTag}>
+                        <form onSubmit={handleCreateNewTag}>
                             <input type='text' name='title' placeholder='Nome da Etiqueta' className='form-input bg-neutral-100 w-48 border-[1px] border-neutral-200 rounded-md p-1 shadow-inner my-2' />
                             <HexColorPicker color={color} onChange={setColor} className='my-2' />
                             <button type='submit' className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Criar</button>

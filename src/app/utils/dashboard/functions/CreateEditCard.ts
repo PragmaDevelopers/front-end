@@ -1,5 +1,22 @@
-export function handleShowTag() {
-    if (isFlagSet(userValue.userData, "CRIAR_TAG")) {
+import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { ChangeEvent, RefObject } from "react";
+import { isFlagSet } from "../../checkers";
+import { Card, userData } from "@/app/types/KanbanTypes";
+
+export function ShowTag(
+    userData: userData, 
+    setViewAddTag: (arg0: boolean) => void,
+    viewAddTag: any,
+    setModalOpen: (arg0: boolean) => void,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    setModalTitle: (arg0: string) => void,
+    setModalDescription: (arg0: string) => void,
+    setModalText: (arg0: string) => void,
+    setModalBorderColor: (arg0: string) => void,
+    setModalFocusRef: (arg0: any) => void,
+    setModalOptions: (arg0: any) => void,
+): void {
+    if (isFlagSet(userData, "CRIAR_TAG")) {
         setViewAddTag(!viewAddTag)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -13,9 +30,10 @@ export function handleShowTag() {
         ];
 
         const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => <button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>);
+            (el: CustomModalButtonAttributes, idx: number) => `<button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>`
+        );
 
-    setModalTitle("Ação Negada.");
+        setModalTitle("Ação Negada.");
         setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
         setModalText("Fale com seu administrador se isto é um engano.");
         setModalBorderColor("border-red-500");
@@ -27,8 +45,20 @@ export function handleShowTag() {
 };
 
 
-export function handleShowDate() {
-    if (isFlagSet(userValue.userData, "CRIAR_PRAZOS")) {
+export function ShowDate(
+    userData: userData, 
+    setModalOpen: (arg0: boolean) => void,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    setModalTitle: (arg0: string) => void,
+    setModalDescription: (arg0: string) => void,
+    setModalText: (arg0: string) => void,
+    setModalBorderColor: (arg0: string) => void,
+    setModalFocusRef: (arg0: any) => void,
+    setModalOptions: (arg0: any) => void,
+    setViewAddDate: (arg0: boolean) => void,
+    viewAddDate: boolean,
+) {
+    if (isFlagSet(userData, "CRIAR_PRAZOS")) {
         setViewAddDate(!viewAddDate)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -42,7 +72,8 @@ export function handleShowDate() {
         ];
 
         const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => <button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>);
+            (el: CustomModalButtonAttributes, idx: number) => `<button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>`
+        );
 
         setModalTitle("Ação Negada.");
         setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
@@ -55,8 +86,20 @@ export function handleShowDate() {
     }
 };
 
-export function handleShowField() {
-    if (isFlagSet(userValue.userData, "CRIAR_CAMPO")) {
+export function ShowField(
+    userData: userData, 
+    setModalOpen: (arg0: boolean) => void,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    setModalTitle: (arg0: string) => void,
+    setModalDescription: (arg0: string) => void,
+    setModalText: (arg0: string) => void,
+    setModalBorderColor: (arg0: string) => void,
+    setModalFocusRef: (arg0: any) => void,
+    setModalOptions: (arg0: any) => void,
+    setViewAddField: (arg0: boolean) => void,
+    viewAddField: boolean,
+) {
+    if (isFlagSet(userData, "CRIAR_CAMPO")) {
         setViewAddField(!viewAddField)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -70,7 +113,8 @@ export function handleShowField() {
         ];
 
         const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => <button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>);
+            (el: CustomModalButtonAttributes, idx: number) => `<button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>`
+        );
 
         setModalTitle("Ação Negada.");
         setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
@@ -83,8 +127,21 @@ export function handleShowField() {
     }
 };
 
-export function handleShowMember() {
-    if (isFlagSet(userValue.userData, "CONVIDAR_PARA_O_KANBAN")) {
+export function ShowMember(
+    userData: userData, 
+    setModalOpen: (arg0: boolean) => void,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    setModalTitle: (arg0: string) => void,
+    setModalDescription: (arg0: string) => void,
+    setModalText: (arg0: string) => void,
+    setModalBorderColor: (arg0: string) => void,
+    setModalFocusRef: (arg0: any) => void,
+    setModalOptions: (arg0: any) => void,
+
+    setViewAddMember: (arg0: boolean) => void,
+    viewAddMember: boolean,
+) {
+    if (isFlagSet(userData, "CONVIDAR_PARA_O_KANBAN")) {
         setViewAddMember(!viewAddMember)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -98,7 +155,8 @@ export function handleShowMember() {
         ];
 
         const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => <button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>);
+            (el: CustomModalButtonAttributes, idx: number) => `<button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>`
+            );
 
         setModalTitle("Ação Negada.");
         setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
@@ -111,8 +169,21 @@ export function handleShowMember() {
     }
 };
 
-export function handleShowMoveCard() {
-    if (isFlagSet(userValue.userData, "MOVER_CARDS")) {
+export function ShowMoveCard(
+    userData: userData, 
+    setModalOpen: (arg0: boolean) => void,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    setModalTitle: (arg0: string) => void,
+    setModalDescription: (arg0: string) => void,
+    setModalText: (arg0: string) => void,
+    setModalBorderColor: (arg0: string) => void,
+    setModalFocusRef: (arg0: any) => void,
+    setModalOptions: (arg0: any) => void,
+
+    setViewMoveCard: (arg0: boolean) => void,
+    viewMoveCard: boolean,
+    ) {
+    if (isFlagSet(userData, "MOVER_CARDS")) {
         setViewMoveCard(!viewMoveCard)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -126,7 +197,8 @@ export function handleShowMoveCard() {
         ];
 
         const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => <button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>);
+            (el: CustomModalButtonAttributes, idx: number) => `<button className={ el?.className } type = { el.type } key = { idx } onClick = { el.onclickfunc } ref = { el?.ref } > { el.text } < /button>`
+            );
 
         setModalTitle("Ação Negada.");
         setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
@@ -139,11 +211,11 @@ export function handleShowMoveCard() {
     }
 };
 
-    export function handleCustomFieldChange(event: ChangeEvent<HTMLInputElement>) {
+    export function CustomFieldChange(event: ChangeEvent<HTMLInputElement>, setCustomFieldsData: (arg0: (prevData: any) => any) => void) {
         const name = event.target.name;
         const value = event.target.value;
         console.log(name, value);
-        setCustomFieldsData((prevData) => {
+        setCustomFieldsData((prevData: any) => {
             return {
                 ...prevData,
                 [name]: value,
@@ -151,7 +223,7 @@ export function handleShowMoveCard() {
         });
     }
 
-    export function createNewTag(event: any) {
+    export function createNewTag(event: any, setViewAddTag: (arg0: boolean) => void, addNewTag: (arg0: string, arg1: string) => void, setColor: (arg0: string) => void, color: string) {
         event.preventDefault();
         const tagTitle: string = event?.target?.title?.value;
         addNewTag(tagTitle, color);
@@ -160,7 +232,7 @@ export function handleShowMoveCard() {
         setColor("#aabbcc");
     }
 
-    export function createNewCustomField(event: any) {
+    export function createNewCustomField(event: any, setViewAddField: (arg0: boolean) => void, addCustomField: (arg0: any, arg1: string | number, arg2: string) => void) {
         event.preventDefault();
         setViewAddField(false);
         // (name: string, value: string | number, fieldType: "text" | "number")
@@ -176,26 +248,40 @@ export function handleShowMoveCard() {
         event.target.reset();
     }
 
-    export function closeCalendar(e: any) {
+    export function closeCalendar(e: any, setViewAddDate: (arg0: boolean) => void) {
         e.preventDefault();
         setViewAddDate(false);
         e.target.reset();
     }
 
-    export function closeMoveCard(e: any) {
+    export function closeMoveCard(e: any, setViewMoveCard: (arg0: boolean) => void) {
         e.preventDefault();
         setViewMoveCard(false);
         e.target.reset();
     }
 
-    export function closeAddMember(e: any) {
+    export function closeAddMember(e: any, setViewAddMember: (arg0: boolean) => void) {
         e.preventDefault();
         setViewAddMember(false);
         e.target.reset();
     }
 
-    export function handleCreateInnerCard() {
-        if (isFlagSet(userValue.userData, "CRIAR_CARDS")) {
+    export function CreateInnerCard(
+    userData: userData, 
+    setModalOpen: (arg0: boolean) => void,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    setModalTitle: (arg0: string) => void,
+    setModalDescription: (arg0: string) => void,
+    setModalText: (arg0: string) => void,
+    setModalBorderColor: (arg0: string) => void,
+    setModalFocusRef: (arg0: any) => void,
+    setModalOptions: (arg0: any) => void,
+
+    setIsCreatingInnerCard: (arg0: boolean) => void,
+    tempCardsArr: Card[],
+
+    ) {
+        if (isFlagSet(userData, "CRIAR_CARDS")) {
             console.log(`BUTTON PUSH CREATE INNER CARD ${tempCardsArr}`, tempCardsArr);
             setIsCreatingInnerCard(true);
         } else {
@@ -210,7 +296,8 @@ export function handleShowMoveCard() {
             ];
 
             const modalOpt: any = optAttrs.map(
-                (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+                (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
+                );
 
             setModalTitle("Ação Negada.");
             setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");

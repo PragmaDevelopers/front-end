@@ -5,7 +5,7 @@ import { DragStartEvent, DragEndEvent, DragOverEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { RefObject } from "react";
 
-export function onDragStart(
+export function OnDragStart(
     event: DragStartEvent,
     userValue: userValueDT,
     setModalTitle: (value: string) => void,
@@ -17,8 +17,8 @@ export function onDragStart(
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
     isFlagSet: (value: userData, flag: string) => boolean,
-    setActiveCard: (arg0: any) => void,
-    setActiveColumn: (arg0: any) => void,
+    setActiveCard: (arg0:  Card | null | any) => void,
+    setActiveColumn: (arg0:  Column | null | any) => void,
     setTempDragState: (arg0: DragStartEvent) => void,
     ) {
     //console.log("DRAG START", event);
@@ -131,7 +131,7 @@ export function onDragStart(
     }
 }
 
-export function onDragEnd(
+export function OnDragEnd(
     event: DragEndEvent,
     userValue: userValueDT,
     setModalTitle: (value: string) => void,
@@ -143,10 +143,10 @@ export function onDragEnd(
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
     isFlagSet: (value: userData, flag: string) => boolean,
-    setKanbanData: (arg0: { (prevKanbanData: KanbanData): { columns: Column[]; kanbanId: SystemID; }; (prevKanbanData: KanbanData): { columns: Column[]; kanbanId: SystemID; } | undefined; (prevKanbanData: KanbanData): { columns: Column[]; kanbanId: SystemID; } | undefined; (prevKanbanData: KanbanData): { columns: Column[]; kanbanId: SystemID; } | undefined; }) => void,
-    setActiveColumn: (arg0: null) => void,
-    setActiveCard: (arg0: null) => void,
-    tempDragState: DragEndEvent,
+    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
+    setActiveColumn: (arg0: Column | null | any) => void,
+    setActiveCard: (arg0: Card | null | any) => void,
+    tempDragState: DragEndEvent | DragStartEvent | DragOverEvent,
     ) {
     if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -446,7 +446,7 @@ export function onDragEnd(
     }
 }
 
-export function onDragOver(
+export function OnDragOver(
     event: DragOverEvent,
     userValue: userValueDT,
     setModalTitle: (value: string) => void,
@@ -458,7 +458,7 @@ export function onDragOver(
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
     isFlagSet: (value: userData, flag: string) => boolean,
-    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData) => void,
+    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
     ) {
     if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
         const optAttrs: CustomModalButtonAttributes[] = [

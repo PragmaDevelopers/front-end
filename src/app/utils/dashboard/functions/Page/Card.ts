@@ -1,5 +1,29 @@
-export function createCard(columnID: string | number) {
-    if (!isFlagSet(userValue.userData, "CRIAR_CARDS")) {
+import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { Card, KanbanData, CheckList, CheckListItem, userData, SystemID, userValueDT } from "@/app/types/KanbanTypes";
+import { API_BASE_URL } from "@/app/utils/variables";
+import { MDXEditorMethods } from "@mdxeditor/editor";
+import { RefObject } from "react";
+
+export function CreateCard(
+        columnID: SystemID,
+        userData: userData,
+        setModalTitle: (value: string) => void,
+        setModalDescription: (value: string) => void,
+        setModalText: (value: string) => void,
+        setModalBorderColor: (value: string) => void,
+        setModalFocusRef: (value: any) => void,
+        setModalOptions: (value: any) => void,
+        setModalOpen: (value: boolean) => void,
+        noButtonRef: RefObject<HTMLButtonElement>,
+        isFlagSet: (value: userData, flag: string) => boolean,
+        setTempColumnID: (arg0: SystemID) => void,
+        setEditorText: (arg0: string) => void,
+        setTempCard: (arg0: Card) => void,
+        setIsEdition: (arg0: boolean) => void,
+        setShowCreateCardForm: (arg0: boolean) => void,
+        editorRef: RefObject<MDXEditorMethods>,
+    ) {
+    if (!isFlagSet(userData, "CRIAR_CARDS")) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {
                 text: "Entendido.",
@@ -11,7 +35,8 @@ export function createCard(columnID: string | number) {
         ];
 
         const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+            (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
+            );
 
         setModalTitle("Ação Negada.");
         setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
@@ -47,7 +72,19 @@ export function createCard(columnID: string | number) {
     console.log("CREATING CARD");
 };
 
-export function createCardForm(event: any, isEdition: boolean) {
+export function CreateCardForm(
+    event: any, 
+    isEdition: boolean,
+    editorRef: RefObject<MDXEditorMethods>,
+    tempColumnID: SystemID,
+    tempCard: Card,
+    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
+    userValue: userValueDT,
+    setTempColumnID: (arg0: SystemID) => void,
+    setEditorText: (arg0: string) => void,
+    setTempCard: (arg0: Card) => void,
+    setShowCreateCardForm: (arg0: boolean) => void,
+    ) {
     event.preventDefault();
     const cardTitle: string = event.target.title.value;
     //const cardDescription: string = event.target.description.value;
@@ -60,7 +97,7 @@ export function createCardForm(event: any, isEdition: boolean) {
             let newCard: Card = {
                 ...tempCard,
                 title: cardTitle,
-                description: cardDescription,
+                description: cardDescription as string,
             }
             const targetColumn = prevData.columns.find((column) => column?.id === tempColumnID);
             if (!targetColumn) {
@@ -222,7 +259,11 @@ export function createCardForm(event: any, isEdition: boolean) {
 };
 
 
-export function deleteCard(columnID: string | number, cardID: string | number) {
+export function DeleteCard(
+    columnID: SystemID, 
+    cardID: SystemID,
+    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
+    ) {
     setKanbanData((prevData: KanbanData) => {
         const targetColumn = prevData.columns.find((column) => column?.id === columnID);
         if (!targetColumn) {

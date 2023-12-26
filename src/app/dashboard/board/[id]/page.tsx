@@ -1,12 +1,5 @@
 "use client";
 
-/* ==========================================================================================
-
-BUG:
-    Go to Line 1540;
-
-============================================================================================= */
-
 import {
     DndContext,
     DragEndEvent,
@@ -18,92 +11,43 @@ import {
     DragOverEvent
 } from '@dnd-kit/core';
 import {
-    CSSProperties,
-    MutableRefObject,
-    forwardRef,
-    useEffect,
     useMemo,
     useRef,
     useState,
-    Ref,
-    ChangeEvent,
-    Fragment
 } from 'react';
-import { CSS } from '@dnd-kit/utilities';
 import {
     SortableContext,
-    arrayMove,
-    useSortable
 } from '@dnd-kit/sortable';
 import { createPortal } from 'react-dom';
 import {
-    ArrowUpOnSquareIcon,
     Cog6ToothIcon,
-    MinusCircleIcon,
     PlusCircleIcon,
-    XCircleIcon
 } from '@heroicons/react/24/outline';
-import { CalendarDaysIcon, XMarkIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
-import { HexColorPicker } from "react-colorful";
-import {
-    CardElementProps,
-    ColumnContainerProps,
-    CreateEditCardProps,
-    InnerCardElementProps,
-    RichEditorProps
-} from '@/app/interfaces/KanbanInterfaces';
 import {
     Card,
-    CheckList,
-    CheckListItem,
     Column,
-    CustomFieldNumber,
-    CustomFieldText,
-    CustomFields,
     DateValue,
-    KanbanData,
-    Member,
-    Tag,
-    userData
+    SystemID,
 } from '@/app/types/KanbanTypes';
 import '@mdxeditor/editor/style.css';
-import { toolbarPlugin } from '@mdxeditor/editor/plugins/toolbar';
-import {
-    headingsPlugin,
-    listsPlugin,
-    quotePlugin,
-    thematicBreakPlugin,
-    linkPlugin,
-    linkDialogPlugin,
-    imagePlugin,
-    tablePlugin,
-    markdownShortcutPlugin,
-    UndoRedo,
-    BoldItalicUnderlineToggles,
-    BlockTypeSelect,
-    InsertImage,
-    InsertTable,
-    ListsToggle,
-    CreateLink,
-    MDXEditor,
-    MDXEditorMethods,
-} from "@mdxeditor/editor";
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import { Combobox, Transition } from '@headlessui/react';
-import { CustomModal, CustomModalButtonAttributes } from '@/app/components/ui/CustomModal';
+import { MDXEditorMethods } from "@mdxeditor/editor";
+import { CustomModal } from '@/app/components/ui/CustomModal';
 import Link from 'next/link';
-import { API_BASE_URL, SYSTEM_PERMISSIONS } from '@/app/utils/variables';
 import { useUserContext } from '@/app/contexts/userContext';
 import { isFlagSet } from '@/app/utils/checkers';
-import { InnerCardElement } from '@/app/components/dashboard/InnerCard';
-import { CardElement } from '@/app/components/dashboard/Card';
-import RichEditor from '@/app/components/dashboard/RichEditor';
 import { ColumnContainer } from '@/app/components/dashboard/Column';
 import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
+import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
+import { CreateCard, CreateCardForm, DeleteCard } from '@/app/utils/dashboard/functions/Page/Card';
+import { UpdateListTitle, InputChange, AddList, AddInput, RemoveList, RemoveInput, ToggleCheckbox } from '@/app/utils/dashboard/functions/Page/Checklist';
+import { UpdateColumnTitle, RemoveColumn, CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
+import { AddCustomField } from '@/app/utils/dashboard/functions/Page/CustomField';
+import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashboard/functions/Page/InnerCardUtils';
+import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
+import { AddInnerCard, CreateInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
     const [kanbanData, setKanbanData] = useState<any>({});
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
@@ -125,26 +69,6 @@ export default function Page({ params }: { params: { id: string } }) {
     const [tempCardsArr, setTempCardsArr] = useState<Card[]>([]);
     const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
     const [isEdittingInnerCard, setIsEdittingInnerCard] = useState<boolean>(false);
-
-
-
-
-    // const [confirmDeleteYesFunc, setConfirmDeleteYesFunc] = useState<any>(null);
-    // const [confirmDeleteNoFunc, setConfirmDeleteNoFunc] = useState<any>(null);
-    // const [confirmDeleteYesText, setModalOpen] = useState<string>("");
-    // const [confirmDeleteNoText, setModalDescription] = useState<string>("");
-    // const [viewConfirmDelete, setModalTitle] = useState<boolean>(false);
-    // const [confirmDeleteText, setConfirmDeleteText] = useState<string>("");
-
-    // title: string,
-    // description: string,
-    // text: string,
-    // options: any,
-    // isOpen: boolean,
-    // setIsOpen: any,
-    // borderColor: string,
-    // focusRef: any,
-
     const [modalTitle, setModalTitle] = useState<string>("");
     const [modalDescription, setModalDescription] = useState<string>("");
     const [modalText, setModalText] = useState<string>("");
@@ -171,262 +95,321 @@ export default function Page({ params }: { params: { id: string } }) {
     //    fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
     //    })
     //}, [params]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const onDragStart = (event: DragStartEvent) => {
-        
+        OnDragStart(
+            event,
+            userValue,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            setActiveCard,
+            setActiveColumn,
+            setTempDragState,
+        );
     }
 
     const onDragEnd = (event: DragEndEvent) => {
-        
+        OnDragEnd(
+            event,
+            userValue,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            setKanbanData,
+            setActiveColumn,
+            setActiveCard,
+            tempDragState,
+        );
     }
 
     const onDragOver = (event: DragOverEvent) => {
+        OnDragOver(
+            event,
+            userValue,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            setKanbanData,            
+        );
+    }
+
+    const handleCreateCardForm = (event: any, isEdition: boolean) => {
+        CreateCardForm(
+            event,
+            isEdition,
+            editorRef,
+            tempColumnID,
+            tempCard,
+            setKanbanData,
+            userValue,
+            setTempColumnID,
+            setEditorText,
+            setTempCard,
+            setShowCreateCardForm,
+        );
+    }
+
+    const handleUpdateListTitle = (listIndex: number, value: string) => {
+        UpdateListTitle(
+            listIndex,
+            value,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            userValue.userData,
+            setTempCard,
+
+        );
+    }
+
+    const handleInputChange = (listIndex: number, inputIndex: number, value: string) => {
+        InputChange(
+            listIndex,
+            inputIndex,
+            value,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            userValue.userData,
+            setTempCard,
+        );
+    }
+
+    const handleAddList = () => {
+        AddList(
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            userValue.userData,
+            setTempCard,
+        );
+    }
+
+    const handleAddInput = (listIndex: number) => {
+        AddInput(
+            listIndex,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            userValue.userData,
+            setTempCard,
+        );
+    }
+
+    const handleRemoveList = (listIndex: number,) => {
+        RemoveList(
+            listIndex,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            userValue.userData,
+            setTempCard,
+        );
+    }
+
+    const handleRemoveInput = (listIndex: number, inputIndex: number) => {
+        RemoveInput(
+            listIndex,
+            inputIndex,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            userValue.userData,
+            setTempCard,
+        );
+    }
+
+    const handleToggleCheckbox = (listIndex: number, itemIndex: number) => {
+        ToggleCheckbox(
+            listIndex, 
+            itemIndex,
+            setTempCard,
+        );
+    }
+
+    const handleAddTag = (tagTitle: string, tagColor: string) => {
+        AddTag(
+            tagTitle,
+            tagColor,
+            setTempCard,
+        );
+    }
+
+    const handleRemoveCurrentTag = (tagID: SystemID) => {
+        RemoveTag(
+            tagID,
+            setTempCard,
+        );
+    }
+
+    const handleAddCustomField = (name: string, value: string | number, fieldType: "text" | "number") => {
+        AddCustomField(
+            name,
+            value,
+            fieldType,
+            setTempCard,
+        );
+    }
+
+    const handleAddInnerCard = (event: any, isEdittingInnerCard: boolean) => {
+        AddInnerCard(
+            event,
+            isEdittingInnerCard,
+            AppendToTempCardsArray,
+            PopFromTempCardsArray,
+            tempCard,
+            tempCardsArr,
+            editorRef,
+            setEditorText,
+            setTempCard,
+            setTempCardsArr,
+        );
+    }
+
+    const handleCreateInnerCard = (event: any, isEdittingInnerCard: boolean) => {
+        CreateInnerCard(
+            event,
+            isEdittingInnerCard,
+            AppendToTempCardsArray,
+            PopFromTempCardsArray,
+            tempCard,
+            tempCardsArr,
+            editorRef,
+            setEditorText,
+            setTempCard,
+            setTempCardsArr,
+            setIsCreatingInnerCard,
+        );
         
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const handleAddCustomField = (name: string, value: string | number, fieldType: "text" | "number") => {
-        setTempCard((prevCard: Card) => {
-            console.log(prevCard);
-            if (fieldType === "text") {
-                const Field: CustomFieldText = {
-                    name: name,
-                    value: value as string,
-                    id: "",                                         /////////////////////////////////////////////////////////////////////////////
-                    fieldType: "text",
-                }
-                const newCustomFields: CustomFields[] = [...prevCard.customFields, Field as unknown as CustomFields];
-                return {
-                    ...prevCard,
-                    customFields: newCustomFields,
-                };
-            } else {
-                const Field: CustomFieldNumber = {
-                    name: name,
-                    value: value as number,
-                    id: "",                                         /////////////////////////////////////////////////////////////////////////////
-                    fieldType: "number",
-                }
-                const newCustomFields: CustomFields[] = [...prevCard.customFields, Field as unknown as CustomFields];
-                return {
-                    ...prevCard,
-                    customFields: newCustomFields,
-                };
-            }
-        });
+    const handleAppendToTempCardsArray = (newCard: Card) => {
+        AppendToTempCardsArray(newCard, tempCardsArr, setTempCardsArr);
     }
 
+    const handlePopFromTempCardsArray = (): Card => {
+        const res = PopFromTempCardsArray(tempCardsArr, setTempCardsArr);
+        return res;
+    }
 
+    const handleCreateCard = (columnID: SystemID) => {
+        CreateCard(
+            columnID,
+            userValue.userData,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            setTempColumnID,
+            setEditorText,
+            setTempCard,
+            setIsEdition,
+            setShowCreateCardForm,
+            editorRef,
+        );
+    }
 
+    const handleDeleteCard = (columnID: SystemID, cardID: SystemID) => {
+        DeleteCard(columnID, cardID, setKanbanData);
+    }
 
+    const handleUpdateColumnTitle = (columnID: SystemID, title: string) => {
+        UpdateColumnTitle(
+            columnID, 
+            title, 
+            userValue, 
+            setKanbanData,
+        );
+    }
 
+    const handleRemoveColumn = (columnIDToRemove: SystemID) => {
+        RemoveColumn(
+            columnIDToRemove, 
+            userValue, 
+            setKanbanData, 
+            kanbanData,
+        );
+    }
 
+    const handleCreateNewColumn = () => {
+        CreateNewColumn(
+            userValue,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setModalOpen,
+            noButtonRef,
+            isFlagSet,
+            setKanbanData,
+            kanbanData,
+            params,
+        );
+    }
 
     const editEditorText = (text: string) => {
         editorRef.current?.setMarkdown(text);
-    }
-
-
-
-
-
-
-    //
-    // INNER CARD LOGIC
-    //
-    const _appendToTempCardsArray = (newCard: Card) => {
-        console.log("APPENDING", newCard, "TO", tempCardsArr);
-        setTempCardsArr((prevArr: Card[]) => {
-            console.log(prevArr);
-            console.log(tempCardsArr);
-            return [...prevArr, newCard] as Card[];
-        });
-        console.log(tempCardsArr);
-    }
-
-    const _popFromTempCardsArray = (): Card => {
-        const retVal = tempCardsArr[tempCardsArr.length - 1];
-        setTempCardsArr((prevArr: Card[]) => {
-            console.log(prevArr);
-            console.log(tempCardsArr);
-            const tPrevArr: Card[] = prevArr.slice(0, -1);
-            return tPrevArr;
-        });
-        console.log("POPPING", retVal, "FROM", tempCardsArr);
-        return retVal;
-    }
-
-    const createInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        if (!isEdittingInnerCard) {
-            event.preventDefault();
-            let localTempCard: Card = tempCard;
-            let localTempCardsArray: Card[] = tempCardsArr;
-            const cardTitle: string = event.target.title.value;
-            const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-            // console.log("createInnerCard", "OLD CARD", cardTitle, cardDescription);
-            console.log(localTempCard);
-            const newCard: Card = {
-                ...localTempCard,
-                title: cardTitle,
-                description: cardDescription as unknown as string,
-            }
-            // console.log("createInnerCard", `APPENDING A CARD TO THE TEMPS CARD ARRAY`, tempCardsArr);
-            localTempCardsArray.push(newCard);
-            const tCard: Card = {
-                id: "",                                         /////////////////////////////////////////////////////////////////////////////
-                title: "",
-                columnID: tempCard.columnID,
-                description: "",
-                checklists: [],
-                tags: [],
-                members: [],
-                comments: [],
-                dropdowns: [],
-                date: 0,
-                customFields: [],
-                innerCards: [],
-            }
-            event.target.reset();
-            setEditorText("");
-            setTempCard(tCard);
-            setTempCardsArr(localTempCardsArray);
-            setIsCreatingInnerCard(false);
-            editorRef.current?.setMarkdown("");
-        } else {
-            // const selectedInnerCard: Card = _popFromTempCardsArray();
-            let localTempCard: Card = tempCard;
-            let localTempCardsArray: Card[] = tempCardsArr;
-            let selectedInnerCard: Card = tempCardsArr.pop() as unknown as Card;
-            event.preventDefault();
-            //Outer Card
-            const cardTitle: string = event.target.title.value;
-            const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-            // console.log("createInnerCard tempCard", tempCard);
-            // console.log("createInnerCard", "OLD OUTER CARD", cardTitle, cardDescription);
-            // console.log(tempCard, selectedInnerCard);
-            const newCard: Card = { // OUTER CARD
-                ...localTempCard,
-                title: cardTitle,
-                description: cardDescription as unknown as string,
-            }
-            console.log("createInnerCard", `APPENDING OUTER CARD TO THE TEMPS CARD ARRAY`, localTempCardsArray, newCard);
-            //_appendToTempCardsArray(newCard);
-            localTempCardsArray.push(newCard);
-            console.log("createInnerCard", `APPENDED OUTER CARD TO THE TEMPS CARD ARRAY`, localTempCardsArray);
-            //const targetCard = newCard.innerCards.findIndex((card: Card) => card?.id === tempCard.id);
-            event.target.reset();
-            event.target.title.value = selectedInnerCard.title;
-            setEditorText(selectedInnerCard.description);
-            editorRef.current?.setMarkdown(selectedInnerCard.description);
-            setTempCard(selectedInnerCard);
-            setTempCardsArr(localTempCardsArray)
-            //setIsCreatingInnerCard(false);
-            //setIsEdittingInnerCard(false);
-        }
-    }
-
-    const addInnerCard = (event: any, _isEdittingInnerCard: boolean) => {
-        if (!_isEdittingInnerCard) {
-            event.preventDefault();
-            let localTempCard: Card = tempCard;
-            let localTempCardsArray: Card[] = tempCardsArr;
-            // console.log("_isEdittingInnerCard: FALSE", _isEdittingInnerCard);
-            const cardTitle: string = event.target.title.value;
-            const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-            // console.log("addInnerCard", cardTitle, cardDescription);
-            const newCard: Card = {
-                ...localTempCard,
-                title: cardTitle,
-                description: cardDescription as unknown as string,
-            }
-            // console.log("addInnerCard tempCardsArr", tempCardsArr)
-            //const _prevCard: Card = _popFromTempCardsArray();
-            let _prevCard: Card = localTempCardsArray.pop() as unknown as Card;
-            // console.log("addInnerCard _prevCard", _prevCard)
-            // console.log("addInnerCard", "PREVIOUS CARD", _prevCard)
-            const _nInnerCardsArr: Card[] = [..._prevCard.innerCards, newCard];
-            const ntCard: Card = {
-                ..._prevCard,
-                innerCards: _nInnerCardsArr,
-            }
-            event.target.reset();
-            setEditorText(ntCard.description);
-            setTempCard(ntCard);
-            setTempCardsArr(localTempCardsArray);
-            // console.log("addInnerCard", "NEW TEMPCARD", ntCard);
-            editorRef.current?.setMarkdown(ntCard.description);
-        } else {
-            event.preventDefault();
-            let localTempCard: Card = tempCard;
-            let localTempCardsArray: Card[] = tempCardsArr;
-            console.log("====================================", localTempCardsArray);
-            // console.log("_isEdittingInnerCard: TRUE", _isEdittingInnerCard);
-            // Inner Card
-            console.log("addInnerCard INNER_tempCard", localTempCard);
-            console.log("AAAAAAAAAAAAAAAAA", localTempCardsArray); // tempCardsArr is empty for some reason.
-            const cardTitle: string = event.target.title.value;
-            const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-            const newCard: Card = { // EDITED INNER CARD
-                ...localTempCard,
-                title: cardTitle,
-                description: cardDescription as unknown as string,
-            }
-            //const _prevOuterCard: Card = _popFromTempCardsArray();
-            let _prevOuterCard: Card = localTempCardsArray.pop() as unknown as Card;
-            console.log("addInnerCard _prevOuterCard", _prevOuterCard)
-            const updatedInnerCardsList = _prevOuterCard?.innerCards?.map((card: Card) => card?.id === newCard?.id ? newCard : card)
-            console.log("updatedInnerCardsList", updatedInnerCardsList)
-            const ntCard: Card = { // Previous Outer Card
-                ..._prevOuterCard,
-                innerCards: updatedInnerCardsList,
-            }
-            console.log("ntCard", ntCard);
-            setEditorText(ntCard.description);
-            event.target.title.value = ntCard.title;
-            editorRef.current?.setMarkdown(ntCard.description);
-            setTempCard(ntCard);
-            setTempCardsArr(localTempCardsArray);
-            console.log("addInnerCard", "NEW TEMPCARD", ntCard);
-            event.target.reset();
-        }
     }
 
     return (
@@ -445,8 +428,8 @@ export default function Page({ params }: { params: { id: string } }) {
                 showCreateCardForm={showCreateCardForm}
                 setShowCreateCardForm={setShowCreateCardForm}
                 card={tempCard as Card}
-                createCardForm={createCardForm}
-                updateListTitle={updateListTitle}
+                createCardForm={handleCreateCardForm}
+                updateListTitle={handleUpdateListTitle}
                 handleInputChange={handleInputChange}
                 handleAddList={handleAddList}
                 handleAddInput={handleAddInput}
@@ -455,22 +438,22 @@ export default function Page({ params }: { params: { id: string } }) {
                 handleToggleCheckbox={handleToggleCheckbox}
                 isEdition={isEdition}
                 addNewTag={handleAddTag}
-                removeCurrentTag={removeCurrentTag}
+                removeCurrentTag={handleRemoveCurrentTag}
                 cardDate={cardDate}
                 setCardDate={setCardDate}
                 editorText={editorText}
                 setEditorText={editEditorText}
                 ref={editorRef}
                 addCustomField={handleAddCustomField}
-                addInnerCard={addInnerCard}
-                createInnerCard={createInnerCard}
+                addInnerCard={handleAddInnerCard}
+                createInnerCard={handleCreateInnerCard}
                 tempCardsArr={tempCardsArr}
                 isCreatingInnerCard={isCreatingInnerCard}
                 setIsCreatingInnerCard={setIsCreatingInnerCard}
                 isEdittingInnerCard={isEdittingInnerCard}
                 setIsEdittingInnerCard={setIsEdittingInnerCard}
-                _appendToTempCardsArray={_appendToTempCardsArray}
-                _popFromTempCardsArray={_popFromTempCardsArray}
+                _appendToTempCardsArray={handleAppendToTempCardsArray}
+                _popFromTempCardsArray={handlePopFromTempCardsArray}
                 setModalOptions={setModalOptions}
                 setModalOpen={setModalOpen}
                 setModalDescription={setModalDescription}
@@ -487,12 +470,12 @@ export default function Page({ params }: { params: { id: string } }) {
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-[95%] overflow-auto shrink-0">
                     <SortableContext items={columnsId}>
                         {kanbanData.columns?.map((col: Column) => <ColumnContainer
-                            createCard={createCard}
-                            deleteCard={deleteCard}
-                            updateColumnTitle={updateColumnTitle}
+                            createCard={handleCreateCard}
+                            deleteCard={handleDeleteCard}
+                            updateColumnTitle={handleUpdateColumnTitle}
                             key={col.id}
                             column={col}
-                            deleteColumn={removeColumn}
+                            deleteColumn={handleRemoveColumn}
                             setShowCreateCardForm={setShowCreateCardForm}
                             setTempCard={setTempCard}
                             setIsEdition={setIsEdition}
@@ -507,7 +490,9 @@ export default function Page({ params }: { params: { id: string } }) {
                             setModalText={setModalText}
                         />)}
                     </SortableContext>
-                    <button className='w-64 h-full rounded-md shadow-inner bg-[#F0F0F0] border-neutral-200 border-[1px] flex flex-col justify-center items-center' onClick={createNewColumn}>
+                    <button 
+                    className='w-64 h-full rounded-md shadow-inner bg-[#F0F0F0] border-neutral-200 border-[1px] flex flex-col justify-center items-center' 
+                    onClick={handleCreateNewColumn}>
                         <h1 className='mb-2'>Add Column</h1>
                         <PlusCircleIcon className='w-8 aspect-square' />
                     </button>
@@ -515,11 +500,11 @@ export default function Page({ params }: { params: { id: string } }) {
                 {createPortal(
                     <DragOverlay className='w-full h-full'>
                         {activeColumn && <ColumnContainer
-                            deleteCard={deleteCard}
-                            createCard={createCard}
-                            updateColumnTitle={updateColumnTitle}
+                            deleteCard={handleDeleteCard}
+                            createCard={handleCreateCard}
+                            updateColumnTitle={handleUpdateColumnTitle}
                             column={activeColumn}
-                            deleteColumn={removeColumn}
+                            deleteColumn={handleRemoveColumn}
                             setTempCard={setTempCard}
                             setShowCreateCardForm={setShowCreateCardForm}
                             setIsEdition={setIsEdition}

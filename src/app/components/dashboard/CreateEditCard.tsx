@@ -13,6 +13,8 @@ import { InnerCardElement } from "./InnerCard";
 import RichEditor from "./RichEditor";
 import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
 
+import 'react-calendar/dist/Calendar.css';
+
 const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEditorMethods> | undefined) => {
     const { setShowCreateCardForm,
         showCreateCardForm,

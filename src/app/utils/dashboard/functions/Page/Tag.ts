@@ -1,6 +1,6 @@
-import { Card, Tag } from "@/app/types/KanbanTypes";
+import { Card, SystemID, Tag } from "@/app/types/KanbanTypes";
 
-export function handleAddTag(tagTitle: string, tagColor: string, setTempCard: (arg0: (prevCard: Card) => Card | Card) => void) {
+export function AddTag(tagTitle: string, tagColor: string, setTempCard: (arg0: (prevCard: Card) => Card | Card) => void) {
     setTempCard((prevCard: Card) => {
         const newTag: Tag = {
             title: tagTitle, color: tagColor, id: ""
@@ -13,7 +13,7 @@ export function handleAddTag(tagTitle: string, tagColor: string, setTempCard: (a
     });
 }
 
-export function removeCurrentTag(tagID: string | number, setTempCard: (arg0: (prevCard: Card) => Card | Card) => void) {
+export function RemoveTag(tagID: SystemID, setTempCard: (arg0: (prevCard: Card) => Card | Card) => void) {
     setTempCard((prevCard: Card) => {
         const newTagsList: Tag[] = prevCard.tags.filter((tag: Tag) => tag.id != tagID);
         return {

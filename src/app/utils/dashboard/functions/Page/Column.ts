@@ -1,9 +1,9 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { Column, KanbanData, userData, userValueDT } from "@/app/types/KanbanTypes";
+import { Column, KanbanData, SystemID, userData, userValueDT } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { RefObject } from "react";
 
-export function createNewColumn(
+export function CreateNewColumn(
     userValue: userValueDT,
     setModalTitle: (value: string) => void,
     setModalDescription: (value: string) => void,
@@ -16,7 +16,7 @@ export function createNewColumn(
     isFlagSet: (value: userData, flag: string) => boolean,
     setKanbanData: (arg0: (prevData: KanbanData) => any | KanbanData) => void,
     kanbanData: KanbanData,
-    params: { id: string | number; },
+    params: { id: SystemID; },
     ) {
     if (!isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -90,8 +90,8 @@ export function createNewColumn(
     }
 }
 
-export function removeColumn(
-    columnIDToRemove: string | number, 
+export function RemoveColumn(
+    columnIDToRemove: SystemID, 
     userValue: userValueDT, 
     setKanbanData: (arg0: (prevData: KanbanData) => any | KanbanData) => void, 
     kanbanData: KanbanData
@@ -113,8 +113,8 @@ export function removeColumn(
 }
 
 
-export function updateColumnTitle(
-    columnID: string | number, 
+export function UpdateColumnTitle(
+    columnID: SystemID, 
     title: string, 
     userValue: userValueDT, 
     setKanbanData: (arg0: (prevKanbanData: KanbanData) => any | KanbanData) => void

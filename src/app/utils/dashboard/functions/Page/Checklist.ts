@@ -2,7 +2,10 @@ import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { Card, CheckListItem, userData } from "@/app/types/KanbanTypes";
 import { RefObject } from "react";
 
-export function InputChange(listIndex: any, inputIndex: any, value: any, 
+export function InputChange(
+    listIndex: number, 
+    inputIndex: number, 
+    value: string, 
     setModalTitle: (value: string) => void,
     setModalDescription: (value: string) => void,
     setModalText: (value: string) => void,
@@ -51,8 +54,9 @@ export function InputChange(listIndex: any, inputIndex: any, value: any,
     }
 };
 
-export function updateListTitle(listIndex: any, value: string,
-    
+export function UpdateListTitle(
+    listIndex: number, 
+    value: string, 
     setModalTitle: (value: string) => void,
     setModalDescription: (value: string) => void,
     setModalText: (value: string) => void,
@@ -155,7 +159,8 @@ export function AddList(
     }
 };
 
-export function AddInput(listIndex: any,
+export function AddInput(
+    listIndex: number,
     setModalTitle: (value: string) => void,
     setModalDescription: (value: string) => void,
     setModalText: (value: string) => void,
@@ -205,7 +210,9 @@ export function AddInput(listIndex: any,
     }
 };
 
-export function RemoveInput(listIndex: any, inputIndex: any,
+export function RemoveInput(
+    listIndex: number, 
+    inputIndex: number,
     setModalTitle: (value: string) => void,
     setModalDescription: (value: string) => void,
     setModalText: (value: string) => void,
@@ -216,7 +223,8 @@ export function RemoveInput(listIndex: any, inputIndex: any,
     noButtonRef: RefObject<HTMLButtonElement>,
     isFlagSet: (value: userData, flag: string) => boolean,
     userData: userData,
-    setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,) {
+    setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
+    ) {
     if (isFlagSet(userData, "DELETAR_CHECKLISTS")) {
 
         setTempCard((prevCard: Card) => {
@@ -253,7 +261,8 @@ export function RemoveInput(listIndex: any, inputIndex: any,
     }
 };
 
-export function RemoveList(listIndex: any,
+export function RemoveList(
+    listIndex: number,
     setModalTitle: (value: string) => void,
     setModalDescription: (value: string) => void,
     setModalText: (value: string) => void,
@@ -302,17 +311,9 @@ export function RemoveList(listIndex: any,
     }
 };
 
-export function ToggleCheckbox(listIndex: any, itemIndex: any,
-    setModalTitle: (value: string) => void,
-    setModalDescription: (value: string) => void,
-    setModalText: (value: string) => void,
-    setModalBorderColor: (value: string) => void,
-    setModalFocusRef: (value: any) => void,
-    setModalOptions: (value: any) => void,
-    setModalOpen: (value: boolean) => void,
-    noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+export function ToggleCheckbox(
+    listIndex: number, 
+    itemIndex: number,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
     ) {
     //if (isFlagSet(userData, "CRIAR_CHECKLISTS")) {

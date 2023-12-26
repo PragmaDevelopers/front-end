@@ -18,7 +18,16 @@ export function CreateNewColumn(
     kanbanData: KanbanData,
     params: { id: SystemID; },
     ) {
-    console.log("@ Create New Column Function:", userValue);
+    for (const key in userValue) {
+      if (key === "userData") {
+        for (const item in userValue.userData) {
+          console.log("[INFO]\t@ Create New Column Function", item, userValue.userData[item]);
+        } 
+      } else {
+        console.log("[INFO]\t@ Create New Column Function", key, userValue[key]);
+      }
+    
+  }
     if (!isFlagSet(userValue.userData, "CRIAR_COLUNAS")) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {

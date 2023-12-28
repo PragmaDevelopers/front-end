@@ -51,7 +51,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
     const [kanbanData, setKanbanData] = useState<any>({});
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-    const [activeCard, setActiveCard] = useState<Card | null>(null);
+    const [, setActiveCard] = useState<Card | null>(null);
     const columnsId = useMemo(() => {
         if (kanbanData && kanbanData.columns && kanbanData.columns.length > 0) {
             return kanbanData.columns.map((col: any) => col.id);
@@ -60,8 +60,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         }
     }, [kanbanData]);
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
-    const [tempColumnID, setTempColumnID] = useState<string | number>("");
-    const [lists, setLists] = useState([]);
+    const [tempColumnID, setTempColumnID] = useState<SystemID>("");
     const [tempCard, setTempCard] = useState<any>({});
     const [isEdition, setIsEdition] = useState<boolean>(false);
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
@@ -78,7 +77,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [modalFocusRef, setModalFocusRef] = useState<any>();
 
 
-    const { userValue, updateUserValue } = useUserContext();
+    const { userValue } = useUserContext();
 
 
     const editorRef = useRef<MDXEditorMethods>(null);

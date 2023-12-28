@@ -1,14 +1,12 @@
 import { useUserContext } from "@/app/contexts/userContext";
 import { CreateEditCardProps } from "@/app/interfaces/KanbanInterfaces";
 import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card } from "@/app/types/KanbanTypes";
-import { isFlagSet } from "@/app/utils/checkers";
 import { Combobox, Transition } from "@headlessui/react";
 import { XMarkIcon, MinusCircleIcon, CalendarDaysIcon, PlusCircleIcon, ArrowUpOnSquareIcon, ChevronUpDownIcon, CheckIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { forwardRef, Ref, useRef, useState, ChangeEvent, CSSProperties, Fragment } from "react";
 import Calendar from "react-calendar";
 import { HexColorPicker } from "react-colorful";
-import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { InnerCardElement } from "./InnerCard";
 import RichEditor from "./RichEditor";
 import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
@@ -278,7 +276,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                 {card.tags?.map((items: Tag) => (
                                     <div key={items?.id} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
                                         <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
-                                        <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.title}</h1>
+                                        <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.name}</h1>
                                     </div>
                                 ))}
                             </div>

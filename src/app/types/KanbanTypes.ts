@@ -74,7 +74,7 @@ export type KanbanData = {
 }
 
 export type Tag = {
-    title: string;
+    name: string;
     color: string;
     id: SystemID;
 }

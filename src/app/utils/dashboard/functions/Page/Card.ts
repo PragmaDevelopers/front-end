@@ -1,5 +1,5 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { Card, KanbanData, CheckList, CheckListItem, userData, SystemID, userValueDT } from "@/app/types/KanbanTypes";
+import { Card, KanbanData, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { RefObject } from "react";
@@ -134,6 +134,13 @@ export function CreateCardForm(
                 }
 
                 let tnCard: Card = newCard;
+
+
+
+
+                
+                // CHECKLISTS FETCH
+
                 tnCard.checklists.forEach((element) => {
                     let checklistRequest = {
                         method: 'POST',
@@ -148,6 +155,15 @@ export function CreateCardForm(
                     ).then((data) => element.id = data);
                     console.log(`[INFO]\tPOST Request for CheckList [${element.name}] #${element.id} was sucessfully made.`);
                 });
+
+
+
+
+
+
+
+                // CHECKLISTS ITEMS FETCH
+
 
                 tnCard.checklists.forEach((element: CheckList) => {
                     element.items.forEach((e: CheckListItem) => {
@@ -182,6 +198,30 @@ export function CreateCardForm(
 
                     })
                 });
+
+
+
+
+                // TAGS FETCH
+                tnCard.tags.forEach((element: Tag) => {
+                    let tagRequest = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userValue.token}`,
+                        },
+                        body: JSON.stringify({cardId: tnCard.id, name: element.name}),
+                    }
+
+                    fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/tag`, tagRequest).then(
+                        response => response.text()
+                    ).then((data) => element.id = data);
+                    console.log(`[INFO]\tPOST Request for Tag [${element.name}] #${element.id} was sucessfully made.`);
+                })
+
+
+
+
 
 
                 const cardRequestOptions = {

@@ -3,7 +3,7 @@ import { Card, SystemID, Tag } from "@/app/types/KanbanTypes";
 export function AddTag(tagTitle: string, tagColor: string, setTempCard: (arg0: (prevCard: Card) => Card | Card) => void) {
     setTempCard((prevCard: Card) => {
         const newTag: Tag = {
-            title: tagTitle, color: tagColor, id: ""
+            name: tagTitle, color: tagColor, id: ""
         };
         const newTagsList: Tag[] = [...prevCard.tags, newTag];
         return {

@@ -1,6 +1,12 @@
 # API  ROUTES
 
-*Please refer to \[PERMISSIONS LIST\](./PERMISSIONS_LIST.md) for the permissions.*
+*Please refer to [PERMISSIONS LIST](./PERMISSIONS_LIST.md) for the permissions.*
+
+## Meta Types Reference
+
+```ts
+type SystemID = string | number; // UNIQUE
+```
 
 ## Login \[PUBLIC\]
 
@@ -80,11 +86,11 @@ type Kanban_Request = {
 }
 ```
 
-Return Type: `UINT`
+Return Type: `SystemID`
 
 Return Data:
 ```ts
-type KanbanID = string // UNIQUE
+type KanbanID = SystemID // UNIQUE
 ```
 - Example: `42`
 
@@ -101,11 +107,11 @@ Permissions: NONE
 
 Body Schema: NONE
 
-Return Type: `{id: uint, title: string}[]`
+Return Type: `{id: SystemID, title: string}[]`
 
 Return Data:
 ```ts
-type KanbanList = {id: number, title: string}[]
+type KanbanList = {id: SystemID, title: string}[]
 ```
 - Example: `[{"id": 2, "title": test}]`
 
@@ -124,11 +130,11 @@ Permissions: NONE
 
 Body Schema: NONE
 
-Return Type: `{id: uint, title: string}[]`
+Return Type: `{id: SystemID, title: string}[]`
 
 Return Data:
 ```ts
-type KanbanList = {id: number, title: string}[]
+type KanbanList = {id: SystemID, title: string}[]
 ```
 - Example: `[{"id": 2, "title": test}]`
 

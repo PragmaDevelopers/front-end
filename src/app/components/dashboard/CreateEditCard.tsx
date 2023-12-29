@@ -7,11 +7,12 @@ import { MDXEditorMethods } from "@mdxeditor/editor";
 import { forwardRef, Ref, useRef, useState, ChangeEvent, CSSProperties, Fragment } from "react";
 import Calendar from "react-calendar";
 import { HexColorPicker } from "react-colorful";
-import { InnerCardElement } from "./InnerCard";
-import RichEditor from "./RichEditor";
+import { InnerCardElement } from "@/app/components/dashboard/InnerCard";
+import RichEditor from "@/app/components/dashboard/RichEditor";
 import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
 
 import 'react-calendar/dist/Calendar.css';
+import { CommentSection } from "@/app/components/dashboard/Comment";
 
 const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEditorMethods> | undefined) => {
     const { setShowCreateCardForm,
@@ -186,29 +187,29 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
     const handleCustomFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
         CustomFieldChange(
-            event, 
+            event,
             setCustomFieldsData,
         )
     }
     const handleCreateNewTag = (event: any) => {
         createNewTag(
-            event, 
-            setViewAddTag, 
-            addNewTag, 
-            setColor, 
+            event,
+            setViewAddTag,
+            addNewTag,
+            setColor,
             color
         )
     }
     const handleCreateNewCustomField = (event: any) => {
         createNewCustomField(
-            event, 
+            event,
             setViewAddField,
             addCustomField,
         )
     }
     const handleCloseCalendar = (e: any) => {
         closeCalendar(
-            e, 
+            e,
             setViewAddDate
         )
     }
@@ -226,17 +227,17 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
     const handleCreateInnerCard = () => {
         CreateInnerCard(
-        userValue.userData, 
-        setModalOpen,
-        noButtonRef,
-        setModalTitle,
-        setModalDescription,
-        setModalText,
-        setModalBorderColor,
-        setModalFocusRef,
-        setModalOptions,
-        setIsCreatingInnerCard,
-        tempCardsArr,
+            userValue.userData,
+            setModalOpen,
+            noButtonRef,
+            setModalTitle,
+            setModalDescription,
+            setModalText,
+            setModalBorderColor,
+            setModalFocusRef,
+            setModalOptions,
+            setIsCreatingInnerCard,
+            tempCardsArr,
         )
     }
 
@@ -336,6 +337,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                                     <PlusCircleIcon className='w-6 aspect-square' />
                                 </button>
                             </div>
+                        </div>
+                        <div className="w-full h-60">
+                            <CommentSection userData={userValue.userData} />
                         </div>
                         <div className='flex flex-row'>
                             {card?.innerCards?.map((card: Card, idx: number) => (

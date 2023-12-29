@@ -79,30 +79,31 @@ export type Tag = {
     id: SystemID;
 }
 
-export type Member = {
-    name: string | null;
-    email: string | null;
-    nacionalidade: string | null;
-    password: string | null; // Hash
-    gender: string | null;
-    accountCreation: string | null; // Date
-    profilePicture: string | null;
-    pushEmail: string | null;
-    generalPermissions: string | null;
-    id: SystemID | null;
-    role: string | null;
-    kanban_role: string | null;
-}
+// export type Member = {
+//     name: string | null;
+//     email: string | null;
+//     nacionalidade: string | null;
+//     password: string | null; // Hash
+//     gender: string | null;
+//     accountCreation: string | null; // Date
+//     profilePicture: string | null;
+//     pushEmail: string | null;
+//     generalPermissions: string | null;
+//     id: SystemID | null;
+//     role: string | null;
+//     kanban_role: string | null;
+// }
+
+export type Member = userData;
 
 export type Comment = {
     user: Member;
     content: string;
     id: SystemID;
-    answers: Comment[] | null;
+    answers: Comment[];
     edited: boolean;
     date: string;
 }
-
 
 export type userData = {
     id: SystemID;

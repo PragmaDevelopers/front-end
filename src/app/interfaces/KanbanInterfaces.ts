@@ -1,4 +1,4 @@
-import { Card, Column } from "../types/KanbanTypes";
+import { Card, Column, Member, SystemID, Comment } from "../types/KanbanTypes";
 
 export interface CardElementProps {
     card: Card,
@@ -110,4 +110,10 @@ export interface InnerCardElementProps {
     setIsEdittingInnerCard: any;
     _appendToTempCardsArray: any;
     _popFromTempCardsArray: any;
+}
+
+export interface CommentEntryProps extends Comment {
+    setIsAnswering: (arg0: { isAnswering: boolean, answeringUser: Member, commentId: SystemID }) => void;
+    removeCurrentComment: (targetId: SystemID) => void,
+    editComment: (arg0: Comment) => void,
 }

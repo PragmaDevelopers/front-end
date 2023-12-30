@@ -146,7 +146,7 @@ function MoveCardForm(props: MoveCardFormProps) {
         <div className={(viewMoveCard ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
             <form onSubmit={handleCloseMoveCard} className='flex flex-col items-center'>
                 <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
-                    {dashboardsArray.map((kanban: { kanbanId: string, name: string }) => {
+                    {dashboardsArray?.map((kanban: { kanbanId: string, name: string }) => {
                         return <option value={kanban?.kanbanId} key={kanban?.kanbanId}>{kanban?.name}</option>;
                     })}
                 </select>
@@ -200,7 +200,7 @@ function CustomFieldsSection(props: CustomFieldsSectionProps) {
     const { customFieldsArray, handleCustomFieldChange, handleShowField } = props;
     return (
         <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
-            {customFieldsArray.map((item: CustomFields, idx: any) => {
+            {customFieldsArray?.map((item: CustomFields, idx: any) => {
                 console.log("MAP LOOP", item?.fieldType);
                 if (item?.fieldType === "text") {
                     return (
@@ -236,7 +236,7 @@ function TagsSection(props: TagsSectionProps) {
     const { tagsArray, removeCurrentTag, handleShowTag } = props;
     return (
         <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
-            {tagsArray.map((items: Tag) => (
+            {tagsArray?.map((items: Tag) => (
                 <div key={items?.id} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
                     <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
                     <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.name}</h1>
@@ -273,7 +273,7 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
     } = props;
     return (
         <div className='p-1'>
-            {checklistArray.map((list: CheckList, listIndex: number) => (
+            {checklistArray?.map((list: CheckList, listIndex: number) => (
                 <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-96 h-fit my-2'>
                     <div className='flex items-center mb-4'>
                         <input type='text'
@@ -361,7 +361,7 @@ function InnerCardSection(props: InnerCardsSectionProps) {
 
     return (
         <div className='flex flex-row'>
-            {innerCardsArray.map((card: Card, idx: number) => (
+            {innerCardsArray?.map((card: Card, idx: number) => (
                 <InnerCardElement
                     key={idx}
                     card={card}
@@ -648,9 +648,12 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         viewAddTag={viewAddTag}
                     />
                 </div>
-                <form className='w-full h-full'>
+                <form className='w-full h-full relative'>
                     <h1>Card Creation</h1>
                     <CardTitle title={card.title} />
+                      <h1>
+                        Prazo {card.date}
+                      </h1>
                     <RichEditor 
                         ref={ref} 
                         onChange={console.log} 
@@ -692,9 +695,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         handleCreateInnerCard={handleCreateInnerCard}
                     />
 
-                    <button className="absolute bottom-2">test btn</button> {/* button off the natural flow */}
+                    <button className="-bottom-72 absolute">test btn</button> {/* button off the natural flow */}
                 </form>
-                <div className='mb-8 w-full h-60'> 
+                <div className='mb-32 w-full h-60'> 
                     <CommentSection userData={userValue.userData} />
                 </div>
             </div>

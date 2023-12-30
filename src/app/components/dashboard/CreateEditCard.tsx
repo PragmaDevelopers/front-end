@@ -407,13 +407,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
             <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
-                <form> {/* TOP */}
-                    <div>
-                        
-                    </div>
+                <form className='relative w-full h-full'>
+                    <h1>Card Creation</h1>
                     <button className="absolute bottom-2">test btn</button> {/* button off the natural flow */}
                 </form>
-                <div> {/* BOTTOM */}
+                <div className='mb-8'> 
                      {/* COMMENTS GOES HERE */}
                 </div>
             </div>

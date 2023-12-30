@@ -1,6 +1,6 @@
 import { useUserContext } from "@/app/contexts/userContext";
 import { CreateEditCardProps } from "@/app/interfaces/KanbanInterfaces";
-import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card } from "@/app/types/KanbanTypes";
+import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card, SystemID } from "@/app/types/KanbanTypes";
 import { Combobox, Transition } from "@headlessui/react";
 import { XMarkIcon, MinusCircleIcon, CalendarDaysIcon, PlusCircleIcon, ArrowUpOnSquareIcon, ChevronUpDownIcon, CheckIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -174,8 +174,61 @@ function SideContent(props: SideContentProps) {
     );
 }
 
+interface CardTitleProps { title: string; }
+function CardTitle(props: CardTitleProps) {
+    const {title} = props;
+    return (
+        <input 
+            id="CardTitle" 
+            type='text' 
+            defaultValue={title} 
+            name='title' 
+            placeholder='Digite um titulo' 
+            className='my-3 mx-1 font-bold text-xl form-input bg-neutral-50 w-full border-none outline-none p-1 rounded-md' 
+        />
+    );
+}
 
-
+interface CustomFieldsSectionProps { customFieldsArray: CustomFields[] }
+function CustomFieldsSection(props: CustomFieldsSectionProps) {
+    const { customFieldsArray } = props;
+    return (
+        <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
+            {customFieldsArray.map((item: CustomFields, idx: any) => {
+                console.log("MAP LOOP", item?.fieldType);
+                if (item?.fieldType === "text") {
+                    return (
+                        <div key={idx} className='w-24 flex justify-center items-center'>
+                            <h1 className='mr-1'>{item?.name}:</h1>
+                            <input className='w-32 bg-neutral-50 border-none outline-none' type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div key={idx} className='w-24 flex justify-center items-center'>
+                            <h1 className='mr-1'>{item?.name}:</h1>
+                            <input className='w-32 bg-neutral-50 border-none outline-none' type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                        </div>
+                    );
+                }
+            })}
+        </div>
+    );
+}
+interface TagsSectionProps { tagsArray: Tag[]; removeCurrentTag: (arg0: SystemID) => void; }
+function TagsSection(props: TagsSectionProps) {
+    const { tagsArray, removeCurrentTag } = props;
+    return (
+        <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
+            {tagsArray.map((items: Tag) => (
+                <div key={items?.id} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
+                    <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
+                    <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.name}</h1>
+                </div>
+            ))}
+        </div>
+    );
+}
 
 const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEditorMethods> | undefined) => {
     const { setShowCreateCardForm,
@@ -409,6 +462,10 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
             <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
                 <form className='relative w-full h-full'>
                     <h1>Card Creation</h1>
+                    <CardTitle title={card.title} />
+                    <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
+                    <CustomFieldsSection customFieldsArray={card?.customFields}/>
+                    <TagsSection removeCurrentTag={removeCurrentTag} tagsArray={card.tags} />
                     <button className="absolute bottom-2">test btn</button> {/* button off the natural flow */}
                 </form>
                 <div className='mb-8'> 

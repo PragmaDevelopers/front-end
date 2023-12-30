@@ -10,169 +10,171 @@ import { HexColorPicker } from "react-colorful";
 import { InnerCardElement } from "@/app/components/dashboard/InnerCard";
 import RichEditor from "@/app/components/dashboard/RichEditor";
 import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
-
 import 'react-calendar/dist/Calendar.css';
 import { CommentSection } from "@/app/components/dashboard/Comment";
 
-
-interface SideContentProps {
+interface AddMemberFormProps {
     viewAddMember: boolean;
     handleCloseAddMember: any;
     selected: any;
     setSelected: any;
     setQuery: any;
     filteredPeople: any;
-    viewAddDate: any;
-    handleCloseCalendar: any;
-    cardDate: any;
-    setCardDate: any;
-    viewAddField: any;
-    handleCreateNewCustomField: any;
-    viewMoveCard: any;
-    handleCloseMoveCard: any;
-    dashboards: any;
-    viewAddTag: any;
-    handleCreateNewTag: any;
-    color: any;
-    setColor: any;
     query: any;
 }
 
-function SideContent(props: SideContentProps) {
-    const { 
-        viewAddMember, 
-        handleCloseAddMember, 
-        selected, 
-        setSelected, 
-        setQuery, 
-        filteredPeople, 
-        viewAddDate, 
-        handleCloseCalendar, 
-        cardDate, 
-        setCardDate, 
-        viewAddField, 
-        handleCreateNewCustomField, 
-        viewMoveCard, 
-        handleCloseMoveCard, 
-        dashboards, 
-        viewAddTag, 
-        handleCreateNewTag, 
-        color, 
-        setColor,
-        query,
-    } = props;
-
-
+function AddMemberForm(props: AddMemberFormProps) {
+    const { filteredPeople, handleCloseAddMember, selected, setQuery, setSelected, viewAddMember, query } = props;
     return (
-        <div className='ml-4 flex flex-col items-center justify-start h-[75%] relative'>
-            <div className={(viewAddMember ? 'flex' : 'hidden') + ' absolute -left-56 top-28 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                <form onSubmit={handleCloseAddMember}>
-                    <Combobox value={selected} onChange={setSelected}>
-                        <div className="relative mt-1">
-                            <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-                                <Combobox.Input
-                                    className="form-input w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                                    displayValue={(person: any) => person.name}
-                                    onChange={(event: any) => setQuery(event.target.value)}
+        <div className={(viewAddMember ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+            <form onSubmit={handleCloseAddMember}>
+                <Combobox value={selected} onChange={setSelected}>
+                    <div className="relative mt-1">
+                        <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                            <Combobox.Input
+                                className="form-input w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                                displayValue={(person: any) => person.name}
+                                onChange={(event: any) => setQuery(event.target.value)}
+                            />
+                            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
                                 />
-                                <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <ChevronUpDownIcon
-                                        className="h-5 w-5 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                </Combobox.Button>
-                            </div>
-                            <Transition
-                                as={Fragment}
-                                leave="transition ease-in duration-100"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                                afterLeave={() => setQuery('')}
-                            >
-                                <Combobox.Options className="form-select absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                                    {filteredPeople.length === 0 && query !== '' ? (
-                                        <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
-                                            Nothing found.
-                                        </div>
-                                    ) : (
-                                        filteredPeople.map((person: any) => (
-                                            <Combobox.Option
-                                                key={person.id}
-                                                className={({ active }) =>
-                                                    `relative cursor-default select-none py-2 pl-10 pr-4 rounded-md ${active ? 'bg-teal-50 text-neutral-900' : 'text-gray-900'
-                                                    }`
-                                                }
-                                                value={person}
-                                            >
-                                                {({ selected, active }: any) => (
-                                                    <>
+                            </Combobox.Button>
+                        </div>
+                        <Transition
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                            afterLeave={() => setQuery('')}
+                        >
+                            <Combobox.Options className="form-select absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                {filteredPeople.length === 0 && query !== '' ? (
+                                    <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                                        Nothing found.
+                                    </div>
+                                ) : (
+                                    filteredPeople.map((person: any) => (
+                                        <Combobox.Option
+                                            key={person.id}
+                                            className={({ active }) =>
+                                                `relative cursor-default select-none py-2 pl-10 pr-4 rounded-md ${active ? 'bg-teal-50 text-neutral-900' : 'text-gray-900'
+                                                }`
+                                            }
+                                            value={person}
+                                        >
+                                            {({ selected, active }: any) => (
+                                                <>
+                                                    <span
+                                                        className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                                            }`}
+                                                    >
+                                                        {person.name}
+                                                    </span>
+                                                    {selected ? (
                                                         <span
-                                                            className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-teal-600' : 'text-teal-600'
                                                                 }`}
                                                         >
-                                                            {person.name}
+                                                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
                                                         </span>
-                                                        {selected ? (
-                                                            <span
-                                                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-teal-600' : 'text-teal-600'
-                                                                    }`}
-                                                            >
-                                                                <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                                            </span>
-                                                        ) : null}
-                                                    </>
-                                                )}
-                                            </Combobox.Option>
-                                        ))
-                                    )}
-                                </Combobox.Options>
-                            </Transition>
-                        </div>
-                    </Combobox>
+                                                    ) : null}
+                                                </>
+                                            )}
+                                        </Combobox.Option>
+                                    ))
+                                )}
+                            </Combobox.Options>
+                        </Transition>
+                    </div>
+                </Combobox>
 
-                    <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
-                </form>
-            </div>
-
-            <div className={(viewAddDate ? 'flex' : 'hidden') + ' absolute -left-56 top-44 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                <form onSubmit={handleCloseCalendar}>
-                    <Calendar value={cardDate} onChange={setCardDate} />
-                    <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Close</button>
-                </form>
-            </div>
-
-            <div className={(viewAddField ? 'flex' : 'hidden') + ' absolute  -left-56 top-56 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                <form onSubmit={handleCreateNewCustomField} className='flex flex-col items-center'>
-                    <input type='text' name='fieldTitle' placeholder='Field Name' className='bg-neutral-50 border-none outline-none' />
-                    <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
-                        <option value="text">Text</option>
-                        <option value="number">Number</option>
-                    </select>
-                    <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add Field</button>
-                </form>
-            </div>
-
-            <div className={(viewMoveCard ? 'flex' : 'hidden') + ' absolute  -left-56 top-72 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                <form onSubmit={handleCloseMoveCard} className='flex flex-col items-center'>
-                    <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
-                        {dashboards?.map((kanban: { kanbanId: string, name: string }) => {
-                            return <option value={kanban?.kanbanId} key={kanban?.kanbanId}>{kanban?.name}</option>;
-                        })}
-                    </select>
-                    <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Add Field</button>
-                </form>
-            </div>
-
-            <div className={(viewAddTag ? 'flex' : 'hidden') + ' absolute -left-56 top-14 bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-                <form onSubmit={handleCreateNewTag}>
-                    <input type='text' name='title' placeholder='Nome da Etiqueta' className='form-input bg-neutral-100 w-48 border-[1px] border-neutral-200 rounded-md p-1 shadow-inner my-2' />
-                    <HexColorPicker color={color} onChange={setColor} className='my-2' />
-                    <button type='submit' className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Criar</button>
-                </form>
-            </div>
+                <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Adicionar</button>
+            </form>
         </div>
     );
 }
+
+interface AddCardDateFormProps {
+    viewAddDate: boolean;
+    handleCloseCalendar: any;
+    cardDate: any;
+    setCardDate: any;
+}
+function AddCardDateForm(props: AddCardDateFormProps) {
+    const { cardDate, handleCloseCalendar, setCardDate, viewAddDate } = props;
+    return (
+        <div className={(viewAddDate ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+            <form onSubmit={handleCloseCalendar}>
+                <Calendar value={cardDate} onChange={setCardDate} />
+                <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Adicionar</button>
+            </form>
+        </div>
+    );
+}
+
+interface AddCustomFieldForm {
+    viewAddField: boolean;
+    handleCreateNewCustomField: any;
+}
+function AddCustomFieldForm(props: AddCustomFieldForm) {
+    const {viewAddField, handleCreateNewCustomField} = props;
+    return (
+        <div className={(viewAddField ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+            <form onSubmit={handleCreateNewCustomField} className='flex flex-col items-center'>
+                <input type='text' name='fieldTitle' placeholder='Field Name' className='bg-neutral-50 border-none outline-none' />
+                <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
+                    <option value="text">Text</option>
+                    <option value="number">Number</option>
+                </select>
+                <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Adicionar Campo</button>
+            </form>
+        </div>
+    );
+}
+
+interface MoveCardFormProps {
+    viewMoveCard: boolean;
+    handleCloseMoveCard: any;
+    dashboardsArray: { kanbanId: string, name: string }[];
+}
+function MoveCardForm(props: MoveCardFormProps) {
+    const { dashboardsArray, handleCloseMoveCard, viewMoveCard } = props;
+    return (
+        <div className={(viewMoveCard ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+            <form onSubmit={handleCloseMoveCard} className='flex flex-col items-center'>
+                <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
+                    {dashboardsArray.map((kanban: { kanbanId: string, name: string }) => {
+                        return <option value={kanban?.kanbanId} key={kanban?.kanbanId}>{kanban?.name}</option>;
+                    })}
+                </select>
+                <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Mover</button>
+            </form>
+        </div>
+    );
+}
+
+interface AddTagFormProps {
+    viewAddTag: boolean;
+    handleCreateNewTag: any;
+    color: any;
+    setColor: any;
+}
+function AddTagForm(props: AddTagFormProps) {
+    const { color, handleCreateNewTag, setColor, viewAddTag } = props;
+    return (
+        <div className={(viewAddTag ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+            <form onSubmit={handleCreateNewTag}>
+                <input type='text' name='title' placeholder='Nome da Etiqueta' className='form-input bg-neutral-100 w-48 border-[1px] border-neutral-200 rounded-md p-1 shadow-inner my-2' />
+                <HexColorPicker color={color} onChange={setColor} className='my-2' />
+                <button type='submit' className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Criar</button>
+            </form>
+        </div>
+    );
+}
+
 
 interface CardTitleProps { title: string; }
 function CardTitle(props: CardTitleProps) {
@@ -189,9 +191,13 @@ function CardTitle(props: CardTitleProps) {
     );
 }
 
-interface CustomFieldsSectionProps { customFieldsArray: CustomFields[], handleCustomFieldChange: (event: ChangeEvent<HTMLInputElement>) => void; }
+interface CustomFieldsSectionProps { 
+    customFieldsArray: CustomFields[];
+    handleCustomFieldChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    handleShowField: () => void;
+}
 function CustomFieldsSection(props: CustomFieldsSectionProps) {
-    const { customFieldsArray, handleCustomFieldChange } = props;
+    const { customFieldsArray, handleCustomFieldChange, handleShowField } = props;
     return (
         <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
             {customFieldsArray.map((item: CustomFields, idx: any) => {
@@ -218,12 +224,16 @@ function CustomFieldsSection(props: CustomFieldsSectionProps) {
                     );
                 }
             })}
+            <button type='button' className='transition-all'
+                onClick={handleShowField}>
+                <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+            </button>
         </div>
     );
 }
-interface TagsSectionProps { tagsArray: Tag[]; removeCurrentTag: (arg0: SystemID) => void; }
+interface TagsSectionProps { tagsArray: Tag[]; removeCurrentTag: (arg0: SystemID) => void; handleShowTag: () => void; }
 function TagsSection(props: TagsSectionProps) {
-    const { tagsArray, removeCurrentTag } = props;
+    const { tagsArray, removeCurrentTag, handleShowTag } = props;
     return (
         <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
             {tagsArray.map((items: Tag) => (
@@ -232,6 +242,10 @@ function TagsSection(props: TagsSectionProps) {
                     <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.name}</h1>
                 </div>
             ))}
+            <button className='transition-all' type='button'
+                onClick={handleShowTag}>
+                <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+            </button>
         </div>
     );
 }
@@ -317,8 +331,34 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
     );
 }
 
-interface InnerCardsSectionProps { innerCardsArray: Card[] }
-function InnerCardSection() {
+interface InnerCardsSectionProps {
+    innerCardsArray: Card[];
+    tempCardsArr: Card[];
+    _appendToTempCardsArray: () => void;
+    _popFromTempCardsArray: () => void;
+    addInnerCard: () => void;
+    createInnerCard: () => void;
+    isCreatingInnerCard: boolean;
+    setIsCreatingInnerCard: () => void;
+    setIsEdittingInnerCard: () => void;
+    isEdittingInnerCard: boolean;
+    handleCreateInnerCard: () => void;
+}
+function InnerCardSection(props: InnerCardsSectionProps) {
+    const { 
+        _appendToTempCardsArray,
+        _popFromTempCardsArray,
+        addInnerCard,
+        createInnerCard,
+        innerCardsArray,
+        isCreatingInnerCard,
+        isEdittingInnerCard,
+        setIsCreatingInnerCard,
+        setIsEdittingInnerCard,
+        tempCardsArr,
+        handleCreateInnerCard
+    } = props;
+
     return (
         <div className='flex flex-row'>
             {innerCardsArray.map((card: Card, idx: number) => (
@@ -337,12 +377,17 @@ function InnerCardSection() {
 
                 />
             ))}
+            <button type="submit" className='transition-all'
+                onClick={handleCreateInnerCard} id='innerCard'>
+                <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+            </button>
         </div>
     );
 }
 
 const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEditorMethods> | undefined) => {
-    const { setShowCreateCardForm,
+    const { 
+        setShowCreateCardForm,
         showCreateCardForm,
         createCardForm,
         card,
@@ -571,14 +616,60 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
             <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
-                <form className='relative w-full h-full'>
+                <div className={`${(viewAddTag || viewAddMember || viewAddDate || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full absolute justify-center items-center`}>
+                    <AddMemberForm
+                        filteredPeople={filteredPeople}
+                        handleCloseAddMember={handleCloseAddMember}
+                        selected={selected}
+                        setQuery={setQuery}
+                        setSelected={setSelected}
+                        viewAddMember={viewAddMember}
+                        query={query}
+                    />
+                    <AddCardDateForm 
+                        cardDate={cardDate}
+                        handleCloseCalendar={handleCloseCalendar}
+                        setCardDate={setCardDate}
+                        viewAddDate={viewAddDate}
+                    />
+                    <AddCustomFieldForm 
+                        handleCreateNewCustomField={handleCreateNewCustomField}
+                        viewAddField={viewAddField}
+                    />
+                    <MoveCardForm 
+                        dashboardsArray={dashboards}
+                        handleCloseMoveCard={handleCloseMoveCard}
+                        viewMoveCard={viewMoveCard}
+                    />
+                    <AddTagForm 
+                        color={color}
+                        handleCreateNewTag={handleCreateNewTag}
+                        setColor={setColor}
+                        viewAddTag={viewAddTag}
+                    />
+                </div>
+                <form className='w-full h-full'>
                     <h1>Card Creation</h1>
                     <CardTitle title={card.title} />
-                    <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
-                    <CustomFieldsSection customFieldsArray={card?.customFields} handleCustomFieldChange={handleCustomFieldChange} />
-                    <TagsSection removeCurrentTag={removeCurrentTag} tagsArray={card.tags} />
+                    <RichEditor 
+                        ref={ref} 
+                        onChange={console.log} 
+                        getMarkdown={setEditorText} 
+                        markdown={card?.description} 
+                        display={showCreateCardForm}
+                    />
+                    <CustomFieldsSection 
+                        customFieldsArray={card?.customFields} 
+                        handleCustomFieldChange={handleCustomFieldChange}
+                        handleShowField={handleShowField}
+                    />
+                    <TagsSection 
+                        removeCurrentTag={removeCurrentTag} 
+                        tagsArray={card.tags} 
+                        handleShowTag={handleShowTag}
+                    />
                     <ChecklistsSection 
-                        checklistArray={card.checklists} 
+                        checklistArray={card?.checklists} 
                         handleAddInput={handleAddInput}  
                         handleAddList={handleAddList} 
                         handleInputChange={handleInputChange}
@@ -587,17 +678,24 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         handleToggleCheckbox={handleToggleCheckbox}
                         updateListTitle={updateListTitle}
                     />
-
-
-
-
-
-
+                    <InnerCardSection
+                        innerCardsArray={card?.innerCards}
+                        _appendToTempCardsArray={_appendToTempCardsArray}
+                        _popFromTempCardsArray={_popFromTempCardsArray}
+                        addInnerCard={addInnerCard}
+                        createInnerCard={createInnerCard}
+                        isCreatingInnerCard={isCreatingInnerCard}
+                        isEdittingInnerCard={isEdittingInnerCard}
+                        setIsCreatingInnerCard={setIsCreatingInnerCard}
+                        setIsEdittingInnerCard={setIsEdittingInnerCard}
+                        tempCardsArr={tempCardsArr}
+                        handleCreateInnerCard={handleCreateInnerCard}
+                    />
 
                     <button className="absolute bottom-2">test btn</button> {/* button off the natural flow */}
                 </form>
-                <div className='mb-8'> 
-                     {/* COMMENTS GOES HERE */}
+                <div className='mb-8 w-full h-60'> 
+                    <CommentSection userData={userValue.userData} />
                 </div>
             </div>
         </div>

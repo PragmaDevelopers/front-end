@@ -189,9 +189,9 @@ function CardTitle(props: CardTitleProps) {
     );
 }
 
-interface CustomFieldsSectionProps { customFieldsArray: CustomFields[] }
+interface CustomFieldsSectionProps { customFieldsArray: CustomFields[], handleCustomFieldChange: (event: ChangeEvent<HTMLInputElement>) => void; }
 function CustomFieldsSection(props: CustomFieldsSectionProps) {
-    const { customFieldsArray } = props;
+    const { customFieldsArray, handleCustomFieldChange } = props;
     return (
         <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
             {customFieldsArray.map((item: CustomFields, idx: any) => {
@@ -200,14 +200,20 @@ function CustomFieldsSection(props: CustomFieldsSectionProps) {
                     return (
                         <div key={idx} className='w-24 flex justify-center items-center'>
                             <h1 className='mr-1'>{item?.name}:</h1>
-                            <input className='w-32 bg-neutral-50 border-none outline-none' type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                            <input 
+                            className='w-32 bg-neutral-50 border-none outline-none' 
+                            type='text' name={item?.name}  defaultValue={item?.value}
+                            onChange={handleCustomFieldChange} placeholder='Digite um valor' />
                         </div>
                     );
                 } else {
                     return (
                         <div key={idx} className='w-24 flex justify-center items-center'>
                             <h1 className='mr-1'>{item?.name}:</h1>
-                            <input className='w-32 bg-neutral-50 border-none outline-none' type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                            <input 
+                            className='w-32 bg-neutral-50 border-none outline-none' 
+                            type='number' name={item?.name} defaultValue={item?.value} 
+                            onChange={handleCustomFieldChange} placeholder='Digite um valor' />
                         </div>
                     );
                 }
@@ -225,6 +231,111 @@ function TagsSection(props: TagsSectionProps) {
                     <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
                     <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.name}</h1>
                 </div>
+            ))}
+        </div>
+    );
+}
+
+interface ChecklistsSectionProps {
+    checklistArray: CheckList[];
+    updateListTitle: (arg0: number, arg1: string) => void;
+    handleRemoveList: (arg0: number) => void;
+    handleToggleCheckbox: (arg0: number, arg1: number) => void;
+    handleInputChange: (arg0: number, arg1: number, arg2: string) => void;
+    handleRemoveInput: (arg0: number, arg1: number) => void;
+    handleAddInput: (arg0: number) => void;
+    handleAddList: () => void;
+}
+function ChecklistsSection(props: ChecklistsSectionProps) {
+    const { 
+        checklistArray, 
+        handleAddInput, 
+        handleAddList, 
+        handleInputChange, 
+        handleRemoveInput, 
+        handleRemoveList, 
+        handleToggleCheckbox, 
+        updateListTitle 
+    } = props;
+    return (
+        <div className='p-1'>
+            {checklistArray.map((list: CheckList, listIndex: number) => (
+                <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-96 h-fit my-2'>
+                    <div className='flex items-center mb-4'>
+                        <input type='text'
+                            className='form-input border-none shrink-0 mr-2 p-0.5 bg-neutral-50 outline-none w-80'
+                            placeholder='Digite um nome' onChange={(e) => updateListTitle(listIndex, e.target.value)} />
+                        <button
+                            type="button"
+                            onClick={() => handleRemoveList(listIndex)}
+                        >
+                            <MinusCircleIcon className='w-6 aspect-square' />
+                        </button>
+                    </div>
+
+
+
+                    {list.items?.map((inputValue: CheckListItem, inputIndex: number) => (
+                        <div key={inputIndex} className='flex items-center my-2'>
+                            <input
+                                type="checkbox"
+                                checked={inputValue.completed}
+                                onChange={() => handleToggleCheckbox(listIndex, inputIndex)}
+                                className="bg-blue-100 border-blue-200 rounded-full focus:ring-blue-300 form-checkbox mr-2"
+                            />
+                            <input
+                                className='form-input shadow-inner border-neutral-200 border-[1px] rounded-md bg-neutral-100 mr-2 p-0.5 w-64'
+                                type="text"
+                                value={inputValue.name}
+                                placeholder='Adicionar Tarefa'
+                                onChange={(e) =>
+                                    handleInputChange(listIndex, inputIndex, e.target.value)
+                                }
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveInput(listIndex, inputIndex)}
+                            >
+                                <MinusCircleIcon className='w-6 aspect-square' />
+                            </button>
+                            <button className='mx-2'>
+                                <CalendarDaysIcon className='aspect-square w-6' />
+                            </button>
+                        </div>
+                    ))}
+                    <button type="button" className="flex items-center justify-center w-full" onClick={() => handleAddInput(listIndex)}>
+                        <h1 className='mr-2'>Nova Tarefa</h1>
+                        <PlusCircleIcon className='w-6 aspect-square' />
+                    </button>
+                </div>
+            ))}
+            <button type="button" onClick={handleAddList} className='bg-neutral-50 my-2 rounded-md w-96 p-2 drop-shadow flex justify-center items-center'>
+                <h1 className="mr-2">Nova Lista</h1>
+                <PlusCircleIcon className='w-6 aspect-square' />
+            </button>
+        </div>
+    );
+}
+
+interface InnerCardsSectionProps { innerCardsArray: Card[] }
+function InnerCardSection() {
+    return (
+        <div className='flex flex-row'>
+            {innerCardsArray.map((card: Card, idx: number) => (
+                <InnerCardElement
+                    key={idx}
+                    card={card}
+                    tempCardsArr={tempCardsArr}
+                    _appendToTempCardsArray={_appendToTempCardsArray}
+                    _popFromTempCardsArray={_popFromTempCardsArray}
+                    addInnerCard={addInnerCard}
+                    createInnerCard={createInnerCard}
+                    isCreatingInnerCard={isCreatingInnerCard}
+                    setIsCreatingInnerCard={setIsCreatingInnerCard}
+                    setIsEdittingInnerCard={setIsEdittingInnerCard}
+                    isEdittingInnerCard={isEdittingInnerCard}
+
+                />
             ))}
         </div>
     );
@@ -464,8 +575,25 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     <h1>Card Creation</h1>
                     <CardTitle title={card.title} />
                     <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
-                    <CustomFieldsSection customFieldsArray={card?.customFields}/>
+                    <CustomFieldsSection customFieldsArray={card?.customFields} handleCustomFieldChange={handleCustomFieldChange} />
                     <TagsSection removeCurrentTag={removeCurrentTag} tagsArray={card.tags} />
+                    <ChecklistsSection 
+                        checklistArray={card.checklists} 
+                        handleAddInput={handleAddInput}  
+                        handleAddList={handleAddList} 
+                        handleInputChange={handleInputChange}
+                        handleRemoveInput={handleRemoveInput}
+                        handleRemoveList={handleRemoveList}
+                        handleToggleCheckbox={handleToggleCheckbox}
+                        updateListTitle={updateListTitle}
+                    />
+
+
+
+
+
+
+
                     <button className="absolute bottom-2">test btn</button> {/* button off the natural flow */}
                 </form>
                 <div className='mb-8'> 

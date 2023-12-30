@@ -1,6 +1,6 @@
 import { useUserContext } from "@/app/contexts/userContext";
 import { CreateEditCardProps } from "@/app/interfaces/KanbanInterfaces";
-import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card, SystemID } from "@/app/types/KanbanTypes";
+import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card, SystemID, userData } from "@/app/types/KanbanTypes";
 import { Combobox, Transition } from "@headlessui/react";
 import { XMarkIcon, MinusCircleIcon, CalendarDaysIcon, PlusCircleIcon, ArrowUpOnSquareIcon, ChevronUpDownIcon, CheckIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -12,6 +12,12 @@ import RichEditor from "@/app/components/dashboard/RichEditor";
 import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
 import 'react-calendar/dist/Calendar.css';
 import { CommentSection } from "@/app/components/dashboard/Comment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import 'dayjs/locale/pt-br';
+
+dayjs.locale('pt-br');
+dayjs.extend(relativeTime);
 
 interface AddMemberFormProps {
     viewAddMember: boolean;
@@ -199,12 +205,13 @@ interface CustomFieldsSectionProps {
 function CustomFieldsSection(props: CustomFieldsSectionProps) {
     const { customFieldsArray, handleCustomFieldChange, handleShowField } = props;
     return (
+        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
         <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
             {customFieldsArray?.map((item: CustomFields, idx: any) => {
                 console.log("MAP LOOP", item?.fieldType);
                 if (item?.fieldType === "text") {
                     return (
-                        <div key={idx} className='w-24 flex justify-center items-center'>
+                        <div key={idx} className='w-fit flex justify-center items-center'>
                             <h1 className='mr-1'>{item?.name}:</h1>
                             <input 
                             className='w-32 bg-neutral-50 border-none outline-none' 
@@ -214,7 +221,7 @@ function CustomFieldsSection(props: CustomFieldsSectionProps) {
                     );
                 } else {
                     return (
-                        <div key={idx} className='w-24 flex justify-center items-center'>
+                        <div key={idx} className='w-fit flex justify-center items-center'>
                             <h1 className='mr-1'>{item?.name}:</h1>
                             <input 
                             className='w-32 bg-neutral-50 border-none outline-none' 
@@ -226,8 +233,9 @@ function CustomFieldsSection(props: CustomFieldsSectionProps) {
             })}
             <button type='button' className='transition-all'
                 onClick={handleShowField}>
-                <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                <PlusCircleIcon className='aspect-square w-6 mr-2' />
             </button>
+        </div>
         </div>
     );
 }
@@ -235,7 +243,8 @@ interface TagsSectionProps { tagsArray: Tag[]; removeCurrentTag: (arg0: SystemID
 function TagsSection(props: TagsSectionProps) {
     const { tagsArray, removeCurrentTag, handleShowTag } = props;
     return (
-        <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
+        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
+        <div className='grid grid-cols-6 auto-rows-auto gap-2 overflow-auto h-fit'>
             {tagsArray?.map((items: Tag) => (
                 <div key={items?.id} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
                     <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
@@ -244,8 +253,9 @@ function TagsSection(props: TagsSectionProps) {
             ))}
             <button className='transition-all' type='button'
                 onClick={handleShowTag}>
-                <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                <PlusCircleIcon className='aspect-square w-6 mr-2' />
             </button>
+        </div>
         </div>
     );
 }
@@ -272,6 +282,7 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
         updateListTitle 
     } = props;
     return (
+        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1 flex justify-center">
         <div className='p-1'>
             {checklistArray?.map((list: CheckList, listIndex: number) => (
                 <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-96 h-fit my-2'>
@@ -328,6 +339,7 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
                 <PlusCircleIcon className='w-6 aspect-square' />
             </button>
         </div>
+        </div>
     );
 }
 
@@ -360,6 +372,7 @@ function InnerCardSection(props: InnerCardsSectionProps) {
     } = props;
 
     return (
+        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
         <div className='flex flex-row'>
             {innerCardsArray?.map((card: Card, idx: number) => (
                 <InnerCardElement
@@ -377,10 +390,32 @@ function InnerCardSection(props: InnerCardsSectionProps) {
 
                 />
             ))}
-            <button type="submit" className='transition-all'
+            <button type="submit" className='transition-all my-2 mx-4'
                 onClick={handleCreateInnerCard} id='innerCard'>
-                <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                <PlusCircleIcon className='aspect-square w-6' />
             </button>
+        </div>
+        </div>
+    );
+}
+
+interface MembersSectionProps { membersList: Member[] }
+function MembersSection(props: MembersSectionProps) {
+    const { membersList } = props;
+    return (
+        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
+            {membersList?.map((member: userData, index: number) => {
+                return (
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                            <h1>{member.name}</h1>
+                        </div>
+                        <div className="flex items-center">
+                            <h2>{member.email}</h2>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }
@@ -613,10 +648,12 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         )
     }
 
+    const cardDateOBJ = dayjs(card.date);
+
+
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
-            <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
-                <div className={`${(viewAddTag || viewAddMember || viewAddDate || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full absolute justify-center items-center`}>
+            <div className={`${(viewAddTag || viewAddMember || viewAddDate || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full bg-neutral-950/25 absolute justify-center items-center z-[9999999999]`}>
                     <AddMemberForm
                         filteredPeople={filteredPeople}
                         handleCloseAddMember={handleCloseAddMember}
@@ -648,12 +685,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         viewAddTag={viewAddTag}
                     />
                 </div>
-                <form className='w-full h-full relative'>
-                    <h1>Card Creation</h1>
+
+            <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
+                <form className='w-full h-fit relative'>
+                    <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
                     <CardTitle title={card.title} />
-                      <h1>
-                        Prazo {card.date}
-                      </h1>
+                    <h1 className="text-neutral-700 text-lg font-semibold my-1">
+                        Prazo: {cardDateOBJ.format('DD/MM/YYYY')}, tempo restante: {dayjs().to(cardDateOBJ)}
+                    </h1>
                     <RichEditor 
                         ref={ref} 
                         onChange={console.log} 
@@ -661,26 +700,39 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         markdown={card?.description} 
                         display={showCreateCardForm}
                     />
+                    <h1>Campos</h1>
                     <CustomFieldsSection 
                         customFieldsArray={card?.customFields} 
                         handleCustomFieldChange={handleCustomFieldChange}
                         handleShowField={handleShowField}
                     />
+                    
+                    <h1>Etiquetas</h1>
                     <TagsSection 
                         removeCurrentTag={removeCurrentTag} 
                         tagsArray={card.tags} 
                         handleShowTag={handleShowTag}
                     />
-                    <ChecklistsSection 
-                        checklistArray={card?.checklists} 
-                        handleAddInput={handleAddInput}  
-                        handleAddList={handleAddList} 
-                        handleInputChange={handleInputChange}
-                        handleRemoveInput={handleRemoveInput}
-                        handleRemoveList={handleRemoveList}
-                        handleToggleCheckbox={handleToggleCheckbox}
-                        updateListTitle={updateListTitle}
-                    />
+                    <div className="flex justify-between items-center">
+                        <div className="w-full mr-2">
+                            <h1>Tarefas</h1>
+                            <ChecklistsSection 
+                                checklistArray={card?.checklists} 
+                                handleAddInput={handleAddInput}  
+                                handleAddList={handleAddList} 
+                                handleInputChange={handleInputChange}
+                                handleRemoveInput={handleRemoveInput}
+                                handleRemoveList={handleRemoveList}
+                                handleToggleCheckbox={handleToggleCheckbox}
+                                updateListTitle={updateListTitle}
+                            />
+                        </div>
+                        <div className="w-full ml-2">
+                            <h1>Membros</h1>
+                            <MembersSection membersList={card?.members} />
+                        </div>
+                    </div>
+                    <h1>Cartões Internos</h1>
                     <InnerCardSection
                         innerCardsArray={card?.innerCards}
                         _appendToTempCardsArray={_appendToTempCardsArray}
@@ -694,10 +746,10 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         tempCardsArr={tempCardsArr}
                         handleCreateInnerCard={handleCreateInnerCard}
                     />
-
-                    <button className="-bottom-72 absolute">test btn</button> {/* button off the natural flow */}
+                    <button className="-bottom-80 absolute">test btn</button> {/* button off the natural flow */}
                 </form>
-                <div className='mb-32 w-full h-60'> 
+                <div className='w-full h-60 mb-28'>
+                    <h1>Comentários</h1>
                     <CommentSection userData={userValue.userData} />
                 </div>
             </div>

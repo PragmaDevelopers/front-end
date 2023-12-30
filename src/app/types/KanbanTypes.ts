@@ -56,7 +56,7 @@ export type Card = {
     members: Member[];
     comments: Comment[];
     dropdowns: Dropdown[];
-    date: number;
+    date: string;
     customFields: CustomFields[];
     innerCards: Card[];
 }

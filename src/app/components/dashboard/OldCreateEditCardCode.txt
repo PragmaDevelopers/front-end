@@ -406,16 +406,193 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
-            <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
-                <form> {/* TOP */}
-                    <div>
-                        
+            <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg flex justify-center items-start px-8 drop-shadow-lg '>
+                <div className="absolute inset-0">
+                    <div className="flex justify-center items-center flex-col absolute inset-0 bg-red-200">
+                    <form onSubmit={handleCreateCardForm} className='w-full h-full flex justify-center items-center flex-col'>
+                        <div className="w-full h-full flex justify-center items-start">
+                            <div className='w-[80%] h-fit'>
+                            <h1 className='text-center font-bold text-xl w-fit h-fit'>Card Creation</h1>
+                                <div className='w-full h-[85%]'>
+                                    <div className='flex my-2'>
+                                        <input className='font-bold text-xl form-input bg-neutral-50 w-full border-none outline-none p-1 m-1 rounded-md' id="CardTitle" type='text' defaultValue={card.title} name='title' placeholder='Digite um titulo' />
+                                    </div>
+                                    <RichEditor markdown={card?.description} onChange={console.log} getMarkdown={setEditorText} ref={ref} display={showCreateCardForm} />
+                                    <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
+                                        {card?.customFields?.map((item: CustomFields, idx: any) => {
+                                            console.log("MAP LOOP", item?.fieldType);
+                                            if (item?.fieldType === "text") {
+                                                return (
+                                                    <div key={idx} className='w-24 flex justify-center items-center'>
+                                                        <h1 className='mr-1'>{item?.name}:</h1>
+                                                        <input className='w-32 bg-neutral-50 border-none outline-none' type='text' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                                                    </div>
+                                                );
+                                            } else {
+                                                return (
+                                                    <div key={idx} className='w-24 flex justify-center items-center'>
+                                                        <h1 className='mr-1'>{item?.name}:</h1>
+                                                        <input className='w-32 bg-neutral-50 border-none outline-none' type='number' name={item?.name} defaultValue={item?.value} onChange={handleCustomFieldChange} placeholder='Digite um valor' />
+                                                    </div>
+                                                );
+                                            }
+                                        })}
+                                    </div>
+
+                                    <div className='grid p-2 grid-cols-6 auto-rows-auto gap-2 overflow-auto h-20'>
+                                        {card.tags?.map((items: Tag) => (
+                                            <div key={items?.id} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
+                                                <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
+                                                <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.name}</h1>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className='p-1'>
+                                        {card.checklists?.map((list: CheckList, listIndex: number) => (
+                                            <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-96 h-fit my-2'>
+                                                <div className='flex items-center mb-4'>
+                                                    <input type='text'
+                                                        className='form-input border-none shrink-0 mr-2 p-0.5 bg-neutral-50 outline-none w-80'
+                                                        placeholder='Digite um nome' onChange={(e) => updateListTitle(listIndex, e.target.value)} />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveList(listIndex)}
+                                                    >
+                                                        <MinusCircleIcon className='w-6 aspect-square' />
+                                                    </button>
+                                                </div>
+
+
+
+                                                {list.items?.map((inputValue: CheckListItem, inputIndex: number) => (
+                                                    <div key={inputIndex} className='flex items-center my-2'>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={inputValue.completed}
+                                                            onChange={() => handleToggleCheckbox(listIndex, inputIndex)}
+                                                            className="bg-blue-100 border-blue-200 rounded-full focus:ring-blue-300 form-checkbox mr-2"
+                                                        />
+                                                        <input
+                                                            className='form-input shadow-inner border-neutral-200 border-[1px] rounded-md bg-neutral-100 mr-2 p-0.5 w-64'
+                                                            type="text"
+                                                            value={inputValue.name}
+                                                            placeholder='Adicionar Tarefa'
+                                                            onChange={(e) =>
+                                                                handleInputChange(listIndex, inputIndex, e.target.value)
+                                                            }
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemoveInput(listIndex, inputIndex)}
+                                                        >
+                                                            <MinusCircleIcon className='w-6 aspect-square' />
+                                                        </button>
+                                                        <button className='mx-2'>
+                                                            <CalendarDaysIcon className='aspect-square w-6' />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                                <button type="button" className="flex items-center justify-center w-full" onClick={() => handleAddInput(listIndex)}>
+                                                    <h1 className='mr-2'>Nova Tarefa</h1>
+                                                    <PlusCircleIcon className='w-6 aspect-square' />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <button type="button" onClick={handleAddList} className='bg-neutral-50 my-2 rounded-md w-96 p-2 drop-shadow flex justify-center items-center'>
+                                            <h1 className="mr-2">Nova Lista</h1>
+                                            <PlusCircleIcon className='w-6 aspect-square' />
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className='flex flex-row'>
+                                    {card?.innerCards?.map((card: Card, idx: number) => (
+                                        <InnerCardElement
+                                            key={idx}
+                                            card={card}
+                                            tempCardsArr={tempCardsArr}
+                                            _appendToTempCardsArray={_appendToTempCardsArray}
+                                            _popFromTempCardsArray={_popFromTempCardsArray}
+                                            addInnerCard={addInnerCard}
+                                            createInnerCard={createInnerCard}
+                                            isCreatingInnerCard={isCreatingInnerCard}
+                                            setIsCreatingInnerCard={setIsCreatingInnerCard}
+                                            setIsEdittingInnerCard={setIsEdittingInnerCard}
+                                            isEdittingInnerCard={isEdittingInnerCard}
+
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className='w-56 ml-4 flex flex-col items-center justify-start h-[75%] relative'>
+                                <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
+                                    onClick={handleShowTag}>
+                                    <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                                    <h1 className="w-fit h-fit flex justify-center items-center">Add Tag</h1>
+                                </button>
+                                <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
+                                    onClick={handleShowMember}>
+                                    <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                                    <h1 className="w-fit h-fit flex justify-center items-center">Add Member</h1>
+                                </button>
+                                <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
+                                    onClick={handleShowDate}>
+                                    <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                                    <h1 className="w-fit h-fit flex justify-center items-center">Add Date</h1>
+                                </button>
+
+                                <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
+                                    onClick={handleShowField}>
+                                    <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                                    <h1 className="w-fit h-fit flex justify-center items-center">Add Field</h1>
+                                </button>
+
+                                <button className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative' type='button'
+                                    onClick={handleShowMoveCard}>
+                                    <ArrowUpOnSquareIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                                    <h1 className="w-fit h-fit flex justify-center items-center">Move Card</h1>
+                                </button>
+                                <button type="submit" className='hover:scale-110 transition-all drop-shadow rounded-md p-2 bg-neutral-50 flex justify-center items-center my-2 w-48 relative'
+                                    onClick={handleCreateInnerCard} id='innerCard'>
+                                    <PlusCircleIcon className='absolute right-2 aspect-square w-6 mr-2' />
+                                    <h1 className="w-fit h-fit flex justify-center items-center">Add Card</h1>
+                                </button>
+                            </div>
+                        </div>
+                        <div className='w-full flex justify-center items-center'>
+                            <button id="outerCard" type='submit' className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'>Create Card</button>
+                        </div>
+                    </form>
+                    <div className="w-full h-fit flex justify-start items-start">
+                        <div className="w-[75%] h-60">
+                            <CommentSection userData={userValue.userData} />
+                        </div>
                     </div>
-                    <button className="absolute bottom-2">test btn</button> {/* button off the natural flow */}
-                </form>
-                <div> {/* BOTTOM */}
-                     {/* COMMENTS GOES HERE */}
                 </div>
+                <SideContent
+                    viewAddMember={viewAddMember}
+                    handleCloseAddMember={handleCloseAddMember}
+                    selected={selected}
+                    setSelected={setSelected}
+                    setQuery={setQuery}
+                    filteredPeople={filteredPeople}
+                    viewAddDate={viewAddDate}
+                    handleCloseCalendar={handleCloseCalendar}
+                    cardDate={cardDate}
+                    setCardDate={setCardDate}
+                    viewAddField={viewAddField}
+                    handleCreateNewCustomField={handleCreateNewCustomField}
+                    viewMoveCard={viewMoveCard}
+                    handleCloseMoveCard={handleCloseMoveCard}
+                    dashboards={dashboards}
+                    viewAddTag={viewAddTag}
+                    handleCreateNewTag={handleCreateNewTag}
+                    color={color}
+                    setColor={setColor}
+                    query={query}
+                />
+                <button onClick={() => setShowCreateCardForm(false)}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
+                </div>
+                
             </div>
         </div>
     );

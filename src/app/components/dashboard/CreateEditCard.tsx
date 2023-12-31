@@ -406,7 +406,7 @@ function MembersSection(props: MembersSectionProps) {
         <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
             {membersList?.map((member: userData, index: number) => {
                 return (
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center" key={index}>
                         <div className="flex items-center">
                             <h1>{member.name}</h1>
                         </div>
@@ -416,6 +416,7 @@ function MembersSection(props: MembersSectionProps) {
                     </div>
                 );
             })}
+            
         </div>
     );
 }

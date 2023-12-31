@@ -1,10 +1,29 @@
 "use client";
+import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
+import ImageUploader from "@/app/components/global/ImageUploader";
+import { useUserContext } from "@/app/contexts/userContext";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Page() {
     const router = useRouter();
+    const { userValue, updateUserValue } = useUserContext();
+    const [profilePictureSource, setProfilePictureSource] = useState<string>(userValue.userData.profilePicture as string);
+
+    const handleProfilePictureSource = (arg0: string) => {
+        setProfilePictureSource(arg0)
+    }
+
+    const handleFormSubmit = (e: any) => {
+        let subPfp: string = profilePictureSource;
+        let subEmail: string = e?.target?.emailPessoal;
+        let subPasswd: string = e?.target?.;
+        let subRePasswd: string = e?.target?.;
+        let subNat: string = e?.target?.;
+        let subGender: string = e?.target?.;
+    }
 
     return (
         <main className="w-full h-full bg-neutral-100 overflow-hidden">
@@ -14,19 +33,26 @@ export default function Page() {
             </div>
             <div className="mt-4 flex flex-col items-center justify-between relative p-4">
                 <div className="bg-neutral-50 rounded-lg drop-shadow-md p-4 flex flex-row justify-center items-center ml-4">
-                    <UserCircleIcon className="aspect-square w-24 mr-4" />
+                    <ProfilePicture className="aspect-square w-24 mr-4" size={512} source={userValue.userData?.profilePicture} />
                     <div>
-                        <h1 className="text-lg font-bold text-neutral-900 mb-1">Fulano da Silva</h1>
-                        <h2 className="text-neutral-700 text-sm my-0.5">usuario@exemplo.com</h2>
-                        <h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>
+                        <h1 className="text-lg font-bold text-neutral-900 mb-1">{userValue.userData.name}</h1>
+                        <h2 className="text-neutral-700 text-sm my-0.5">{userValue.userData.email}</h2>
+                        {/*<h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>*/}
                     </div>
                 </div>
                 <form className="m-4 w-[28rem]">
                     <div className="bg-neutral-50 px-2 pt-2 pb-8 rounded-lg m-4 drop-shadow-md overflow-auto max-h-[20rem]">
                         <h1 className="font-bold text-xl mb-2 text-neutral-900">Informações Pessoais</h1>
                         <div className="flex flex-col justify-center items-center w-full">
+                            <h2 className="w-full text-left font-bold mb-1">Imagem de Perfil</h2>
+                            <ImageUploader callback={handleProfilePictureSource} />
+                        </div>
+                        <div className="flex w-full justify-center items-center my-4">
+                            <hr className="w-[90%] bg-neutral-100" />
+                        </div>
+                        <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Email</h2>
-                            <input id="emailPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
+                            <input name="emailPessoal" id="emailPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
                             <button
                                 className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">
                                 Salvar
@@ -37,9 +63,9 @@ export default function Page() {
                         </div>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Senha</h2>
-                            <input id="senhaPessoal" type="password" autoComplete="new-password"
+                            <input name="senhaPessoal" id="senhaPessoal" type="password" autoComplete="new-password"
                                 className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Insira sua senha" />
-                            <input id="senhaPessoal" type="password" autoComplete="new-password"
+                            <input name="reSenhaPessoal" id="reSenhaPessoal" type="password" autoComplete="new-password"
                                 className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Re-insira sua senha" />
                             <button
                                 className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">
@@ -51,7 +77,8 @@ export default function Page() {
                         </div>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Nacionalidade</h2>
-                            <select className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Selecione sua nacionalidade">
+                            <select id="nationality" name="nationality" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1">
+                                <option value="" disabled selected>Selecione sua nacionalidade</option>
                                 <option value="AF">AF - Afeganistão</option>
                                 <option value="ZA">ZA - África do Sul</option>
                                 <option value="AL">AL - Albânia</option>
@@ -77,7 +104,7 @@ export default function Page() {
                                 <option value="BO">BO - Bolívia</option>
                                 <option value="BA">BA - Bósnia e Herzegovina</option>
                                 <option value="BW">BW - Botsuana</option>
-                                <option value="BR" selected={true}>BR - Brasil</option>
+                                <option value="BR">BR - Brasil</option>
                                 <option value="BN">BN - Brunei</option>
                                 <option value="BG">BG - Bulgária</option>
                                 <option value="BF">BF - Burkina Faso</option>
@@ -256,7 +283,7 @@ export default function Page() {
                         </div>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Gênero</h2>
-                            <input id="generoPessoal" type="input"
+                            <input name="generoPessoal" id="generoPessoal" type="input"
                                 className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira seu genero" />
                             <button
                                 className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">

@@ -2,6 +2,7 @@
 import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
 import ImageUploader from "@/app/components/global/ImageUploader";
 import { useUserContext } from "@/app/contexts/userContext";
+import { NATIONALITIES_ARRAY } from "@/app/utils/variables";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
@@ -16,13 +17,23 @@ export default function Page() {
         setProfilePictureSource(arg0)
     }
 
+    const checkNationality = (value: string): boolean => {
+        for (let index = 0; index < NATIONALITIES_ARRAY.length; index++) {
+            const element: string = NATIONALITIES_ARRAY[index];
+            if (element.toLowerCase() === value.toLowerCase()) {
+                return true;
+            }
+        }
+         return false;
+    }
+
     const handleFormSubmit = (e: any) => {
         let subPfp: string = profilePictureSource;
         let subEmail: string = e?.target?.emailPessoal;
-        let subPasswd: string = e?.target?.;
-        let subRePasswd: string = e?.target?.;
-        let subNat: string = e?.target?.;
-        let subGender: string = e?.target?.;
+        let subPasswd: string = e?.target?.emailPessoal;
+        let subRePasswd: string = e?.target?.emailPessoal;
+        let subNat: string = e?.target?.emailPessoal;
+        let subGender: string = e?.target?.emailPessoal;
     }
 
     return (
@@ -78,7 +89,6 @@ export default function Page() {
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Nacionalidade</h2>
                             <select id="nationality" name="nationality" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1">
-                                <option value="" disabled selected>Selecione sua nacionalidade</option>
                                 <option value="AF">AF - Afeganistão</option>
                                 <option value="ZA">ZA - África do Sul</option>
                                 <option value="AL">AL - Albânia</option>

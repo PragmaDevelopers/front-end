@@ -18,3 +18,4 @@
 ## Bug Fixes
 
 - [ ] TagDelete deletando array toda ao invés de apenas uma.
+- [ ] Envio e edição dos valores do perfil do usuario.

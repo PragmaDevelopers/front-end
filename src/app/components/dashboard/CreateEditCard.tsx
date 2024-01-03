@@ -46,25 +46,24 @@ function CardDateSection(props: CardDateSectionProps) {
             <h1 className="text-neutral-700 text-lg font-semibold my-1">
                 Prazo: {cardDateOBJ.format('DD/MM/YYYY')}, tempo restante: {dayjs().to(cardDateOBJ)}
             </h1>
-            <div className="flex">
-                
-                <div>
-                    <h1>Ação ao finalizar prazo:</h1>
-                    <select defaultValue="MOVE_CARD">
+            <div className="flex w-full items-center justify-between">
+                <div className="flex flex-col justify-center items-center w-fit">
+                    <h1 className="px-4 py-2 font-semibold">Ação ao finalizar prazo:</h1>
+                    <select className="w-full" defaultValue="MOVE_CARD">
                         <option value="MOVE_CARD" onClick={() => setDueAction("MOVE_CARD")}>
                             Mover Card
                         </option>
                     </select>
                 </div>
-                <div>
-                    <h1>Dashboard de destino:</h1>
-                    <select>
+                <div className="flex flex-col justify-center items-center w-fit">
+                    <h1 className="px-4 py-2 font-semibold">Dashboard de destino:</h1>
+                    <select className="w-full">
                         {kanbansArray.map((e: { kanbanId: string | number, name: string }, i: number) => <option key={i} value={e.kanbanId} onClick={() => setDestinationKanban(e.kanbanId)}>{e.name}</option>)}
                     </select>
                 </div>
-                <div>
-                    <h1>Coluna de destino:</h1>
-                    <select>
+                <div className="flex flex-col justify-center items-center w-fit">
+                    <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
+                    <select className="w-full">
                         {columnsArray.filter((element) => destinationKanban.id === element.kanbanId).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>))}
                     </select>
                 </div>
@@ -710,7 +709,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const cardDateOBJ = dayjs(card.date);
     let _dExists = cardDateOBJ.isValid();
-    const [dateExists, setDateExists] = useState(_dExists);
+    const [dateExists, setDateExists] = useState(!_dExists);
     useEffect(() => {
         console.log("USE EFFECT dateExists", dateExists, "_dExists", _dExists);
     }, [dateExists, _dExists]);
@@ -775,6 +774,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         destinationKanban={destinationKanban}
                         dateExists={dateExists}
                     />
+                    <h1 className="my-2 font-semibold">Descrição</h1>
                     <RichEditor 
                         ref={ref} 
                         onChange={console.log} 
@@ -782,14 +782,14 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         markdown={card?.description} 
                         display={showCreateCardForm}
                     />
-                    <h1>Campos</h1>
+                    <h1 className="my-2 font-semibold">Campos</h1>
                     <CustomFieldsSection 
                         customFieldsArray={card?.customFields} 
                         handleCustomFieldChange={handleCustomFieldChange}
                         handleShowField={handleShowField}
                     />
                     
-                    <h1>Etiquetas</h1>
+                    <h1 className="my-2 font-semibold">Etiquetas</h1>
                     <TagsSection 
                         removeCurrentTag={removeCurrentTag} 
                         tagsArray={card.tags} 
@@ -797,7 +797,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     />
                     <div className="flex justify-between items-center">
                         <div className="w-full mr-2">
-                            <h1>Tarefas</h1>
+                            <h1 className="my-2 font-semibold">Tarefas</h1>
                             <ChecklistsSection 
                                 checklistArray={card?.checklists} 
                                 handleAddInput={handleAddInput}  
@@ -810,11 +810,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                             />
                         </div>
                         <div className="w-full ml-2">
-                            <h1>Membros</h1>
+                            <h1 className="my-2 font-semibold">Membros</h1>
                             <MembersSection membersList={card?.members} />
                         </div>
                     </div>
-                    <h1>Cartões Internos</h1>
+                    <h1 className="my-2 font-semibold">Cartões Internos</h1>
                     <InnerCardSection
                         innerCardsArray={card?.innerCards}
                         _appendToTempCardsArray={_appendToTempCardsArray}
@@ -828,10 +828,18 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         tempCardsArr={tempCardsArr}
                         handleCreateInnerCard={handleCreateInnerCard}
                     />
-                    <button className="-bottom-80 absolute">test btn</button> {/* button off the natural flow */}
+                    <div className="w-full -bottom-80 absolute flex justify-center items-center">
+                        <button 
+                            className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'
+                            id="outerCard" 
+                            type='submit' 
+                        >
+                            Finalizar
+                        </button> {/* button off the natural flow */}
+                    </div>
                 </form>
                 <div className='w-full h-60 mb-28'>
-                    <h1>Comentários</h1>
+                    <h1 className="my-2 font-semibold">Comentários</h1>
                     <CommentSection userData={userValue.userData} />
                 </div>
             </div>

@@ -5,8 +5,8 @@
 - [ ] tela de configurações da Dashboard
 - [ ] backend fetchs
 - [ ] edição do background do pdf
-- [ ] ações ao expirar prazos
-- [ ] adição de datas nos cards
+- [x] ações ao expirar prazos
+- [x] adição de datas nos cards
 - [x] Upload de imagens em base64
 - [x] Download de imagens em base64
 - [x] FallBack de imagem/svg padrão

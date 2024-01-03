@@ -59,7 +59,7 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div>
                     <h1>Coluna de destino:</h1>
                     <select>
-                        {columnsArray.filter((element) => destinationKanban.id === element.kanbanId).columns.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>)}
+                        {columnsArray.filter((element) => destinationKanban.id === element.kanbanId).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>))}
                     </select>
                 </div>
             </div>

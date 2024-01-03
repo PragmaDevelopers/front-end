@@ -25,9 +25,11 @@ interface CardDateSectionProps {
     columnsArray: Column[];
     setDueAction: any;
     setDestinationKanban: any;
+    setDestinationColumn: any;
+    kanbansArray: { kanbanId: string | number, name: string }[];
 }
 function CardDateSection(props: CardDateSectionProps) {
-    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban } = props;
+    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban, kanbansArray, setDestinationColumn } = props;
     const [dateExists, ] = useState<boolean>(cardDateOBJ.isValid());
 
     return (
@@ -50,7 +52,13 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div>
                     <h1>Dashboard de destino:</h1>
                     <select>
-                        {columnsArray.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationKanban(e.id)}>{e.title}</option>)}
+                        {kanbansArray.map((e: { kanbanId: string | number, name: string }, i: number) => <option key={i} value={e.kanbanId} onClick={() => setDestinationKanban(e.kanbanId)}>{e.name}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <h1>Coluna de destino:</h1>
+                    <select>
+                        {columnsArray.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>)}
                     </select>
                 </div>
             </div>
@@ -742,6 +750,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         columnsArray={columnsArray}
                         setDueAction={setDueAction}
                         setDestinationKanban={setDestinationKanban}
+                        setDestinationColumn={setDestinationColumn}
+                        kanbansArray={kanbansArray}
                     />
                     <RichEditor 
                         ref={ref} 

@@ -327,6 +327,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const handleRemoveCurrentTag = (tagID: SystemID) => {
+        console.log("HANDLE REMOVE TAG, ID", tagID);
         RemoveTag(
             tagID,
             setTempCard,

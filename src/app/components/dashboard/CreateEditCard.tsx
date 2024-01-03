@@ -296,13 +296,16 @@ function CustomFieldsSection(props: CustomFieldsSectionProps) {
 interface TagsSectionProps { tagsArray: Tag[]; removeCurrentTag: (arg0: SystemID) => void; handleShowTag: () => void; }
 function TagsSection(props: TagsSectionProps) {
     const { tagsArray, removeCurrentTag, handleShowTag } = props;
+    useEffect(() => {
+        console.log(tagsArray);
+    }, [tagsArray]);
     return (
         <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
         <div className='grid grid-cols-6 auto-rows-auto gap-2 overflow-auto h-fit'>
-            {tagsArray?.map((items: Tag) => (
-                <div key={items?.id} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: items?.color } as CSSProperties}>
-                    <button type='button' onClick={() => removeCurrentTag(items?.id)}><XMarkIcon className='aspect-square w-4' /></button>
-                    <h1 style={{ backgroundColor: items?.color } as CSSProperties} className='ml-1'>{items?.name}</h1>
+            {tagsArray?.map((item: Tag, index: number) => (
+                <div key={index} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: item?.color } as CSSProperties}>
+                    <button type='button' onClick={() => removeCurrentTag(item?.id)}><XMarkIcon className='aspect-square w-4' /></button>
+                    <h1 style={{ backgroundColor: item?.color } as CSSProperties} className='ml-1'>{item?.name}</h1>
                 </div>
             ))}
             <button className='transition-all' type='button'
@@ -724,6 +727,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [destinationColumn, setDestinationColumn] = useState();
     const [dueAction, setDueAction] = useState<string>("");
 
+    const _remTag = (tagID: any) => {
+        console.log("_remTag", tagID);
+        removeCurrentTag(tagID);
+    }
+
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
             <div className={`${(viewAddTag || viewAddMember || viewAddDate || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full bg-neutral-950/25 absolute justify-center items-center z-[9999999999]`}>
@@ -791,7 +799,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     
                     <h1 className="my-2 font-semibold">Etiquetas</h1>
                     <TagsSection 
-                        removeCurrentTag={removeCurrentTag} 
+                        removeCurrentTag={_remTag} 
                         tagsArray={card.tags} 
                         handleShowTag={handleShowTag}
                     />

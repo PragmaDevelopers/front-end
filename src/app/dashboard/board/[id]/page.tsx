@@ -47,6 +47,7 @@ import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashb
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
 import { AddInnerCard, CreateInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 import { API_BASE_URL } from '@/app/utils/variables';
+import { appendFile } from 'fs';
 
 
 export default function Page({ params }: { params: { id: SystemID } }) {
@@ -78,6 +79,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [modalBorderColor, setModalBorderColor] = useState<string>("");
     const [modalFocusRef, setModalFocusRef] = useState<any>();
     const [kanbansArray, setKanbansArray] = useState<{ kanbanId: SystemID, name: string }[]>([]);
+    const [kanbansColumnsArray, setKanbansColumnsArray] = useState<{kanbanId: SystemID, columns: Column[]}[]>([]);
     const { userValue } = useUserContext();
     const editorRef = useRef<MDXEditorMethods>(null);
     const noButtonRef = useRef<HTMLButtonElement>(null);
@@ -88,7 +90,16 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }));
 
 
+    
+
     useEffect(() => {
+        const appendToKanbansColumnsArray = (element: any) => {
+            let _tmpArr = kanbansColumnsArray;
+            _tmpArr.push(element);
+            setKanbansColumnsArray(_tmpArr);
+        }
+
+
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -96,8 +107,21 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 'Authorization': `Bearer ${userValue.token}`,
             },
         };
-        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then(data => setKanbansArray(data))
-    }, [setKanbansArray, userValue]);
+        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then((data: any) => {
+            data.forEach((element: any) => {
+                let id = element.kanbanId;
+                fetch(`${API_BASE_URL}/api/private/user/kanban/${id}/columns`).then(response => response.json()).then((data: any) => {
+                    let _newEntry = {
+                        kanbanId: id,
+                        columns: data,
+                    }
+
+                    appendToKanbansColumnsArray(_newEntry);
+                })
+            });
+            setKanbansArray(data);
+        })
+    }, [setKanbansArray, userValue, kanbansColumnsArray, setKanbansColumnsArray]);
 
 
 
@@ -479,7 +503,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 setModalTitle={setModalTitle}
                 setModalText={setModalText}
                 handleAddDate={handleAddDate}
-                columnsArray={kanbanData.columns}
+                columnsArray={kanbansColumnsArray}
                 dashboards={kanbansArray}
 
             />

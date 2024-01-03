@@ -324,6 +324,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             tagColor,
             setTempCard,
             userValue,
+            tempCard,
         );
     }
 

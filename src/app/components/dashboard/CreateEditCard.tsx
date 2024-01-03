@@ -28,24 +28,26 @@ interface CardDateSectionProps {
     setDestinationColumn: any;
     kanbansArray: { kanbanId: string | number, name: string }[];
     destinationKanban: any;
-
+    dateExists: boolean;
+    handleShowDate: any;
 }
 function CardDateSection(props: CardDateSectionProps) {
-    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban, kanbansArray, setDestinationColumn, destinationKanban } = props;
-    let dateExists = cardDateOBJ.isValid();
+    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban, kanbansArray, setDestinationColumn, destinationKanban, dateExists, handleShowDate } = props;
     useEffect(() => {
         console.log("date Exists", dateExists);
     }, [dateExists])
 
     return (
+        <div>
+        <button type="button" className={`${dateExists ? 'hidden' : 'flex'} flex-col`} onClick={handleShowDate}>
+            Adicionar Prazo
+        </button>
         <div className={`${dateExists ? 'flex' : 'hidden'} flex-col`}>
             <h1 className="text-neutral-700 text-lg font-semibold my-1">
                 Prazo: {cardDateOBJ.format('DD/MM/YYYY')}, tempo restante: {dayjs().to(cardDateOBJ)}
             </h1>
             <div className="flex">
-                <button type="button">
-                    Adicionar Prazo
-                </button>
+                
                 <div>
                     <h1>Ação ao finalizar prazo:</h1>
                     <select defaultValue="MOVE_CARD">
@@ -67,6 +69,7 @@ function CardDateSection(props: CardDateSectionProps) {
                     </select>
                 </div>
             </div>
+        </div>
         </div>
     );
 }
@@ -572,10 +575,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     }
 
-    const _handleAddCardDate = (value: any) => {
-        handleAddDate(value);
-        setCardDate(value);
-    }
+    
 
     const handleShowTag = () => {
         ShowTag(
@@ -709,7 +709,13 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
 
     const cardDateOBJ = dayjs(card.date);
-
+    let _dExists = cardDateOBJ.isValid();
+    const [dateExists, setDateExists] = useState(_dExists);
+    const _handleAddCardDate = (value: any) => {
+        setDateExists(true);
+        handleAddDate(value);
+        setCardDate(value);
+    }
 
     const [destinationKanban, setDestinationKanban] = useState();
     const [destinationColumn, setDestinationColumn] = useState();
@@ -732,6 +738,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         handleCloseCalendar={handleCloseCalendar}
                         setCardDate={_handleAddCardDate}
                         viewAddDate={viewAddDate}
+                        handleShowDate={handleShowDate}
                     />
                     <AddCustomFieldForm 
                         handleCreateNewCustomField={handleCreateNewCustomField}
@@ -762,6 +769,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         setDestinationColumn={setDestinationColumn}
                         kanbansArray={dashboards}
                         destinationKanban={destinationKanban}
+                        dateExists={dateExists}
                     />
                     <RichEditor 
                         ref={ref} 

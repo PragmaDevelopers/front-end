@@ -22,14 +22,15 @@ dayjs.extend(relativeTime);
 
 interface CardDateSectionProps {
     cardDateOBJ: dayjs.Dayjs;
-    columnsArray: Column[];
+    columnsArray: {kanbanId: SystemID, columns: Column[]}[];
     setDueAction: any;
     setDestinationKanban: any;
     setDestinationColumn: any;
     kanbansArray: { kanbanId: string | number, name: string }[];
+    destinationKanban: any;
 }
 function CardDateSection(props: CardDateSectionProps) {
-    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban, kanbansArray, setDestinationColumn } = props;
+    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban, kanbansArray, setDestinationColumn, destinationKanban } = props;
     const [dateExists, ] = useState<boolean>(cardDateOBJ.isValid());
 
     return (
@@ -58,7 +59,7 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div>
                     <h1>Coluna de destino:</h1>
                     <select>
-                        {columnsArray.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>)}
+                        {columnsArray.filter((element) => destinationKanban.id === element.kanbanId).columns.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>)}
                     </select>
                 </div>
             </div>

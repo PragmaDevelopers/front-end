@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from 'zod';
 
 type IValidations = "procuracao" | "nome_completo" | "profissao"
     | "nacionalidade" | "estado_civil" | "uniao_estavel" | "rg"

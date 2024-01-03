@@ -180,8 +180,6 @@ export default function Page() {
 
                     }).catch((e: any) => console.log(e));
                 }
-
-
             }
 
             const getUserData = (token: string, userTempData: userValueDT) => {

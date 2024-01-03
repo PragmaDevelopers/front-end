@@ -1,41 +1,146 @@
 "use client";
 
+import { useUserContext } from "@/app/contexts/userContext";
+import { Member, Notification, userData } from "@/app/types/KanbanTypes";
+import { API_BASE_URL, NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
 import { ArrowTopRightOnSquareIcon, TagIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-function NotificationElement() {
+type parsedNotification = {
+    title: string;
+    message: string;
+    category: string;
+    viewed: boolean;
+    user: Member;
+}
+function parseRawNotificationsArray(notificationsArray: Notification[], userList: userData[]): parsedNotification[] {
+    let newArray: parsedNotification[] = [];
+    notificationsArray.forEach((notification: Notification) => {
+        let user: Member = userList.filter((value: userData) => {
+            if (value.id === notification.sender_user_id) {
+                return value;
+            }
+        })[0];
+
+        let message: string = notification.message;
+        console.log(NOTIFICATION_CATEGORIES_TITLE);
+        console.log(NOTIFICATION_CATEGORIES_TITLE["CARDTAG_UPDATE"]);
+        let title: string = NOTIFICATION_CATEGORIES_TITLE[notification.category];
+        let category: string = notification.category;
+        let viewed: boolean = notification.viewed;
+
+        let newNotification: parsedNotification = {
+            title: title,
+            message: message,
+            category: category,
+            viewed: viewed,
+            user: user,
+        }
+
+        newArray.push(newNotification);
+    });
+
+    return newArray;
+}
+
+
+interface NotificationElementProps {
+    title: string;
+    message: string;
+}
+function NotificationElement(props: NotificationElementProps) {
+    const { title, message } = props;
     return (
         <Link href="#" className="w-full h-16 bg-neutral-transparent hover:bg-neutral-50/25 transition-all block overflow-x-hidden">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
                 <UserCircleIcon className="aspect-square w-12 mr-2" />
                 <div className="flex flex-col mx-2 grow w-12 overflow-hidden">
-                    <h1 className="text-lg font-bold">Title</h1>
-                    <h2 className="truncate text-sm text-neutral-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Facilisis volutpat est velit egestas dui id ornare arcu odio. Nunc sed blandit libero volutpat sed cras. Commodo nulla facilisi nullam vehicula.</h2>
+                    <h1 className="text-lg font-bold">{title}</h1>
+                    <h2 className="truncate text-sm text-neutral-600">{message}</h2>
                 </div>
-                <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" />
+                {/* <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" /> */}
                 <TrashIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" />
             </div>
         </Link>
     );
 }
 
+function filterNotifications(category: string, notificationsArray: parsedNotification[], setParsedNotifications: Dispatch<SetStateAction<parsedNotification[]>>) {
+    let filteredNotifications: parsedNotification[] = [];
+
+    switch (category.toLowerCase()) {
+        case "kanban":
+            filteredNotifications = notificationsArray.filter((value: parsedNotification) => (value.category === "KANBAN_CREATE") || (value.category === "KANBAN_UPDATE") || (value.category === "KANBAN_DELETE") || (value.category === "KANBAN_INVITE") || (value.category === "KANBAN_UNINVITE"));
+            break;
+        case "coluna":
+            filteredNotifications = notificationsArray.filter((value: parsedNotification) => (value.category === "COLUMN_CREATE") || (value.category === "COLUMN_UPDATE") || (value.category === "COLUMN_DELETE") || (value.category === "COLUMN_MOVE"));
+            break;
+        case "card":
+            filteredNotifications = notificationsArray.filter((value: parsedNotification) => (value.category === "CARD_CREATE") || (value.category === "INNERCARD_CREATE") || (value.category === "CARD_UPDATE") || (value.category === "CARD_DELETE") || (value.category === "CARD_MOVE"));
+            break;
+        case "tag":
+            filteredNotifications = notificationsArray.filter((value: parsedNotification) => (value.category === "CARDTAG_CREATE") || (value.category === "CARDTAG_UPDATE") || (value.category === "CARDTAG_DELETE"));
+            break;
+        case "comentario":
+            filteredNotifications = notificationsArray.filter((value: parsedNotification) => (value.category === "CARDCOMMENT_CREATE") || (value.category === "CARDCOMMENTANSWERED_CREATE") || (value.category === "CARDCOMMENT_UPDATE") || (value.category === "CARDCOMMENT_DELETE"));
+
+            break;
+        case "checklist":
+            filteredNotifications = notificationsArray.filter((value: parsedNotification) => (value.category === "CARDCHECKLIST_CREATE") || (value.category === "CARDCHECKLIST_UPDATE") || (value.category === "CARDCHECKLIST_DELETE") || (value.category === "CARDCHECKLISTITEM_CREATE") || (value.category === "CARDCHECKLISTITEM_UPDATE") || (value.category === "CARDCHECKLISTITEM_DELETE"));
+            break;
+
+        default:
+            filteredNotifications = notificationsArray;
+            break;
+    }
+
+    setParsedNotifications(filteredNotifications);
+}
+
 export default function Page() {
+    const [notificationsArray, setNotificationsArray] = useState<Notification[]>([]);
+    const [parsedNotifications, setParsedNotifications] = useState<parsedNotification[]>([]);
+    const [cachedNotifications, setCachedNotifications] = useState<parsedNotification[] | Notification[]>([]);
+    const { userValue, updateUserValue } = useUserContext();
+    useEffect(() => {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userValue.token}`,
+            },
+        };
+        fetch(`${API_BASE_URL}/api/private/user/notifications`, requestOptions).then(
+            (response: Response) => response.json()
+        ).then((value: any) => {
+            setNotificationsArray(value);
+            console.log("[INFO] @ Page notificationsArray", value);
+            let pNot: parsedNotification[] = parseRawNotificationsArray(value, userValue.usersList);
+            setParsedNotifications(pNot);
+            setCachedNotifications(pNot);
+            console.log("[INFO] @ Page parsedNotifications", pNot);
+        });
+    }, [userValue]);
+
     return (
         <main className="w-full h-full flex flex-col">
-            <h1 className="font-bold text-xl mt-4 text-center">Central de notificações</h1>
+            <h1 className="font-bold text-xl mt-4 text-center">Central de notificações do sistema.</h1>
             <div className="w-full h-full flex flex-row justify-start items-start">
-                <div className="h-[88%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
+                {/* FILTRAGEM DE NOTIFICAÇÕES FICA PRA DPS PQ POR ENQUANTO SÓ EXISTE NOTIFICAÇÃO DE SISTEMA */}
+                {/* <div className="h-[88%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">
+                    <h1>Filtrar Notificações</h1>
                     <div className="w-full h-8 ml-0 hover:ml-2 transition-all my-2 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
-                        <h1 className="text-sm font-semibold">Notificações PUSH</h1>
+                        <h1 className="text-sm font-semibold">Ações em Cards</h1>
                     </div>
                     <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
-                        <h1 className="text-sm font-semibold">Movimentações</h1>
+                        <h1 className="text-sm font-semibold">Ações em Colunas</h1>
                     </div>
                     <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
-                        <h1 className="text-sm font-semibold">Prazos Expirados</h1>
+                        <h1 className="text-sm font-semibold">Ações em Comentários</h1>
                     </div>
                     <div className="w-full h-8 ml-0 hover:ml-2 transition-all mt-4 flex flex-row justify-start items-center fill-neutral-950 stroke-neutral-950 text-neutral-950 hover:fill-blue-500 hover:stroke-blue-500 hover:text-blue-500">
                         <TagIcon className="w-6 aspect-square mx-4" />
@@ -43,38 +148,10 @@ export default function Page() {
                     </div>
                 </div>
                 <div className="w-[75%] h-[88%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
-                    <NotificationElement />
+                    {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement message={element.message} title={element.title} key={index}/>)}
+                </div> */}
+                <div className="w-full h-[88%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
+                    {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement message={element.message} title={element.title} key={index}/>)}
                 </div>
             </div>
         </main>

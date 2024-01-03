@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { UserContextProps, userValueDT } from '../types/KanbanTypes';
+import { userValueDT } from '../types/KanbanTypes';
+import { UserContextProps } from '../interfaces/KanbanInterfaces';
 
 
 

@@ -1,5 +1,5 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { Card, KanbanData, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag } from "@/app/types/KanbanTypes";
+import { Card, KanbanData, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag, DateValue } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { RefObject } from "react";
@@ -61,7 +61,7 @@ export function CreateCard(
         members: [],
         comments: [],
         dropdowns: [],
-        date: 0,
+        date: "",
         customFields: [],
         innerCards: [],
         backendID: 0,
@@ -291,7 +291,7 @@ export function CreateCardForm(
         members: [],
         comments: [],
         dropdowns: [],
-        date: 0,
+        date: "",
         customFields: [],
         innerCards: [],
     } as Card);
@@ -327,3 +327,11 @@ export function DeleteCard(
         };
     });
 };
+
+export function AddCardDate(dateOBJ: DateValue, tempCard: Card, setTempCard: (arg0: Card) => void) {
+    const newCard: Card  = {
+        ...tempCard,
+        date: dateOBJ === undefined ? "" : dateOBJ === null ? "" : dateOBJ.toString(),
+    }
+    setTempCard(newCard);
+}

@@ -1,4 +1,4 @@
-import { Card, Column, Member, SystemID, Comment } from "../types/KanbanTypes";
+import { Card, Column, Member, SystemID, Comment, userValueDT } from "../types/KanbanTypes";
 
 export interface CardElementProps {
     card: Card,
@@ -70,8 +70,6 @@ export interface CreateEditCardProps {
     _appendToTempCardsArray: any;
     _popFromTempCardsArray: any;
 
-
-
     setModalTitle: any;
     setModalDescription: any;
     setModalText: any;
@@ -79,6 +77,10 @@ export interface CreateEditCardProps {
     setModalOpen: any;
     setModalBorderColor: any;
     setModalFocusRef: any;
+    handleAddDate: any;
+
+    columnsArray: any;
+    dashboards: any;
 }
 
 export interface RichEditorProps {
@@ -116,4 +118,9 @@ export interface CommentEntryProps extends Comment {
     setIsAnswering: (arg0: { isAnswering: boolean, answeringUser: Member, commentId: SystemID }) => void;
     removeCurrentComment: (targetId: SystemID) => void,
     editComment: (arg0: Comment) => void,
+}
+
+export interface UserContextProps {
+    userValue: userValueDT;
+    updateUserValue: (newValue: userValueDT) => void;
 }

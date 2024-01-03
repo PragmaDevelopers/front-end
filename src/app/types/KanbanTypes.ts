@@ -124,7 +124,15 @@ export type userValueDT = {
     usersList: userData[];
 };
 
-export interface UserContextProps {
-    userValue: userValueDT;
-    updateUserValue: (newValue: userValueDT) => void;
+export type Notification = {
+    id: SystemID;
+    message: string;
+    viewed: boolean;
+    category: string;
+    sender_user_id: SystemID;
+    sender_user_name: string;
+    recipient_user_id: SystemID | undefined;
+    recipient_user_name: string | undefined;
+    changed_id: SystemID;
 }
+

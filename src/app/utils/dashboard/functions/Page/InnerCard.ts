@@ -40,7 +40,7 @@ export function CreateInnerCard(
             members: [],
             comments: [],
             dropdowns: [],
-            date: 0,
+            date: "",
             customFields: [],
             innerCards: [],
         }

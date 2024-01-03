@@ -1,6 +1,6 @@
 import { useUserContext } from "@/app/contexts/userContext";
 import { CreateEditCardProps } from "@/app/interfaces/KanbanInterfaces";
-import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card, SystemID, userData } from "@/app/types/KanbanTypes";
+import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card, SystemID, userData, Column } from "@/app/types/KanbanTypes";
 import { Combobox, Transition } from "@headlessui/react";
 import { XMarkIcon, MinusCircleIcon, CalendarDaysIcon, PlusCircleIcon, ArrowUpOnSquareIcon, ChevronUpDownIcon, CheckIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -15,9 +15,48 @@ import { CommentSection } from "@/app/components/dashboard/Comment";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
+import { AddCardDate } from "@/app/utils/dashboard/functions/Page/Card";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
+
+interface CardDateSectionProps {
+    cardDateOBJ: dayjs.Dayjs;
+    columnsArray: Column[];
+    setDueAction: any;
+    setDestinationKanban: any;
+}
+function CardDateSection(props: CardDateSectionProps) {
+    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban } = props;
+    const [dateExists, ] = useState<boolean>(cardDateOBJ.isValid());
+
+    return (
+        <div className={`${dateExists ? 'flex' : 'hidden'} flex-col`}>
+            <h1 className="text-neutral-700 text-lg font-semibold my-1">
+                Prazo: {cardDateOBJ.format('DD/MM/YYYY')}, tempo restante: {dayjs().to(cardDateOBJ)}
+            </h1>
+            <div className="flex">
+                <button type="button">
+                    Adicionar Prazo
+                </button>
+                <div>
+                    <h1>Ação ao finalizar prazo:</h1>
+                    <select defaultValue="MOVE_CARD">
+                        <option value="MOVE_CARD" onClick={() => setDueAction("MOVE_CARD")}>
+                            Mover Card
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <h1>Dashboard de destino:</h1>
+                    <select>
+                        {columnsArray.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationKanban(e.id)}>{e.title}</option>)}
+                    </select>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 interface AddMemberFormProps {
     viewAddMember: boolean;
@@ -459,6 +498,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         setModalBorderColor,
         setModalFocusRef,
         setModalText,
+        handleAddDate,
+        columnsArray,
+        dashboards,
     } = props;
 
     const { userValue, updateUserValue } = useUserContext();
@@ -475,10 +517,10 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
     const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});
     const [members, setMembers] = useState<Member[]>([]);
-    const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
-        { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
-        { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
-    ]);
+    // const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
+    //     { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
+    //     { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
+    // ]);
     //useEffect(() => {
     //    fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
     //}, [setDashboards]);
@@ -517,6 +559,10 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     }
 
+    const _handleAddCardDate = (value: any) => {
+        handleAddDate(value);
+        setCardDate(value);
+    }
 
     const handleShowTag = () => {
         ShowTag(
@@ -667,7 +713,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     <AddCardDateForm 
                         cardDate={cardDate}
                         handleCloseCalendar={handleCloseCalendar}
-                        setCardDate={setCardDate}
+                        setCardDate={_handleAddCardDate}
                         viewAddDate={viewAddDate}
                     />
                     <AddCustomFieldForm 
@@ -691,9 +737,12 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                 <form className='w-full h-fit relative'>
                     <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
                     <CardTitle title={card.title} />
-                    <h1 className="text-neutral-700 text-lg font-semibold my-1">
-                        Prazo: {cardDateOBJ.format('DD/MM/YYYY')}, tempo restante: {dayjs().to(cardDateOBJ)}
-                    </h1>
+                    <CardDateSection
+                        cardDateOBJ={cardDateOBJ}
+                        columnsArray={columnsArray}
+                        setDueAction={setDueAction}
+                        setDestinationKanban={setDestinationKanban}
+                    />
                     <RichEditor 
                         ref={ref} 
                         onChange={console.log} 

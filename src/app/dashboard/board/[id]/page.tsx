@@ -11,6 +11,7 @@ import {
     DragOverEvent
 } from '@dnd-kit/core';
 import {
+    useEffect,
     useMemo,
     useRef,
     useState,
@@ -38,13 +39,14 @@ import { isFlagSet } from '@/app/utils/checkers';
 import { ColumnContainer } from '@/app/components/dashboard/Column';
 import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
 import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
-import { CreateCard, CreateCardForm, DeleteCard } from '@/app/utils/dashboard/functions/Page/Card';
+import { AddCardDate, CreateCard, CreateCardForm, DeleteCard } from '@/app/utils/dashboard/functions/Page/Card';
 import { UpdateListTitle, InputChange, AddList, AddInput, RemoveList, RemoveInput, ToggleCheckbox } from '@/app/utils/dashboard/functions/Page/Checklist';
 import { UpdateColumnTitle, RemoveColumn, CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
 import { AddCustomField } from '@/app/utils/dashboard/functions/Page/CustomField';
 import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashboard/functions/Page/InnerCardUtils';
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
 import { AddInnerCard, CreateInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
+import { API_BASE_URL } from '@/app/utils/variables';
 
 
 export default function Page({ params }: { params: { id: SystemID } }) {
@@ -75,20 +77,32 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalBorderColor, setModalBorderColor] = useState<string>("");
     const [modalFocusRef, setModalFocusRef] = useState<any>();
-
-
+    const [kanbansArray, setKanbansArray] = useState<{ kanbanId: SystemID, name: string }[]>([]);
     const { userValue } = useUserContext();
-
-
     const editorRef = useRef<MDXEditorMethods>(null);
     const noButtonRef = useRef<HTMLButtonElement>(null);
-
-
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
             distance: 2,  // 2px
         }
     }));
+
+
+    useEffect(() => {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userValue.token}`,
+            },
+        };
+        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then(data => setKanbansArray(data))
+    }, [setKanbansArray, userValue]);
+
+
+
+
+
 
     //useEffect(() => {
     //    fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
@@ -407,6 +421,10 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         );
     }
 
+    const handleAddDate = (value: any) => {
+        AddCardDate(value, tempCard, setTempCard);
+    }
+
     const editEditorText = (text: string) => {
         editorRef.current?.setMarkdown(text);
     }
@@ -460,6 +478,10 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 setModalBorderColor={setModalBorderColor}
                 setModalTitle={setModalTitle}
                 setModalText={setModalText}
+                handleAddDate={handleAddDate}
+                columnsArray={kanbanData.columns}
+                dashboards={kanbansArray}
+
             />
             <div className="flex justify-between items-center w-full px-2">
                 <h1>{params.id}</h1>

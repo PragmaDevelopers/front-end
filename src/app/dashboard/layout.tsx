@@ -12,6 +12,7 @@ import { API_BASE_URL } from "../utils/variables";
 import ConfirmDelete from "../components/ui/ConfirmDelete";
 import { CustomModal, CustomModalButtonAttributes } from "../components/ui/CustomModal";
 import { isFlagSet } from "../utils/checkers";
+import { SystemID } from "../types/KanbanTypes";
 
 interface BoardMenuEntryProps {
     href: string;
@@ -133,7 +134,7 @@ export default function Layout({ children }: any) {
 
     const router = useRouter();
 
-    const [dashboards, setDashboards] = useState<{ kanbanId: string | number, name: string }[]>([]);
+    const [dashboards, setDashboards] = useState<{ id: SystemID, title: string }[]>([]);
 
     const [kanbanID, setKanbanID] = useState<string>("");
 
@@ -206,13 +207,13 @@ export default function Layout({ children }: any) {
                 console.log("Kanban ID", data);
                 setKanbanID(data);
 
-            const dashboardItem: { name: string, kanbanId: string | number } = {
-                name: boardname, kanbanId: data,
+            const dashboardItem: { title: string, id: SystemID } = {
+                title: boardname, id: data,
             }
 
             if (dashboards !== undefined) {
                 if (dashboards?.length >= 0) {
-                    setDashboards([...dashboards as unknown as { name: string, kanbanId: string | number }[], dashboardItem]);
+                    setDashboards([...dashboards as unknown as { title: string, id: SystemID }[], dashboardItem]);
                 } else {
                     setDashboards([dashboardItem]);
                 }
@@ -235,9 +236,9 @@ export default function Layout({ children }: any) {
 
         fetch(`${API_BASE_URL}/api/private/user/kanban/${kanbanID}`, requestOptions).then(response => response.text()).then(data => console.log(data));
 
-        setDashboards((dash: { kanbanId: string | number, name: string }[]) => {
-            const newDashboardList: { kanbanId: string | number, name: string }[] = dash.filter((ds: { kanbanId: string | number, name: string }) => ds.kanbanId != kanbanID);
-            return newDashboardList as { kanbanId: string | number, name: string }[];
+        setDashboards((dash: { id: SystemID, title: string }[]) => {
+            const newDashboardList: { id: SystemID, title: string }[] = dash.filter((ds: { id: SystemID, title: string }) => ds.id != kanbanID);
+            return newDashboardList as { id: SystemID, title: string }[];
         });
     }
 
@@ -287,10 +288,10 @@ export default function Layout({ children }: any) {
                                 setModalBorderColor={setModalBorderColor}
                                 setModalTitle={setModalTitle}
                                 setModalText={setModalText}
-                                kanbanID={element.kanbanId}
+                                kanbanID={element.id}
                                 key={index}
-                                href={`/dashboard/board/${element.kanbanId}`}
-                                name={element.name}
+                                href={`/dashboard/board/${element.id}`}
+                                name={element.title}
                                 deleteKanban={deleteKanban} />)}
                         </div>
                         <div>

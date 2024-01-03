@@ -63,7 +63,7 @@ function CardDateSection(props: CardDateSectionProps) {
                 </div>
                 <div className="flex flex-col justify-center items-center w-fit">
                     <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
-                    <select className="w-full">
+                    <select className="w-full" onChange={setDestinationColumn}>
                         {columnsArray.filter((element) => destinationKanban.id === element.id).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id}>{e.title}</option>))}
                     </select>
                 </div>
@@ -768,8 +768,11 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                 </div>
 
             <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
-                <form className='w-full h-fit relative'>
-                    <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
+                <form className='w-full h-fit relative' onSubmit={handleCreateCardForm}>
+                    <div className="w-full h-fit flex justify-center items-center relative">
+                        <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
+                        <button type="button" onClick={() => setShowCreateCardForm(false)}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
+                    </div>
                     <CardTitle title={card.title} />
                     <CardDateSection
                         cardDateOBJ={cardDateOBJ}

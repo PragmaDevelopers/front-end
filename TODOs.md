@@ -10,6 +10,7 @@
 - [x] Upload de imagens em base64
 - [x] Download de imagens em base64
 - [x] FallBack de imagem/svg padrão
+- [ ] Inner Cards. 
 
 ### Bug Fixes
 
@@ -21,9 +22,10 @@
 - [x] dashboard criada nao gera URL com ID.
 - [ ] tela de cadastro dos clientes [o ui foi implementado mas ta bugado a funcionalidade] [o lucas disse que veria]
 - [ ] geração de contratos [o ui foi implementado mas ta bugado a funcionalidade] [o lucas disse que veria]
+- [ ] dropdown do MDXEditor com z-index errado.
+- [ ] configuração de permissões do usuário [o gui ta trabalhando nisso]
 
 ## ve se da
 
-- [ ] configuração de permissões do usuário [o gui ta trabalhando nisso]
 - [ ] filtragem de notificações [fica pra dps pq so existe notificação de sistema]
 - [ ] configuração de templates de custom fields

@@ -47,7 +47,6 @@ import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashb
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
 import { AddInnerCard, CreateInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 import { API_BASE_URL } from '@/app/utils/variables';
-import { appendFile } from 'fs';
 
 
 export default function Page({ params }: { params: { id: SystemID } }) {
@@ -80,6 +79,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [modalFocusRef, setModalFocusRef] = useState<any>();
     const [kanbansArray, setKanbansArray] = useState<{ id: SystemID, title: string }[]>([]);
     const [kanbansColumnsArray, setKanbansColumnsArray] = useState<{id: SystemID, columns: Column[]}[]>([]);
+    const [kanbanTitle, setKanbanTitle] = useState<string>("");
     const { userValue } = useUserContext();
     const editorRef = useRef<MDXEditorMethods>(null);
     const noButtonRef = useRef<HTMLButtonElement>(null);
@@ -107,9 +107,14 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 'Authorization': `Bearer ${userValue.token}`,
             },
         };
-        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then((data: any) => {
-            data.forEach((element: any) => {
+        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then((data: {id: SystemID, title:string}[]) => {
+            data.forEach((element: { id: SystemID, title: string }) => {
                 let id = element.id;
+                let title = element.title;
+                if ((id as number) === parseInt(params.id as string)) {
+                    console.log(title);
+                    setKanbanTitle(title);
+                }
                 fetch(`${API_BASE_URL}/api/private/user/kanban/${id}/columns`).then(response => response.json()).then((data: any) => {
                     let _newEntry = {
                         id: id,
@@ -119,9 +124,10 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                     appendToKanbansColumnsArray(_newEntry);
                 })
             });
+
             setKanbansArray(data);
         })
-    }, [setKanbansArray, userValue, kanbansColumnsArray, setKanbansColumnsArray]);
+    }, [setKanbansArray, userValue, kanbansColumnsArray, setKanbansColumnsArray, setKanbanTitle, params]);
 
 
 
@@ -510,7 +516,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
             />
             <div className="flex justify-between items-center w-full px-2">
-                <h1>{params.id}</h1>
+                <h1>{kanbanTitle}</h1>
                 <Link href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
             <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>

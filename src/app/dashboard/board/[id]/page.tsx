@@ -78,8 +78,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalBorderColor, setModalBorderColor] = useState<string>("");
     const [modalFocusRef, setModalFocusRef] = useState<any>();
-    const [kanbansArray, setKanbansArray] = useState<{ kanbanId: SystemID, name: string }[]>([]);
-    const [kanbansColumnsArray, setKanbansColumnsArray] = useState<{kanbanId: SystemID, columns: Column[]}[]>([]);
+    const [kanbansArray, setKanbansArray] = useState<{ id: SystemID, title: string }[]>([]);
+    const [kanbansColumnsArray, setKanbansColumnsArray] = useState<{id: SystemID, columns: Column[]}[]>([]);
     const { userValue } = useUserContext();
     const editorRef = useRef<MDXEditorMethods>(null);
     const noButtonRef = useRef<HTMLButtonElement>(null);
@@ -109,10 +109,10 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         };
         fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then((data: any) => {
             data.forEach((element: any) => {
-                let id = element.kanbanId;
+                let id = element.id;
                 fetch(`${API_BASE_URL}/api/private/user/kanban/${id}/columns`).then(response => response.json()).then((data: any) => {
                     let _newEntry = {
-                        kanbanId: id,
+                        id: id,
                         columns: data,
                     }
 
@@ -324,7 +324,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             tagColor,
             setTempCard,
             userValue,
-            tempCard,
         );
     }
 

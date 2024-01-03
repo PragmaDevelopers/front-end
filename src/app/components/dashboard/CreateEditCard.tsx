@@ -22,11 +22,11 @@ dayjs.extend(relativeTime);
 
 interface CardDateSectionProps {
     cardDateOBJ: dayjs.Dayjs;
-    columnsArray: {kanbanId: SystemID, columns: Column[]}[];
+    columnsArray: {id: SystemID, columns: Column[]}[];
     setDueAction: any;
     setDestinationKanban: any;
     setDestinationColumn: any;
-    kanbansArray: { kanbanId: string | number, name: string }[];
+    kanbansArray: { id: SystemID, title: string }[];
     destinationKanban: any;
     dateExists: boolean;
     handleShowDate: any;
@@ -58,13 +58,13 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div className="flex flex-col justify-center items-center w-fit">
                     <h1 className="px-4 py-2 font-semibold">Dashboard de destino:</h1>
                     <select className="w-full">
-                        {kanbansArray.map((e: { kanbanId: string | number, name: string }, i: number) => <option key={i} value={e.kanbanId} onClick={() => setDestinationKanban(e.kanbanId)}>{e.name}</option>)}
+                        {kanbansArray.map((e: { id: SystemID, title: string }, i: number) => <option key={i} value={e.id} onClick={() => setDestinationKanban(e.id)}>{e.title}</option>)}
                     </select>
                 </div>
                 <div className="flex flex-col justify-center items-center w-fit">
                     <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
                     <select className="w-full">
-                        {columnsArray.filter((element) => destinationKanban.id === element.kanbanId).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>))}
+                        {columnsArray.filter((element) => destinationKanban.id === element.id).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>))}
                     </select>
                 </div>
             </div>

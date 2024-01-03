@@ -147,7 +147,10 @@ export default function Layout({ children }: any) {
                 'Authorization': `Bearer ${userValue.token}`,
             },
         };
-        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then(data => setDashboards(data))
+        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then((data) => {
+            setDashboards(data);
+            console.log(data);
+        })
     }, [setDashboards, userValue]);
 
     

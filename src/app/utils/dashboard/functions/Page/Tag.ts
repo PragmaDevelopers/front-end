@@ -1,32 +1,34 @@
+import { useUserContext } from "@/app/contexts/userContext";
 import { Card, SystemID, Tag } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 
-export function AddTag(tagTitle: string, tagColor: string, setTempCard: any, userValue: any, tempCard: Card) {
-    let request = {
+export function AddTag(tagTitle: string, tagColor: string, setTempCard: any, userValue: any) {
+
+    setTempCard((prevCard: Card) => {
+        let tmpID = "";
+        let request = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${userValue.token}`,
             },
-            body: JSON.stringify({ cardId: tempCard.id, name: tagTitle, color: tagColor }),
-    }
-    fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/tag`, request).then(
-        response => response.text()
-    ).then((data) => {
-        setTempCard((prevCard: Card) => {
-            const newTag: Tag = {
-                name: tagTitle, color: tagColor, id: data,
-            };
+            body: JSON.stringify({ cardId: prevCard.id, name: tagTitle, color: tagColor }),
+        }
 
-            const newTagsList: Tag[] = [...prevCard.tags, newTag];
-            return {
-                ...prevCard,
-                tags: newTagsList,
-            } as Card;
-        });
+        fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/tag`, request).then(
+            response => response.text()
+        ).then(data => tmpID = data);
+
+        const newTag: Tag = {
+            name: tagTitle, color: tagColor, id: tmpID,
+        };
+
+        const newTagsList: Tag[] = [...prevCard.tags, newTag];
+        return {
+            ...prevCard,
+            tags: newTagsList,
+        } as Card;
     });
-
-
 }
 
 export function RemoveTag(tagID: SystemID, setTempCard: any) {

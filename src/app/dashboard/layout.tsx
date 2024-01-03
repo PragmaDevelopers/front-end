@@ -199,10 +199,12 @@ export default function Layout({ children }: any) {
                 }),
             };
 
-            fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.text()).then(data => setKanbanID(data));
+            fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.text()).then((data) => {
+                console.log("Kanban ID", data);
+                setKanbanID(data);
 
             const dashboardItem: { name: string, kanbanId: string | number } = {
-                name: boardname, kanbanId: kanbanID
+                name: boardname, kanbanId: data,
             }
 
             if (dashboards !== undefined) {
@@ -214,6 +216,8 @@ export default function Layout({ children }: any) {
             } else {
                 setDashboards([dashboardItem]);
             }
+            });
+
         }
     }
 

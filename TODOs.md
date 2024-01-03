@@ -15,12 +15,12 @@
 
 - [x] TagDelete deletando array toda ao invés de apenas uma. (era o id q era o msm pra tds)
 - [ ] Envio e edição dos valores do perfil do usuario.
-- [ ] geração de contratos nao gerando
-- [ ] geração de contratos nao importando variaveis
-- [ ] dashboard no GET retornando UNDEFINED.
-- [ ] dashboard criada nao gera URL com ID.
-- [ ] tela de cadastro dos clientes [o ui foi implementado mas ta bugado a funcionalidade]
-- [ ] geração de contratos [o ui foi implementado mas ta bugado a funcionalidade]
+- [ ] geração de contratos nao gerando. [o lucas disse que veria]
+- [ ] geração de contratos nao importando variaveis. [o lucas disse que veria]
+- [x] dashboard no GET retornando UNDEFINED.
+- [x] dashboard criada nao gera URL com ID.
+- [ ] tela de cadastro dos clientes [o ui foi implementado mas ta bugado a funcionalidade] [o lucas disse que veria]
+- [ ] geração de contratos [o ui foi implementado mas ta bugado a funcionalidade] [o lucas disse que veria]
 
 ## ve se da
 

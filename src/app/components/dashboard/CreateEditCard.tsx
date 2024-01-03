@@ -49,22 +49,22 @@ function CardDateSection(props: CardDateSectionProps) {
             <div className="flex w-full items-center justify-between">
                 <div className="flex flex-col justify-center items-center w-fit">
                     <h1 className="px-4 py-2 font-semibold">Ação ao finalizar prazo:</h1>
-                    <select className="w-full" defaultValue="MOVE_CARD">
-                        <option value="MOVE_CARD" onClick={() => setDueAction("MOVE_CARD")}>
+                    <select className="w-full" defaultValue="MOVE_CARD" onChange={setDueAction}>
+                        <option value="MOVE_CARD">
                             Mover Card
                         </option>
                     </select>
                 </div>
                 <div className="flex flex-col justify-center items-center w-fit">
                     <h1 className="px-4 py-2 font-semibold">Dashboard de destino:</h1>
-                    <select className="w-full">
-                        {kanbansArray.map((e: { id: SystemID, title: string }, i: number) => <option key={i} value={e.id} onClick={() => setDestinationKanban(e.id)}>{e.title}</option>)}
+                    <select className="w-full" onChange={setDestinationKanban}>
+                        {kanbansArray.map((e: { id: SystemID, title: string }, i: number) => <option key={i} value={e.id}>{e.title}</option>)}
                     </select>
                 </div>
                 <div className="flex flex-col justify-center items-center w-fit">
                     <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
                     <select className="w-full">
-                        {columnsArray.filter((element) => destinationKanban.id === element.id).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id} onClick={() => setDestinationColumn(e.id)}>{e.title}</option>))}
+                        {columnsArray.filter((element) => destinationKanban.id === element.id).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id}>{e.title}</option>))}
                     </select>
                 </div>
             </div>

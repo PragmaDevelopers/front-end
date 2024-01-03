@@ -187,7 +187,7 @@ export default function Layout({ children }: any) {
         } else {
 
             event.preventDefault();
-
+            let boardname: string = event.target.boardname.value;
             const requestOptions = {
                 method: 'POST',
                 headers: {
@@ -195,14 +195,14 @@ export default function Layout({ children }: any) {
                     'Authorization': `Bearer ${userValue.token}`,
                 },
                 body: JSON.stringify({
-                    "title": event.target.boardname.value,
+                    "title": boardname,
                 }),
             };
 
             fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.text()).then(data => setKanbanID(data));
 
             const dashboardItem: { name: string, kanbanId: string | number } = {
-                name: event.target.boardname.value, kanbanId: kanbanID
+                name: boardname, kanbanId: kanbanID
             }
 
             if (dashboards !== undefined) {

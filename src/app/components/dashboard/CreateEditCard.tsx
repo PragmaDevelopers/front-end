@@ -4,7 +4,7 @@ import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card, S
 import { Combobox, Transition } from "@headlessui/react";
 import { XMarkIcon, MinusCircleIcon, CalendarDaysIcon, PlusCircleIcon, ArrowUpOnSquareIcon, ChevronUpDownIcon, CheckIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import { forwardRef, Ref, useRef, useState, ChangeEvent, CSSProperties, Fragment } from "react";
+import { forwardRef, Ref, useRef, useState, ChangeEvent, CSSProperties, Fragment, useEffect } from "react";
 import Calendar from "react-calendar";
 import { HexColorPicker } from "react-colorful";
 import { InnerCardElement } from "@/app/components/dashboard/InnerCard";
@@ -28,10 +28,14 @@ interface CardDateSectionProps {
     setDestinationColumn: any;
     kanbansArray: { kanbanId: string | number, name: string }[];
     destinationKanban: any;
+
 }
 function CardDateSection(props: CardDateSectionProps) {
     const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban, kanbansArray, setDestinationColumn, destinationKanban } = props;
-    const [dateExists, ] = useState<boolean>(cardDateOBJ.isValid());
+    let dateExists = cardDateOBJ.isValid();
+    useEffect(() => {
+        console.log("date Exists", dateExists);
+    }, [dateExists])
 
     return (
         <div className={`${dateExists ? 'flex' : 'hidden'} flex-col`}>

@@ -13,11 +13,11 @@
 
 ### Bug Fixes
 
-- [ ] TagDelete deletando array toda ao invés de apenas uma.
+- [x] TagDelete deletando array toda ao invés de apenas uma. (era o id q era o msm pra tds)
 - [ ] Envio e edição dos valores do perfil do usuario.
 - [ ] geração de contratos nao gerando
 - [ ] geração de contratos nao importando variaveis
-- [ ] dashboard no GET retornando UNDEFINED
+- [ ] dashboard no GET retornando UNDEFINED.
 - [ ] dashboard criada nao gera URL com ID.
 - [ ] tela de cadastro dos clientes [o ui foi implementado mas ta bugado a funcionalidade]
 - [ ] geração de contratos [o ui foi implementado mas ta bugado a funcionalidade]

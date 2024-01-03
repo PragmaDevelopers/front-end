@@ -323,6 +323,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             tagTitle,
             tagColor,
             setTempCard,
+            userValue,
         );
     }
 

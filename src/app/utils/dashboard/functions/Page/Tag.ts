@@ -2,8 +2,7 @@ import { useUserContext } from "@/app/contexts/userContext";
 import { Card, SystemID, Tag } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 
-export function AddTag(tagTitle: string, tagColor: string, setTempCard: any) {
-    const { userValue } = useUserContext();
+export function AddTag(tagTitle: string, tagColor: string, setTempCard: any, userValue: any) {
 
     setTempCard((prevCard: Card) => {
         let tmpID = "";

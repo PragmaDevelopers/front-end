@@ -150,15 +150,16 @@ export default function Layout({ children }: any) {
         fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then(data => setDashboards(data))
     }, [setDashboards, userValue]);
 
-    const returnToHome = () => {
-        router.push("/");
-    }
+    
 
     useEffect(() => {
+        const returnToHome = () => {
+            router.push("/");
+        }
         if (userValue.token === "") {
             returnToHome();
         }
-    }, [userValue, returnToHome]);
+    }, [userValue, router]);
 
     const addDashBoard = (event: any) => {
         if (!isFlagSet(userValue.userData, "CRIAR_DASHBOARDS")) {

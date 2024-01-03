@@ -711,6 +711,10 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const cardDateOBJ = dayjs(card.date);
     let _dExists = cardDateOBJ.isValid();
     const [dateExists, setDateExists] = useState(_dExists);
+    useEffect(() => {
+        console.log("USE EFFECT dateExists", dateExists, "_dExists", _dExists);
+    }, [dateExists, _dExists]);
+
     const _handleAddCardDate = (value: any) => {
         setDateExists(true);
         handleAddDate(value);
@@ -738,7 +742,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         handleCloseCalendar={handleCloseCalendar}
                         setCardDate={_handleAddCardDate}
                         viewAddDate={viewAddDate}
-                        handleShowDate={handleShowDate}
                     />
                     <AddCustomFieldForm 
                         handleCreateNewCustomField={handleCreateNewCustomField}
@@ -763,6 +766,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                     <CardTitle title={card.title} />
                     <CardDateSection
                         cardDateOBJ={cardDateOBJ}
+                        handleShowDate={handleShowDate}
                         columnsArray={columnsArray}
                         setDueAction={setDueAction}
                         setDestinationKanban={setDestinationKanban}

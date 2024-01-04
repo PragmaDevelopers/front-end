@@ -1714,8 +1714,9 @@ form._multiFieldForm_lug8m_1101 ._formField_lug8m_1107 label {
 
 ._popupContainer_lug8m_1127 {
   position: relative;
-  z-index: 1;
+      z-index: 99999;
 }
+
 :root, ._light-theme_1xkrx_1 {
   --blue1: hsl(206, 100%, 99.2%);
   --blue2: hsl(210, 100%, 98.0%);

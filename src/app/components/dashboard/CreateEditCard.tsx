@@ -734,7 +734,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     return (
         <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-20 justify-center items-center bg-neutral-950/25'}>
-            <div className={`${(viewAddTag || viewAddMember || viewAddDate || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full bg-neutral-950/25 absolute justify-center items-center z-[9999999999]`}>
+            <div className={`${(viewAddTag || viewAddMember || viewAddDate || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full bg-neutral-950/25 absolute justify-center items-center z-[99999]`}>
                     <AddMemberForm
                         filteredPeople={filteredPeople}
                         handleCloseAddMember={handleCloseAddMember}

@@ -566,7 +566,7 @@ export default function Page({ params }: { params: { id: string } }) {
     return (
         <main className="w-full h-full overflow-auto shrink-0">
             <div className="relative w-full flex flex-row justify-center items-center px-2 mt-2 mb-4">
-                <h1 className="">Configurações da Dashboard {kanbanTitle}</h1>
+                <h1 className="text-lg font-semibold">Configurações da Dashboard {kanbanTitle}</h1>
                 <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
             </div>
 
@@ -589,30 +589,26 @@ export default function Page({ params }: { params: { id: string } }) {
             <div className="my-2 w-full">
             <h1 className="text-lg font-semibold">Gerenciar Membros da Dashboard</h1>
             <div className="flex justify-between items-center p-2 w-full h-fit">
-                <div className="flex flex-col justify-center items-center w-96 h-fit">
-                    <div className="w-full">
+                <div className="flex flex-col justify-center items-center w-fit h-fit">
+                    <div className="flex items-center">
                         <AddMemberToDashboardSection
                             people={allUsersArray}
                             setSelectedPeople={setSelectedUsers}
                             selectedPeople={selectedUsers}
                         />
-                        <div className="w-full flex justify-center items-center">
                         <button type="button" onClick={handleAddMembersToKanban} className="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
-                            Adicionar Membros a Dashboard
+                            Adicionar Membro
                         </button>
-                        </div>
                     </div>
-                    <div className="w-full">
+                    <div className="flex items-center">
                         <RemoveMemberFromDashboardSection
                             people={usersArray}
                             setSelectedPeople={setRemoveSelectedUsers}
                             selectedPeople={removeSelectedUsers}
                         />
-                        <div className="w-full flex justify-center items-center">
                         <button type="button" onClick={handleRemoveMemberFromKanban} className="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-red-600">
-                            Remover Membros da Dashboard
+                            Remover Membro
                         </button>
-                        </div>
                     </div>
                 </div>
                 <div className="w-96 h-fit p-2">
@@ -625,14 +621,14 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
 
 
-            
-            <div>
+            <h1 className="text-lg font-semibold mt-2 mb-1">Templates de Campos Customizados</h1>
+            <div className="flex items-center">
                 <RemoveCustomFieldTemplateSection
                     templates={customFieldsTemplates}
                     selectedTemplates={selectedCustomFieldsTemplates}
                     setSelectedTemplates={setSelectedCustomFieldsTemplates}
                 />
-                <button type="button" onClick={handleDeleteCustomTemplates}>
+                <button type="button" onClick={handleDeleteCustomTemplates} className="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-red-600 ml-4">
                     Apagar Templates
                 </button>
             </div>
@@ -640,11 +636,14 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
             <div>
-                <div className={`${isEditingTag ? 'flex' : 'hidden'} absolute inset-0 w-full h-full justify-center items-center bg-neutral-950/25`}>
-                    <div className="w-fit h-fit p-2 rounded-md shadow-md">
+                <div className={`${isEditingTag ? 'flex' : 'hidden'} z-[99999999999999999] absolute inset-0 w-screen h-screen justify-center items-center bg-neutral-950/25`}>
+                    <div className="w-fit h-fit p-2 rounded-md shadow-md bg-neutral-50">
+                        <div className="w-full h-fit flex justify-end items-center mb-2">
+                            <h1 className="w-full font-semibold text-center">Editar Tag</h1>
                         <button type="button" onClick={() => setIsEditingTag(false)}>
                             <XCircleIcon className="w-6 aspect-square"/>
                         </button>
+                        </div>
                         <form onSubmit={handleEditTagSubmit}>
                             <input defaultValue={tagNameDefaultValue} type='text' name='title' placeholder='Nome da Etiqueta' className='form-input bg-neutral-100 w-48 border-[1px] border-neutral-200 rounded-md p-1 shadow-inner m-2' />
                             <HexColorPicker color={color} onChange={setColor} className='m-2' />
@@ -654,19 +653,23 @@ export default function Page({ params }: { params: { id: string } }) {
                 </div>
 
 
+                <h1 className="text-lg font-semibold mt-2 mb-1">Gerenciar Etiquetas Criadas</h1>
+                <div className="flex items-center">
+
                 <SelectTagsSection 
                     tags={allTags}
                     selected={selectedTag}
                     setSelected={setSelectedTag}
                 />
 
-                <button type="button" onClick={handleEditTag}>
+                <button type="button" onClick={handleEditTag} className="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-blue-600 ml-4">
                     editar etiqueta
                 </button>
 
-                <button type="button" onClick={handleDeleteTag}>
+                <button type="button" onClick={handleDeleteTag} className="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-red-600 ml-4">
                     remover etiqueta
                 </button>
+                </div>
             </div>
 
 

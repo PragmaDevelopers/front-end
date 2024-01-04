@@ -1,50 +1,18 @@
 "use client";
 
-import { MDXEditor, headingsPlugin, listsPlugin, quotePlugin, thematicBreakPlugin, linkPlugin, linkDialogPlugin, tablePlugin, markdownShortcutPlugin, toolbarPlugin, UndoRedo, BlockTypeSelect, BoldItalicUnderlineToggles, InsertTable, ListsToggle, CreateLink } from "@mdxeditor/editor";
+import RichEditor from '@/app/components/dashboard/RichEditor';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
-import { forwardRef } from "react";
-
-const Editor = forwardRef(() => {
-    return (
-            <MDXEditor
-            className="MDXEditor"
-            onChange={console.log}
-            markdown={""}
-            plugins={[
-                headingsPlugin(),
-                listsPlugin(),
-                quotePlugin(),
-                thematicBreakPlugin(),
-                linkPlugin(),
-                linkDialogPlugin(),
-                tablePlugin(),
-                markdownShortcutPlugin(),
-                toolbarPlugin({
-                    toolbarContents: () => (
-                        <>
-                            <UndoRedo />
-                            <BlockTypeSelect />
-                            <BoldItalicUnderlineToggles />
-                            <InsertTable />
-                            <ListsToggle />
-                            <CreateLink />
-                        </>
-                    )
-                }),
-            ]}
-
-        />
-
-    );
-});
-
-Editor.displayName = "Editor";
+import { useRef } from 'react';
 
 export default function Page() {
+    const editorRef = useRef<MDXEditorMethods>(null);
     return (
         <main className="w-full h-full">
             <div className="w-[75%] h-[75%]">
-                <Editor/>
+                <div className='z-[2]'>
+                    <RichEditor display={true} ref={editorRef} markdown='' onChange={console.log}/>
+                </div>
             </div>
         </main>
     );

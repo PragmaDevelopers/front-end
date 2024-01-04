@@ -2,7 +2,7 @@
 
 ## PRIORIDADES
 
-- [ ] tela de configurações da Dashboard [trabajando nisso]
+- [x] tela de configurações da Dashboard.
 - [ ] backend fetchs
 - [ ] edição do background do pdf [falar pro lucas dar uma olhada]
 - [ ] Inner Cards [tem cara de que vai demorar um cacete ao cubo.] 

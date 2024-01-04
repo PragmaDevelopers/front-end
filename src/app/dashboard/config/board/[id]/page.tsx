@@ -570,7 +570,6 @@ export default function Page({ params }: { params: { id: string } }) {
                 <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
             </div>
 
-
             <div className="my-2">
                 <h1 className="text-lg font-semibold">Renomear Dashboard</h1>
                 <RenameKanbanSection 
@@ -581,10 +580,6 @@ export default function Page({ params }: { params: { id: string } }) {
                     inputStyles="bg-neutral-200 border-[1px] border-neutral-200 rounded-md shadow-inner p-1 my-1"
                 />
             </div>
-
-
-
-
 
             <div className="my-2 w-full">
             <h1 className="text-lg font-semibold">Gerenciar Membros da Dashboard</h1>

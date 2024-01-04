@@ -296,7 +296,7 @@ export default function Page() {
                             <div className="flex flex-col">
                                 <input name="username" type="text" placeholder="Insira seu nome" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
                                 <input name="useremail" type="email" placeholder="Insira seu email" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
-                                <select name="usernat" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Selecione sua nacionalidade">
+                                <select name="usernat" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1">
                                     <option value="AF">AF - Afeganistão</option>
                                     <option value="ZA">ZA - África do Sul</option>
                                     <option value="AL">AL - Albânia</option>

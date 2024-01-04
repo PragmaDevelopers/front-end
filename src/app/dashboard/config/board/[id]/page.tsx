@@ -9,7 +9,7 @@
  * */
 
 import { useUserContext } from "@/app/contexts/userContext";
-import { Member, SystemID } from "@/app/types/KanbanTypes";
+import { Member, SystemID, userData } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
@@ -138,6 +138,20 @@ export default function Page({ params }: { params: { id: string } }) {
 
     const handleAddMembersToKanban = () => {
         console.log(selectedUsers);
+        selectedUsers.forEach((e: userData) => {
+            const usersRequestOptions = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userValue.token}`,
+                },
+                body: JSON.stringify({ kanbanId: params.id, userId: e.id }),
+            };
+            fetch(`${API_BASE_URL}/api/private/user/invite/kanban/`, usersRequestOptions);
+            console.log("convidado usuario", e.name, "para a dashboard", kanbanTitle);
+        });
+        
+
     }
 
     return (

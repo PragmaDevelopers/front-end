@@ -235,7 +235,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const handleAddMembersToKanban = () => {
         selectedUsers.forEach((e: userData) => {
             const usersRequestOptions = {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userValue.token}`,

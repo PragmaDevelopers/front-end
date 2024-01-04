@@ -3,26 +3,18 @@ import { Card, SystemID } from "@/app/types/KanbanTypes";
 export function AppendToTempCardsArray(
     newCard: Card,
     tempCardsArr: Card[],
-    setTempCardsArr: (arg0: ((arg0: Card[]) => Card[]) | Card[]) => void,
+    setTempCardsArr: any,
     ) {
-    console.log("APPENDING", newCard, "TO", tempCardsArr);
-    setTempCardsArr((prevArr: Card[]) => {
-        console.log(prevArr);
-        console.log(tempCardsArr);
-        return [...prevArr, newCard] as Card[];
-    });
-    console.log(tempCardsArr);
+    let _tmpCard: Card = newCard;
+    let _tmpArray: Card[] = tempCardsArray;
+    _tmpArray.push(_tmpCard);
+    setTempCardsArr(_tmpArray);
 }
 
-export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: (arg0: ((arg0: Card[]) => Card[]) | Card[]) => void): Card {
-    const retVal = tempCardsArr[tempCardsArr.length - 1];
-    setTempCardsArr((prevArr: Card[]) => {
-        console.log(prevArr);
-        console.log(tempCardsArr);
-        const tPrevArr: Card[] = prevArr.slice(0, -1);
-        return tPrevArr;
-    });
-    console.log("POPPING", retVal, "FROM", tempCardsArr);
+export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any): Card | undefined {
+    let _tmpArray: Card[] = tempCardsArray;
+    const retVal = _tmpArray.pop();
+    setTempCardsArr(_tmpArray);
     return retVal;
 }
 
@@ -43,7 +35,6 @@ export function appendTempCardToArray (
     tempCardsArray: Card[],
     setTempCard: React.Dispatch<React.SetStateAction<Card>>,
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
-    callback?: any,
 ): void {
     let _newTempArray: Card[] = tempCardsArray;
     _newTempArray.push(tempCard);
@@ -91,7 +82,6 @@ export function appendAndSetTempCardById(
     tempCardsArray: Card[],
     setTempCard: React.Dispatch<React.SetStateAction<Card>>,
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
-    callback?: any,
 ): void {
         let _newTempArray: Card[] = tempCardsArray;
         const matchingCard = tempCard.innerCards.find(card => card.id === cardID);
@@ -116,6 +106,31 @@ export function swapTempCardWithLast(
         _cardsArray.push(_tmpCard);
         setTempCardsArray(_cardsArray);
         setTempCard(poppedCard);
+        callback(poppedCard);
+    }
+};
+
+export function appendTempCardToPoppedInnerCards(
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
+): void {
+    let _tmpArray = tempCardsArray;
+    const poppedCard = _tmpArray.pop();
+    if (poppedCard) {
+        const cardIndex = poppedCard.innerCards.findIndex(card => card.id === tempCard.id);
+        if (cardIndex !== -1) {
+            poppedCard.innerCards[cardIndex] = tempCard;
+        } else {
+            poppedCard.innerCards.push(tempCard);
+        }
+        setTempCard(poppedCard);
+        setTempCardsArray(_tmpArray);
+        if (callback) {
+            callback(poppedCard);
+        }
     }
 };
 

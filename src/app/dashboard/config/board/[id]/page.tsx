@@ -118,12 +118,13 @@ interface RenameKanbanSectionProps {
     defaultValue: string;
     submitButtonStyles: string;
     submitButtonText: string;
+    inputStyles: string;
 }
 function RenameKanbanSection(props: RenameKanbanSectionProps) {
-    const { submitButtonText, submitButtonStyles, defaultValue, onSubmit } = props;
+    const { submitButtonText, submitButtonStyles, defaultValue, onSubmit, inputStyles } = props;
     return (
         <form onSubmit={onSubmit}>
-            <input type="text" placeholder="Insira um novo nome" defaultValue={defaultValue} name="kanbanname" />
+            <input type="text" placeholder="Insira um novo nome" defaultValue={defaultValue} name="kanbanname" className={`form-input ${inputStyles}`} />
             <button type="submit" className={submitButtonStyles}>{submitButtonText}</button>
         </form>
     );
@@ -564,18 +565,20 @@ export default function Page({ params }: { params: { id: string } }) {
 
     return (
         <main className="w-full h-full overflow-auto shrink-0">
-            <div className="relative w-full flex flex-row justify-center items-center px-2 my-2">
+            <div className="relative w-full flex flex-row justify-center items-center px-2 mt-2 mb-4">
                 <h1 className="">Configurações da Dashboard {kanbanTitle}</h1>
                 <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
             </div>
 
 
-            <div>
+            <div className="my-2">
+                <h1 className="text-lg font-semibold">Renomear Dashboard</h1>
                 <RenameKanbanSection 
                     onSubmit={handleSubmitRenameKanban}
                     defaultValue={kanbanTitle}
                     submitButtonText="Salvar"
-                    submitButtonStyles=""
+                    submitButtonStyles="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600"
+                    inputStyles="bg-neutral-200 border-[1px] border-neutral-200 rounded-md shadow-inner p-1 my-1"
                 />
             </div>
 
@@ -583,8 +586,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
 
-
-            <div className="flex justify-between items-center p-2 w-fit h-fit">
+            <div className="my-2 w-full">
+            <h1 className="text-lg font-semibold">Gerenciar Membros da Dashboard</h1>
+            <div className="flex justify-between items-center p-2 w-full h-fit">
                 <div className="flex flex-col justify-center items-center w-96 h-fit">
                     <div className="w-full">
                         <AddMemberToDashboardSection
@@ -592,9 +596,11 @@ export default function Page({ params }: { params: { id: string } }) {
                             setSelectedPeople={setSelectedUsers}
                             selectedPeople={selectedUsers}
                         />
-                        <button type="button" onClick={handleAddMembersToKanban}>
+                        <div className="w-full flex justify-center items-center">
+                        <button type="button" onClick={handleAddMembersToKanban} className="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
                             Adicionar Membros a Dashboard
                         </button>
+                        </div>
                     </div>
                     <div className="w-full">
                         <RemoveMemberFromDashboardSection
@@ -602,17 +608,20 @@ export default function Page({ params }: { params: { id: string } }) {
                             setSelectedPeople={setRemoveSelectedUsers}
                             selectedPeople={removeSelectedUsers}
                         />
-                        <button type="button" onClick={handleRemoveMemberFromKanban}>
+                        <div className="w-full flex justify-center items-center">
+                        <button type="button" onClick={handleRemoveMemberFromKanban} className="rounded-md bg-neutral-50 p-2 m-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-red-600">
                             Remover Membros da Dashboard
                         </button>
+                        </div>
                     </div>
                 </div>
                 <div className="w-96 h-fit p-2">
-                    <h1>Membros da Dashboard</h1>
-                    <div>
+                    <h1 className="w-full text-center font-semibold">Membros da Dashboard</h1>
+                    <div className="bg-neutral-200 border-[1px] border-neutral-200 rounded-md shadow-inner p-1 my-1">
                         {usersArray.map((element: Member, i: number) => <h1 key={i}>{element.name}</h1>)}
                     </div>
                 </div>
+            </div>
             </div>
 
 

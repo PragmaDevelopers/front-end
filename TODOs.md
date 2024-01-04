@@ -15,8 +15,8 @@
 
 ### Bug Fixes
 
-- [ ] dropdown do MDXEditor com z-index errado.
-- [ ] Envio e edição dos valores do perfil do usuario.
+- [x] dropdown do MDXEditor com z-index errado.
+- [] Envio e edição dos valores do perfil do usuario.
 
 - [x] TagDelete deletando array toda ao invés de apenas uma. (era o id q era o msm pra tds)
 - [x] dashboard no GET retornando UNDEFINED.

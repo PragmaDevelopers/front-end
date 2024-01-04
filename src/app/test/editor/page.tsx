@@ -2,7 +2,7 @@
 
 import RichEditor from '@/app/components/dashboard/RichEditor';
 import { MDXEditorMethods } from '@mdxeditor/editor';
-import '@mdxeditor/editor/style.css';
+import '@/app/mdxeditor.css';
 import { useRef } from 'react';
 
 export default function Page() {

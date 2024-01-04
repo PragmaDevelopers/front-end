@@ -278,6 +278,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [selectedUsers, setSelectedUsers] = useState<Member[]>([]);
     const [removeSelectedUsers, setRemoveSelectedUsers] = useState<Member[]>([]);
     const [customFieldsTemplates, setCustomFieldsTemplates] = useState<CustomFieldsTemplate[]>([]);
+    const [selectedCustomFieldsTemplates, setSelectedCustomFieldsTemplates] = useState<CustomFieldsTemplate[]>([]);
 
     useEffect(() => {
         setAllUsersArray(userValue.usersList);
@@ -448,7 +449,14 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
 
 
-
+            
+            <div>
+                <RemoveCustomFieldTemplateSection
+                    templates={customFieldsTemplates}
+                    selectedTemplates={selectedCustomFieldsTemplates}
+                    setSelectedTemplates={setSelectedCustomFieldsTemplates}
+                />
+            </div>
 
 
 

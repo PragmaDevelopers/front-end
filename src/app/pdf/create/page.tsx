@@ -9,12 +9,11 @@ import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, UndoRedo,
 import { root } from "postcss";
 import { IFormSignUpInputs } from "@/app/types/RegisterClientFormTypes";
 
-function PDFPageEdit() {
-
-
+function editPdf() {
   const [signUpData, setSignUpData] = useState<IFormSignUpInputs>();
   const [variable, setVariable] = useState<string>("");
 
+  const router = useRouter();
   const ref = useRef<MDXEditorMethods>(null)
 
   useEffect(() => {
@@ -121,14 +120,13 @@ function PDFPageEdit() {
   }
 
   function formSubmit() {
-    // const router = useRouter();
     let textToPdf = ref.current?.getMarkdown().replace(/\\/g, "") || "";
     console.log(textToPdf.split("\n\n"))
     const filterTextToPdf = spaceVerification(textToPdf.split("\n\n"));
     var output = Mustache.render(filterTextToPdf.join("\n\n"), signUpData);
     console.log(output)
     sessionStorage.setItem("pdf_info", JSON.stringify(output));
-    // router.push("./view");
+    router.push("./view");
   }
 
   return (
@@ -191,4 +189,4 @@ function PDFPageEdit() {
   );
 }
 
-export default PDFPageEdit;
+export default editPdf;

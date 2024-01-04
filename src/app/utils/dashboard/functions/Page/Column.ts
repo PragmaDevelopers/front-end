@@ -21,10 +21,10 @@ export function CreateNewColumn(
     for (const key in userValue) {
       if (key === "userData") {
         for (const item in userValue.userData) {
-          console.log("[INFO]\t@ Create New Column Function", item, userValue.userData[item]);
+          console.log("[INFO]\t@ Create New Column Function", item, (userValue as any).userData[item]);
         } 
       } else {
-        console.log("[INFO]\t@ Create New Column Function", key, userValue[key]);
+        console.log("[INFO]\t@ Create New Column Function", key, (userValue as any)[key]);
       }
     
   }

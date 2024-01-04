@@ -4,18 +4,33 @@
  *  [x] Add Member
  *  [x] Remove Members
  *  [ ] Tags
- *  [ ] Custom Fields
+ *  [x] Custom Fields
  *  [x] Renomear Kanban
  * */
 
 import { useUserContext } from "@/app/contexts/userContext";
-import { CustomFieldsTemplate, Member, SystemID, userData } from "@/app/types/KanbanTypes";
+import { CustomFieldsTemplate, Member, SystemID, Tag, userData } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, Fragment } from "react";
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+
+
+function SelectTagsSection() {
+    return (
+        
+    );
+}
+
+
+
+
+
+
+
+
 
 interface RenameKanbanSectionProps {
     onSubmit: any;
@@ -279,6 +294,8 @@ export default function Page({ params }: { params: { id: string } }) {
     const [removeSelectedUsers, setRemoveSelectedUsers] = useState<Member[]>([]);
     const [customFieldsTemplates, setCustomFieldsTemplates] = useState<CustomFieldsTemplate[]>([]);
     const [selectedCustomFieldsTemplates, setSelectedCustomFieldsTemplates] = useState<CustomFieldsTemplate[]>([]);
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
 
     useEffect(() => {
         setAllUsersArray(userValue.usersList);
@@ -476,6 +493,12 @@ export default function Page({ params }: { params: { id: string } }) {
                 <button type="button" onClick={handleDeleteCustomTemplates}>
                     Apagar Templates
                 </button>
+            </div>
+
+
+
+            <div>
+
             </div>
 
 

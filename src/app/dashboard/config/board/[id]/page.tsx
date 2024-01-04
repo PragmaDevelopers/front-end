@@ -392,8 +392,25 @@ export default function Page({ params }: { params: { id: string } }) {
             },
             body: JSON.stringify({title: newTitle}),
         }
-        fetch(`${API_BASE_URL}/api/private/user/kanban/${params.id}`)
+        fetch(`${API_BASE_URL}/api/private/user/kanban/${params.id}`, requestOpts);
     }
+
+
+
+    const handleDeleteCustomTemplates = () => {
+        const requestOpts = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userValue.token}`,
+            },
+        }
+        selectedCustomFieldsTemplates.forEach((value: CustomFieldsTemplate) => {
+            fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/customField/template/${value.name}`, requestOpts);
+            console.log(`Template ${value.name} apagado.`);
+        })
+    }
+
 
     return (
         <main className="w-full h-full overflow-auto shrink-0">
@@ -456,6 +473,9 @@ export default function Page({ params }: { params: { id: string } }) {
                     selectedTemplates={selectedCustomFieldsTemplates}
                     setSelectedTemplates={setSelectedCustomFieldsTemplates}
                 />
+                <button type="button" onClick={handleDeleteCustomTemplates}>
+                    Apagar Templates
+                </button>
             </div>
 
 

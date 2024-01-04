@@ -1,5 +1,13 @@
 "use client";
 
+/*
+ *  Add Member
+ *  Remove Members
+ *  Tags
+ *  Custom Fields
+ *  Renomear Kanban
+ * */
+
 import { useUserContext } from "@/app/contexts/userContext";
 import { Member, SystemID } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
@@ -128,6 +136,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
     }, [userValue, params, setKanbanTitle, setUsersArray, setAllUsersArray]);
 
+    const handleAddMembersToKanban = () => {
+        console.log(selectedUsers);
+    }
 
     return (
         <main className="w-full h-full overflow-auto shrink-0">
@@ -141,6 +152,9 @@ export default function Page({ params }: { params: { id: string } }) {
                     setSelectedPeople={setSelectedUsers}
                     selectedPeople={selectedUsers}
                 />
+                <button type="button" onClick={handleAddMembersToKanban}>
+                    Adicionar Membros a Dashboard
+                </button>
             </div>
             <div>
                 {selectedUsers.map((v, i) => <h1 key={i}>{v.name}</h1>)}

@@ -30,7 +30,6 @@ import {
     DateValue,
     SystemID,
 } from '@/app/types/KanbanTypes';
-import '@/app/mdxeditor.css';
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { CustomModal } from '@/app/components/ui/CustomModal';
 import Link from 'next/link';

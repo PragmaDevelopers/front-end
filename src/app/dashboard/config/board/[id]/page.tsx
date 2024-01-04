@@ -283,12 +283,41 @@ export default function Page({ params }: { params: { id: string } }) {
         updateUsersArray();
     }
 
+    const handleSubmitRenameKanban = (e: any) => {
+        e.preventDefault();
+        let newTitle: string = e.target.kanbanname.value;
+        setKanbanTitle(newTitle);
+        const requestOpts = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userValue.token}`,
+            },
+            body: JSON.stringify({title: newTitle}),
+        }
+        fetch(`${API_BASE_URL}/api/private/user/kanban/${params.id}`)
+    }
+
     return (
         <main className="w-full h-full overflow-auto shrink-0">
             <div className="relative w-full flex flex-row justify-center items-center px-2 my-2">
                 <h1 className="">Configurações da Dashboard {kanbanTitle}</h1>
                 <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
             </div>
+
+
+            <div>
+                <RenameKanbanSection 
+                    onSubmit={handleSubmitRenameKanban}
+                    defaultValue={kanbanTitle}
+                    submitButtonText="Salvar"
+                    submitButtonStyles=""
+                />
+            </div>
+
+
+
+
 
 
             <div className="flex justify-between items-center p-2 w-fit h-fit">
@@ -321,6 +350,14 @@ export default function Page({ params }: { params: { id: string } }) {
                     </div>
                 </div>
             </div>
+
+
+
+
+
+
+
+
         </main>
     );
 

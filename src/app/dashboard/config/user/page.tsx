@@ -64,6 +64,7 @@ export default function Page() {
         for (let [key, value] of Object.entries(userValue.userData)) {
             if (compareObj[key] !== value) {
                 sendObj[key] = compareObj[key]
+                console.log(sendObj);
             }
         }
 

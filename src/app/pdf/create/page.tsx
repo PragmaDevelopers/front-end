@@ -18,7 +18,7 @@ function PDFPageEdit() {
   const ref = useRef<MDXEditorMethods>(null)
 
   useEffect(() => {
-    const sessionData = sessionStorage.getItem("registration_form");
+    const sessionData = sessionStorage.getItem("clientSignUp");
     if (sessionData) {
       setSignUpData(JSON.parse(sessionData))
     }

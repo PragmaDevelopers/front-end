@@ -4,7 +4,7 @@
 
 - [ ] tela de configurações da Dashboard [trabajando nisso]
 - [ ] backend fetchs
-- [ ] edição do background do pdf
+- [ ] edição do background do pdf [falar pro lucas dar uma olhada]
 - [ ] Inner Cards [tem cara de que vai demorar um cacete ao cubo.] 
 
 - [x] ações ao expirar prazos
@@ -15,6 +15,7 @@
 
 ### Bug Fixes
 
+- [ ] remover membro da dashboard na tela de configurações retorna 403.
 - [x] dropdown do MDXEditor com z-index errado.
 - [ ] Envio e edição dos valores do perfil do usuario. [falta so a foto de perfil q ta bugada, o backend retorna 403 com ela]
 

@@ -51,7 +51,7 @@ function AddMemberToDashboardSection(props: addMemberToDashboardProps) {
             leaveTo="opacity-0"
             afterLeave={() => setQuery('')}
           >
-            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            <Combobox.Options className="z-50 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {
                 people.map((person) => (
                   <Combobox.Option
@@ -127,7 +127,7 @@ function RemoveMemberFromDashboardSection(props: removeMemberToDashboardProps) {
             leaveTo="opacity-0"
             afterLeave={() => setQuery('')}
           >
-            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            <Combobox.Options className="z-50 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {
                 people.map((person) => (
                   <Combobox.Option
@@ -240,9 +240,9 @@ export default function Page({ params }: { params: { id: string } }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userValue.token}`,
                 },
-                body: JSON.stringify({ kanbanId: params.id, userId: e.id }),
+                body: JSON.stringify({ kanbanId: parseInt(params.id), userId: e.id }),
             };
-            fetch(`${API_BASE_URL}/api/private/user/invite/kanban/`, usersRequestOptions);
+            fetch(`${API_BASE_URL}/api/private/user/invite/kanban`, usersRequestOptions);
             console.log("convidado usuario", e.name, "para a dashboard", kanbanTitle);
         });
         updateUsersArray();
@@ -271,25 +271,37 @@ export default function Page({ params }: { params: { id: string } }) {
                 <h1 className="">Configurações da Dashboard {kanbanTitle}</h1>
                 <button className="absolute left-4 hover:left-2 transition-all" type="button" onClick={() => router.back()}><ArrowLeftIcon className="aspect-square w-8 stroke-1 stroke-neutral-900 fill-neutral-900" /></button>
             </div>
-            <div>
-                <AddMemberToDashboardSection
-                    people={allUsersArray}
-                    setSelectedPeople={setSelectedUsers}
-                    selectedPeople={selectedUsers}
-                />
-                <button type="button" onClick={handleAddMembersToKanban}>
-                    Adicionar Membros a Dashboard
-                </button>
-            </div>
-            <div>
-                <RemoveMemberFromDashboardSection
-                    people={allUsersArray}
-                    setSelectedPeople={setRemoveSelectedUsers}
-                    selectedPeople={removeSelectedUsers}
-                />
-                <button type="button" onClick={handleRemoveMemberFromKanban}>
-                    Remover Membros da Dashboard
-                </button>
+
+
+            <div className="flex justify-between items-center p-2 w-fit h-fit">
+                <div className="flex flex-col justify-center items-center w-96 h-fit">
+                    <div className="w-full">
+                        <AddMemberToDashboardSection
+                            people={allUsersArray}
+                            setSelectedPeople={setSelectedUsers}
+                            selectedPeople={selectedUsers}
+                        />
+                        <button type="button" onClick={handleAddMembersToKanban}>
+                            Adicionar Membros a Dashboard
+                        </button>
+                    </div>
+                    <div className="w-full">
+                        <RemoveMemberFromDashboardSection
+                            people={usersArray}
+                            setSelectedPeople={setRemoveSelectedUsers}
+                            selectedPeople={removeSelectedUsers}
+                        />
+                        <button type="button" onClick={handleRemoveMemberFromKanban}>
+                            Remover Membros da Dashboard
+                        </button>
+                    </div>
+                </div>
+                <div className="w-96 h-fit p-2">
+                    <h1>Membros da Dashboard</h1>
+                    <div>
+                        {usersArray.map((element: Member, i: number) => <h1 key={i}>{element.name}</h1>)}
+                    </div>
+                </div>
             </div>
         </main>
     );

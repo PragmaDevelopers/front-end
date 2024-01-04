@@ -121,6 +121,10 @@ export default function Page() {
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Imagem de Perfil</h2>
                             <ImageUploader callback={handleProfilePictureSource} />
+                            <button type="submit"
+                                className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">
+                                Salvar
+                            </button>
                         </div>
                         <div className="flex w-full justify-center items-center my-4">
                             <hr className="w-[90%] bg-neutral-100" />

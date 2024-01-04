@@ -136,3 +136,23 @@ export type Notification = {
     changed_id: SystemID;
 }
 
+type CustomFieldsInput = {
+    id: SystemID;
+    inputName: string;
+    inputType: string;
+    index: number;
+}
+
+export type CustomFieldsTemplate = {
+    name: string;
+    inputs: CustomFieldsInput[];
+}
+
+export type CustomFieldEntry = {
+    name: string;
+    inputName: string;
+    inputType: string;
+    id: SystemID;
+}
+
+

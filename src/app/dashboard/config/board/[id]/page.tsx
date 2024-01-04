@@ -1,11 +1,11 @@
 "use client";
 
 /*
- *  Add Member
- *  Remove Members
- *  Tags
- *  Custom Fields
- *  Renomear Kanban
+ *  [x] Add Member
+ *  [x] Remove Members
+ *  [ ] Tags
+ *  [ ] Custom Fields
+ *  [ ] Renomear Kanban
  * */
 
 import { useUserContext } from "@/app/contexts/userContext";
@@ -16,6 +16,24 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, Fragment } from "react";
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+
+interface RenameKanbanSectionProps {
+    onSubmit: any;
+    defaultValue: string;
+    submitButtonStyles: string;
+    submitButtonText: string;
+}
+function RenameKanbanSection(props: RenameKanbanSectionProps) {
+    const { submitButtonText, submitButtonStyles, defaultValue, onSubmit } = props;
+    return (
+        <form onSubmit={onSubmit}>
+            <input type="text" placeholder="Insira um novo nome" defaultValue={defaultValue} name="kanbanname" />
+            <button type="submit" className={submitButtonStyles}>{submitButtonText}</button>
+        </form>
+    );
+}
+
+
 
 interface addMemberToDashboardProps {
     selectedPeople: Member[];

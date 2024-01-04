@@ -44,6 +44,9 @@
 }
 */
 
+._selectItem_lug8m_271, ._selectContainer_lug8m_257 {
+    z-index: 999999 !important;
+}
 
 div._editorRoot_lug8m_37._popupContainer_lug8m_1127.MDXEditor.block {
     opacity: 0;

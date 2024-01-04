@@ -277,6 +277,8 @@ export default function Page({ params }: { params: { id: string } }) {
     const [allUsersArray, setAllUsersArray] = useState<Member[]>([]);
     const [selectedUsers, setSelectedUsers] = useState<Member[]>([]);
     const [removeSelectedUsers, setRemoveSelectedUsers] = useState<Member[]>([]);
+    const [customFieldsTemplates, setCustomFieldsTemplates] = useState<CustomFieldsTemplate[]>([]);
+
     useEffect(() => {
         setAllUsersArray(userValue.usersList);
 
@@ -311,7 +313,24 @@ export default function Page({ params }: { params: { id: string } }) {
             setUsersArray(data);
         })
 
-    }, [userValue, params, setKanbanTitle, setUsersArray, setAllUsersArray]);
+
+        const customFieldsTemplatesRequest = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userValue.token}`,
+            },
+        }
+        fetch(`${API_BASE_URL}/api/private/user/kanban/column/card/customField/templates`, 
+            customFieldsTemplatesRequest).then(response => response.json()).then((data: CustomFieldsTemplate[]) => {
+                console.log(data);
+                setCustomFieldsTemplates(data);
+        })
+
+
+
+
+    }, [userValue, params, setKanbanTitle, setUsersArray, setAllUsersArray, setCustomFieldsTemplates]);
 
     const updateUsersArray = () => {
         const usersRequestOptions = {

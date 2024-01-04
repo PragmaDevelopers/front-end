@@ -19,10 +19,8 @@ export default function Page() {
 
 
     const handleProfilePictureSource = (arg0: string) => {
-        const regex = /^data:image\/(png|jpeg);base64,/;
-        const cleanedDataUrl = arg0.replace(regex, "");
-        setProfilePictureSource(cleanedDataUrl);
-        console.log(cleanedDataUrl);
+        setProfilePictureSource(arg0);
+        console.log(arg0);
     }
 
     const checkNationality = (value: string): boolean => {

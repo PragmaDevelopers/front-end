@@ -19,7 +19,8 @@ export default function Page() {
 
 
     const handleProfilePictureSource = (arg0: string) => {
-        setProfilePictureSource(arg0)
+        setProfilePictureSource(arg0);
+        console.log(arg0);
     }
 
     const checkNationality = (value: string): boolean => {
@@ -42,6 +43,7 @@ export default function Page() {
         let subGender: string = e.target.generoPessoal.value;
         let subName: string = e.target.namePessoal.value;
 
+        console.log(profilePictureSource);
         console.log("subPfp",subPfp);
         console.log("subEmail",subEmail);
         console.log("subPasswd",subPasswd);

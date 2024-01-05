@@ -9,7 +9,6 @@ export function PageCreateInnerCard( /* This function is called on the create bu
         editorRef: RefObject<MDXEditorMethods>,
         tempCard: Card,
         setEditorText: any,
-        setIsCreatingInnerCard: any,
         tempCardsArray: any,
         setTempCardsArray: any,
         setTempCard: any,
@@ -41,7 +40,6 @@ export function PageCreateInnerCard( /* This function is called on the create bu
         appendTempCardToArray(newCard, _tmpCardArray, setTempCard, setTempCardsArray);
         event.target.reset();
         setEditorText("");
-        setIsCreatingInnerCard(false);
         editorRef.current?.setMarkdown("");
     }
 
@@ -60,6 +58,7 @@ export function PageAddInnerCard( /*  This function is called on the form submit
         tempCardsArray: any,
         setTempCardsArray: any,
         setTempCard: any,
+        setIsCreatingInnerCard: any,
     ) {
     event.preventDefault();
     let _tempCard: Card = tempCard;
@@ -91,6 +90,7 @@ export function PageAddInnerCard( /*  This function is called on the form submit
 
         event.target.reset();
         popAndAppendTempCard(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
+        setIsCreatingInnerCard(false);
     }
 
     newCard = tempCard;

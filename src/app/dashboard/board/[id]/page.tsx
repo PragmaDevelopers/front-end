@@ -377,19 +377,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const handleCreateInnerCard = (event: any, isEdittingInnerCard: boolean) => {
         console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", tempCardsArr);
         console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", isEdittingInnerCard);
-        if (isEdittingInnerCard) {
-            PageEditInnerCard(
-                event,
-                isEdittingInnerCard,
-                editorRef,
-                tempCard,
-                setEditorText,
-                setIsCreatingInnerCard,
-                tempCardsArr,
-                setTempCardsArr,
-                setTempCard,
-            )
-        } else {
         PageCreateInnerCard(
                 event,
                 isEdittingInnerCard,
@@ -401,8 +388,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 setTempCardsArr,
                 setTempCard,
             );
-        }
-        
     }
 
 

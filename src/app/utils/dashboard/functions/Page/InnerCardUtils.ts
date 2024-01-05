@@ -154,9 +154,9 @@ export function swapTempCardWithLast(
     const poppedCard = _cardsArray.pop();
 
 
-    console.log("=== EDIT === [INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast tempCard value: ", _tmpCard);
-    console.log("=== EDIT === [INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast tempCardArray value: ", _cardsArray);
-    console.log("=== EDIT === [INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast poppedCard value: ", poppedCard);
+    //console.log("=== EDIT === [INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast tempCard value: ", _tmpCard);
+    //console.log("=== EDIT === [INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast tempCardArray value: ", _cardsArray);
+    //console.log("=== EDIT === [INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast poppedCard value: ", poppedCard);
 
     if (poppedCard) {
         _cardsArray.push(_tmpCard);
@@ -187,8 +187,7 @@ export function appendTempCardToPoppedInnerCards(
     const poppedCard = _tmpArray.pop();
     let _tmpCard: Card = { ...tempCard };
     if (poppedCard) {
-        //const updatedOuterCard = findAndReplaceInnerCard(poppedCard, tempCard);
-        const updatedOuterCard = findAndReplaceInnerCard(tempCard, poppedCard);
+        const updatedOuterCard = findAndReplaceInnerCard(poppedCard, tempCard);
 
         console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
         console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
@@ -291,8 +290,22 @@ export function appendAndSetTempCardById(
 
 // Helper function to find and replace inner card in an outer card
 export function findAndReplaceInnerCard(outerCard: Card, innerCard: Card): Card {
-    const updatedOuterCard = { ...outerCard };
-  
+    let updatedOuterCard: Card = { ...outerCard };
+    
+    console.log("BUG OUTER CARD: ", updatedOuterCard);
+    console.log("BUG OLDER INNER CARDS ARRAY: ", updatedOuterCard.innerCards);
+    
+    let updatedInnerCardsArray: Card[] = updatedOuterCard.innerCards.map((v: Card) => v.id === innerCard.id ? innerCard : v)
+
+    console.log("BUG UPDATED INNER CARDS ARRAY: ", updatedInnerCardsArray);
+    let returnCard: Card = {
+        ...updatedOuterCard,
+        innerCards: updatedInnerCardsArray,
+    }
+    
+    console.log("BUG RETURN CARD: ", returnCard);
+
+    /*
     if (outerCard.innerCards && outerCard.innerCards.length > 0) {
       const index = outerCard.innerCards.findIndex((card) => card.id === innerCard.id);
   
@@ -306,6 +319,7 @@ export function findAndReplaceInnerCard(outerCard: Card, innerCard: Card): Card 
       // Handle case where outer card has no inner cards
       console.error("BUG Outer card has no inner cards.");
     }
+    */
   
-    return updatedOuterCard;
+    return returnCard;
   }

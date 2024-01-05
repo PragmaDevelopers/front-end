@@ -187,7 +187,8 @@ export function appendTempCardToPoppedInnerCards(
     const poppedCard = _tmpArray.pop();
     let _tmpCard: Card = { ...tempCard };
     if (poppedCard) {
-        const updatedOuterCard = findAndReplaceInnerCard(poppedCard, tempCard);
+        //const updatedOuterCard = findAndReplaceInnerCard(poppedCard, tempCard);
+        const updatedOuterCard = findAndReplaceInnerCard(tempCard, poppedCard);
 
         console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
         console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);

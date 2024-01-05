@@ -163,6 +163,7 @@ export function swapTempCardWithLast(
         _cardsArray.push(_tmpCard);
         setTempCardsArray(_cardsArray);
         setTempCard(poppedCard);
+        _tmpCard = poppedCard;
         callback(poppedCard);
 
         console.log("=== EDIT === [INFO] [01] (EDIT) @ END swapTempCardWithLast tempCard value: ", _tmpCard);

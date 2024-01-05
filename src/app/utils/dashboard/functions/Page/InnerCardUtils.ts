@@ -141,6 +141,40 @@ export function popAndAppendTempCard(
 
 };
 
+
+export function appendLastIntoTempInnerCards(
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
+) {
+    let _cardsArray: Card[] = [...tempCardsArray];
+    let _tmpCard: Card = { ...tempCard };
+    const poppedCard = _cardsArray.pop(); // INNER CARD?
+    
+    console.log("=== TEST === tempCard", _tmpCard);
+    console.log("=== TEST === poppedCard", poppedCard);
+
+    if (poppedCard) {
+        const updatedOuterCard = findAndReplaceInnerCard(_tmpCard, poppedCard);
+        console.log("=== TEST === updatedOuterCard", updatedOuterCard);
+        setTempCard(updatedOuterCard);
+        setTempCardsArray(_cardsArray);
+        if (callback) {
+            callback(poppedCard);
+        }
+
+
+        console.log("=== TEST === updatedTempCardsArray", _cardsArray);
+        _tmpCard = { ...updatedOuterCard };
+
+    }
+
+
+}
+
+
 /*  [01] (EDIT) FIRST FUNCTION TO BE EXECUTED */
 export function swapTempCardWithLast(
     tempCard: Card,

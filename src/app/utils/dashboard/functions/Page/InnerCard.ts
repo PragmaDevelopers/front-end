@@ -1,7 +1,7 @@
 import { Card } from "@/app/types/KanbanTypes";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { RefObject } from "react";
-import { appendTempCardToArray, appendTempCardToPoppedInnerCards, popAndAppendTempCard, swapTempCardWithLast } from "./InnerCardUtils";
+import { appendLastIntoTempInnerCards, appendTempCardToArray, appendTempCardToPoppedInnerCards, popAndAppendTempCard, swapTempCardWithLast } from "./InnerCardUtils";
 
 
 export function PageEditInnerCard(/* This function is called on the inner card button */
@@ -32,8 +32,9 @@ export function PageEditInnerCard(/* This function is called on the inner card b
         editorRef.current?.setMarkdown(card.description);
     }
     event.target.reset();
-    swapTempCardWithLast(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);  
-    appendTempCardToPoppedInnerCards(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
+    appendLastIntoTempInnerCards(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction)
+    //swapTempCardWithLast(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);  
+    //appendTempCardToPoppedInnerCards(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
 }
 
 export function PageCreateInnerCard( /* This function is called on the create button */
@@ -67,8 +68,9 @@ export function PageCreateInnerCard( /* This function is called on the create bu
             editorRef.current?.setMarkdown(card.description);
         }
         event.target.reset();
-        swapTempCardWithLast(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);  
-        appendTempCardToPoppedInnerCards(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
+        appendLastIntoTempInnerCards(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction)
+        //swapTempCardWithLast(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);  
+        //appendTempCardToPoppedInnerCards(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
     } else {
         appendTempCardToArray(newCard, _tmpCardArray, setTempCard, setTempCardsArray);
         event.target.reset();

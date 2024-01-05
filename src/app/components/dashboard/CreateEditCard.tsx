@@ -566,7 +566,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         } else {
             if ((tempCardsArr.length > 0) || isEdittingInnerCard) {
                 console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
-                createInnerCard(event, isEdittingInnerCard);
+                //createInnerCard(event, isEdittingInnerCard);
                 addInnerCard(event, isEdittingInnerCard);
                 console.log(`SUBMIT ADDING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
             } else {

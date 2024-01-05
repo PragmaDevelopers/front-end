@@ -15,17 +15,19 @@
 
 ### Bug Fixes
 
-- [ ] remover membro da dashboard na tela de configurações retorna 403.
+- [ ] INNER CARDS ARRAY JA CONTEM OS VALORES [eu to enlouquecendo.]
+
+- [x] remover membro da dashboard na tela de configurações retorna 403.
 - [x] dropdown do MDXEditor com z-index errado.
-- [ ] Envio e edição dos valores do perfil do usuario. [falta so a foto de perfil q ta bugada, o backend retorna 403 com ela]
+- [x] Envio e edição dos valores do perfil do usuario. [falta so a foto de perfil q ta bugada, o backend retorna 403 com ela]
 
 - [x] TagDelete deletando array toda ao invés de apenas uma. (era o id q era o msm pra tds)
 - [x] dashboard no GET retornando UNDEFINED.
 - [x] dashboard criada nao gera URL com ID.
 
-- [ ] geração de contratos nao gerando. [o lucas disse que veria]
-- [ ] geração de contratos nao importando variaveis. [o lucas disse que veria]
-- [ ] configuração de permissões do usuário [o gui ta trabalhando nisso]
+- [x] geração de contratos nao gerando. [o lucas disse que veria]
+- [x] geração de contratos nao importando variaveis. [o lucas disse que veria]
+- [x] configuração de permissões do usuário [o gui ta trabalhando nisso]
 
 ## ve se da
 

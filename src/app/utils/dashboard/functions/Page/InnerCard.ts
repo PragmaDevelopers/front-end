@@ -3,7 +3,7 @@ import { MDXEditorMethods } from "@mdxeditor/editor";
 import { RefObject } from "react";
 import { appendTempCardToArray, appendTempCardToPoppedInnerCards, popAndAppendTempCard, swapTempCardWithLast } from "./InnerCardUtils";
 
-export function CreateInnerCard( /* This function is called on the create button */
+export function PageCreateInnerCard( /* This function is called on the create button */
         event: any, 
         isEdittingInnerCard: boolean,
         editorRef: RefObject<MDXEditorMethods>,
@@ -26,8 +26,8 @@ export function CreateInnerCard( /* This function is called on the create button
     }
 
 
-    console.log("[INFO] #01 @ BEGIN CreateInnerCard tempCard value: ", newCard);
-    console.log("[INFO] #01 @ BEGIN CreateInnerCard tempCardsArray value: ", _tmpCardArray);
+    console.log("[INFO] #01 @ BEGIN PageCreateInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #01 @ BEGIN PageCreateInnerCard tempCardsArray value: ", _tmpCardArray);
 
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
@@ -47,11 +47,11 @@ export function CreateInnerCard( /* This function is called on the create button
 
     newCard = tempCard;
 
-    console.log("[INFO] #01 @ END CreateInnerCard tempCard value: ", newCard);
-    console.log("[INFO] #01 @ END CreateInnerCard tempCardsArray value: ", _tmpCardArray);
+    console.log("[INFO] #01 @ END PageCreateInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #01 @ END PageCreateInnerCard tempCardsArray value: ", _tmpCardArray);
 }
 
-export function AddInnerCard( /*  This function is called on the form submit */
+export function PageAddInnerCard( /*  This function is called on the form submit */
         event: any, 
         isEdittingInnerCard: boolean,
         editorRef: RefObject<MDXEditorMethods>,
@@ -72,8 +72,8 @@ export function AddInnerCard( /*  This function is called on the form submit */
         description: cardDescription as unknown as string,
     }
 
-    console.log("[INFO] #03 @ BEGIN AddInnerCard tempCard value: ", newCard);
-    console.log("[INFO] #03 @ BEGIN AddInnerCard tempCardsArray value: ", _tmpCardArray);
+    console.log("[INFO] #03 @ BEGIN PageAddInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #03 @ BEGIN PageAddInnerCard tempCardsArray value: ", _tmpCardArray);
 
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
@@ -95,7 +95,7 @@ export function AddInnerCard( /*  This function is called on the form submit */
 
     newCard = tempCard;
 
-    console.log("[INFO] #03 @ END AddInnerCard tempCard value: ", newCard);
-    console.log("[INFO] #03 @ END AddInnerCard tempCardsArray value: ", _tmpCardArray);
+    console.log("[INFO] #03 @ END PageAddInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #03 @ END PageAddInnerCard tempCardsArray value: ", _tmpCardArray);
 
 }

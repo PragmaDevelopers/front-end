@@ -9,7 +9,7 @@ import Calendar from "react-calendar";
 import { HexColorPicker } from "react-colorful";
 import { InnerCardElement } from "@/app/components/dashboard/InnerCard";
 import RichEditor from "@/app/components/dashboard/RichEditor";
-import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
+import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, BootstrapCreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
 import 'react-calendar/dist/Calendar.css';
 import { CommentSection } from "@/app/components/dashboard/Comment";
 import dayjs from "dayjs";
@@ -695,7 +695,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         )
     }
     const handleCreateInnerCard = () => {
-        CreateInnerCard(
+        console.log("#00 BOOTSTRAP CREATE INNER CARD ON CREATEEDITCARD COMPONENT", tempCardsArr);
+        BootstrapCreateInnerCard(
             userValue.userData,
             setModalOpen,
             noButtonRef,

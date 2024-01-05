@@ -44,7 +44,7 @@ import { UpdateColumnTitle, RemoveColumn, CreateNewColumn } from '@/app/utils/da
 import { AddCustomField } from '@/app/utils/dashboard/functions/Page/CustomField';
 import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashboard/functions/Page/InnerCardUtils';
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
-import { AddInnerCard, CreateInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
+import { PageAddInnerCard, PageCreateInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 import { API_BASE_URL } from '@/app/utils/variables';
 
 
@@ -349,8 +349,17 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         );
     }
 
+
+
+
+
+
+
+
+
     const handleAddInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        AddInnerCard(
+        console.log("#0 HANDLE ADD INNER CARD ON PAGE FILE", tempCardsArr);
+        PageAddInnerCard(
             event,
             isEdittingInnerCard,
             editorRef,
@@ -363,7 +372,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const handleCreateInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        CreateInnerCard(
+        console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", tempCardsArr);
+        PageCreateInnerCard(
             event,
             isEdittingInnerCard,
             editorRef,
@@ -377,6 +387,13 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         
     }
 
+
+
+
+
+
+
+
     const handleAppendToTempCardsArray = (newCard: Card) => {
         AppendToTempCardsArray(newCard, tempCardsArr, setTempCardsArr);
     }
@@ -385,6 +402,15 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         const res = PopFromTempCardsArray(tempCardsArr, setTempCardsArr);
         return res;
     }
+
+
+
+
+
+
+
+
+
 
     const handleCreateCard = (columnID: SystemID) => {
         CreateCard(

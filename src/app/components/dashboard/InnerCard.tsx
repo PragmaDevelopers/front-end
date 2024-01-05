@@ -19,7 +19,7 @@ export function InnerCardElement(props: InnerCardElementProps) {
     } = props;
 
     const handleEditCard = (): void => {
-        EditCard(card, setIsEdittingInnerCard, tempCard, tempCardsArr, setTempCard, setTempCardsArr);
+        EditCard(card, setIsEdittingInnerCard, _appendToTempCardsArray, tempCard, tempCardsArr, setTempCard, setTempCardsArr);
     }
 
     return (

@@ -194,7 +194,8 @@ export function appendTempCardToPoppedInnerCards(
         if (cardIndex !== -1) {
             poppedCard.innerCards[cardIndex] = tempCard;
         } else {
-            poppedCard.innerCards.push(tempCard);
+            console.log("BUG ERROR EDIT INNER CARD NOT FOUND ON OUTER CARD.");
+            //poppedCard.innerCards.push(tempCard);
         }
         setTempCard(poppedCard);
         setTempCardsArray(_tmpArray);

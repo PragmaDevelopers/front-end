@@ -81,6 +81,9 @@ export interface CreateEditCardProps {
 
     columnsArray: any;
     dashboards: any;
+
+    setTempCard: any;
+    setTempCardsArr: any;
 }
 
 export interface RichEditorProps {
@@ -112,6 +115,9 @@ export interface InnerCardElementProps {
     setIsEdittingInnerCard: any;
     _appendToTempCardsArray: any;
     _popFromTempCardsArray: any;
+    tempCard: any;
+    setTempCard: any;
+    setTempCardsArr: any;
 }
 
 export interface CommentEntryProps extends Comment {

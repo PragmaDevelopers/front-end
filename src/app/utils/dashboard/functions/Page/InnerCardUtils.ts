@@ -79,8 +79,8 @@ export function appendTempCardToArray (
     let _newTempArray: Card[] = tempCardsArray;
     let _tmpCard: Card = tempCard;
     
-    console.log("[INFO] [01] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", _tmpCard);
-    console.log("[INFO] [01] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
+    console.log("[INFO] #02 [01] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", _tmpCard);
+    console.log("[INFO] #02 [01] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
 
     _newTempArray.push(tempCard);
     let _newTempCard: Card = {
@@ -100,8 +100,8 @@ export function appendTempCardToArray (
     setTempCardsArray(_newTempArray);
     setTempCard(_newTempCard);
 
-    console.log("[INFO] [01] (CREATE) @ END appendTempCardToArray tempCard value: ", _newTempCard);
-    console.log("[INFO] [01] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _newTempArray);
+    console.log("[INFO] #02 [01] (CREATE) @ END appendTempCardToArray tempCard value: ", _newTempCard);
+    console.log("[INFO] #02 [01] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _newTempArray);
 };
 
 /*  [02] (CREATE) SECOND FUNCTION TO BE EXECUTED */
@@ -115,9 +115,9 @@ export function popAndAppendTempCard(
     let _newTempArray: Card[] = tempCardsArray;
     let lastCard = _newTempArray[_newTempArray.length - 1];
 
-    console.log("[INFO] [02] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", tempCard);
-    console.log("[INFO] [02] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
-    console.log("[INFO] [02] (CREATE) @ BEGIN appendTempCardToArray lastCard value: ", lastCard);
+    console.log("[INFO] #04 [02] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", tempCard);
+    console.log("[INFO] #04 [02] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
+    console.log("[INFO] #04 [02] (CREATE) @ BEGIN appendTempCardToArray lastCard value: ", lastCard);
 
     if (lastCard) {
         lastCard.innerCards.push(tempCard);
@@ -126,9 +126,9 @@ export function popAndAppendTempCard(
         setTempCard(lastCard);
 
 
-        console.log("[INFO] [02] (CREATE) @ END appendTempCardToArray tempCard value: ", tempCard);
-        console.log("[INFO] [02] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _mutatedTempArray);
-        console.log("[INFO] [02] (CREATE) @ END appendTempCardToArray lastCard value: ", lastCard);
+        console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray tempCard value: ", tempCard);
+        console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _mutatedTempArray);
+        console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray lastCard value: ", lastCard);
 
         if (callback !== undefined) {
             callback(lastCard);

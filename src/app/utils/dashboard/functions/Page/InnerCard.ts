@@ -18,15 +18,15 @@ export function CreateInnerCard( /* This function is called on the create button
     let _tempCard: Card = tempCard;
     const cardTitle: string = event.target.title.value;
     const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-    const newCard: Card = {
+    let newCard: Card = {
         ..._tempCard,
         title: cardTitle,
         description: cardDescription as unknown as string,
     }
 
 
-    console.log("[INFO] @ BEGIN CreateInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ BEGIN CreateInnerCard tempCardsArray value: ", tempCardsArray);
+    console.log("[INFO] #01 @ BEGIN CreateInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #01 @ BEGIN CreateInnerCard tempCardsArray value: ", tempCardsArray);
 
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
@@ -44,8 +44,10 @@ export function CreateInnerCard( /* This function is called on the create button
         editorRef.current?.setMarkdown("");
     }
 
-    console.log("[INFO] @ END CreateInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ END CreateInnerCard tempCardsArray value: ", tempCardsArray);
+    newCard = tempCard;
+
+    console.log("[INFO] #01 @ END CreateInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #01 @ END CreateInnerCard tempCardsArray value: ", tempCardsArray);
 }
 
 export function AddInnerCard( /*  This function is called on the form submit */
@@ -62,14 +64,14 @@ export function AddInnerCard( /*  This function is called on the form submit */
     let _tempCard: Card = tempCard;
     const cardTitle: string = event.target.title.value;
     const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-    const newCard: Card = {
+    let newCard: Card = {
         ..._tempCard,
         title: cardTitle,
         description: cardDescription as unknown as string,
     }
 
-    console.log("[INFO] @ BEGIN AddInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ BEGIN AddInnerCard tempCardsArray value: ", tempCardsArray);
+    console.log("[INFO] #03 @ BEGIN AddInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #03 @ BEGIN AddInnerCard tempCardsArray value: ", tempCardsArray);
 
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
@@ -78,7 +80,7 @@ export function AddInnerCard( /*  This function is called on the form submit */
             editorRef.current?.setMarkdown(card.description);
         }
         event.target.reset();
-        appendTempCardToPoppedInnerCards(_tempCard, tempCardsArray, setTempCard, setTempCardsArray, callbackFunction);
+        appendTempCardToPoppedInnerCards(newCard, tempCardsArray, setTempCard, setTempCardsArray, callbackFunction);
     } else {
         const callbackFunction = (card: Card) => {
             setEditorText(card.description);
@@ -89,8 +91,9 @@ export function AddInnerCard( /*  This function is called on the form submit */
         popAndAppendTempCard(newCard, tempCardsArray, setTempCard, setTempCardsArray, callbackFunction);
     }
 
+    newCard = tempCard;
 
-    console.log("[INFO] @ END AddInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ END AddInnerCard tempCardsArray value: ", tempCardsArray);
+    console.log("[INFO] #03 @ END AddInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #03 @ END AddInnerCard tempCardsArray value: ", tempCardsArray);
 
 }

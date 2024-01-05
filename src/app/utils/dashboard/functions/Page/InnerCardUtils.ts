@@ -1,4 +1,5 @@
 import { Card, SystemID } from "@/app/types/KanbanTypes";
+import { generateRandomString } from "@/app/utils/generators";
 
 export function AppendToTempCardsArray(
     newCard: Card,
@@ -85,7 +86,7 @@ export function appendTempCardToArray (
     _newTempArray.push(tempCard);
     let _newTempCard: Card = {
         title: "",
-        id: "", // Assuming an appropriate default value for ID
+        id: generateRandomString(), // Assuming an appropriate default value for ID
         columnID: _tmpCard.columnID, // Assuming an appropriate default value for columnID
         description: "",
         checklists: [],

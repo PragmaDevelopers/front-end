@@ -1,5 +1,6 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { Card, KanbanData, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag, DateValue } from "@/app/types/KanbanTypes";
+import { generateRandomString } from "@/app/utils/generators";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { RefObject } from "react";
@@ -52,7 +53,7 @@ export function CreateCard(
     setEditorText("");
 
     setTempCard({
-        id: "",
+        id: generateRandomString(),
         title: "",
         columnID: columnID,
         description: "",
@@ -282,7 +283,7 @@ export function CreateCardForm(
     setEditorText("");
     setTempColumnID("");
     setTempCard({
-        id: "",                                         /////////////////////////////////////////////////////////////////////////////
+        id: generateRandomString(),                                         /////////////////////////////////////////////////////////////////////////////
         title: "",
         columnID: "",
         description: "",

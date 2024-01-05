@@ -184,14 +184,18 @@ export function appendTempCardToPoppedInnerCards(
     callback?: any,
 ): void {
     let _tmpArray = [...tempCardsArray];
-    const poppedCard = _tmpArray.pop();
     let _tmpCard: Card = { ...tempCard };
+
+    console.log("BUG TEST tempCardsArray: ", _tmpArray);
+    console.log("BUG TEST tempCard: ", _tmpCard);
+
+
+
+    const poppedCard = _tmpArray.pop();
     if (poppedCard) {
         const updatedOuterCard = findAndReplaceInnerCard(poppedCard, tempCard);
 
-        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
-        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
-        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
+        
 
         setTempCard(updatedOuterCard);
         setTempCardsArray(_tmpArray);

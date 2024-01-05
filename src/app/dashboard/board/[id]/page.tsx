@@ -353,14 +353,12 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         AddInnerCard(
             event,
             isEdittingInnerCard,
-            AppendToTempCardsArray,
-            PopFromTempCardsArray,
-            tempCard,
-            tempCardsArr,
             editorRef,
+            tempCard,
             setEditorText,
-            setTempCard,
+            tempCardsArr,
             setTempCardsArr,
+            setTempCard,
         );
     }
 
@@ -368,15 +366,13 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         CreateInnerCard(
             event,
             isEdittingInnerCard,
-            AppendToTempCardsArray,
-            PopFromTempCardsArray,
-            tempCard,
-            tempCardsArr,
             editorRef,
+            tempCard,
             setEditorText,
-            setTempCard,
-            setTempCardsArr,
             setIsCreatingInnerCard,
+            tempCardsArr,
+            setTempCardsArr,
+            setTempCard,
         );
         
     }
@@ -385,7 +381,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         AppendToTempCardsArray(newCard, tempCardsArr, setTempCardsArr);
     }
 
-    const handlePopFromTempCardsArray = (): Card => {
+    const handlePopFromTempCardsArray = (): Card | undefined => {
         const res = PopFromTempCardsArray(tempCardsArr, setTempCardsArr);
         return res;
     }

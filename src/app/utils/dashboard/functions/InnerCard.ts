@@ -1,12 +1,10 @@
 import { Card } from "@/app/types/KanbanTypes";
 
-export function EditCard(card: Card, tempCardsArr: Card[],
+export function EditCard(
+    card: Card,
     setIsEdittingInnerCard: (value: boolean) => void,
-    _appendToTempCardsArray: (value: Card) => void
+    appendToTempCardsArray: any,
 ): void {
-    console.log("editing inner card", card);
-    console.log(`BEFORE appending`, card, "to", tempCardsArr);
     setIsEdittingInnerCard(true);
-    _appendToTempCardsArray(card);
-    console.log(`AFTER appending to`, tempCardsArr);
+    appendToTempCardsArray(card);
 }

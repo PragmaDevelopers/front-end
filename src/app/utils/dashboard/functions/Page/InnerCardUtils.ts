@@ -6,13 +6,13 @@ export function AppendToTempCardsArray(
     setTempCardsArr: any,
     ) {
     let _tmpCard: Card = newCard;
-    let _tmpArray: Card[] = tempCardsArray;
+    let _tmpArray: Card[] = tempCardsArr;
     _tmpArray.push(_tmpCard);
     setTempCardsArr(_tmpArray);
 }
 
 export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any): Card | undefined {
-    let _tmpArray: Card[] = tempCardsArray;
+    let _tmpArray: Card[] = tempCardsArr;
     const retVal = _tmpArray.pop();
     setTempCardsArr(_tmpArray);
     return retVal;

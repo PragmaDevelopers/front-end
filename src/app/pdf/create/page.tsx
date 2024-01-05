@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 const Mustache = require('mustache');
 
 import '@mdxeditor/editor/style.css'
-import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, UndoRedo, BoldItalicUnderlineToggles, toolbarPlugin, corePluginHooks, InsertTable, tablePlugin } from "@mdxeditor/editor";
-import { root } from "postcss";
+import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, UndoRedo, BoldItalicUnderlineToggles, toolbarPlugin, InsertImage, imagePlugin } from "@mdxeditor/editor";
 import { IFormSignUpInputs } from "@/app/types/RegisterClientFormTypes";
+import ImageUploader from "@/app/components/global/ImageUploader";
 
 function EditPdf() {
   const [signUpData, setSignUpData] = useState<IFormSignUpInputs>();
@@ -125,7 +125,7 @@ function EditPdf() {
     const filterTextToPdf = spaceVerification(textToPdf.split("\n\n"));
     var output = Mustache.render(filterTextToPdf.join("\n\n"), signUpData);
     console.log(output)
-    sessionStorage.setItem("pdf_info", JSON.stringify(output));
+    sessionStorage.setItem("pdfInfo", JSON.stringify(output));
     router.push("./view");
   }
 
@@ -178,10 +178,28 @@ function EditPdf() {
         }
       }}>
         <MDXEditor contentEditableClassName="prose" ref={ref} markdown={""}
-          plugins={[tablePlugin(),
+          plugins={[imagePlugin({
+            imageUploadHandler: async (image) => {
+              // Função para converter uma imagem para base64
+              const imageToBase64 = (file:any) => {
+                return new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(reader.result);
+                  reader.onerror = (error) => reject(error);
+                  reader.readAsDataURL(file);
+                });
+              };
+
+              // Converta a imagem para base64
+              const base64String = await imageToBase64(image) as string;
+
+              // Retorne a string base64
+              return Promise.resolve(base64String);
+            },
+          }),
           headingsPlugin(),
           toolbarPlugin({
-            toolbarContents: () => (<><UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles /></>)
+            toolbarContents: () => (<><UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles /><InsertImage /></>)
           })]}
         />
       </div>

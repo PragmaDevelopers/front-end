@@ -31,15 +31,45 @@ export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any
 
 
 export function removeCardById(targetId: SystemID, card: Card): Card {
-  card.innerCards = card.innerCards.filter(innerCard => innerCard.id !== targetId);
+    const _tmpCard: Card = card;
+    _tmpCard.innerCards = card.innerCards.filter((innerCard: Card) => innerCard.id !== targetId);
 
-  for (const innerCard of card.innerCards) {
-    removeCardById(targetId, innerCard);
-  }
+    for (const innerCard of _tmpCard.innerCards) {
+        removeCardById(targetId, innerCard);
+    }
 
-  return card;
+    return card;
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*  [01] (CREATE) FIRST FUNCTION TO BE EXECUTED */
 export function appendTempCardToArray (
     tempCard: Card,
     tempCardsArray: Card[],
@@ -47,15 +77,16 @@ export function appendTempCardToArray (
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
 ): void {
     let _newTempArray: Card[] = tempCardsArray;
+    let _tmpCard: Card = tempCard;
     
-    console.log("[INFO] @ BEGIN appendTempCardToArray tempCard value: ", tempCard);
-    console.log("[INFO] @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
+    console.log("[INFO] [01] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", _tmpCard);
+    console.log("[INFO] [01] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
 
     _newTempArray.push(tempCard);
     let _newTempCard: Card = {
         title: "",
         id: "", // Assuming an appropriate default value for ID
-        columnID: tempCard.columnID, // Assuming an appropriate default value for columnID
+        columnID: _tmpCard.columnID, // Assuming an appropriate default value for columnID
         description: "",
         checklists: [],
         tags: [],
@@ -69,10 +100,11 @@ export function appendTempCardToArray (
     setTempCardsArray(_newTempArray);
     setTempCard(_newTempCard);
 
-    console.log("[INFO] @ END appendTempCardToArray tempCard value: ", tempCard);
-    console.log("[INFO] @ END appendTempCardToArray tempCardArray value: ", _newTempArray);
+    console.log("[INFO] [01] (CREATE) @ END appendTempCardToArray tempCard value: ", _newTempCard);
+    console.log("[INFO] [01] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _newTempArray);
 };
 
+/*  [02] (CREATE) SECOND FUNCTION TO BE EXECUTED */
 export function popAndAppendTempCard(
     tempCard: Card,
     tempCardsArray: Card[],
@@ -83,9 +115,9 @@ export function popAndAppendTempCard(
     let _newTempArray: Card[] = tempCardsArray;
     let lastCard = _newTempArray[_newTempArray.length - 1];
 
-    console.log("[INFO] @ BEGIN appendTempCardToArray tempCard value: ", tempCard);
-    console.log("[INFO] @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
-    console.log("[INFO] @ BEGIN appendTempCardToArray lastCard value: ", lastCard);
+    console.log("[INFO] [02] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", tempCard);
+    console.log("[INFO] [02] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
+    console.log("[INFO] [02] (CREATE) @ BEGIN appendTempCardToArray lastCard value: ", lastCard);
 
     if (lastCard) {
         lastCard.innerCards.push(tempCard);
@@ -94,9 +126,9 @@ export function popAndAppendTempCard(
         setTempCard(lastCard);
 
 
-        console.log("[INFO] @ END appendTempCardToArray tempCard value: ", tempCard);
-        console.log("[INFO] @ END appendTempCardToArray tempCardArray value: ", _mutatedTempArray);
-        console.log("[INFO] @ END appendTempCardToArray lastCard value: ", lastCard);
+        console.log("[INFO] [02] (CREATE) @ END appendTempCardToArray tempCard value: ", tempCard);
+        console.log("[INFO] [02] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _mutatedTempArray);
+        console.log("[INFO] [02] (CREATE) @ END appendTempCardToArray lastCard value: ", lastCard);
 
         if (callback !== undefined) {
             callback(lastCard);
@@ -105,6 +137,103 @@ export function popAndAppendTempCard(
 
 
 };
+
+
+/*  [01] (EDIT) FIRST FUNCTION TO BE EXECUTED */
+export function swapTempCardWithLast(
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
+): void {
+    let _cardsArray: Card[] = tempCardsArray;
+    let _tmpCard: Card = tempCard;
+    const poppedCard = _cardsArray.pop();
+
+
+    console.log("[INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast tempCard value: ", _tmpCard);
+    console.log("[INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast tempCardArray value: ", _cardsArray);
+    console.log("[INFO] [01] (EDIT) @ BEGIN swapTempCardWithLast poppedCard value: ", poppedCard);
+
+    if (poppedCard) {
+        _cardsArray.push(_tmpCard);
+        setTempCardsArray(_cardsArray);
+        setTempCard(poppedCard);
+        callback(poppedCard);
+
+        console.log("[INFO] [01] (EDIT) @ END swapTempCardWithLast tempCard value: ", _tmpCard);
+        console.log("[INFO] [01] (EDIT) @ END swapTempCardWithLast tempCardArray value: ", _cardsArray);
+        console.log("[INFO] [01] (EDIT) @ END swapTempCardWithLast poppedCard value: ", poppedCard);
+
+    }
+};
+
+/*  [02] (EDIT) SECOND FUNCTION TO BE EXECUTED */
+export function appendTempCardToPoppedInnerCards(
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
+): void {
+    let _tmpArray = tempCardsArray;
+    const poppedCard = _tmpArray.pop();
+    if (poppedCard) {
+        const cardIndex = poppedCard.innerCards.findIndex(card => card.id === tempCard.id);
+
+        console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", tempCard);
+        console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
+        console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
+        console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
+
+        if (cardIndex !== -1) {
+            poppedCard.innerCards[cardIndex] = tempCard;
+        } else {
+            poppedCard.innerCards.push(tempCard);
+        }
+        setTempCard(poppedCard);
+        setTempCardsArray(_tmpArray);
+        if (callback) {
+            callback(poppedCard);
+        }
+
+        console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCard value: ", tempCard);
+        console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
+        console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
+        console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
+
+
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function appendAndSetTempCardById(
     cardID: SystemID,
@@ -128,72 +257,6 @@ export function appendAndSetTempCardById(
         console.log("[INFO] @ END appendTempCardToArray tempCard value: ", tempCard);
         console.log("[INFO] @ END appendTempCardToArray tempCardArray value: ", _newTempArray);
         console.log("[INFO] @ END appendTempCardToArray matchingCard value: ", matchingCard);
-
-    }
-};
-
-export function swapTempCardWithLast(
-    tempCard: Card,
-    tempCardsArray: Card[],
-    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
-    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
-    callback?: any,
-): void {
-    let _cardsArray: Card[] = tempCardsArray;
-    let _tmpCard: Card = tempCard;
-    const poppedCard = _cardsArray.pop();
-
-
-    console.log("[INFO] @ BEGIN swapTempCardWithLast tempCard value: ", _tmpCard);
-    console.log("[INFO] @ BEGIN swapTempCardWithLast tempCardArray value: ", _cardsArray);
-    console.log("[INFO] @ BEGIN swapTempCardWithLast poppedCard value: ", poppedCard);
-
-    if (poppedCard) {
-        _cardsArray.push(_tmpCard);
-        setTempCardsArray(_cardsArray);
-        setTempCard(poppedCard);
-        callback(poppedCard);
-
-        console.log("[INFO] @ END swapTempCardWithLast tempCard value: ", _tmpCard);
-        console.log("[INFO] @ END swapTempCardWithLast tempCardArray value: ", _cardsArray);
-        console.log("[INFO] @ END swapTempCardWithLast poppedCard value: ", poppedCard);
-
-    }
-};
-
-export function appendTempCardToPoppedInnerCards(
-    tempCard: Card,
-    tempCardsArray: Card[],
-    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
-    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
-    callback?: any,
-): void {
-    let _tmpArray = tempCardsArray;
-    const poppedCard = _tmpArray.pop();
-    if (poppedCard) {
-        const cardIndex = poppedCard.innerCards.findIndex(card => card.id === tempCard.id);
-
-        console.log("[INFO] @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", tempCard);
-        console.log("[INFO] @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
-        console.log("[INFO] @ BEGIN appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
-        console.log("[INFO] @ BEGIN appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
-
-        if (cardIndex !== -1) {
-            poppedCard.innerCards[cardIndex] = tempCard;
-        } else {
-            poppedCard.innerCards.push(tempCard);
-        }
-        setTempCard(poppedCard);
-        setTempCardsArray(_tmpArray);
-        if (callback) {
-            callback(poppedCard);
-        }
-
-        console.log("[INFO] @ END appendTempCardToPoppedInnerCards tempCard value: ", tempCard);
-        console.log("[INFO] @ END appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
-        console.log("[INFO] @ END appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
-        console.log("[INFO] @ END appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
-
 
     }
 };

@@ -3,26 +3,18 @@ import { Card, SystemID } from "@/app/types/KanbanTypes";
 export function AppendToTempCardsArray(
     newCard: Card,
     tempCardsArr: Card[],
-    setTempCardsArr: (arg0: ((arg0: Card[]) => Card[]) | Card[]) => void,
+    setTempCardsArr: any,
     ) {
-    console.log("APPENDING", newCard, "TO", tempCardsArr);
-    setTempCardsArr((prevArr: Card[]) => {
-        console.log(prevArr);
-        console.log(tempCardsArr);
-        return [...prevArr, newCard] as Card[];
-    });
-    console.log(tempCardsArr);
+    let _tmpCard: Card = newCard;
+    let _tmpArray: Card[] = tempCardsArr;
+    _tmpArray.push(_tmpCard);
+    setTempCardsArr(_tmpArray);
 }
 
-export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: (arg0: ((arg0: Card[]) => Card[]) | Card[]) => void): Card {
-    const retVal = tempCardsArr[tempCardsArr.length - 1];
-    setTempCardsArr((prevArr: Card[]) => {
-        console.log(prevArr);
-        console.log(tempCardsArr);
-        const tPrevArr: Card[] = prevArr.slice(0, -1);
-        return tPrevArr;
-    });
-    console.log("POPPING", retVal, "FROM", tempCardsArr);
+export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any): Card | undefined {
+    let _tmpArray: Card[] = tempCardsArr;
+    const retVal = _tmpArray.pop();
+    setTempCardsArr(_tmpArray);
     return retVal;
 }
 
@@ -65,18 +57,22 @@ export function appendTempCardToArray (
 };
 
 export function popAndAppendTempCard(
-  tempCard: Card,
-  tempCardsArray: Card[],
-  setTempCard: React.Dispatch<React.SetStateAction<Card>>,
-  setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
 ): void {
     let _newTempArray: Card[] = tempCardsArray;
-    const lastCard = _newTempArray[_newTempArray.length - 1];
+    let lastCard = _newTempArray[_newTempArray.length - 1];
     if (lastCard) {
         lastCard.innerCards.push(tempCard);
         let _mutatedTempArray: Card[] = _newTempArray.slice(0, -1);
         setTempCardsArray(_mutatedTempArray);
         setTempCard(lastCard);
+        if (callback !== undefined) {
+            callback(lastCard);
+        }
   }
 };
 
@@ -85,14 +81,56 @@ export function appendAndSetTempCardById(
     tempCard: Card,
     tempCardsArray: Card[],
     setTempCard: React.Dispatch<React.SetStateAction<Card>>,
-    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
 ): void {
-    const matchingCard = tempCard.innerCards.find(card => card.id === cardID);
-    if (matchingCard) {
         let _newTempArray: Card[] = tempCardsArray;
+        const matchingCard = tempCard.innerCards.find(card => card.id === cardID);
+        if (matchingCard) {
         _newTempArray.push(tempCard);
         setTempCardsArray(_newTempArray);
         setTempCard(matchingCard);
-  }
+    }
+};
+
+export function swapTempCardWithLast(
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
+): void {
+    let _cardsArray: Card[] = tempCardsArray;
+    let _tmpCard: Card = tempCard;
+    const poppedCard = _cardsArray.pop();
+    if (poppedCard) {
+        _cardsArray.push(_tmpCard);
+        setTempCardsArray(_cardsArray);
+        setTempCard(poppedCard);
+        callback(poppedCard);
+    }
+};
+
+export function appendTempCardToPoppedInnerCards(
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
+): void {
+    let _tmpArray = tempCardsArray;
+    const poppedCard = _tmpArray.pop();
+    if (poppedCard) {
+        const cardIndex = poppedCard.innerCards.findIndex(card => card.id === tempCard.id);
+        if (cardIndex !== -1) {
+            poppedCard.innerCards[cardIndex] = tempCard;
+        } else {
+            poppedCard.innerCards.push(tempCard);
+        }
+        setTempCard(poppedCard);
+        setTempCardsArray(_tmpArray);
+        if (callback) {
+            callback(poppedCard);
+        }
+    }
 };
 

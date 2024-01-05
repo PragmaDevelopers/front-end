@@ -357,6 +357,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
     const setTempCardsArr = (value: any) => {
         console.log("## APPENDING VALUE", value, "TO", tempCardsArr);
+        setTempCardsArrr(value);
     }
 
     const handleAddInnerCard = (event: any, isEdittingInnerCard: boolean) => {

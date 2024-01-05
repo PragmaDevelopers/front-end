@@ -66,7 +66,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [isEdition, setIsEdition] = useState<boolean>(false);
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
     const [editorText, setEditorText] = useState<string>("");
-    const [tempCardsArr, setTempCardsArr] = useState<Card[]>([]);
+    const [tempCardsArr, setTempCardsArrr] = useState<Card[]>([]);
     const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
     const [isEdittingInnerCard, setIsEdittingInnerCard] = useState<boolean>(false);
     const [modalTitle, setModalTitle] = useState<string>("");
@@ -355,7 +355,9 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
 
 
-
+    const setTempCardsArr = (value: any) => {
+        console.log("## APPENDING VALUE", value, "TO", tempCardsArr);
+    }
 
     const handleAddInnerCard = (event: any, isEdittingInnerCard: boolean) => {
         console.log("#0 HANDLE ADD INNER CARD ON PAGE FILE", tempCardsArr);

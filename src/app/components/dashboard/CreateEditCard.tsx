@@ -558,6 +558,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const handleCreateCardForm = (event: any) => {
         const clickedButton = event.nativeEvent.submitter;
+        console.log("[INFO]", isCreatingInnerCard, clickedButton.id);
         if (isCreatingInnerCard || clickedButton.id === "innerCard") {
             console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
             createInnerCard(event, isEdittingInnerCard);
@@ -709,6 +710,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
             setIsCreatingInnerCard,
             tempCardsArr,
         )
+        console.log("#### isCreatingInnerCard", isCreatingInnerCard);
     }
 
     const cardDateOBJ = dayjs(card.date);

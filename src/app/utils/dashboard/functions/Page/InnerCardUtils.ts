@@ -6,7 +6,7 @@ export function AppendToTempCardsArray(
     setTempCardsArr: any,
     ) {
     let _tmpCard: Card = {...newCard};
-    let _tmpArray: Card[] = [...tempCardsArray];
+    let _tmpArray: Card[] = [...tempCardsArr];
     
     console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCard value: ", _tmpCard);
     console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCardArray value: ", _tmpArray);

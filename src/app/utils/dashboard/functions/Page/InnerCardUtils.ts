@@ -249,6 +249,7 @@ export function appendAndSetTempCard(
     
     console.log("=== EDIT === [INFO] @ BEGIN appendAndSetTempCard tempCard value: ", _tmpCard);
     console.log("=== EDIT === [INFO] @ BEGIN appendAndSetTempCard tempCardsArray value: ", _newTempArray);
+    console.log("=== EDIT === [INFO] @ SINGLE appendAndSetTempCard currentCard value: ", _card);
     
 
     _newTempArray.push(_tmpCard);

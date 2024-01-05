@@ -5,8 +5,8 @@ export function AppendToTempCardsArray(
     tempCardsArr: Card[],
     setTempCardsArr: any,
     ) {
-    let _tmpCard: Card = newCard;
-    let _tmpArray: Card[] = tempCardsArr;
+    let _tmpCard: Card = {...newCard};
+    let _tmpArray: Card[] = [...tempCardsArray];
     
     console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCard value: ", _tmpCard);
     console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCardArray value: ", _tmpArray);
@@ -20,7 +20,7 @@ export function AppendToTempCardsArray(
 }
 
 export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any): Card | undefined {
-    let _tmpArray: Card[] = tempCardsArr;
+    let _tmpArray: Card[] = [...tempCardsArr];
     console.log("[INFO] @ BEGIN PopFromTempCardsArray tempCardArray value: ", _tmpArray);
     const retVal = _tmpArray.pop();
     setTempCardsArr(_tmpArray);
@@ -31,7 +31,7 @@ export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any
 
 
 export function removeCardById(targetId: SystemID, card: Card): Card {
-    const _tmpCard: Card = card;
+    const _tmpCard: Card = {...card};
     _tmpCard.innerCards = card.innerCards.filter((innerCard: Card) => innerCard.id !== targetId);
 
     for (const innerCard of _tmpCard.innerCards) {
@@ -76,8 +76,8 @@ export function appendTempCardToArray (
     setTempCard: React.Dispatch<React.SetStateAction<Card>>,
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
 ): void {
-    let _newTempArray: Card[] = tempCardsArray;
-    let _tmpCard: Card = tempCard;
+    let _newTempArray: Card[] = [...tempCardsArray];
+    let _tmpCard: Card = {...tempCard};
     
     console.log("[INFO] #02 [01] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", _tmpCard);
     console.log("[INFO] #02 [01] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
@@ -112,21 +112,23 @@ export function popAndAppendTempCard(
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
     callback?: any,
 ): void {
-    let _newTempArray: Card[] = tempCardsArray;
+    let _newTempArray: Card[] = [...tempCardsArray];
+    let _tmpCard: Card = {...tempCard};
     let lastCard = _newTempArray[_newTempArray.length - 1];
 
-    console.log("[INFO] #04 [02] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", tempCard);
+    console.log("[INFO] #04 [02] (CREATE) @ BEGIN appendTempCardToArray tempCard value: ", _tmpCard);
     console.log("[INFO] #04 [02] (CREATE) @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
     console.log("[INFO] #04 [02] (CREATE) @ BEGIN appendTempCardToArray lastCard value: ", lastCard);
 
     if (lastCard) {
-        lastCard.innerCards.push(tempCard);
+        lastCard.innerCards.push(_tmpCard);
         let _mutatedTempArray: Card[] = _newTempArray.slice(0, -1);
         setTempCardsArray(_mutatedTempArray);
         setTempCard(lastCard);
+        _tmpCard = {...lastCard};
 
 
-        console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray tempCard value: ", tempCard);
+        console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray tempCard value: ", _tmpCard);
         console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _mutatedTempArray);
         console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray lastCard value: ", lastCard);
 
@@ -147,8 +149,8 @@ export function swapTempCardWithLast(
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
     callback?: any,
 ): void {
-    let _cardsArray: Card[] = tempCardsArray;
-    let _tmpCard: Card = tempCard;
+    let _cardsArray: Card[] = [...tempCardsArray];
+    let _tmpCard: Card = {...tempCard};
     const poppedCard = _cardsArray.pop();
 
 
@@ -177,12 +179,13 @@ export function appendTempCardToPoppedInnerCards(
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
     callback?: any,
 ): void {
-    let _tmpArray = tempCardsArray;
+    let _tmpArray = [...tempCardsArray];
     const poppedCard = _tmpArray.pop();
+    let _tmpCard: Card = {...tempCard};
     if (poppedCard) {
         const cardIndex = poppedCard.innerCards.findIndex(card => card.id === tempCard.id);
 
-        console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", tempCard);
+        console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
         console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
         console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
         console.log("[INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
@@ -198,7 +201,9 @@ export function appendTempCardToPoppedInnerCards(
             callback(poppedCard);
         }
 
-        console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCard value: ", tempCard);
+        _tmpCard = {...poppedCard};
+
+        console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
         console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
         console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
         console.log("[INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
@@ -242,10 +247,11 @@ export function appendAndSetTempCardById(
     setTempCard: React.Dispatch<React.SetStateAction<Card>>,
     setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
 ): void {
-    let _newTempArray: Card[] = tempCardsArray;
+    let _newTempArray: Card[] = [...tempCardsArray];
+    let _tmpCard: Card = {...tempCard};
     const matchingCard = tempCard.innerCards.find(card => card.id === cardID);
 
-    console.log("[INFO] @ BEGIN appendTempCardToArray tempCard value: ", tempCard);
+    console.log("[INFO] @ BEGIN appendTempCardToArray tempCard value: ", _tmpCard);
     console.log("[INFO] @ BEGIN appendTempCardToArray tempCardArray value: ", _newTempArray);
     console.log("[INFO] @ BEGIN appendTempCardToArray matchingCard value: ", matchingCard);
 
@@ -253,8 +259,8 @@ export function appendAndSetTempCardById(
         _newTempArray.push(tempCard);
         setTempCardsArray(_newTempArray);
         setTempCard(matchingCard);
-
-        console.log("[INFO] @ END appendTempCardToArray tempCard value: ", tempCard);
+        _tmpCard = {...matchingCard};
+        console.log("[INFO] @ END appendTempCardToArray tempCard value: ", _tmpCard);
         console.log("[INFO] @ END appendTempCardToArray tempCardArray value: ", _newTempArray);
         console.log("[INFO] @ END appendTempCardToArray matchingCard value: ", matchingCard);
 

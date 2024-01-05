@@ -1,5 +1,5 @@
 import { renderToString } from 'react-dom/server';
-import { PDFRenderer,pdf, BlobProvider,Document, Page, renderToBuffer,Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { PDFRenderer,pdf, BlobProvider,Document, Page, Image,Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 import { NextResponse,NextRequest } from 'next/server'
 
 
@@ -37,6 +37,7 @@ function boldItalicValidation(regex:RegExp,line:string,index:number){
   }
   
     let wordSplit = line.match(regex);
+    console.log(wordSplit)
     const arr = []
     if(wordSplit){
       
@@ -112,7 +113,17 @@ export default function pdfGenerator({data}:{data:string[]}) {
                       if(line.match(/&#x20;/g)){
                         line = line.replace(/&#x20;/g,"")
                       }
-                      let regex = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
+                      let regex = /data:image\/jpeg;base64,([^)]*)\)/;
+                      if(line.match(regex)){
+                        const match = line.match(regex);
+                        if(match){
+                          const base64Data = match[1];
+                          console.log(base64Data)
+                          return <Image key={"image"+index} src={"data:image/jpeg;base64,"+base64Data}  />
+                        }
+                      }
+
+                      regex = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
                       if(line.match(regex)){
                         return boldItalicValidation(regex,line,index);
                       }

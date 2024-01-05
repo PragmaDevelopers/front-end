@@ -9,7 +9,7 @@ import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, UndoRedo,
 import { root } from "postcss";
 import { IFormSignUpInputs } from "@/app/types/RegisterClientFormTypes";
 
-function editPdf() {
+function EditPdf() {
   const [signUpData, setSignUpData] = useState<IFormSignUpInputs>();
   const [variable, setVariable] = useState<string>("");
 
@@ -189,4 +189,4 @@ function editPdf() {
   );
 }
 
-export default editPdf;
+export default EditPdf;

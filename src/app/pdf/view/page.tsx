@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import pdfGenerator from '../../utils/pdfGenerator';
 import { pdf } from "@react-pdf/renderer";
 
-function viewPdf() {
+function ViewPdf() {
   const ref = useRef<HTMLIFrameElement>(null);
   const [height,setHeight] = useState(700);
   useEffect(() => {
@@ -31,4 +31,4 @@ function viewPdf() {
   );
 }
 
-export default viewPdf;
+export default ViewPdf;

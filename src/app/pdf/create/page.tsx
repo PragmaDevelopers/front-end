@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 const Mustache = require('mustache');
 
 import '@mdxeditor/editor/style.css'
-import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, UndoRedo, BoldItalicUnderlineToggles, toolbarPlugin, InsertImage, imagePlugin } from "@mdxeditor/editor";
+import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, UndoRedo, BoldItalicUnderlineToggles, toolbarPlugin, tablePlugin, InsertImage, imagePlugin } from "@mdxeditor/editor";
 import { IFormSignUpInputs } from "@/app/types/RegisterClientFormTypes";
-import ImageUploader from "@/app/components/global/ImageUploader";
 
 function EditPdf() {
   const [signUpData, setSignUpData] = useState<IFormSignUpInputs>();
@@ -143,11 +142,14 @@ function EditPdf() {
         </div>
         <button onClick={() => formSubmit()} type="button" className="bg-slate-400 p-2 rounded-md">Criar PDF</button>
       </div>
-      <div onSelect={() => {
+      <div onSelect={(e) => {
         const selection = window.getSelection();
+        console.log(e)
         if (selection?.rangeCount) {
           manipulateProseClass({ restoreIds: true });
-          let selectionText = selection.toString();
+
+          console.log("arroz")
+
           let start = selection.getRangeAt(0).startOffset;
           sessionStorage.setItem("edit_pdf_start_index", start.toString())
 
@@ -162,7 +164,6 @@ function EditPdf() {
 
           if (targetElement) {
             sessionStorage.setItem(`edit_pdf_line_selected`, targetElement.id);
-            console.log(targetElement.id)
             sessionStorage.setItem(`edit_pdf_line_children_count`, targetElement.children.length.toString());
           }
           const targetElementChildren = targetElement?.children;
@@ -197,6 +198,7 @@ function EditPdf() {
               return Promise.resolve(base64String);
             },
           }),
+          tablePlugin(),
           headingsPlugin(),
           toolbarPlugin({
             toolbarContents: () => (<><UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles /><InsertImage /></>)

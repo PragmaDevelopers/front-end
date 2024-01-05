@@ -9,15 +9,15 @@ export function AppendToTempCardsArray(
     let _tmpCard: Card = {...newCard};
     let _tmpArray: Card[] = [...tempCardsArr];
     
-    console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCard value: ", _tmpCard);
-    console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCardArray value: ", _tmpArray);
+    console.log("[INFO] BUG @ BEGIN AppendToTempCardsArray tempCard value: ", _tmpCard);
+    console.log("[INFO] BUG @ BEGIN AppendToTempCardsArray tempCardArray value: ", _tmpArray);
 
 
     _tmpArray.push(_tmpCard);
     setTempCardsArr(_tmpArray);
 
-    console.log("[INFO] @ END AppendToTempCardsArray tempCard value: ", _tmpCard);
-    console.log("[INFO] @ END AppendToTempCardsArray tempCardArray value: ", _tmpArray);
+    console.log("[INFO] BUG @ END AppendToTempCardsArray tempCard value: ", _tmpCard);
+    console.log("[INFO] BUG @ END AppendToTempCardsArray tempCardArray value: ", _tmpArray);
 }
 
 export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any): Card | undefined {
@@ -186,10 +186,10 @@ export function appendTempCardToPoppedInnerCards(
     if (poppedCard) {
         const cardIndex = poppedCard.innerCards.findIndex(card => card.id === tempCard.id);
 
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
 
         if (cardIndex !== -1) {
             poppedCard.innerCards[cardIndex] = tempCard;
@@ -204,10 +204,10 @@ export function appendTempCardToPoppedInnerCards(
 
         _tmpCard = {...poppedCard};
 
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ END appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ END appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
 
 
     }

@@ -370,7 +370,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             tempCardsArr,
             setTempCardsArr,
             setTempCard,
-            setIsCreatingInnerCard,
         );
     }
 
@@ -382,6 +381,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             editorRef,
             tempCard,
             setEditorText,
+            setIsCreatingInnerCard,
             tempCardsArr,
             setTempCardsArr,
             setTempCard,

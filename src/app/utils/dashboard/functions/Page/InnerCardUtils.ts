@@ -98,6 +98,8 @@ export function appendTempCardToArray (
         innerCards: [],
     }
     setTempCardsArray(_newTempArray);
+    setTempCardsArray(_newTempArray);
+    setTempCardsArray(_newTempArray);
     setTempCard(_newTempCard);
 
     console.log("[INFO] #02 [01] (CREATE) @ END appendTempCardToArray tempCard value: ", _newTempCard);
@@ -124,9 +126,10 @@ export function popAndAppendTempCard(
         lastCard.innerCards.push(_tmpCard);
         let _mutatedTempArray: Card[] = _newTempArray.slice(0, -1);
         setTempCardsArray(_mutatedTempArray);
+        setTempCardsArray(_mutatedTempArray);
+        setTempCardsArray(_mutatedTempArray);
         setTempCard(lastCard);
         _tmpCard = {...lastCard};
-
 
         console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray tempCard value: ", _tmpCard);
         console.log("[INFO] #04 [02] (CREATE) @ END appendTempCardToArray tempCardArray value: ", _mutatedTempArray);

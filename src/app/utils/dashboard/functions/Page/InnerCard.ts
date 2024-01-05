@@ -35,8 +35,6 @@ export function PageEditInnerCard(/* This function is called on the inner card b
     swapTempCardWithLast(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);  
 }
 
-
-
 export function PageCreateInnerCard( /* This function is called on the create button */
         event: any, 
         isEdittingInnerCard: boolean,
@@ -59,13 +57,26 @@ export function PageCreateInnerCard( /* This function is called on the create bu
         description: cardDescription as unknown as string,
     }
     console.log("[INFO] #01 @ BEGIN PageCreateInnerCard tempCard value: ", newCard);
-    console.log("[INFO] #01 @ BEGIN PageCreateInnerCard tempCardsArray value: ", _tmpCardArray);
-    appendTempCardToArray(newCard, _tmpCardArray, setTempCard, setTempCardsArray);
-    event.target.reset();
-    setEditorText("");
-    setIsCreatingInnerCard(false);
-    editorRef.current?.setMarkdown("");
-    newCard = tempCard;
+    console.log("[INFO] #01 @ BEGIN PageCreateInnerCard tempCardsArray value: ", _tmpCardArray); 
+
+    if (isEdittingInnerCard) {
+        const callbackFunction = (card: Card) => {
+            event.target.title.value = card.title;
+            setEditorText(card.description);
+            editorRef.current?.setMarkdown(card.description);
+        }
+        event.target.reset();
+        swapTempCardWithLast(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);  
+    } else {
+        appendTempCardToArray(newCard, _tmpCardArray, setTempCard, setTempCardsArray);
+        event.target.reset();
+        setEditorText("");
+        setIsCreatingInnerCard(false);
+        editorRef.current?.setMarkdown("");
+        newCard = tempCard;
+    }
+
+
     console.log("[INFO] #01 @ END PageCreateInnerCard tempCard value: ", newCard);
     console.log("[INFO] #01 @ END PageCreateInnerCard tempCardsArray value: ", _tmpCardArray);
 }

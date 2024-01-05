@@ -3,7 +3,7 @@ import { MDXEditorMethods } from "@mdxeditor/editor";
 import { RefObject } from "react";
 import { appendTempCardToArray, appendTempCardToPoppedInnerCards, popAndAppendTempCard, swapTempCardWithLast } from "./InnerCardUtils";
 
-export function CreateInnerCard( /* This function is called on the create button */
+export function PageCreateInnerCard( /* This function is called on the create button */
         event: any, 
         isEdittingInnerCard: boolean,
         editorRef: RefObject<MDXEditorMethods>,
@@ -16,17 +16,18 @@ export function CreateInnerCard( /* This function is called on the create button
     ) {
     event.preventDefault();
     let _tempCard: Card = tempCard;
+    let _tmpCardArray: Card[] = tempCardsArray;
     const cardTitle: string = event.target.title.value;
     const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-    const newCard: Card = {
+    let newCard: Card = {
         ..._tempCard,
         title: cardTitle,
         description: cardDescription as unknown as string,
     }
 
 
-    console.log("[INFO] @ BEGIN CreateInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ BEGIN CreateInnerCard tempCardsArray value: ", tempCardsArray);
+    console.log("[INFO] #01 @ BEGIN PageCreateInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #01 @ BEGIN PageCreateInnerCard tempCardsArray value: ", _tmpCardArray);
 
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
@@ -35,20 +36,22 @@ export function CreateInnerCard( /* This function is called on the create button
             editorRef.current?.setMarkdown(card.description);
         }
         event.target.reset();
-        swapTempCardWithLast(newCard, tempCardsArray, setTempCard, setTempCardsArray, callbackFunction);
+        swapTempCardWithLast(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
     } else {
-        appendTempCardToArray(newCard, tempCardsArray, setTempCard, setTempCardsArray);
+        appendTempCardToArray(newCard, _tmpCardArray, setTempCard, setTempCardsArray);
         event.target.reset();
         setEditorText("");
         setIsCreatingInnerCard(false);
         editorRef.current?.setMarkdown("");
     }
 
-    console.log("[INFO] @ END CreateInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ END CreateInnerCard tempCardsArray value: ", tempCardsArray);
+    newCard = tempCard;
+
+    console.log("[INFO] #01 @ END PageCreateInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #01 @ END PageCreateInnerCard tempCardsArray value: ", _tmpCardArray);
 }
 
-export function AddInnerCard( /*  This function is called on the form submit */
+export function PageAddInnerCard( /*  This function is called on the form submit */
         event: any, 
         isEdittingInnerCard: boolean,
         editorRef: RefObject<MDXEditorMethods>,
@@ -60,16 +63,17 @@ export function AddInnerCard( /*  This function is called on the form submit */
     ) {
     event.preventDefault();
     let _tempCard: Card = tempCard;
+    let _tmpCardArray: Card[] = tempCardsArray;
     const cardTitle: string = event.target.title.value;
     const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-    const newCard: Card = {
+    let newCard: Card = {
         ..._tempCard,
         title: cardTitle,
         description: cardDescription as unknown as string,
     }
 
-    console.log("[INFO] @ BEGIN AddInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ BEGIN AddInnerCard tempCardsArray value: ", tempCardsArray);
+    console.log("[INFO] #03 @ BEGIN PageAddInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #03 @ BEGIN PageAddInnerCard tempCardsArray value: ", _tmpCardArray);
 
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
@@ -78,7 +82,7 @@ export function AddInnerCard( /*  This function is called on the form submit */
             editorRef.current?.setMarkdown(card.description);
         }
         event.target.reset();
-        appendTempCardToPoppedInnerCards(_tempCard, tempCardsArray, setTempCard, setTempCardsArray, callbackFunction);
+        appendTempCardToPoppedInnerCards(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
     } else {
         const callbackFunction = (card: Card) => {
             setEditorText(card.description);
@@ -86,11 +90,12 @@ export function AddInnerCard( /*  This function is called on the form submit */
         }
 
         event.target.reset();
-        popAndAppendTempCard(newCard, tempCardsArray, setTempCard, setTempCardsArray, callbackFunction);
+        popAndAppendTempCard(newCard, _tmpCardArray, setTempCard, setTempCardsArray, callbackFunction);
     }
 
+    newCard = tempCard;
 
-    console.log("[INFO] @ END AddInnerCard tempCard value: ", tempCard);
-    console.log("[INFO] @ END AddInnerCard tempCardsArray value: ", tempCardsArray);
+    console.log("[INFO] #03 @ END PageAddInnerCard tempCard value: ", newCard);
+    console.log("[INFO] #03 @ END PageAddInnerCard tempCardsArray value: ", _tmpCardArray);
 
 }

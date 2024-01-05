@@ -9,7 +9,7 @@ import Calendar from "react-calendar";
 import { HexColorPicker } from "react-colorful";
 import { InnerCardElement } from "@/app/components/dashboard/InnerCard";
 import RichEditor from "@/app/components/dashboard/RichEditor";
-import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, CreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
+import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, BootstrapCreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
 import 'react-calendar/dist/Calendar.css';
 import { CommentSection } from "@/app/components/dashboard/Comment";
 import dayjs from "dayjs";
@@ -558,14 +558,15 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const handleCreateCardForm = (event: any) => {
         const clickedButton = event.nativeEvent.submitter;
-        if (isCreatingInnerCard || clickedButton.id === "innerCard") {
+        console.log("[INFO]", isCreatingInnerCard, clickedButton.id);
+        if (isCreatingInnerCard || (clickedButton.id === "innerCard")) {
             console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
             createInnerCard(event, isEdittingInnerCard);
             console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
         } else {
-            if (tempCardsArr.length > 0 || isEdittingInnerCard) {
+            if ((tempCardsArr.length > 0) || isEdittingInnerCard) {
                 console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
-                createInnerCard(event, isEdittingInnerCard);
+                //createInnerCard(event, isEdittingInnerCard);
                 addInnerCard(event, isEdittingInnerCard);
                 console.log(`SUBMIT ADDING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
             } else {
@@ -695,7 +696,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         )
     }
     const handleCreateInnerCard = () => {
-        CreateInnerCard(
+        console.log("#00 BOOTSTRAP CREATE INNER CARD ON CREATEEDITCARD COMPONENT", tempCardsArr);
+        BootstrapCreateInnerCard(
             userValue.userData,
             setModalOpen,
             noButtonRef,
@@ -708,6 +710,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
             setIsCreatingInnerCard,
             tempCardsArr,
         )
+        console.log("#### isCreatingInnerCard", isCreatingInnerCard);
     }
 
     const cardDateOBJ = dayjs(card.date);

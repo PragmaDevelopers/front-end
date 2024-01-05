@@ -266,7 +266,7 @@ export function closeAddMember(e: any, setViewAddMember: (arg0: boolean) => void
     e.target.reset();
 }
 
-export function CreateInnerCard(
+export function BootstrapCreateInnerCard(
 userData: userData, 
 setModalOpen: (arg0: boolean) => void,
 noButtonRef: RefObject<HTMLButtonElement>,

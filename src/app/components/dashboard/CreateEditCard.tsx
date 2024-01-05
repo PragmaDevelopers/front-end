@@ -412,6 +412,9 @@ interface InnerCardsSectionProps {
     setIsEdittingInnerCard: () => void;
     isEdittingInnerCard: boolean;
     handleCreateInnerCard: () => void;
+    tempCard: any;
+    setTempCard: any;
+    setTempCardsArr: any;
 }
 function InnerCardSection(props: InnerCardsSectionProps) {
     const { 
@@ -425,7 +428,10 @@ function InnerCardSection(props: InnerCardsSectionProps) {
         setIsCreatingInnerCard,
         setIsEdittingInnerCard,
         tempCardsArr,
-        handleCreateInnerCard
+        handleCreateInnerCard,
+        tempCard,
+        setTempCardsArr,
+        setTempCard,
     } = props;
 
     return (
@@ -444,6 +450,9 @@ function InnerCardSection(props: InnerCardsSectionProps) {
                     setIsCreatingInnerCard={setIsCreatingInnerCard}
                     setIsEdittingInnerCard={setIsEdittingInnerCard}
                     isEdittingInnerCard={isEdittingInnerCard}
+                    tempCard={tempCard}
+                    setTempCard={setTempCard}
+                    setTempCardsArr={setTempCardsArr}
 
                 />
             ))}
@@ -519,6 +528,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         handleAddDate,
         columnsArray,
         dashboards,
+        setTempCardsArr,
+        setTempCard,
     } = props;
 
     const { userValue, updateUserValue } = useUserContext();
@@ -841,6 +852,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         setIsEdittingInnerCard={setIsEdittingInnerCard}
                         tempCardsArr={tempCardsArr}
                         handleCreateInnerCard={handleCreateInnerCard}
+                        setTempCard={setTempCard}
+                        setTempCardsArr={setTempCardsArr}
+                        tempCard={card}
                     />
                     <div className="w-full -bottom-80 absolute flex justify-center items-center">
                         <button 

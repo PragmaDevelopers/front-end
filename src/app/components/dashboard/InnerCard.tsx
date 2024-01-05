@@ -13,10 +13,13 @@ export function InnerCardElement(props: InnerCardElementProps) {
         isEdittingInnerCard,
         _appendToTempCardsArray,
         _popFromTempCardsArray,
+        tempCard,
+        setTempCard,
+        setTempCardsArr,
     } = props;
 
     const handleEditCard = (): void => {
-        EditCard(card, setIsEdittingInnerCard, _appendToTempCardsArray);
+        EditCard(card, setIsEdittingInnerCard, tempCard, tempCardsArr, setTempCard, setTempCardsArr);
     }
 
     return (

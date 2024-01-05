@@ -236,7 +236,30 @@ export function appendTempCardToPoppedInnerCards(
 
 
 
+export function appendAndSetTempCard(
+    card: Card,
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>
+): void {
+    let _newTempArray: Card[] = [...tempCardsArray];
+    let _tmpCard: Card = {...tempCard};
+    let _card: Card = {...card};
+    
+    console.log("=== EDIT === [INFO] @ BEGIN appendAndSetTempCard tempCard value: ", _tmpCard);
+    console.log("=== EDIT === [INFO] @ BEGIN appendAndSetTempCard tempCardsArray value: ", _newTempArray);
+    console.log("=== EDIT === [INFO] @ SINGLE appendAndSetTempCard currentCard value: ", _card);
+    
 
+    _newTempArray.push(_tmpCard);
+    setTempCard(_card);
+    _tmpCard = _card;
+    setTempCardsArray(_newTempArray);
+
+    console.log("=== EDIT === [INFO] @ END appendAndSetTempCard tempCard value: ", _tmpCard);
+    console.log("=== EDIT === [INFO] @ END appendAndSetTempCard tempCardsArray value: ", _newTempArray);
+}
 
 
 

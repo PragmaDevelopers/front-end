@@ -537,7 +537,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 handleAddDate={handleAddDate}
                 columnsArray={kanbansColumnsArray}
                 dashboards={kanbansArray}
-
+                setTempCard={setTempCard}
+                setTempCardsArr={setTempCardsArr}
             />
             <div className="flex justify-between items-center w-full px-2">
                 <h1>{kanbanTitle}</h1>

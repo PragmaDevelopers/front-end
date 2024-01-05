@@ -580,7 +580,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                 if (isEdittingInnerCard) {
                     console.log("=== EDIT === isEdittingInnerCard", isEdittingInnerCard);
                     createInnerCard(event, isEdittingInnerCard);
-                    addInnerCard(event, isEdittingInnerCard);
                 } else {
                     addInnerCard(event, isEdittingInnerCard);
                 }

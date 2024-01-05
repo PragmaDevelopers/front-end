@@ -24,6 +24,10 @@ export function CreateInnerCard( /* This function is called on the create button
         description: cardDescription as unknown as string,
     }
 
+
+    console.log("[INFO] @ BEGIN CreateInnerCard tempCard value: ", tempCard);
+    console.log("[INFO] @ BEGIN CreateInnerCard tempCardsArray value: ", tempCardsArray);
+
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
             event.target.title.value = card.title;
@@ -39,6 +43,9 @@ export function CreateInnerCard( /* This function is called on the create button
         setIsCreatingInnerCard(false);
         editorRef.current?.setMarkdown("");
     }
+
+    console.log("[INFO] @ END CreateInnerCard tempCard value: ", tempCard);
+    console.log("[INFO] @ END CreateInnerCard tempCardsArray value: ", tempCardsArray);
 }
 
 export function AddInnerCard( /*  This function is called on the form submit */
@@ -54,12 +61,15 @@ export function AddInnerCard( /*  This function is called on the form submit */
     event.preventDefault();
     let _tempCard: Card = tempCard;
     const cardTitle: string = event.target.title.value;
-        const cardDescription: string | undefined = editorRef.current?.getMarkdown();
-        const newCard: Card = {
-            ..._tempCard,
-            title: cardTitle,
-            description: cardDescription as unknown as string,
-        }
+    const cardDescription: string | undefined = editorRef.current?.getMarkdown();
+    const newCard: Card = {
+        ..._tempCard,
+        title: cardTitle,
+        description: cardDescription as unknown as string,
+    }
+
+    console.log("[INFO] @ BEGIN AddInnerCard tempCard value: ", tempCard);
+    console.log("[INFO] @ BEGIN AddInnerCard tempCardsArray value: ", tempCardsArray);
 
     if (isEdittingInnerCard) {
         const callbackFunction = (card: Card) => {
@@ -78,4 +88,9 @@ export function AddInnerCard( /*  This function is called on the form submit */
         event.target.reset();
         popAndAppendTempCard(newCard, tempCardsArray, setTempCard, setTempCardsArray, callbackFunction);
     }
+
+
+    console.log("[INFO] @ END AddInnerCard tempCard value: ", tempCard);
+    console.log("[INFO] @ END AddInnerCard tempCardsArray value: ", tempCardsArray);
+
 }

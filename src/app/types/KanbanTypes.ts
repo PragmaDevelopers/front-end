@@ -59,6 +59,7 @@ export type Card = {
     date: string;
     customFields: CustomFields[];
     innerCards: Card[];
+    outerCardID?: SystemID;
 }
 
 export type Column = {

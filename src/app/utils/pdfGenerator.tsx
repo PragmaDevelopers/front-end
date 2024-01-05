@@ -44,7 +44,7 @@ function boldItalicValidation(regex:RegExp,line:string,index:number){
       console.log(wordSplit)
       for(let i = 0;i < wordSplit.length;i++){
         let word = wordSplit[i];
-        if (wordSplit[i].match(/\*\*\*([\s\S]*?)\*\*\*/g)) {
+        if (word.match(/\*\*\*([\s\S]*?)\*\*\*/g)) {
           word = word.replace(/\*\*\*(.*?)\*\*\*/g,"$1");
           style.font = "Times-BoldItalic";
         } else if (word.match(/\*\*([\s\S]*?)\*\*/g)) {
@@ -60,6 +60,9 @@ function boldItalicValidation(regex:RegExp,line:string,index:number){
           style.textDecoration = "underline";
         }
         arr.push(<Text key={"word-"+i} style={{fontFamily:style.font,textDecoration:style.textDecoration }}>{word}</Text>);
+
+        style.font = "Times-Roman";
+        style.textDecoration = "none";
       }
     }
     return <Text key={"line-"+index} style={{fontSize:style.fontSize,fontFamily:style.fontWeigth,display:"flex"}}>{arr}</Text>;
@@ -113,13 +116,13 @@ export default function pdfGenerator({data}:{data:string[]}) {
                       if(line.match(/&#x20;/g)){
                         line = line.replace(/&#x20;/g,"")
                       }
-                      let regex = /data:image\/jpeg;base64,([^)]*)\)/;
+                      let regex = /data:image\/([^;]+);base64,([^)]*)\)/;
                       if(line.match(regex)){
                         const match = line.match(regex);
                         if(match){
-                          const base64Data = match[1];
-                          console.log(base64Data)
-                          return <Image key={"image"+index} src={"data:image/jpeg;base64,"+base64Data}  />
+                          const pictureFormt = match[1];
+                          const base64Data = match[2];
+                          return <Image key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data}  />
                         }
                       }
 

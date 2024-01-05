@@ -559,12 +559,12 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const handleCreateCardForm = (event: any) => {
         const clickedButton = event.nativeEvent.submitter;
         console.log("[INFO]", isCreatingInnerCard, clickedButton.id);
-        if (isCreatingInnerCard || clickedButton.id === "innerCard") {
+        if (isCreatingInnerCard || (clickedButton.id === "innerCard")) {
             console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
             createInnerCard(event, isEdittingInnerCard);
             console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
         } else {
-            if (tempCardsArr.length > 0 || isEdittingInnerCard) {
+            if ((tempCardsArr.length > 0) || isEdittingInnerCard) {
                 console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
                 createInnerCard(event, isEdittingInnerCard);
                 addInnerCard(event, isEdittingInnerCard);

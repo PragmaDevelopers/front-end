@@ -8,7 +8,7 @@ function ViewPdf() {
   const [height,setHeight] = useState(700);
   useEffect(() => {
     async function getPdf(){
-      const pdfInfoDataSession = sessionStorage.getItem("pdf_info");
+      const pdfInfoDataSession = sessionStorage.getItem("pdfInfo");
       if(pdfInfoDataSession){
         const data = JSON.parse(pdfInfoDataSession).split("\n\n")
         console.log(data)

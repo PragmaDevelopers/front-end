@@ -72,11 +72,14 @@ function ToggleOption(props: ToggleOptionProps) {
 }
 
 function updateSelectedUser(userValue: userValueDT, updateUserValue: (newValue: userValueDT) => void, updatedUser: userData): void {
-  let tmpUsrVal: userValueDT = { ...userValue };
-  tmpUsrVal.usersList = tmpUsrVal.usersList.map((user: userData) => (user.id === updatedUser.id ? updatedUser : user));
+  const tmpUsrVal: userValueDT = {
+    ...userValue,
+    usersList: userValue.usersList.map((user: userData) => (user.id === updatedUser.id ? updatedUser : user)),
+  };
 
   updateUserValue(tmpUsrVal);
 }
+
 
 export default function Page() {
   const router = useRouter();
@@ -95,7 +98,6 @@ export default function Page() {
       setUsrPermsVal(newUserPermsVal);
     }
   }, [selected]);
-  
 
   const handleToggleFlag = (flagName: string, value: boolean) => {
     ToggleBitFlag(value, flagName, handleUpdateSelectedUser, selected);
@@ -110,6 +112,7 @@ export default function Page() {
       setSelected(value);
     }
   };
+  
 
   return (
     <main className="w-full h-full bg-neutral-100 overflow-hidden">
@@ -126,7 +129,6 @@ export default function Page() {
           <div className="w-96 ml-2">
             <Combobox value={selected} onChange={handleSetSelect}>
               <div className="relative mt-1">
-                {/* ... (restante do código) ... */}
               </div>
             </Combobox>
           </div>
@@ -135,7 +137,6 @@ export default function Page() {
 
       <div className="mt-4 flex flex-col items-center justify-start relative p-4 w-full h-[85%] overflow-hidden">
         <div className="w-[75%] h-fit p-2 bg-neutral-50 drop-shadow-md rounded-md flex flex-col justify-start items-center overflow-auto">
-          {/* ... (restante do código) ... */}
         </div>
         <button
           type="button"

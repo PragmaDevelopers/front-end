@@ -4,6 +4,12 @@
 
 /* flex flex-col my-2 border-[1px] rounded-md border-neutral-200 p-2 outline-none shadow-inner bg-neutral-100 */
 
+.prose h1 { @apply font-black text-3xl }
+.prose h2 { @apply font-black text-2xl }
+.prose h3 { @apply font-black text-xl }
+.prose h4 { @apply font-black text-lg }
+.prose h5 { @apply font-black text-base }
+.prose h6 { @apply font-black text-sm }
 
 .MDXEditor { 
     @apply p-2 border-[1px] border-neutral-200 rounded-md w-full h-fit my-2 font-poppins relative shadow-inner bg-neutral-100 

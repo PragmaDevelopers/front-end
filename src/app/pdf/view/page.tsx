@@ -13,17 +13,21 @@ function ViewPdf() {
         for(let i = 0;i < Number(formattedLineLength);i++){
           const formattedLine = sessionStorage.getItem("pdf_formatted_line_"+i);
         //   let obj = 
+        // FAZER O VIEW INTERPRETAR O ALINHAMENTO DE TEXTO E A IMAGEM DE FUNDO
+        console.log(formattedLine)
           if(formattedLine){
             lines.push(formattedLine);
           }
         }
         
+        console.log(lines)
+
         const blob = await pdf(pdfGenerator({data:lines})).toBlob();
         const blobUrl = URL.createObjectURL(blob);
         const iframe = ref.current;
         if(iframe){
             iframe.src = blobUrl;
-            setHeight(window.outerHeight)
+            setHeight(document.documentElement.clientHeight)
         }
     }
     getPdf();

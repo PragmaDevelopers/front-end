@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 const Mustache = require('mustache');
 
 import '@mdxeditor/editor/style.css'
-import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, UndoRedo, BoldItalicUnderlineToggles, toolbarPlugin, InsertImage, imagePlugin } from "@mdxeditor/editor";
+import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, CodeToggle,UndoRedo, BoldItalicUnderlineToggles, toolbarPlugin, InsertImage, imagePlugin } from "@mdxeditor/editor";
 import { IFormSignUpInputs } from "@/app/types/RegisterClientFormTypes";
 import { AlignLeftButton, AlignCenterButton, AlignRightButton } from "@/app/components/PDFEditor/AlignButtons";
 
@@ -27,7 +27,24 @@ function EditPdf() {
 
   function manipulateProseClass({ restoreIds }: { restoreIds?: boolean }) {
     if (restoreIds) {
-      const editorWrapper = document.querySelectorAll(".prose p") as any;
+
+      const currentImageTitle = sessionStorage.getItem("pdf_current_image_title");
+      if(currentImageTitle){
+        const img = document.querySelectorAll(`.prose img[title="${currentImageTitle}"]`)[0];
+
+        let width = sessionStorage.getItem("pdf_current_image_width");
+        let height = sessionStorage.getItem("pdf_current_image_height");
+        if(img && width && height){
+          img.setAttribute("width",width);
+          img.setAttribute("height",height);
+          img.setAttribute("style",`height: ${height}px; width: ${width}px;`)
+          sessionStorage.removeItem("pdf_current_image_width");
+          sessionStorage.removeItem("pdf_current_image_height");
+          sessionStorage.removeItem("pdf_current_image_title");
+        }
+      }
+
+      const editorWrapper = document.querySelectorAll(".prose p, .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6") as any;
       let formattedLineLength = 0;
       for (let i = 0; i < editorWrapper.length; i++) {
         editorWrapper[i].id = "line-" + i;
@@ -40,9 +57,11 @@ function EditPdf() {
         }
         const content = editorRef.current?.getMarkdown().split(/\n\n/g);
         if(content && content[i]){
-          formattedLineLength++;
           sessionStorage.setItem("pdf_line_"+i,content[i]);
-        }     
+        }else{
+          sessionStorage.setItem("pdf_line_"+i,"&#x20;");
+        }
+        formattedLineLength++;
       }
       sessionStorage.setItem("pdf_line_length",String(editorWrapper.length));
       sessionStorage.setItem("pdf_formatted_line_length",String(formattedLineLength));
@@ -65,31 +84,123 @@ function EditPdf() {
     const lines = editorRef.current?.getMarkdown().split(/\n\n/g);
     const lineIndex = Number(sessionStorage.getItem("edit_pdf_line_selected")?.split("-")[1]);
     const wordIndex = Number(sessionStorage.getItem("edit_pdf_word_selected")?.split("-")[1]);
-    const lineChildrenNumber = Number(sessionStorage.getItem(`edit_pdf_line_children_count`));
+    const letterIndex = Number(sessionStorage.getItem("edit_pdf_start_index"));
     
     if (lines) {
       const line = lines[lineIndex];
       let replacementLine = line;
+      const regexBoldUnderlineItalic = /(\*\*\*[\s\S]*?\*\*\*)|(\*\*[\s\S]*?\*\*)|(\*[\s\S]*?\*)|(<u>[\s\S]*<\/u>)|(<img[^>]*\ssrc="[^"]*"\s*\/>)|([\s\S]?)/g;
+      let dbWordIndex = 0;
+      let dbLetterIndex = 0;
+      let lastIsLetter = false;
+      let isPaste = false;
+      let newLine:string[] = [];
 
-      if (!line?.match(/^<u>[\s]*<\/u>$/) && !line?.match(/^[ ]*$/) && ![undefined, "&#x20;", "****&#x20;", "******&#x20;"]?.includes(line)) {
-        if (lineChildrenNumber > 1 || line.split("\n")[0].match(/^\| ([\s\S]*?) \|$/g)) {
-
-          const regexBoldUnderlineItalic = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+)|<u>([^<]+)<\/u>)/g;
-          const wordArr = line?.match(regexBoldUnderlineItalic);
-          if (wordArr && wordArr.length != 0) {
-            const replacementWord = specialCharVerification(wordArr, wordIndex);
-            wordArr.splice(wordIndex, 1, replacementWord);
-            replacementLine = wordArr.join("");
+      line?.replace("&#x20;","").replace(/^#{0,6} /,"").replace(/[\\]/g,"").replace(regexBoldUnderlineItalic, (match, p1, p2, p3, p4, p5, p6) => {
+          if(p1){
+            let ajuste = 3;
+            if(lastIsLetter){
+              dbLetterIndex = 0;
+              lastIsLetter = false;
+              dbWordIndex++;
+            }
+            const letterArr = p1.split("");
+            if(dbWordIndex == wordIndex){
+              if(letterIndex == letterArr.length - 6){
+                ajuste = 6;
+              }
+              letterArr.splice(letterIndex+ajuste,0," `"+variable+"` ");
+              isPaste = true;
+            }
+            
+            dbWordIndex++;
+            newLine.push(letterArr.join(""));;
           }
+          if(p2){
+            let ajuste = 2;
+            if(lastIsLetter){
+              dbLetterIndex = 0;
+              lastIsLetter = false;
+              dbWordIndex++;
+            }
+            const letterArr = p2.split("");
+            if(dbWordIndex == wordIndex){
+              if(letterIndex == letterArr.length - 4){
+                ajuste = 4;
+              }
+              letterArr.splice(letterIndex+ajuste,0," `"+variable+"` ");
+              isPaste = true;
+            }
+            
+            dbWordIndex++;
+            newLine.push(letterArr.join(""));
+          }
+          if(p3){
+            let ajuste = 1;
+            if(lastIsLetter){
+              dbLetterIndex = 0;
+              lastIsLetter = false;
+              dbWordIndex++;
+            }
+            const letterArr = p3.split("");
+            if(dbWordIndex == wordIndex){
+              if(letterIndex == letterArr.length - 2){
+                ajuste = 2;
+              }
+              letterArr.splice(letterIndex+ajuste,0," `"+variable+"` ");
+              isPaste = true;
+            }
+            
+            dbWordIndex++;
+            newLine.push(letterArr.join(""));;
+          }
+          if(p5){
+            if(lastIsLetter){
+              dbLetterIndex = 0;
+              lastIsLetter = false;
+              dbWordIndex++;
+            }
+            if(dbWordIndex == wordIndex){
+              newLine.push(p5+" `"+variable+"` ")
+              isPaste = true;
+            }else{
+              newLine.push(p5)
+            }
+            dbWordIndex++;
+          }
+          if(p6){
+            if(dbLetterIndex == letterIndex && !lastIsLetter && dbWordIndex == wordIndex){
+              newLine.push(" `"+variable+"` "+p6);
+              isPaste = true;
+              console.log("primeiro")
+            }else if(dbLetterIndex == letterIndex - 1 && dbWordIndex == wordIndex){
+              newLine.push(p6+" `"+variable+"` ");
+              isPaste = true;
+            }else{
+              newLine.push(p6);
+            }
 
-        } else {
-          replacementLine = specialCharVerification(lines, lineIndex);
-        }
-      } else {
-        replacementLine = variable;
+            dbLetterIndex++;
+            lastIsLetter = true;
+          }
+          return match;
+      });
+
+      if(!isPaste){
+        newLine.push(" `"+variable+"` ");
+      }
+      console.log(newLine)
+        replacementLine = newLine.join("");
+             
+      const correspondencias = line?.match(/^#{0,6}/);
+
+      let hashtagsRemovidas = "";
+      
+      if (correspondencias && correspondencias[0]) {
+        hashtagsRemovidas = correspondencias[0]+" ";
       }
 
-      lines.splice(lineIndex, 1, replacementLine);
+      lines.splice(lineIndex, 1, hashtagsRemovidas+replacementLine);
       const formattedLines = spaceVerification(lines);
       editorRef.current?.setMarkdown(formattedLines.join("\n\n"));
 
@@ -99,32 +210,6 @@ function EditPdf() {
         setEditorOpacity(1);
       },0)
     }
-  }
-
-  function specialCharVerification(arr: RegExpMatchArray | string[], arrIndex: number) {
-    let specialCharNumber = 0;
-    if (arr[arrIndex].includes("*")) {
-      const boldNumber = arr[arrIndex]?.match(/\*/g)?.length;
-      if (boldNumber) {
-        specialCharNumber += boldNumber / 2;
-      }
-    }
-    if (arr[arrIndex].includes("<u>")) {
-      const underLineNumber = arr[arrIndex]?.match(/<u>|<\/u>/g)?.length;
-      if (underLineNumber) {
-        specialCharNumber += underLineNumber + 1;
-      }
-    }
-    const startIndex = Number(sessionStorage.getItem("edit_pdf_start_index"));
-    const modify = arr[arrIndex].replace(/[\\]/g, "").replace(/&#x20;/g, " ").split("").map((char, index, arr) => {
-      if (startIndex - specialCharNumber === arr.length && index === arr.length - 1) {
-        char = char + variable;
-      } else if (index === startIndex + specialCharNumber) {
-        char = variable + char;
-      }
-      return char;
-    }).join("");
-    return modify;
   }
 
   function spaceVerification(arr: string[]) {
@@ -144,8 +229,10 @@ function EditPdf() {
     let pdfLineLength = sessionStorage.getItem("pdf_line_length");
     for(let i = 0;i < Number(pdfLineLength);i++){
       const line = sessionStorage.getItem("pdf_line_"+i);
-      var formattedLine = Mustache.render(line, signUpData);
-      sessionStorage.setItem("pdf_formatted_line_"+i, formattedLine);
+      if(line){
+        var formattedLine = Mustache.render(line.replace(/`([^`]+)`/g, '$1'), signUpData);
+        sessionStorage.setItem("pdf_formatted_line_"+i, formattedLine);
+      }
     }
     router.push("./view");
   }
@@ -155,16 +242,19 @@ function EditPdf() {
       <h1>Editor de pdf:</h1>
       <div className="flex justify-between">
         <div>
-          <select className="bg-slate-400 p-2 rounded-md me-2" onChange={(e) => setVariable(e.target.value)}>
+          <select defaultValue="default" className="bg-slate-400 p-2 rounded-md me-2" onChange={(e) => setVariable(e.target.value)}>
+            <option disabled value="default">-- Escolha uma opção --</option>
             {selectList(signUpData).map((option) => {
               return <option key={option} value={`{{${option}}}`}>{option}</option>
             })}
           </select>
           <button onClick={() => { 
-            setEditorOpacity(0);
-            setTimeout(()=>{
-              addVariable();
-            },500)
+            if(variable != ""){
+              setEditorOpacity(0);
+              setTimeout(()=>{
+                addVariable();
+              },500)
+            }
           }} className="bg-slate-400 p-2 rounded-md" type="button">Adicionar Variável</button>
         </div>
         <button onClick={() => formSubmit()} type="button" className="bg-slate-400 p-2 rounded-md">Criar PDF</button>
@@ -177,22 +267,40 @@ function EditPdf() {
             if(imageForm[0]){
               sessionStorage.setItem("is_background_image","false")
               const imageInputs = imageForm[0].getElementsByClassName("_formField_lug8m_1107");
-
               const type = imageInputs[2].children[1].getAttribute("type");
-              console.log(type)
+              
               if(type != "checkbox"){
                 imageInputs[2].children[1].insertAdjacentHTML("beforebegin",`<input type="checkbox" name="isBackgroundImage" />`)
+                imageInputs[3].insertAdjacentHTML("afterbegin",`<input required name="image-height" type="number" />`)
+                imageInputs[3].insertAdjacentHTML("afterbegin",`<label for="image-height">Qual a altura da imagem?</label>`)
+                imageInputs[3].insertAdjacentHTML("afterbegin",`<input required name="image-width" type="number" />`)
+                imageInputs[3].insertAdjacentHTML("afterbegin",`<label for="image-width">Qual a largura da imagem?</label>`)
               }
-
+              
               const altLabel = imageInputs[2]?.children[0];
               const altInput = imageInputs[2]?.children[2] as any;
-              const titleLabel = imageInputs[3]?.children[0];
-              const titleInput = imageInputs[3]?.children[1];
+              const widthInput = imageInputs[3]?.children[1] as any;
+              const heightInput = imageInputs[3]?.children[3] as any;
+              const titleLabel = imageInputs[3]?.children[4];
+              const titleInput = imageInputs[3]?.children[5];
               if(altLabel && altInput && titleLabel && titleInput){
                 altLabel.textContent = "É uma imagem de fundo?";
                 altInput.setAttribute("style","display:none;");
-                titleLabel.setAttribute("style","display:none;")
-                titleInput.setAttribute("style","display:none;")
+                titleLabel.textContent = "Identificador da imagem? *";
+                titleInput.setAttribute("required","true");
+                titleInput.setAttribute("maxLength","10");
+
+                if(altInput.value == "on"){
+                  if(widthInput && heightInput){
+                    sessionStorage.setItem("pdf_current_background_image_width",widthInput.value);
+                    sessionStorage.setItem("pdf_current_background_image_height",heightInput.value);
+                  }
+                }else{
+                  if(widthInput && heightInput){
+                    sessionStorage.setItem("pdf_current_image_width",widthInput.value);
+                    sessionStorage.setItem("pdf_current_image_height",heightInput.value);
+                  }
+                }
 
                 if(e.target.name == "isBackgroundImage"){
       
@@ -223,15 +331,21 @@ function EditPdf() {
             let targetElement: HTMLElement | null | undefined = null;
             let targetElementChild: HTMLElement | null | undefined = null;
             if (selection.anchorNode?.nodeName === "#text") {
-              targetElement = selection.anchorNode.parentElement?.parentElement;
+              const t = selection.anchorNode.parentElement?.parentElement;
+              console.log(t?.nodeName)
+              if(t?.nodeName == "CODE"){
+                targetElement = selection.anchorNode.parentElement?.parentElement?.parentElement;
+              }else{
+                targetElement = selection.anchorNode.parentElement?.parentElement;
+              }
               targetElementChild = selection.anchorNode.parentElement
             } else {
               targetElement = selection.anchorNode as HTMLElement;
             }
-
+            console.log(selection.anchorNode?.nodeName)
+            console.log(targetElement)
             if (targetElement) {
               sessionStorage.setItem(`edit_pdf_line_selected`, targetElement.id);
-              sessionStorage.setItem(`edit_pdf_line_children_count`, targetElement.children.length.toString());
             }
             const targetElementChildren = targetElement?.children;
             if (targetElementChildren) {
@@ -247,43 +361,40 @@ function EditPdf() {
         }}
       >
         <MDXEditor contentEditableClassName="prose" ref={editorRef} markdown={""}
-          toMarkdownOptions={{handlers:{image:(e)=>{
-            let alt = sessionStorage.getItem("is_background_image");
-            if(alt != "true"){
-              return `![false](${e.url})`;
-            }else{
-              return `![true](${e.url})`;
+          toMarkdownOptions={{handlers:{
+            image:(e)=>{
+              sessionStorage.setItem("pdf_current_image_title",e.title);
+              let width = sessionStorage.getItem("pdf_current_image_width");
+              let height = sessionStorage.getItem("pdf_current_image_height");
+              setTimeout(()=>{
+                manipulateProseClass({ restoreIds: true });
+              },600)
+              return `<img height="${height}" width="${width}" src="${e.url}" />`;
             }
-          }}}}
+          }}}
           plugins={[imagePlugin({
             imageUploadHandler: async (image) => {
-              let alt = sessionStorage.getItem("is_background_image");
-              if(alt != "true"){
-                // Função para converter uma imagem para base64
-                const imageToBase64 = (file:any) => {
-                  return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = (error) => reject(error);
-                    reader.readAsDataURL(file);
-                  });
-                };
+              // Função para converter uma imagem para base64
+              const imageToBase64 = (file:any) => {
+                return new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(reader.result);
+                  reader.onerror = (error) => reject(error);
+                  reader.readAsDataURL(file);
+                });
+              };
 
-                // Converta a imagem para base64
-                const base64String = await imageToBase64(image) as string;
+              // Converta a imagem para base64
+              const base64String = await imageToBase64(image) as string;
 
-                // Retorne a string base64
-                return Promise.resolve(base64String);
-              }else{
-                // Retorne nada pois é uma imagem de fundo
-                return Promise.resolve("");
-              }
+              // Retorne a string base64
+              return Promise.resolve(base64String);
             },
           }),
           headingsPlugin(),
           toolbarPlugin({
             toolbarContents: () => (<><UndoRedo /><BlockTypeSelect /><BoldItalicUnderlineToggles />
-            <AlignLeftButton /><AlignCenterButton /><AlignRightButton /><InsertImage /></>)
+            <CodeToggle /><AlignLeftButton /><AlignCenterButton /><AlignRightButton /><InsertImage /></>)
           })]}
         />
       </div>

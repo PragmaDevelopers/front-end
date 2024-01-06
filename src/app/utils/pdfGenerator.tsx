@@ -1,5 +1,5 @@
 import { renderToString } from 'react-dom/server';
-import { PDFRenderer,pdf, BlobProvider,Document, Page, Image,Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { PDFRenderer,pdf, BlobProvider,Document, Page, Image,Text, View, StyleSheet } from '@react-pdf/renderer';
 import { NextResponse,NextRequest } from 'next/server'
 
 
@@ -7,7 +7,7 @@ type IFont = "Times-Roman" | "Times-Bold" | "Times-Italic" | "Times-BoldItalic";
 type ITextDecoration = "line-through" | "underline" | "none" | "line-through underline" | "underline line-through";
 
 
-function boldItalicValidation(regex:RegExp,line:string,index:number){
+function boldItalicValidation(regex:RegExp,line:string){
   let style: {font:IFont,textDecoration:ITextDecoration,fontSize:string,fontWeigth:IFont} = {
     font: "Times-Roman",
     textDecoration: "none",
@@ -15,24 +15,6 @@ function boldItalicValidation(regex:RegExp,line:string,index:number){
     fontWeigth: "Times-Roman"
   }
   if(line.match(/^[#]{1,6} ([\s\S]*?)/)){
-    if(line.match(/^[#]{1} ([\s\S]*?)/)){
-      style.fontSize = "32";
-      style.fontWeigth = "Times-Bold"
-    }else if(line.match(/^[#]{2} ([\s\S]*?)/)){
-      style.fontSize = "24";
-      style.fontWeigth = "Times-Bold"
-    }else if(line.match(/^[#]{3} ([\s\S]*?)/)){
-      style.fontSize = "18.72";
-      style.fontWeigth = "Times-Bold"
-    }else if(line.match(/^[#]{4} ([\s\S]*?)/)){
-      style.fontSize = "16";
-      style.fontWeigth = "Times-Bold"
-    }else if(line.match(/^[#]{5} ([\s\S]*?)/)){
-      style.fontSize = "13.28";
-      style.fontWeigth = "Times-Bold"
-    }else if(line.match(/^[#]{6} ([\s\S]*?)/)){
-      style.fontSize = "13";
-    }
     line = line.replace(/^[#]{1,6} ([\s\S]*?)/,"$1")
   }
   
@@ -65,7 +47,11 @@ function boldItalicValidation(regex:RegExp,line:string,index:number){
         style.textDecoration = "none";
       }
     }
-    return <Text key={"line-"+index} style={{fontSize:style.fontSize,fontFamily:style.fontWeigth,display:"flex"}}>{arr}</Text>;
+    return arr;
+}
+
+function imageValidation(){
+
 }
 
 export default function pdfGenerator({data}:{data:string[]}) {
@@ -111,32 +97,71 @@ export default function pdfGenerator({data}:{data:string[]}) {
                 <View style={globalStyle.section}>
                     {data.map((line,index)=>{
                       if(line === "&#x20;"){
-                        return
+                        return <Text key={"space-"+index} />
                       }
-                      if(line.match(/&#x20;/g)){
-                        line = line.replace(/&#x20;/g,"")
-                      }
-                      let regex = /!\[([^)]*)\]\(data:image\/([^;]+);base64,([^)]*)\)/;
-                      if(line.match(regex)){
-                        const match = line.match(regex);
+
+                      let regexImage = /([^"]*)<img height="([^"]*)" width="([^"]*)" title="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>([^"]*)/;
+                      let regexBoldItalic = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
+
+                      let wordArr:JSX.Element[] = [];
+
+                      if(line.match(regexImage)){
+                        const match = line.match(regexImage);
                         if(match){
-                          const isBackground = match[1];
-                          const pictureFormt = match[2];
-                          const base64Data = match[3];
-        
-                          let position = "relative" as "relative" | "absolute";
-                          if(isBackground == "true"){
-                            position = "absolute";
+                          console.log(match)
+                          const previous = match[1];
+
+                          if(previous != ""){
+                            wordArr.push(...boldItalicValidation(regexBoldItalic,previous));
                           }
 
-                          return <Image style={{position:position,width:"100px",height:"100px"}} key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data}  />
+                          const height = match[2];
+                          const width = match[3];
+                          const pictureFormt = match[5];
+                          const base64Data = match[6];
+
+                          wordArr.push(<Image style={{width,height}} key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data}  />);
+
+                          const next = match[7];
+
+                          if(next != ""){
+                            wordArr.push(...boldItalicValidation(regexBoldItalic,next));
+                          }      
+
+                        }
+                      }else{
+                        wordArr.push(...boldItalicValidation(regexBoldItalic,line));
+                      }
+
+                      let style: {font:IFont,textDecoration:ITextDecoration,fontSize:string,fontWeigth:IFont} = {
+                        font: "Times-Roman",
+                        textDecoration: "none",
+                        fontSize: "16",
+                        fontWeigth: "Times-Roman"
+                      }
+
+                      if(line.match(/^[#]{1,6} ([\s\S]*?)/)){
+                        if(line.match(/^[#]{1} ([\s\S]*?)/)){
+                          style.fontSize = "32";
+                          style.fontWeigth = "Times-Bold"
+                        }else if(line.match(/^[#]{2} ([\s\S]*?)/)){
+                          style.fontSize = "24";
+                          style.fontWeigth = "Times-Bold"
+                        }else if(line.match(/^[#]{3} ([\s\S]*?)/)){
+                          style.fontSize = "18.72";
+                          style.fontWeigth = "Times-Bold"
+                        }else if(line.match(/^[#]{4} ([\s\S]*?)/)){
+                          style.fontSize = "16";
+                          style.fontWeigth = "Times-Bold"
+                        }else if(line.match(/^[#]{5} ([\s\S]*?)/)){
+                          style.fontSize = "13.28";
+                          style.fontWeigth = "Times-Bold"
+                        }else if(line.match(/^[#]{6} ([\s\S]*?)/)){
+                          style.fontSize = "13";
                         }
                       }
 
-                      regex = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
-                      if(line.match(regex)){
-                        return boldItalicValidation(regex,line,index);
-                      }
+                      return <View key={"line-"+index} style={{fontSize:style.fontSize,fontFamily:style.fontWeigth,display:"flex"}}>{wordArr}</View>
                     })}
                 </View>
             </Page>

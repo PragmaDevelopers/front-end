@@ -9,15 +9,15 @@ export function AppendToTempCardsArray(
     let _tmpCard: Card = {...newCard};
     let _tmpArray: Card[] = [...tempCardsArr];
     
-    console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCard value: ", _tmpCard);
-    console.log("[INFO] @ BEGIN AppendToTempCardsArray tempCardArray value: ", _tmpArray);
+    console.log("[INFO] BUG @ BEGIN AppendToTempCardsArray tempCard value: ", _tmpCard);
+    console.log("[INFO] BUG @ BEGIN AppendToTempCardsArray tempCardArray value: ", _tmpArray);
 
 
     _tmpArray.push(_tmpCard);
     setTempCardsArr(_tmpArray);
 
-    console.log("[INFO] @ END AppendToTempCardsArray tempCard value: ", _tmpCard);
-    console.log("[INFO] @ END AppendToTempCardsArray tempCardArray value: ", _tmpArray);
+    console.log("[INFO] BUG @ END AppendToTempCardsArray tempCard value: ", _tmpCard);
+    console.log("[INFO] BUG @ END AppendToTempCardsArray tempCardArray value: ", _tmpArray);
 }
 
 export function PopFromTempCardsArray(tempCardsArr: Card[], setTempCardsArr: any): Card | undefined {
@@ -142,6 +142,39 @@ export function popAndAppendTempCard(
 };
 
 
+export function appendLastIntoTempInnerCards(
+    tempCard: Card,
+    tempCardsArray: Card[],
+    setTempCard: React.Dispatch<React.SetStateAction<Card>>,
+    setTempCardsArray: React.Dispatch<React.SetStateAction<Card[]>>,
+    callback?: any,
+) {
+    let _cardsArray: Card[] = [...tempCardsArray];
+    let _tmpCard: Card = { ...tempCard };
+    const poppedCard = _cardsArray.pop(); // INNER CARD?
+    
+    console.log("=== TEST === tempCard", _tmpCard);
+    console.log("=== TEST === poppedCard", poppedCard);
+
+    if (poppedCard) {
+        const updatedOuterCard = findAndReplaceInnerCard(_tmpCard, poppedCard);
+        console.log("=== TEST === updatedOuterCard", updatedOuterCard);
+        setTempCard(updatedOuterCard);
+        setTempCardsArray(_cardsArray);
+        if (callback) {
+            callback(poppedCard);
+        }
+
+
+        console.log("=== TEST === updatedTempCardsArray", _cardsArray);
+        _tmpCard = { ...updatedOuterCard };
+
+    }
+
+
+}
+
+
 /*  [01] (EDIT) FIRST FUNCTION TO BE EXECUTED */
 export function swapTempCardWithLast(
     tempCard: Card,
@@ -151,7 +184,7 @@ export function swapTempCardWithLast(
     callback?: any,
 ): void {
     let _cardsArray: Card[] = [...tempCardsArray];
-    let _tmpCard: Card = {...tempCard};
+    let _tmpCard: Card = { ...tempCard };
     const poppedCard = _cardsArray.pop();
 
 
@@ -163,7 +196,11 @@ export function swapTempCardWithLast(
         _cardsArray.push(_tmpCard);
         setTempCardsArray(_cardsArray);
         setTempCard(poppedCard);
-        callback(poppedCard);
+        _tmpCard = poppedCard;
+
+        if (callback) {
+            callback(poppedCard);
+        }
 
         console.log("=== EDIT === [INFO] [01] (EDIT) @ END swapTempCardWithLast tempCard value: ", _tmpCard);
         console.log("=== EDIT === [INFO] [01] (EDIT) @ END swapTempCardWithLast tempCardArray value: ", _cardsArray);
@@ -181,33 +218,26 @@ export function appendTempCardToPoppedInnerCards(
     callback?: any,
 ): void {
     let _tmpArray = [...tempCardsArray];
+    let _tmpCard: Card = { ...tempCard };
+
+
     const poppedCard = _tmpArray.pop();
-    let _tmpCard: Card = {...tempCard};
     if (poppedCard) {
-        const cardIndex = poppedCard.innerCards.findIndex(card => card.id === tempCard.id);
+        const updatedOuterCard = findAndReplaceInnerCard(poppedCard, tempCard);
 
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ BEGIN appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
+        
 
-        if (cardIndex !== -1) {
-            poppedCard.innerCards[cardIndex] = tempCard;
-        } else {
-            poppedCard.innerCards.push(tempCard);
-        }
-        setTempCard(poppedCard);
+        setTempCard(updatedOuterCard);
         setTempCardsArray(_tmpArray);
         if (callback) {
             callback(poppedCard);
         }
 
-        _tmpCard = {...poppedCard};
+        _tmpCard = { ...updatedOuterCard };
 
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
-        console.log("=== EDIT === [INFO] [02] (EDIT) @ END appendTempCardToPoppedInnerCards cardIndex value: ", cardIndex);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCard value: ", _tmpCard);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ END appendTempCardToPoppedInnerCards tempCardArray value: ", _tmpArray);
+        console.log("=== EDIT === [INFO] BUG [02] (EDIT) @ END appendTempCardToPoppedInnerCards poppedCard value: ", poppedCard);
 
 
     }
@@ -291,3 +321,24 @@ export function appendAndSetTempCardById(
     }
 };
 
+
+// Helper function to find and replace inner card in an outer card
+export function findAndReplaceInnerCard(outerCard: Card, innerCard: Card): Card {
+    let updatedOuterCard: Card = { ...outerCard };
+    
+    if (outerCard.innerCards && outerCard.innerCards.length > 0) {
+      const index = outerCard.innerCards.findIndex((card) => card.id === innerCard.id);
+  
+      if (index !== -1) {
+        updatedOuterCard.innerCards[index] = innerCard;
+      } else {
+        // Handle case where inner card is not found
+        console.error("BUG Inner card not found in the outer card's innerCards array.");
+      }
+    } else {
+      // Handle case where outer card has no inner cards
+      console.error("BUG Outer card has no inner cards.");
+    }
+  
+    return updatedOuterCard;
+  }

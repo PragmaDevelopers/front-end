@@ -44,7 +44,7 @@ import { UpdateColumnTitle, RemoveColumn, CreateNewColumn } from '@/app/utils/da
 import { AddCustomField } from '@/app/utils/dashboard/functions/Page/CustomField';
 import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashboard/functions/Page/InnerCardUtils';
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
-import { PageAddInnerCard, PageCreateInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
+import { PageAddInnerCard, PageCreateInnerCard, PageEditInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 import { API_BASE_URL } from '@/app/utils/variables';
 
 
@@ -376,18 +376,18 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
     const handleCreateInnerCard = (event: any, isEdittingInnerCard: boolean) => {
         console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", tempCardsArr);
+        console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", isEdittingInnerCard);
         PageCreateInnerCard(
-            event,
-            isEdittingInnerCard,
-            editorRef,
-            tempCard,
-            setEditorText,
-            setIsCreatingInnerCard,
-            tempCardsArr,
-            setTempCardsArr,
-            setTempCard,
-        );
-        
+                event,
+                isEdittingInnerCard,
+                editorRef,
+                tempCard,
+                setEditorText,
+                setIsCreatingInnerCard,
+                tempCardsArr,
+                setTempCardsArr,
+                setTempCard,
+            );
     }
 
 

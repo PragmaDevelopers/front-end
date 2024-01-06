@@ -15,7 +15,8 @@
 
 ### Bug Fixes
 
-- [ ] INNER CARDS ARRAY JA CONTEM OS VALORES [eu to enlouquecendo.]
+- [x] INNER CARDS ARRAY JA CONTEM OS VALORES [eu to enlouquecendo.]
+- [ ] INNER CARD INTERMEDIARIO/OUTER CARD SENDO ADICIONADO DENTRO DO CARD MAIS INTERNO (NOME DO CARD INTERMERDIARIO E ID DO CARD MAIS EXTERNO)
 
 - [x] remover membro da dashboard na tela de configurações retorna 403.
 - [x] dropdown do MDXEditor com z-index errado.

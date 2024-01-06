@@ -8,20 +8,23 @@ function ViewPdf() {
   const [height,setHeight] = useState(700);
   useEffect(() => {
     async function getPdf(){
-      const pdfInfoDataSession = sessionStorage.getItem("pdfInfo");
-      if(pdfInfoDataSession){
-        const data = JSON.parse(pdfInfoDataSession).split("\n\n")
-        console.log(data)
-
-        const blob = await pdf(pdfGenerator({data})).toBlob();
+        let formattedLineLength = sessionStorage.getItem("pdf_formatted_line_length");
+        const lines:string[] = [];
+        for(let i = 0;i < Number(formattedLineLength);i++){
+          const formattedLine = sessionStorage.getItem("pdf_formatted_line_"+i);
+        //   let obj = 
+          if(formattedLine){
+            lines.push(formattedLine);
+          }
+        }
+        
+        const blob = await pdf(pdfGenerator({data:lines})).toBlob();
         const blobUrl = URL.createObjectURL(blob);
         const iframe = ref.current;
         if(iframe){
-          iframe.src = blobUrl;
-          setHeight(window.innerHeight)
+            iframe.src = blobUrl;
+            setHeight(window.outerHeight)
         }
-    }
-
     }
     getPdf();
   }, []);

@@ -69,7 +69,7 @@ function boldItalicValidation(regex:RegExp,line:string,index:number){
 }
 
 export default function pdfGenerator({data}:{data:string[]}) {
-  const styles = StyleSheet.create({
+  const globalStyle = StyleSheet.create({
       page: {
         flexDirection: "column",
         backgroundColor: "#FFFFFF"
@@ -107,8 +107,8 @@ export default function pdfGenerator({data}:{data:string[]}) {
     });
     return (
         <Document>
-            <Page size="A4" style={styles.page}>
-                <View style={styles.section}>
+            <Page size="A4" style={globalStyle.page}>
+                <View style={globalStyle.section}>
                     {data.map((line,index)=>{
                       if(line === "&#x20;"){
                         return
@@ -116,13 +116,20 @@ export default function pdfGenerator({data}:{data:string[]}) {
                       if(line.match(/&#x20;/g)){
                         line = line.replace(/&#x20;/g,"")
                       }
-                      let regex = /data:image\/([^;]+);base64,([^)]*)\)/;
+                      let regex = /!\[([^)]*)\]\(data:image\/([^;]+);base64,([^)]*)\)/;
                       if(line.match(regex)){
                         const match = line.match(regex);
                         if(match){
-                          const pictureFormt = match[1];
-                          const base64Data = match[2];
-                          return <Image key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data}  />
+                          const isBackground = match[1];
+                          const pictureFormt = match[2];
+                          const base64Data = match[3];
+        
+                          let position = "relative" as "relative" | "absolute";
+                          if(isBackground == "true"){
+                            position = "absolute";
+                          }
+
+                          return <Image style={{position:position,width:"100px",height:"100px"}} key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data}  />
                         }
                       }
 

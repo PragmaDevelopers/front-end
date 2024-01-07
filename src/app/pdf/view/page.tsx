@@ -9,20 +9,25 @@ function ViewPdf() {
   useEffect(() => {
     async function getPdf(){
         let formattedLineLength = sessionStorage.getItem("pdf_formatted_line_length");
-        const lines:string[] = [];
+        const data:{content:string,style:{textAlign:"left" | "center" | "right"}}[] = [];
         for(let i = 0;i < Number(formattedLineLength);i++){
           const formattedLine = sessionStorage.getItem("pdf_formatted_line_"+i);
         //   let obj = 
         // FAZER O VIEW INTERPRETAR O ALINHAMENTO DE TEXTO E A IMAGEM DE FUNDO
         console.log(formattedLine)
           if(formattedLine){
-            lines.push(formattedLine);
+            const styleLine = sessionStorage.getItem("pdf_style_line_"+i);
+            if(styleLine){
+                data.push({content:formattedLine,style: JSON.parse(styleLine)});
+            }else{
+                data.push({content:formattedLine,style: {textAlign:"left"}});
+            }
           }
         }
         
-        console.log(lines)
+        console.log(data)
 
-        const blob = await pdf(pdfGenerator({data:lines})).toBlob();
+        const blob = await pdf(pdfGenerator(data)).toBlob();
         const blobUrl = URL.createObjectURL(blob);
         const iframe = ref.current;
         if(iframe){

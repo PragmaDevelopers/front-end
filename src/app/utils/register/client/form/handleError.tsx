@@ -1,6 +1,6 @@
 import { UseFormWatch } from "react-hook-form";
 import { IFormSignUpInputs } from "@/app/types/RegisterClientFormTypes";
-import { CepDataInterface } from "@/app/interfaces/RegisterClientFormInterfaces";
+import { CepDataInterface } from "@/app/interfaces/RegisterClientInterfaces";
 
 export async function tryGetAddressByCep(watch: UseFormWatch<IFormSignUpInputs> | any): Promise<CepDataInterface> {
     if (watch().cep?.replace("-", "").length === 8) {

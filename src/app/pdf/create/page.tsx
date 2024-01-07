@@ -276,7 +276,9 @@ function EditPdf() {
                 imageInputs[3].insertAdjacentHTML("afterbegin",`<input required name="image-width" type="number" />`)
                 imageInputs[3].insertAdjacentHTML("afterbegin",`<label for="image-width">Qual a largura da imagem?</label>`)
               }
-              
+
+              const fileInput = imageInputs[0].children[1];
+              const urlInput = imageInputs[1].children[1];
               const altLabel = imageInputs[2]?.children[0];
               const altInput = imageInputs[2]?.children[2] as any;
               const widthInput = imageInputs[3]?.children[1] as any;
@@ -290,18 +292,6 @@ function EditPdf() {
                 titleInput.setAttribute("required","true");
                 titleInput.setAttribute("maxLength","10");
 
-                if(altInput.value == "on"){
-                  if(widthInput && heightInput){
-                    sessionStorage.setItem("pdf_current_background_image_width",widthInput.value);
-                    sessionStorage.setItem("pdf_current_background_image_height",heightInput.value);
-                  }
-                }else{
-                  if(widthInput && heightInput){
-                    sessionStorage.setItem("pdf_current_image_width",widthInput.value);
-                    sessionStorage.setItem("pdf_current_image_height",heightInput.value);
-                  }
-                }
-
                 if(e.target.name == "isBackgroundImage"){
       
                   if(altInput.value == "on"){
@@ -310,8 +300,28 @@ function EditPdf() {
                   }else{
                     altInput.value = "on";
                     sessionStorage.setItem("is_background_image","true");
+                    const confirmBtn = imageForm[0].getElementsByClassName("_primaryButton_lug8m_453")[0];
+                    confirmBtn.setAttribute("type","button");
                   }
                   
+                }
+
+                if(altInput.value == "on"){
+                  if(widthInput && heightInput){
+                    sessionStorage.setItem("pdf_background_image_width",widthInput.value);
+                    sessionStorage.setItem("pdf_background_image_height",heightInput.value);
+                  }
+                }else{
+                  if(widthInput && heightInput){
+                    sessionStorage.setItem("pdf_current_image_width",widthInput.value);
+                    sessionStorage.setItem("pdf_current_image_height",heightInput.value);
+                  }
+                }
+                
+                if(e.target.title == "Save" && altInput.value == "on" && widthInput.value != "" && heightInput.value != ""){
+                  sessionStorage.setItem("pdf_background_image_url",heightInput.value);
+                  document.getElementsByClassName("_dialogContent_lug8m_543")[0].setAttribute("style","display:none;");
+                  document.getElementsByClassName("_dialogOverlay_lug8m_787")[0].setAttribute("style","display:none;");
                 }
               }
             }

@@ -8,7 +8,7 @@ import ClientTemplateHandle from "@/app/components/register/client/template/Clie
 import CreateTemplateInput from "@/app/components/register/client/template/CreateTemplateInput";
 import DeleteTemplateInput from "@/app/components/register/client/template/DeleteTemplateInput";
 import { CepDataProps } from "@/app/interfaces/RegisterClientInterfaces";
-
+import states from "@/api/states/states";
 
 export default function SignUpPageB() {
     const [currentTemplate, setCurrentTemplate] = useState<{ pessoa_fisica: any[], pessoa_juridica: any[] }>({
@@ -206,10 +206,10 @@ export default function SignUpPageB() {
                                                     <>
                                                         <label className="block">{input.label}</label>
                                                         {
-                                                            input.children?.map((child: any, index: number) => {
+                                                            input.children?.map((value: string, index: number) => {
                                                                 return <div key={index} className="inline-block">
-                                                                    <input required className="mx-1" type={input.type} id={"input-" + input.name} value={child.value} />
-                                                                    <label htmlFor={"input-" + input.name}>{child.label}</label>
+                                                                    <input required className="mx-1" type={input.type} id={"input-" + input.name} value={value} />
+                                                                    <label htmlFor={"input-" + input.name}>{value}</label>
                                                                 </div>
                                                             })
                                                         }
@@ -220,22 +220,17 @@ export default function SignUpPageB() {
                                                 ["select"].includes(input.type) && (
                                                 <>
                                                     <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
-                                                    {
-                                                        input.name == "uf" ?
-                                                        addressValue.uf != "" ?
-                                                            <input required className="w-full" id={"input-" + input.name} name={input.name} defaultValue={addressValue.uf} /> 
+                                                    { input.name == "uf" ? 
+                                                        <select required className="w-full" id={"input-" + input.name} name={input.name}>
+                                                            {input.children?.map((child: any,index:number) => <option key={index} value={child.value}>{child.label}</option>)}
+                                                            { input.name == "uf" && states.map((child)=>{
+                                                                return <option key={"fixed-"+child.id} value={child.abbreviation}>{child.abbreviation}</option>
+                                                            })}
+                                                        </select>
                                                         :
-                                                            <select required className="w-full" id={"input-" + input.name} name={input.name}>
-                                                                {input.children?.map((child: any, index: number) => {
-                                                                    return <option key={index} value={child.value}>{child.label}</option>
-                                                                })}
-                                                            </select>
-                                                        :
-                                                            <select required className="w-full" id={"input-" + input.name} name={input.name}>
-                                                                {input.children?.map((child: any, index: number) => {
-                                                                    return <option key={index} value={child.value}>{child.label}</option>
-                                                                })}
-                                                            </select>
+                                                        <select required className="w-full" id={"input-" + input.name} name={input.name}>
+                                                            {input.children?.map((value:string,index:number) => <option key={index} value={value}>{value}</option>)}
+                                                        </select>
                                                     }
                                                 </>
                                             )
@@ -259,12 +254,7 @@ export default function SignUpPageB() {
                                                 ["text", "email", "number", "date", "tel"].includes(input.type) && (
                                                     <>
                                                         <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
-                                                        <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name}
-                                                        defaultValue={
-                                                            input.name == "endereco" ? addressValue.logradouro : 
-                                                            input.name == "bairro" ? addressValue.bairro : 
-                                                            input.name == "cidade" ? addressValue.localidade : ""
-                                                        } />
+                                                        <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                     </>
                                                 )
                                             }

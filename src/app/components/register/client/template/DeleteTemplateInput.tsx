@@ -7,7 +7,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
     setCurrentTemplate:any
 }){
 
-    const [selectedSection, setSelectedSection] = useState("new");
+    const [selectedSection, setSelectedSection] = useState("");
 
     return (
         <form className="bg-gray-200 w-2/4 p-2 mb-4 border-b-2 border-gray-400 flex flex-col"
@@ -37,8 +37,9 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
             }}>
             <div className="mb-3 flex gap-2">
                 <label htmlFor="remove-section" className="inline-block whitespace-nowrap">Qual seção: </label>
-                <select onChange={(e) => setSelectedSection(e.target.value)} value={selectedSection}
+                <select required onChange={(e) => setSelectedSection(e.target.value)} value={selectedSection != "default" ? selectedSection : "default"}
                     className="w-full" name="remove_section" id="remove-section">
+                    <option disabled value="default"> -- Escolha uma seção -- </option>
                     {currentTemplate[typePerson].map((accordion: any, index: number) => {
                         return <option value={accordion.title} key={index}>{accordion.title}</option>
                     })}
@@ -47,7 +48,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
             <div className="mb-3 flex gap-2">
                 <label htmlFor="remove-input" className="whitespace-nowrap">Qual input: </label>
                 <select className="w-full" name="remove_input" id="remove-input">
-                    <option value="">Nenhum</option>
+                <option value=""> -- Escolha um input/Excluir seção -- </option>
                     {currentTemplate[typePerson].map((accordion: any) => {
                         if (accordion.title === selectedSection) {
                             return accordion.inputs.map((input: any, index: number) => {

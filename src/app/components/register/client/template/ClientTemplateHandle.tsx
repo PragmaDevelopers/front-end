@@ -21,8 +21,8 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     setCurrentTemplate(templateList[templateIndex].template);
                 }
             }}>
-                <select defaultValue="default" className="w-full" name="selected_draft">
-                    <option value="default"> -- Escolha um rascunho -- </option>
+                <select required defaultValue="default" className="w-full" name="selected_draft">
+                    <option disabled value="default"> -- Escolha um rascunho -- </option>
                     {templateList && (
                         templateList.map((template) => {
                             return <option key={template.id} value={template.id}>{template.name}</option>
@@ -54,8 +54,8 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     })
                 }
             }}>
-                <select defaultValue="default" className="w-full" name="selected_draft">
-                    <option value="default"> -- Escolha um rascunho -- </option>
+                <select required defaultValue="default" className="w-full" name="selected_draft">
+                    <option disabled value="default"> -- Escolha um rascunho -- </option>
                     {templateList && (
                         templateList.map((template) => {
                             return <option key={template.id} value={template.id}>{template.name}</option>

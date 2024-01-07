@@ -1,3 +1,5 @@
+import { IInputType } from "../types/RegisterClientFormTypes"
+
 export interface CepDataProps {
     uf: string,
     localidade: string,
@@ -19,8 +21,6 @@ export interface ClientTemplateChildrenProps {
     pessoa_juridica: any[]
 }
 
-export type IInputType = "text" | "email" | "select" | "radio" | "number" | "checkbox" | "search" | "date" | "tel" | "textarea";
-
 export interface CreateTemplateInputProps {
     functionType: "new section" | "new input" | "existing input",
     type?: IInputType,
@@ -30,4 +30,11 @@ export interface CreateTemplateInputProps {
     setName?: string,
     newSectionName?: string,
     valueIndex?: number
+}
+
+export interface PdfLineStyleProps {
+    content:string,
+    style:{ 
+        textAlign:"left" | "center" | "right"
+    }
 }

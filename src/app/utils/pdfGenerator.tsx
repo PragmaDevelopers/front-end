@@ -1,6 +1,6 @@
 import { renderToString } from 'react-dom/server';
 import { PDFRenderer,pdf, BlobProvider,Document, Page, Image,Text, View, StyleSheet } from '@react-pdf/renderer';
-import { NextResponse,NextRequest } from 'next/server'
+import { PdfLineStyleProps } from '../interfaces/RegisterClientInterfaces';
 
 
 type IFont = "Times-Roman" | "Times-Bold" | "Times-Italic" | "Times-BoldItalic";
@@ -50,11 +50,7 @@ function boldItalicValidation(regex:RegExp,line:any){
     return arr;
 }
 
-function imageValidation(){
-
-}
-
-export default function pdfGenerator(data:{content:string,style:{textAlign:"left" | "center" | "right"}}[]) {
+export default function pdfGenerator(data:PdfLineStyleProps[]) {
   const globalStyle = StyleSheet.create({
       page: {
         flexDirection: "column",
@@ -162,12 +158,13 @@ export default function pdfGenerator(data:{content:string,style:{textAlign:"left
                         }
                       }
 
-                      return <Text key={"line-"+index} style={{
+                      return <View key={"line-"+index} style={{
                         textAlign:style.textAlign,
                         fontSize:style.fontSize,
                         fontFamily:style.fontWeigth,
-                        display:"flex"
-                      }}>{wordArr}</Text>
+                        display:"flex",
+                        flexDirection: "row"
+                      }}>{wordArr}</View>
                     })}
                 </View>
             </Page>

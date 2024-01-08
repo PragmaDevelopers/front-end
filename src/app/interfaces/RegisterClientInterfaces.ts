@@ -35,6 +35,6 @@ export interface CreateTemplateInputProps {
 export interface PdfLineStyleProps {
     content:string,
     style:{ 
-        textAlign:"left" | "center" | "right"
+        justifyContent:"flex-start" | "center" | "flex-end"
     }
 }

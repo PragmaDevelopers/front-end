@@ -105,22 +105,28 @@ export default function pdfGenerator(data:PdfLineStyleProps[]) {
                         const match = line.content.match(regexImage);
                         if(match){
                           console.log(match)
-                          const previous = match[1];
+                          const previous = {
+                            style: line.style,
+                            content:match[1]
+                          };
 
-                          if(previous != ""){
+                          if(previous.content != ""){
                             wordArr.push(...boldItalicValidation(regexBoldItalic,previous));
                           }
 
-                          const height = match[2];
-                          const width = match[3];
+                          const height = match[2] != "{{height}}" ? match[2] : undefined;
+                          const width = match[2] != "{{width}}" ? match[3] : undefined;
                           const pictureFormt = match[5];
                           const base64Data = match[6];
 
                           wordArr.push(<Image style={{width,height}} key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data} />);
 
-                          const next = match[7];
+                          const next = {
+                            style: line.style,
+                            content:match[7]
+                          };
 
-                          if(next != ""){
+                          if(next.content != ""){
                             wordArr.push(...boldItalicValidation(regexBoldItalic,next));
                           }      
 
@@ -129,12 +135,12 @@ export default function pdfGenerator(data:PdfLineStyleProps[]) {
                         wordArr.push(...boldItalicValidation(regexBoldItalic,line));
                       }
 
-                      let style: {font:IFont,textDecoration:ITextDecoration,fontSize:string,fontWeigth:IFont,textAlign:"left" | "center" | "right"} = {
+                      let style: {font:IFont,textDecoration:ITextDecoration,fontSize:string,fontWeigth:IFont,justifyContent:"flex-start" | "center" | "flex-end"} = {
                         font: "Times-Roman",
                         textDecoration: "none",
                         fontSize: "16",
                         fontWeigth: "Times-Roman",
-                        textAlign: line.style.textAlign
+                        justifyContent: line.style.justifyContent
                       }
 
                       if(line.content.match(/^[#]{1,6} ([\s\S]*?)/)){
@@ -159,11 +165,12 @@ export default function pdfGenerator(data:PdfLineStyleProps[]) {
                       }
 
                       return <View key={"line-"+index} style={{
-                        textAlign:style.textAlign,
+                        justifyContent:style.justifyContent,
                         fontSize:style.fontSize,
                         fontFamily:style.fontWeigth,
                         display:"flex",
-                        flexDirection: "row"
+                        flexDirection: "row",
+                        alignItems: "flex-end"
                       }}>{wordArr}</View>
                     })}
                 </View>

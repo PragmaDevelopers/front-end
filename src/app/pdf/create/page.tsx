@@ -13,6 +13,7 @@ function EditPdf() {
   const [signUpData, setSignUpData] = useState<IFormSignUpInputs>();
   const [variable, setVariable] = useState<string>("");
   const [editorOpacity, setEditorOpacity] = useState<number>(1);
+  const [isLoadImage,setisLoadImage] = useState(false)
 
   const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null)
@@ -25,25 +26,8 @@ function EditPdf() {
     manipulateProseClass({ restoreIds: true });
   }, [])
 
-  function manipulateProseClass({ restoreIds }: { restoreIds?: boolean }) {
+  function manipulateProseClass({ restoreIds}: { restoreIds?: boolean }) {
     if (restoreIds) {
-
-      const currentImageTitle = sessionStorage.getItem("pdf_current_image_title");
-      if(currentImageTitle){
-        const img = document.querySelectorAll(`.prose img[title="${currentImageTitle}"]`)[0];
-
-        let width = sessionStorage.getItem("pdf_current_image_width");
-        let height = sessionStorage.getItem("pdf_current_image_height");
-        if(img && width && height){
-          img.setAttribute("width",width);
-          img.setAttribute("height",height);
-          img.setAttribute("style",`height: ${height}px; width: ${width}px;`)
-          sessionStorage.removeItem("pdf_current_image_width");
-          sessionStorage.removeItem("pdf_current_image_height");
-          sessionStorage.removeItem("pdf_current_image_title");
-        }
-      }
-
       const editorWrapper = document.querySelectorAll(".prose p, .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6") as any;
       let formattedLineLength = 0;
       for (let i = 0; i < editorWrapper.length; i++) {
@@ -265,26 +249,21 @@ function EditPdf() {
           setTimeout(()=>{
             const imageForm = document.body.getElementsByClassName("_multiFieldForm_lug8m_1101");
             if(imageForm[0]){
+              setisLoadImage(true);
               sessionStorage.setItem("is_background_image","false")
               const imageInputs = imageForm[0].getElementsByClassName("_formField_lug8m_1107");
               const type = imageInputs[2].children[1].getAttribute("type");
               
               if(type != "checkbox"){
                 imageInputs[2].children[1].insertAdjacentHTML("beforebegin",`<input type="checkbox" name="isBackgroundImage" />`)
-                imageInputs[3].insertAdjacentHTML("afterbegin",`<input required name="image-height" type="number" />`)
-                imageInputs[3].insertAdjacentHTML("afterbegin",`<label for="image-height">Qual a altura da imagem?</label>`)
-                imageInputs[3].insertAdjacentHTML("afterbegin",`<input required name="image-width" type="number" />`)
-                imageInputs[3].insertAdjacentHTML("afterbegin",`<label for="image-width">Qual a largura da imagem?</label>`)
               }
 
               const fileInput = imageInputs[0].children[1];
               const urlInput = imageInputs[1].children[1];
               const altLabel = imageInputs[2]?.children[0];
               const altInput = imageInputs[2]?.children[2] as any;
-              const widthInput = imageInputs[3]?.children[1] as any;
-              const heightInput = imageInputs[3]?.children[3] as any;
-              const titleLabel = imageInputs[3]?.children[4];
-              const titleInput = imageInputs[3]?.children[5];
+              const titleLabel = imageInputs[3]?.children[0];
+              const titleInput = imageInputs[3]?.children[1];
               if(altLabel && altInput && titleLabel && titleInput){
                 altLabel.textContent = "É uma imagem de fundo?";
                 altInput.setAttribute("style","display:none;");
@@ -305,21 +284,9 @@ function EditPdf() {
                   }
                   
                 }
-
-                if(altInput.value == "on"){
-                  if(widthInput && heightInput){
-                    sessionStorage.setItem("pdf_background_image_width",widthInput.value);
-                    sessionStorage.setItem("pdf_background_image_height",heightInput.value);
-                  }
-                }else{
-                  if(widthInput && heightInput){
-                    sessionStorage.setItem("pdf_current_image_width",widthInput.value);
-                    sessionStorage.setItem("pdf_current_image_height",heightInput.value);
-                  }
-                }
                 
-                if(e.target.title == "Save" && altInput.value == "on" && widthInput.value != "" && heightInput.value != ""){
-                  sessionStorage.setItem("pdf_background_image_url",heightInput.value);
+                if(e.target.title == "Save" && altInput.value == "on"){
+                  // sessionStorage.setItem("pdf_background_image_url",heightInput.value);
                   document.getElementsByClassName("_dialogContent_lug8m_543")[0].setAttribute("style","display:none;");
                   document.getElementsByClassName("_dialogOverlay_lug8m_787")[0].setAttribute("style","display:none;");
                 }
@@ -327,12 +294,12 @@ function EditPdf() {
             }
           },0)
 
-          if(["Left Align","Center Align","Right Align"].includes(e.target.title)){
+          if(["Left Align","Center Align","Right Align"].includes(e.target.title) && !isLoadImage){
             manipulateProseClass({ restoreIds: true });
           }
 
           const selection = window.getSelection();
-          if (selection?.rangeCount) {
+          if (selection?.rangeCount && !isLoadImage) {
             manipulateProseClass({ restoreIds: true });
 
             let start = selection.getRangeAt(0).startOffset;
@@ -373,13 +340,8 @@ function EditPdf() {
         <MDXEditor contentEditableClassName="prose" ref={editorRef} markdown={""}
           toMarkdownOptions={{handlers:{
             image:(e)=>{
-              sessionStorage.setItem("pdf_current_image_title",e.title);
-              let width = sessionStorage.getItem("pdf_current_image_width");
-              let height = sessionStorage.getItem("pdf_current_image_height");
-              setTimeout(()=>{
-                manipulateProseClass({ restoreIds: true });
-              },600)
-              return `<img height="${height}" width="${width}" src="${e.url}" />`;
+              
+              return `<img height="{{height}}" width="{{width}}" title="${e.title}" src="${e.url}" />`;
             }
           }}}
           plugins={[imagePlugin({
@@ -396,6 +358,32 @@ function EditPdf() {
 
               // Converta a imagem para base64
               const base64String = await imageToBase64(image) as string;
+
+              const img = new Image();
+              img.src = base64String;
+
+              img.onload = () => {
+                const width = img.width;
+                const height = img.height;
+
+                const lines = editorRef.current?.getMarkdown().split(/\n\n/g);
+                const lineIndex = Number(sessionStorage.getItem("edit_pdf_line_selected")?.split("-")[1]) | 0;
+
+                if(lines){
+                  const newLine = Mustache.render(lines[lineIndex], {
+                    width,
+                    height 
+                  });
+                  lines.splice(lineIndex,1,newLine);
+                  editorRef.current?.setMarkdown(lines.join("\n\n"));
+                }
+
+                setTimeout(()=>{
+                  manipulateProseClass({ restoreIds: true });
+                },0)
+
+                setisLoadImage(false);
+              };
 
               // Retorne a string base64
               return Promise.resolve(base64String);

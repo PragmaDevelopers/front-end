@@ -21,8 +21,8 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     setCurrentTemplate(templateList[templateIndex].template);
                 }
             }}>
-                <select required defaultValue="default" className="w-full" name="selected_draft">
-                    <option disabled value="default"> -- Escolha um rascunho -- </option>
+                <select required defaultValue="" className="w-full" name="selected_draft">
+                    <option disabled value=""> -- Escolha um rascunho -- </option>
                     {templateList && (
                         templateList.map((template) => {
                             return <option key={template.id} value={template.id}>{template.name}</option>
@@ -54,11 +54,11 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     })
                 }
             }}>
-                <select required defaultValue="default" className="w-full" name="selected_draft">
-                    <option disabled value="default"> -- Escolha um rascunho -- </option>
+                <select required defaultValue="" className="w-full" name="selected_draft">
+                    <option disabled value=""> -- Escolha um rascunho -- </option>
                     {templateList && (
                         templateList.map((template) => {
-                            return <option key={template.id} value={template.id}>{template.name}</option>
+                            return <option disabled={[1].includes(template.id)} key={template.id} value={template.id}>{template.name}</option>
                         })
                     )}
                 </select>
@@ -83,11 +83,14 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                 };
                 fetch(`${API_BASE_URL}/api/private/user/signup/client/template`, requestOptions)
                 .then(response => response.json()).then((id:number) => {
-                    setTemplateList([{
-                        id,
-                        name: templateName,
-                        template: currentTemplate
-                    },...templateList])
+                    setTemplateList([
+                        ...templateList,
+                        {
+                            id,
+                            name: templateName,
+                            template: currentTemplate
+                        }
+                    ])
                     alert("Rascunho salvo!");
                 })
             }}>

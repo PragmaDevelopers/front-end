@@ -1,7 +1,7 @@
 import { IInputType } from "../types/RegisterClientFormTypes"
 
 export interface CepDataProps {
-    uf: string,
+    estado: string,
     localidade: string,
     bairro: string,
     logradouro: string

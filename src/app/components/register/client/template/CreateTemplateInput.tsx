@@ -17,7 +17,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
 
     const [selectedSet, setSelectedSet] = useState("");
 
-    const [selectedWichBefore, setWichBefore] = useState("default");
+    const [selectedWichBefore, setWichBefore] = useState("");
 
     const [handleAlert,setHandleAlert] = useState({
         isTrue: false,
@@ -45,8 +45,9 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
     function createInputOrSection() {
         const newPersonTemplate = currentTemplate[typePerson];
         if (selectedSection.isNew) {
+            let newSection = {};
             if(["new-radio", "new-checkbox", "new-select"].includes(selectedInputType)){
-                newPersonTemplate.push({
+                newSection = {
                     title: selectedSection.name,
                     inputs:[
                         {
@@ -56,7 +57,8 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                             children: inputToInsertB.values
                         }
                     ]
-                });
+                }
+                
             }else{
                 const newArr:object[] = [];
                 inputToInsertA.forEach((input)=>{
@@ -66,10 +68,16 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                         name: input.name
                     });
                 });
-                newPersonTemplate.push({
+                newSection = {
                     title: selectedSection.name,
                     inputs: newArr
-                });
+                }
+            }
+            const sectionIndex = newPersonTemplate.findIndex((section)=>section.title == selectedWichBefore);
+            if(sectionIndex != -1){
+                newPersonTemplate.splice(sectionIndex,0,newSection);
+            }else{
+                newPersonTemplate.push(newSection);
             }
         }else{
             const templateIndex = newPersonTemplate.findIndex(template=>template.title == selectedSection.name);
@@ -163,7 +171,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
             {selectedSection.isNew &&
                 <div className="mb-3 flex gap-2">
                     <label htmlFor="input-section-name" className="whitespace-nowrap">Nome da seção: </label>
-                    <input onChange={(e)=> {
+                    <input required onChange={(e)=> {
                         if(currentTemplate[typePerson].some((template)=>template.title == e.target.value)){
                             setHandleAlert({
                                 isTrue: true,
@@ -337,8 +345,8 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                     selectedSection.isNew ? (
                         <>
                             <label htmlFor="which-input-before" className="whitespace-nowrap">Adicionar antes de qual seção: </label>
-                            <select onChange={(e)=>setWichBefore(e.target.value)} value={selectedWichBefore} className="w-full" name="which_input_before" id="which-input-before">
-                            <option disabled value="default"> -- Escolha uma seção -- </option>
+                            <select required onChange={(e)=>setWichBefore(e.target.value)} defaultValue={selectedWichBefore} className="w-full" name="which_input_before" id="which-input-before">
+                            <option disabled value=""> -- Escolha uma seção -- </option>
                             {
                                 currentTemplate[typePerson].map((accordion: any, index: number) => {
                                     return <option value={accordion.title} key={index}>{accordion.title}</option>
@@ -350,8 +358,8 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                     ) : (
                         <>
                             <label htmlFor="which-input-before" className="whitespace-nowrap">Adicionar antes de qual input: </label>
-                            <select onChange={(e)=>setWichBefore(e.target.value)} value={selectedWichBefore} className="w-full" name="which_input_before" id="which-input-before">
-                            <option disabled value="default"> -- Escolha um input -- </option>
+                            <select required onChange={(e)=>setWichBefore(e.target.value)} defaultValue={selectedWichBefore} className="w-full" name="which_input_before" id="which-input-before">
+                            <option disabled value=""> -- Escolha um input -- </option>
                                 {
                                     ["radio", "select", "checkbox"].includes(selectedInputType) ? (
                                         currentTemplate[typePerson].map((template: any) => {

@@ -1,6 +1,7 @@
 import { renderToString } from 'react-dom/server';
 import { PDFRenderer,pdf, BlobProvider,Document, Page, Image,Text, View, StyleSheet } from '@react-pdf/renderer';
 import { PdfLineStyleProps } from '../interfaces/RegisterClientInterfaces';
+import { useRef } from 'react';
 
 
 type IFont = "Times-Roman" | "Times-Bold" | "Times-Italic" | "Times-BoldItalic";
@@ -87,93 +88,96 @@ export default function pdfGenerator(data:PdfLineStyleProps[]) {
         marginTop: 10
       },
     });
+
+
     return (
         <Document>
             <Page size="A4" style={globalStyle.page}>
-                <View style={globalStyle.section}>
-                    {data.map((line,index)=>{
-                      if(line.content === "&#x20;"){
-                        return <Text key={"space-"+index} />
-                      }
+                <View style={globalStyle.section} render={(props)=>{
+                  console.log(props)
+                  return data.map((line,index)=>{
+                    if(line.content === "&#x20;"){
+                      return <Text key={"space-"+index} />
+                    }
 
-                      let regexImage = /([^"]*)<img height="([^"]*)" width="([^"]*)" title="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>([^"]*)/;
-                      let regexBoldItalic = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
+                    let regexImage = /([^"]*)<img height="([^"]*)" width="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>([^"]*)/;
+                    let regexBoldItalic = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
 
-                      let wordArr:JSX.Element[] = [];
+                    let wordArr:JSX.Element[] = [];
 
-                      if(line.content.match(regexImage)){
-                        const match = line.content.match(regexImage);
-                        if(match){
-                          console.log(match)
-                          const previous = {
-                            style: line.style,
-                            content:match[1]
-                          };
+                    if(line.content.match(regexImage)){
+                      const match = line.content.match(regexImage);
+                      if(match){
+                        console.log(match)
+                        const previous = {
+                          style: line.style,
+                          content:match[1]
+                        };
 
-                          if(previous.content != ""){
-                            wordArr.push(...boldItalicValidation(regexBoldItalic,previous));
-                          }
-
-                          const height = match[2] != "{{height}}" ? match[2] : undefined;
-                          const width = match[2] != "{{width}}" ? match[3] : undefined;
-                          const pictureFormt = match[5];
-                          const base64Data = match[6];
-
-                          wordArr.push(<Image style={{width,height}} key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data} />);
-
-                          const next = {
-                            style: line.style,
-                            content:match[7]
-                          };
-
-                          if(next.content != ""){
-                            wordArr.push(...boldItalicValidation(regexBoldItalic,next));
-                          }      
-
+                        if(previous.content != ""){
+                          wordArr.push(...boldItalicValidation(regexBoldItalic,previous));
                         }
-                      }else{
-                        wordArr.push(...boldItalicValidation(regexBoldItalic,line));
-                      }
 
-                      let style: {font:IFont,textDecoration:ITextDecoration,fontSize:string,fontWeigth:IFont,justifyContent:"flex-start" | "center" | "flex-end"} = {
-                        font: "Times-Roman",
-                        textDecoration: "none",
-                        fontSize: "16",
-                        fontWeigth: "Times-Roman",
-                        justifyContent: line.style.justifyContent
-                      }
+                        const height = match[2] != "{{height}}" ? match[2] : undefined;
+                        const width = match[3] != "{{width}}" ? match[3] : undefined;
+                        const pictureFormt = match[4];
+                        const base64Data = match[5];
 
-                      if(line.content.match(/^[#]{1,6} ([\s\S]*?)/)){
-                        if(line.content.match(/^[#]{1} ([\s\S]*?)/)){
-                          style.fontSize = "32";
-                          style.fontWeigth = "Times-Bold"
-                        }else if(line.content.match(/^[#]{2} ([\s\S]*?)/)){
-                          style.fontSize = "24";
-                          style.fontWeigth = "Times-Bold"
-                        }else if(line.content.match(/^[#]{3} ([\s\S]*?)/)){
-                          style.fontSize = "18.72";
-                          style.fontWeigth = "Times-Bold"
-                        }else if(line.content.match(/^[#]{4} ([\s\S]*?)/)){
-                          style.fontSize = "16";
-                          style.fontWeigth = "Times-Bold"
-                        }else if(line.content.match(/^[#]{5} ([\s\S]*?)/)){
-                          style.fontSize = "13.28";
-                          style.fontWeigth = "Times-Bold"
-                        }else if(line.content.match(/^[#]{6} ([\s\S]*?)/)){
-                          style.fontSize = "13";
-                        }
-                      }
+                        wordArr.push(<Image style={{width,height}} key={"image"+index} src={"data:image/"+pictureFormt+";base64,"+base64Data} />);
 
-                      return <View key={"line-"+index} style={{
-                        justifyContent:style.justifyContent,
-                        fontSize:style.fontSize,
-                        fontFamily:style.fontWeigth,
-                        display:"flex",
-                        flexDirection: "row",
-                        alignItems: "flex-end"
-                      }}>{wordArr}</View>
-                    })}
-                </View>
+                        const next = {
+                          style: line.style,
+                          content:match[6]
+                        };
+
+                        if(next.content != ""){
+                          wordArr.push(...boldItalicValidation(regexBoldItalic,next));
+                        }      
+
+                      }
+                    }else{
+                      wordArr.push(...boldItalicValidation(regexBoldItalic,line));
+                    }
+
+                    let style: {font:IFont,textDecoration:ITextDecoration,fontSize:string,fontWeigth:IFont,justifyContent:"flex-start" | "center" | "flex-end"} = {
+                      font: "Times-Roman",
+                      textDecoration: "none",
+                      fontSize: "16",
+                      fontWeigth: "Times-Roman",
+                      justifyContent: line.style.justifyContent
+                    }
+
+                    if(line.content.match(/^[#]{1,6} ([\s\S]*?)/)){
+                      if(line.content.match(/^[#]{1} ([\s\S]*?)/)){
+                        style.fontSize = "32";
+                        style.fontWeigth = "Times-Bold"
+                      }else if(line.content.match(/^[#]{2} ([\s\S]*?)/)){
+                        style.fontSize = "24";
+                        style.fontWeigth = "Times-Bold"
+                      }else if(line.content.match(/^[#]{3} ([\s\S]*?)/)){
+                        style.fontSize = "18.72";
+                        style.fontWeigth = "Times-Bold"
+                      }else if(line.content.match(/^[#]{4} ([\s\S]*?)/)){
+                        style.fontSize = "16";
+                        style.fontWeigth = "Times-Bold"
+                      }else if(line.content.match(/^[#]{5} ([\s\S]*?)/)){
+                        style.fontSize = "13.28";
+                        style.fontWeigth = "Times-Bold"
+                      }else if(line.content.match(/^[#]{6} ([\s\S]*?)/)){
+                        style.fontSize = "13";
+                      }
+                    }
+
+                    return <View key={"line-"+index} style={{
+                      justifyContent:style.justifyContent,
+                      fontSize:style.fontSize,
+                      fontFamily:style.fontWeigth,
+                      display:"flex",
+                      flexDirection: "row",
+                      alignItems: "flex-end"
+                    }}>{wordArr}</View>
+                  })
+                }} />
             </Page>
         </Document>
     ); 

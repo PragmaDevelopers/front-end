@@ -37,9 +37,9 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
             }}>
             <div className="mb-3 flex gap-2">
                 <label htmlFor="remove-section" className="inline-block whitespace-nowrap">Qual seção: </label>
-                <select required onChange={(e) => setSelectedSection(e.target.value)} value={selectedSection != "default" ? selectedSection : "default"}
+                <select required onChange={(e) => setSelectedSection(e.target.value)} defaultValue={selectedSection}
                     className="w-full" name="remove_section" id="remove-section">
-                    <option disabled value="default"> -- Escolha uma seção -- </option>
+                    <option disabled value=""> -- Escolha uma seção -- </option>
                     {currentTemplate[typePerson].map((accordion: any, index: number) => {
                         return <option value={accordion.title} key={index}>{accordion.title}</option>
                     })}

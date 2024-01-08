@@ -8,6 +8,7 @@ import '@mdxeditor/editor/style.css'
 import { MDXEditor, headingsPlugin, MDXEditorMethods, BlockTypeSelect, CodeToggle,UndoRedo, BoldItalicUnderlineToggles, toolbarPlugin, InsertImage, imagePlugin } from "@mdxeditor/editor";
 import { IFormSignUpInputs } from "@/app/types/RegisterClientFormTypes";
 import { AlignLeftButton, AlignCenterButton, AlignRightButton } from "@/app/components/PDFEditor/AlignButtons";
+import { useUserContext } from "@/app/contexts/userContext";
 
 function EditPdf() {
   const [signUpData, setSignUpData] = useState<IFormSignUpInputs>();
@@ -18,7 +19,24 @@ function EditPdf() {
   const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null)
 
+  const { userValue } = useUserContext();
+
+  const returnToHome = () => {
+      router.push("/");
+  }
+
   useEffect(() => {
+      if (userValue.token === "") {
+          returnToHome();
+      }
+  }, [userValue, router]);
+
+  useEffect(() => {
+
+    if (userValue.token === "") {
+      returnToHome();
+    }
+
     const sessionData = sessionStorage.getItem("clientSignUp");
     if (sessionData) {
       setSignUpData(JSON.parse(sessionData))
@@ -218,7 +236,7 @@ function EditPdf() {
         sessionStorage.setItem("pdf_formatted_line_"+i, formattedLine);
       }
     }
-    router.push("./view");
+    window.open("./view","_blank");
   }
 
   return (
@@ -267,9 +285,8 @@ function EditPdf() {
               if(altLabel && altInput && titleLabel && titleInput){
                 altLabel.textContent = "É uma imagem de fundo?";
                 altInput.setAttribute("style","display:none;");
-                titleLabel.textContent = "Identificador da imagem? *";
-                titleInput.setAttribute("required","true");
-                titleInput.setAttribute("maxLength","10");
+                titleLabel.setAttribute("style","display:none;");
+                titleInput.setAttribute("style","display:none;");
 
                 if(e.target.name == "isBackgroundImage"){
       
@@ -340,7 +357,6 @@ function EditPdf() {
         <MDXEditor contentEditableClassName="prose" ref={editorRef} markdown={""}
           toMarkdownOptions={{handlers:{
             image:(e)=>{
-              
               return `<img height="{{height}}" width="{{width}}" title="${e.title}" src="${e.url}" />`;
             }
           }}}

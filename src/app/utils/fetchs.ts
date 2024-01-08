@@ -13,46 +13,70 @@
  *  [ ] - SIGNUP
  *  [ ] - CARD
  *  [ ] - COLUMN
- *  [ ] - 
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
+ *  [ ] - KANBAN
+ *  [ ] - CHECKLIST
+ *  [ ] - CHECKLIST ITEM
+ *  [ ] - INVITE USER TO KANBAN
+ *  [ ] - COMMENT
+ *  [ ] - COMMENT ANSWER
+ *  [ ] - INNER CARD
+ *  [ ] - TAG
+ *  [ ] - CUSTOM FIELDS
+ *  [ ] - CUSTOM FIELDS TEMPLATES
  *
  * GET:
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
+ *  [ ] - KANBAN USERS
+ *  [ ] - USER KANBANS
+ *  [ ] - PROFILE
+ *  [ ] - USERS
+ *  [ ] - COLUMN
+ *  [ ] - CARD 
+ *  [ ] - CHECKLIST
+ *  [ ] - CHECKLIST ITEM
+ *  [ ] - USER NOTIFICATIONS
+ *  [ ] - TAGS
+ *  [ ] - COMMENTS
+ *  [ ] - CUSTOM FIELDS
+ *  [ ] - CUSTOM FIELDS TEMPLATES
  *
  * PATCH:
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
- *  [ ] -
+ *  [ ] - KANBAN
+ *  [ ] - PROFILE
+ *  [ ] - COLUMN
+ *  [ ] - MOVE COLUMN
+ *  [ ] - CARD
+ *  [ ] - MOVER CARD
+ *  [ ] - CHECKLIST
+ *  [ ] - CHECKLIST ITEM
+ *  [ ] - UPDATE USER PERMISSIONS
+ *  [ ] - COMMENT 
+ *  [ ] - TAG
+ *  [ ] - CUSTOM FIELDS
  *
+ * DELETE:
+ *  [ ] - KANBAN
+ *  [ ] - COLUMN
+ *  [ ] - CARD
+ *  [ ] - CHECKLIST
+ *  [ ] - CHECKLIST ITEM
+ *  [ ] - REMOVE USER FROM KANBAN
+ *  [ ] - COMMENT
+ *  [ ] - TAG
+ *  [ ] - CUSTOM FIELDS
+ *  [ ] - CUSTOM FIELDS TEMPLATES
+ *
+ *
+ *
+ *
+ * FALTANDO:
+ *  - INNER CARDS PATCH:
+ *      > Como vamos atualizar os Inner Cards no Back-End? se tivermos somente \ 
+ *      > o DELETE podemos no front-end preservar os dados, e fazer um POST \
+ *      > com os dados atualizados. - Mirai
+ *  - INNER CARDS DELETE:
+ *      > Como vamos deletar um Inner Card no Back-End? se os innerCards fossem\
+ *      > objetos adjacentes na rota do Card daria para fazermos um PATCH com \
+ *      > o card removido. - Mirai
  * */
 
 import { SystemID } from "../types/KanbanTypes";
@@ -65,12 +89,24 @@ const PRIVATE_ROUTE: string = `${API_BASE_URL}/api/private`;
 const SIGNUP_ROUTE: string = `${PUBLIC_ROUTE}/signup`;
 const LOGIN_ROUTE: string = `${PUBLIC_ROUTE}/login`;
 
+const USER_ROUTE: string = `${PRIVATE_ROUTE}/user`
+
+const KANBAN_ROUTE: string = `${USER_ROUTE}/kanban`;
+const COLUMN_ROUTE: string = `${KANBAN_ROUTE}/column`;
+const CARD_ROUTE: string = `${COLUMN_ROUTE}/card`;
+
 const CHECKLIST_ROUTE: string = `${PRIVATE_ROUTE}/user/kanban/column/card/checkList`;
 const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checkListItem`;
-//const _ROUTE: string = ``;
-//const _ROUTE: string = ``;
-//const _ROUTE: string = ``;
-//const _ROUTE: string = ``;
+
+
+/* Essa é uma função local que retorna a rota com ID de um dado elemento */
+function elementIDRoute(element: string, id: SystemID): string {
+    let elementRouteMap: {[Key: string]: string} = {
+        '': `${id}`,
+    }
+
+    return elementRouteMap[element];
+}
 
 /* Essa é uma função local que simplifica e centraliza a geração de requestObjects */
 function generateRequestObject(body: string, method: 'POST' | 'GET' | 'PATCH' | 'DELETE', authorization?: string): RequestInit {

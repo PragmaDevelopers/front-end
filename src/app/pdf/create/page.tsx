@@ -236,16 +236,16 @@ function EditPdf() {
         sessionStorage.setItem("pdf_formatted_line_"+i, formattedLine);
       }
     }
-    window.open("./view","_blank");
+    window.open("/pdf/view","_blank");
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl p-3">
+    <div className="mx-auto w-full max-w-5xl h-full overflow-auto">
       <h1>Editor de pdf:</h1>
-      <div className="flex justify-between">
+      <div className="flex justify-between sticky">
         <div>
-          <select defaultValue="default" className="bg-slate-400 p-2 rounded-md me-2" onChange={(e) => setVariable(e.target.value)}>
-            <option disabled value="default">-- Escolha uma opção --</option>
+          <select defaultValue="" className="bg-slate-400 p-2 rounded-md me-2" onChange={(e) => setVariable(e.target.value)}>
+            <option disabled value=""> -- Escolha uma opção -- </option>
             {selectList(signUpData).map((option) => {
               return <option key={option} value={`{{${option}}}`}>{option}</option>
             })}

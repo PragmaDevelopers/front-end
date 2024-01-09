@@ -30,7 +30,7 @@ function ViewPdf() {
         }
       }
 
-      const blob = await pdf(pdfGenerator(data)).toBlob();
+      const blob = await pdf(pdfGenerator(data,undefined)).toBlob();
       const blobUrl = URL.createObjectURL(blob);
       const iframe = ref.current;
 
@@ -38,15 +38,10 @@ function ViewPdf() {
         iframe.src = blobUrl;
       }
     }
+    getPdf();
+  }, [ref.current]);
 
-    // Verifica se está no navegador antes de chamar getPdf
-    if (typeof window !== "undefined") {
-      getPdf();
-    }
-
-  }, []);
-
-  return <iframe width="100%" height="100%" ref={ref}></iframe>;
+  return <iframe width="100%" height="100%" ref={ref}></iframe>
 }
 
 export default ViewPdf;

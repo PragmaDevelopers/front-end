@@ -243,7 +243,7 @@ export default function Layout({ children }: any) {
     }
 
     return (
-        <main className="w-full h-full flex flex-row items-start justify-between overflow-hidden">
+        <main className="w-full h-full max-h-[90vh]  flex flex-row items-start justify-between overflow-hidden">
             <CustomModal
                 title={modalTitle}
                 description={modalDescription}

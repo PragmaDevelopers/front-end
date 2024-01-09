@@ -245,7 +245,7 @@ export function CreateCardForm(
 
                 const updatedColumn = {
                     ...targetColumn,
-                    cardsList: [...targetColumn.cardsList, newCard],
+                    cardsList: [...targetColumn.cards, newCard],
                 };
 
                 const updatedColumns = prevData.columns.map((column) =>
@@ -258,9 +258,9 @@ export function CreateCardForm(
                 };
             } else {
                 console.log(`CARD ${newCard.id} EDITED.`);
-                const cardIndex = targetColumn.cardsList.findIndex((card: Card) => card?.id === newCard.id);
+                const cardIndex = targetColumn.cards.findIndex((card: Card) => card?.id === newCard.id);
                 if (cardIndex !== -1) {
-                    const updatedColumnCardList = targetColumn.cardsList.map((card: Card) => card?.id === newCard.id ? newCard : card)
+                    const updatedColumnCardList = targetColumn.cards.map((card: Card) => card?.id === newCard.id ? newCard : card)
                     console.log(updatedColumnCardList);
                     const updatedColumn = {
                         ...targetColumn,
@@ -311,7 +311,7 @@ export function DeleteCard(
             return prevData;
         }
 
-        const updatedCardsList = targetColumn.cardsList.filter((card) => card.id !== cardID);
+        const updatedCardsList = targetColumn.cards.filter((card) => card.id !== cardID);
 
         const updatedColumn = {
             ...targetColumn,

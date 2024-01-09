@@ -246,11 +246,11 @@ export function OnDragEnd(
                         const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
                         if (!srcCol) return;
 
-                        const updatedCardsList = srcCol.cardsList.filter((card) => card.id !== cardEl.id);
+                        const updatedCardsList = srcCol.cards.filter((card) => card.id !== cardEl.id);
 
                         const updatedColumn = {
                             ...srcCol,
-                            cardsList: updatedCardsList,
+                            cards: updatedCardsList,
                         };
 
                         const newCard: Card = {
@@ -260,7 +260,7 @@ export function OnDragEnd(
 
                         const resultDestCol: Column = {
                             ...destCol,
-                            cardsList: [...destCol.cardsList, newCard],
+                            cards: [...destCol.cards, newCard],
                         }
 
                         const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
@@ -319,11 +319,11 @@ export function OnDragEnd(
                             if (destCol === undefined) return;
 
                             //console.log(destCol, srcCol);
-                            const updatedCardsList = srcCol.cardsList.filter((card) => card.id !== cardEl.id);
+                            const updatedCardsList = srcCol.cards.filter((card) => card.id !== cardEl.id);
 
                             const updatedColumn = {
                                 ...srcCol,
-                                cardsList: updatedCardsList,
+                                cards: updatedCardsList,
                             };
 
                             const newCard: Card = {
@@ -332,7 +332,7 @@ export function OnDragEnd(
                             }
                             const resultDestCol: Column = {
                                 ...destCol,
-                                cardsList: [...destCol.cardsList, newCard],
+                                cards: [...destCol.cards, newCard],
                             }
 
                             const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
@@ -385,11 +385,11 @@ export function OnDragEnd(
                             if (!srcCol) return;
                             if (destCol === undefined) return;
 
-                            const updatedCardsList = srcCol.cardsList.filter((card) => card.id !== cardEl.id);
+                            const updatedCardsList = srcCol.cards.filter((card) => card.id !== cardEl.id);
 
                             const updatedColumn = {
                                 ...srcCol,
-                                cardsList: updatedCardsList,
+                                cards: updatedCardsList,
                             };
 
                             const newCard: Card = {
@@ -398,7 +398,7 @@ export function OnDragEnd(
                             }
                             const resultDestCol: Column = {
                                 ...destCol,
-                                cardsList: [...destCol.cardsList, newCard],
+                                cards: [...destCol.cards, newCard],
                             }
 
                             const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
@@ -504,14 +504,14 @@ export function OnDragOver(
                         const targetColumn = prevKanbanData.columns.find((column) => column?.id === active.data.current?.card.columnID);
                         if (!targetColumn) return prevKanbanData;
 
-                        const activeCardIndex = targetColumn.cardsList.findIndex((card: Card) => card?.id === activeID);
-                        const overCardIndex = targetColumn.cardsList.findIndex((card: Card) => card?.id === overID);
+                        const activeCardIndex = targetColumn.cards.findIndex((card: Card) => card?.id === activeID);
+                        const overCardIndex = targetColumn.cards.findIndex((card: Card) => card?.id === overID);
 
-                        const newCardArray: Card[] = arrayMove(targetColumn.cardsList, activeCardIndex, overCardIndex);
+                        const newCardArray: Card[] = arrayMove(targetColumn.cards, activeCardIndex, overCardIndex);
 
                         const updatedColumn = {
                             ...targetColumn,
-                            cardsList: newCardArray,
+                            cards: newCardArray,
                         };
 
                         const updatedColumns = prevKanbanData.columns.map((column: Column) =>
@@ -557,11 +557,11 @@ export function OnDragOver(
                         //const srcCardIndex = sourceColumn.cardsList.findIndex((card: Card) => card?.id === activeID);
                         //const destCardIndex = destColumn.cardsList.findIndex((card: Card) => card?.id === overID);
 
-                        const updatedSourceCardsList = sourceColumn.cardsList.filter((card) => card.id !== activeID);
+                        const updatedSourceCardsList = sourceColumn.cards.filter((card) => card.id !== activeID);
 
                         const updatedSourceColumn = {
                             ...sourceColumn,
-                            cardsList: updatedSourceCardsList,
+                            cards: updatedSourceCardsList,
                         };
 
                         const updatedColumns = prevKanbanData.columns.map((column: Column) =>

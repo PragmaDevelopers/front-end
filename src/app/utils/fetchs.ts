@@ -93,19 +93,24 @@ const USER_ROUTE: string = `${PRIVATE_ROUTE}/user`
 
 const KANBAN_ROUTE: string = `${USER_ROUTE}/kanban`;
 const COLUMN_ROUTE: string = `${KANBAN_ROUTE}/column`;
+const COLUMN_MOVE_ROUTE: string = `${KANBAN_ROUTE}/move/column`;
 const CARD_ROUTE: string = `${COLUMN_ROUTE}/card`;
+const CARD_MOVE_ROUTE: string = `{${COLUMN_ROUTE}/move/card}`
 
 const CHECKLIST_ROUTE: string = `${PRIVATE_ROUTE}/user/kanban/column/card/checkList`;
 const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checkListItem`;
 
 
 /* Essa é uma função local que retorna a rota com ID de um dado elemento */
-function elementIDRoute(element: string, id: SystemID): string {
+type elementType = 'columncards' | 'card' | 'cardchecklists'
+function elementIDRoute(element: elementType, id: SystemID): string {
     let elementRouteMap: {[Key: string]: string} = {
-        '': `${id}`,
+        'columncards': `${COLUMN_ROUTE}/${id}/card`,
+	'card': `${CARD_ROUTE}/${id}`,
+	'cardchecklists': `${CARD_ROUTE}/${id}/checkList`,
     }
 
-    return elementRouteMap[element];
+    return elementRouteMap[element.toLowerCase()];
 }
 
 /* Essa é uma função local que simplifica e centraliza a geração de requestObjects */

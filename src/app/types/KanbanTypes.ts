@@ -63,10 +63,10 @@ export type Card = {
 }
 
 export type Column = {
-    title: string;
-    columnType: number;
     id: SystemID;
-    cardsList: Card[];
+    title: string;
+    index: number;
+    cards: Card[];
 }
 
 export type KanbanData = {

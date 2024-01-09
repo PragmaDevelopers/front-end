@@ -54,6 +54,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [, setActiveCard] = useState<Card | null>(null);
     const columnsId = useMemo(() => {
+        console.log("memo")
         if (kanbanData && kanbanData.columns && kanbanData.columns.length > 0) {
             return kanbanData.columns.map((col: any) => col.id);
         } else {
@@ -92,13 +93,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     
 
     useEffect(() => {
-        const appendToKanbansColumnsArray = (element: any) => {
-            let _tmpArr = kanbansColumnsArray;
-            _tmpArr.push(element);
-            setKanbansColumnsArray(_tmpArr);
-        }
-
-
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -111,19 +105,16 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 let id = element.id;
                 let title = element.title;
                 if ((id as number) === parseInt(params.id as string)) {
-                    console.log(title);
                     setKanbanTitle(title);
                 }
-                fetch(`${API_BASE_URL}/api/private/user/kanban/${id}/columns`).then(response => response.json()).then((data: any) => {
+                fetch(`${API_BASE_URL}/api/private/user/kanban/${id}/columns?cards=true`,requestOptions).then(response => response.json()).then((data: any) => {
                     let _newEntry = {
-                        id: id,
-                        columns: data,
+                        kanbanId: id,
+                        columns: data
                     }
-
-                    appendToKanbansColumnsArray(_newEntry);
+                    setKanbanData(_newEntry);
                 })
             });
-
             setKanbansArray(data);
         })
     }, [setKanbansArray, userValue, kanbansColumnsArray, setKanbansColumnsArray, setKanbanTitle, params]);
@@ -486,7 +477,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     return (
-        <main className="w-full h-full overflow-auto shrink-0">
+        <main className="w-[100vw] h-full overflow-x-auto shrink-0">
             <CustomModal
                 title={modalTitle}
                 description={modalDescription}
@@ -540,12 +531,12 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 setTempCard={setTempCard}
                 setTempCardsArr={setTempCardsArr}
             />
-            <div className="flex justify-between items-center w-full px-2">
+            <div className="flex justify-between items-center w-[80%] fixed">
                 <h1>{kanbanTitle}</h1>
-                <Link href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
+                <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
-            <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
-                <div className="flex flex-row justify-start items-start gap-x-2 w-full h-[95%] overflow-auto shrink-0">
+            <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
+                <div className="flex flex-row justify-start items-start gap-x-2 w-full h-full mt-9 shrink-0">
                     <SortableContext items={columnsId}>
                         {kanbanData.columns?.map((col: Column) => <ColumnContainer
                             createCard={handleCreateCard}
@@ -569,7 +560,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                         />)}
                     </SortableContext>
                     <button 
-                    className='w-64 h-full rounded-md shadow-inner bg-[#F0F0F0] border-neutral-200 border-[1px] flex flex-col justify-center items-center' 
+                    className='min-w-64 w-64 h-full rounded-md shadow-inner bg-[#F0F0F0] border-neutral-200 border-[1px] flex flex-col justify-center items-center' 
                     onClick={handleCreateNewColumn}>
                         <h1 className='mb-2'>Add Column</h1>
                         <PlusCircleIcon className='w-8 aspect-square' />

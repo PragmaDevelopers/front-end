@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="pt-br">
-            <body className={`${interFont.variable} ${poppinsFont.variable} max-h-[100vh] max-w-[100%] scrollbar-thin scrollbar-thumb-neutral-100 scrollbar-track-400 font-poppins w-screen h-screen bg-neutral-50 flex flex-col justify-start items-start transition-all text-neutral-950 `}>
+            <body className={`${interFont.variable} ${poppinsFont.variable} overflow-hidden max-h-[100vh] max-w-[100%] scrollbar-thin scrollbar-thumb-neutral-100 scrollbar-track-400 font-poppins w-screen h-screen bg-neutral-50 flex flex-col justify-start items-start transition-all text-neutral-950 `}>
                 <Main>
                     {children}
                 </Main>

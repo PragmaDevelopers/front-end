@@ -64,7 +64,7 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div className="flex flex-col justify-center items-center w-fit">
                     <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
                     <select className="w-full" onChange={setDestinationColumn}>
-                        {columnsArray.filter((element) => destinationKanban.id === element.id).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id}>{e.title}</option>))}
+                        {columnsArray.filter((element) => destinationKanban?.id === element.id).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id}>{e.title}</option>))}
                     </select>
                 </div>
             </div>
@@ -198,7 +198,7 @@ function AddCustomFieldForm(props: AddCustomFieldForm) {
 interface MoveCardFormProps {
     viewMoveCard: boolean;
     handleCloseMoveCard: any;
-    dashboardsArray: { kanbanId: string, name: string }[];
+    dashboardsArray: { id: string, name: string }[];
 }
 function MoveCardForm(props: MoveCardFormProps) {
     const { dashboardsArray, handleCloseMoveCard, viewMoveCard } = props;
@@ -206,8 +206,9 @@ function MoveCardForm(props: MoveCardFormProps) {
         <div className={(viewMoveCard ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
             <form onSubmit={handleCloseMoveCard} className='flex flex-col items-center'>
                 <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
-                    {dashboardsArray?.map((kanban: { kanbanId: string, name: string }) => {
-                        return <option value={kanban?.kanbanId} key={kanban?.kanbanId}>{kanban?.name}</option>;
+                    {dashboardsArray?.map((kanban: { id: string, name: string }) => {
+                        console.log(kanban.id)
+                        return <option value={kanban?.id} key={kanban?.id}>{kanban?.name}</option>;
                     })}
                 </select>
                 <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Mover</button>

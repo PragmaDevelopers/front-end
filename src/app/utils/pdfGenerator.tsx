@@ -92,16 +92,18 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:st
 
   
   const regexImage = /([^"]*)<img height="([^"]*)" width="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>([^"]*)/;
-  const regexBackgroundImage = /<img className="([^"]*)" height="([^"]*)" width="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>/;
+  const regexBackgroundImage = /<img className="left-([^"]*) top-([^"]*)" height="([^"]*)" width="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>/;
   const regexBoldItalic = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
+
+  const backgroundImageMatch = backgroundImage ? backgroundImage.match(regexBackgroundImage) : null;
 
   return (
       <Document>
         <Page size="A4" style={globalStyle.page}>
           {
-            backgroundImage?.match(regexBackgroundImage) && (
-              <View fixed={true}>
-                <Image src={backgroundImage} />
+            backgroundImageMatch && (
+              <View fixed={true} style={{position:"absolute",left:backgroundImageMatch[1],top:backgroundImageMatch[2]}}>
+                  <Image style={{height:backgroundImageMatch[3],width:backgroundImageMatch[4]}} src={"data:image/"+backgroundImageMatch[5]+";base64,"+backgroundImageMatch[6]} />
               </View>
             )
           }

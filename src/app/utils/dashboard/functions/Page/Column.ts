@@ -3,7 +3,7 @@ import { Column, KanbanData, SystemID, userData, userValueDT } from "@/app/types
 import { API_BASE_URL } from "@/app/utils/variables";
 import { RefObject } from "react";
 
-export function CreateNewColumn(
+export async function CreateNewColumn(
     userValue: userValueDT,
     setModalTitle: (value: string) => void,
     setModalDescription: (value: string) => void,
@@ -56,51 +56,27 @@ export function CreateNewColumn(
         return;
     }
 
-    if (kanbanData.columns !== undefined) {
-        let newColumn = {
-            id: "",                                         /////////////////////////////////////////////////////////////////////////////
-            type: 0,
-            title: `Column ${kanbanData.columns.length}`,
-            cardsList: [],
-        };
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
-            body: JSON.stringify({
-                title: newColumn.title,
-                kanbanId: params.id,
-            }),
-        };
+    let newColumn = {
+        id: "",                                         /////////////////////////////////////////////////////////////////////////////
+        title: `Column ${kanbanData.columns != undefined ? kanbanData.columns.length : 0}`,
+        index: kanbanData.columns != undefined ? kanbanData.columns.length : 0,
+        cards: [],
+    };
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
+        body: JSON.stringify({
+            title: newColumn.title,
+            kanbanId: params.id,
+        }),
+    };
 
-        fetch(`${API_BASE_URL}/api/private/user/kanban/column`, requestOptions).then(response => response.text()).then(data => newColumn.id = data)
+    await fetch(`${API_BASE_URL}/api/private/user/kanban/column`, requestOptions).then(response => response.text()).then(data => newColumn.id = data)
 
-        setKanbanData((prevData: KanbanData) => ({
-            ...prevData,
-            columns: [...prevData.columns, newColumn],
-        }));
-    } else {
-        let newColumn = {
-            id: "",                                         /////////////////////////////////////////////////////////////////////////////
-            type: 0,
-            title: 'Column 0',
-            cardsList: [],
-        };
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
-            body: JSON.stringify({
-                title: newColumn.title,
-                kanbanId: params.id,
-            }),
-        };
-        fetch(`${API_BASE_URL}/api/private/user/kanban/column`, requestOptions).then(response => response.text()).then(data => newColumn.id = data)
-
-
-        setKanbanData((prevData: KanbanData) => ({
-            ...prevData,
-            columns: [newColumn],
-        }));
-    }
+    setKanbanData((prevData: KanbanData) => ({
+        ...prevData,
+        columns: [...prevData.columns, newColumn],
+    }));
 }
 
 export function RemoveColumn(

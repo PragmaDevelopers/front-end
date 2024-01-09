@@ -243,7 +243,7 @@ export default function Layout({ children }: any) {
     }
 
     return (
-        <main className="w-full h-full max-h-[90vh]  flex flex-row items-start justify-between overflow-hidden">
+        <main className="w-full h-full max-h-[90vh] flex flex-row items-start justify-between overflow-hidden">
             <CustomModal
                 title={modalTitle}
                 description={modalDescription}
@@ -254,7 +254,7 @@ export default function Layout({ children }: any) {
                 borderColor={modalBorderColor}
                 focusRef={modalFocusRef}
             />
-            <div className="grow relative w-56 h-full flex flex-col justify-start items-start shrink-0">
+            <div className="grow relative w-[20%] h-full flex flex-col justify-start items-start shrink-0">
                 <details className="p-2 hidden">
                     <summary>Seções</summary>
                     <div className="">
@@ -308,7 +308,7 @@ export default function Layout({ children }: any) {
                     </Link>
                 </div>
             </div>
-            <div className="shadow-inner grow w-full h-full p-2 bg-neutral-100 rounded-tl-md">
+            <div className="shadow-inner grow w-full h-full p-2 overflow-hidden bg-neutral-100 rounded-tl-md">
                 {children}
             </div>
         </main>

@@ -77,7 +77,7 @@ export default function Main({ children }: any) {
                         </div>
                     </div>
                 </div>
-                <div className='w-full h-full overflow-hidden'>
+                <div className='w-full h-full'>
                     {children}
                 </div>
             </div>

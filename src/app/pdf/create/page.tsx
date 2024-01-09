@@ -240,10 +240,9 @@ function EditPdf() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl h-full overflow-auto">
-      <h1>Editor de pdf:</h1>
-      <div className="flex justify-between sticky">
-        <div>
+    <div className="mx-auto w-full max-w-5xl">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-3 pb-3">
           <select defaultValue="" className="bg-slate-400 p-2 rounded-md me-2" onChange={(e) => setVariable(e.target.value)}>
             <option disabled value=""> -- Escolha uma opção -- </option>
             {selectList(signUpData).map((option) => {
@@ -258,6 +257,7 @@ function EditPdf() {
               },500)
             }
           }} className="bg-slate-400 p-2 rounded-md" type="button">Adicionar Variável</button>
+          {/* <img className="p-2" src="https://placehold.co/300x300?text=Imagem+de+fundo" /> */}
         </div>
         <button onClick={() => formSubmit()} type="button" className="bg-slate-400 p-2 rounded-md">Criar PDF</button>
       </div>
@@ -354,7 +354,7 @@ function EditPdf() {
           }
         }}
       >
-        <MDXEditor contentEditableClassName="prose" ref={editorRef} markdown={""}
+        <MDXEditor contentEditableClassName="prose" className="mb-3" ref={editorRef} markdown={""}
           toMarkdownOptions={{handlers:{
             image:(e)=>{
               return `<img height="{{height}}" width="{{width}}" title="${e.title}" src="${e.url}" />`;

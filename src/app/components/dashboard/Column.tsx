@@ -32,7 +32,7 @@ export function ColumnContainer(props: ColumnContainerProps) {
     } = props;
     const [editMode, setEditMode] = useState<boolean>(false);
     const { userValue, updateUserValue } = useUserContext();
-    const cardsIds = useMemo(() => { return column.cardsList.map((card: Card) => card.id) }, [column]);
+    const cardsIds = useMemo(() => { return column.cards?.map((card: Card) => card.id) }, [column]);
 
     const delCol = () => {
         deleteColumn(column.id);
@@ -120,7 +120,7 @@ export function ColumnContainer(props: ColumnContainerProps) {
     }
 
     return (
-        <div className='relative w-64 h-full overflow-auto p-1'
+        <div className='relative min-w-64 w-64 h-full p-1'
             ref={setNodeRef} style={style} {...attributes} {...listeners} >
             <div className='w-full bg-neutral-50 rounded-md drop-shadow p-2 mb-4 flex flex-row justify-between items-center'>
                 <div
@@ -133,8 +133,10 @@ export function ColumnContainer(props: ColumnContainerProps) {
                             if (e.key !== "Enter") return;
                             setEditMode(false);
                         }}
-                        value={column.title}
-                        onChange={(e: any) => updateColumnTitle(column.id, e.target.value)}
+                        defaultValue={column.title}
+                        onChange={(e: any) => {
+                            updateColumnTitle(column.id, e.target.value)
+                        }}
                         className='form-input w-full bg-neutral-50 outline-none'
                     /> :
                         column.title}
@@ -145,7 +147,7 @@ export function ColumnContainer(props: ColumnContainerProps) {
             </div>
             <div>
                 <SortableContext items={cardsIds}>
-                    {column.cardsList.map((card: Card) => {
+                    {column.cards?.map((card: Card) => {
                         return <CardElement
                             setTempColumnID={setTempColumnID}
                             setTempCard={setTempCard}

@@ -28,5 +28,5 @@ BANCO: Santander
 
 Esses dados são da minha mãe btw, é ela quem vai cuidar de algumas questoes enquanto eu tiver off.
 
-Não sei muito mais o que falar, ou que notas deixar, desejo sorte a todos nós nessa reta final. - Mirai.
+Não sei muito mais o que falar, ou que notas deixar, desejo sorte a todos nós nessa reta final, dia 31 eu estou de volta. - Mirai.
 

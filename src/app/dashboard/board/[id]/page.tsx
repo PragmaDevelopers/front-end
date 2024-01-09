@@ -477,7 +477,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     return (
-        <main className="w-[100vw] h-full overflow-x-auto shrink-0">
+        <main className="w-full h-full overflow-x-auto overflow-y-hidden shrink-0">
             <CustomModal
                 title={modalTitle}
                 description={modalDescription}

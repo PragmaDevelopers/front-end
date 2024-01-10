@@ -51,7 +51,7 @@ export function getUserPerms(userPerms: string): { [Key: string]: boolean } {
         let permVal: string = userPerms[c];
         userPermissions[permsList[c]] = permVal === "1";
     }
-    console.log(permsList);
+    
     return userPermissions;
 }
 

@@ -27,7 +27,7 @@ export function CardElement(props: CardElementProps) {
         setModalText,
     } = props;
     const noButtonRef = useRef<any>(null);
-    const { userValue, updateUserValue } = useUserContext();
+    const { userValue } = useUserContext();
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
@@ -88,7 +88,7 @@ export function CardElement(props: CardElementProps) {
             noButtonRef,
             modalOptsElements,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
         );
     }
 
@@ -103,7 +103,7 @@ export function CardElement(props: CardElementProps) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setTempCard,
             setTempColumnID,
             setEditorText,
@@ -112,8 +112,6 @@ export function CardElement(props: CardElementProps) {
             card,
         );
     }
-
-
 
     return (
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'

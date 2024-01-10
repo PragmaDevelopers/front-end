@@ -90,6 +90,8 @@ const SIGNUP_ROUTE: string = `${PUBLIC_ROUTE}/signup`;
 const LOGIN_ROUTE: string = `${PUBLIC_ROUTE}/login`;
 
 const USER_ROUTE: string = `${PRIVATE_ROUTE}/user`
+const USER_PROFILE_ROUTE: string = `${USER_ROUTE}/profile`
+const USER_SEARCH_ROUTE: string = `${USER_ROUTE}/search`
 
 const KANBAN_ROUTE: string = `${USER_ROUTE}/kanban`;
 const COLUMN_ROUTE: string = `${KANBAN_ROUTE}/column`;
@@ -140,21 +142,10 @@ function generateRequestObject(body: string, method: 'POST' | 'GET' | 'PATCH' | 
 
 /* Essa função é usada em @/app/page.tsx */
 type POST_loginBody = { email: string; password: string; }
-export function post_login(body: POST_loginBody, responseCallback?: (response: Response) => void, dataCallback?: (value: string) => void): void {
+export function post_login(body: POST_loginBody, responseCallback: (response: Response) => void): void {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST');
     fetch(LOGIN_ROUTE, requestObject).then((response: Response) => {
-        let _response: Response = response;
-
-        if (responseCallback) {
-            responseCallback(_response);
-        }
-
-        return _response.text()
-    }).then((value: string) => {
-        let _value: string = value;
-        if (dataCallback) {
-            dataCallback(_value);
-        }
+        responseCallback(response);
     }).catch((e: any) => console.log(e));
 }
 
@@ -166,26 +157,102 @@ type POST_signupBody = {
     nationality: string;
     gender: string;
 };
-export function post_signup(body: POST_signupBody, okCallback?: (response: Response) => void): boolean {
-    let returnValue: boolean = false;
+export function post_signup(body: POST_signupBody, okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST');
-    
-
     fetch(SIGNUP_ROUTE, requestObject).then((response: Response) => {
-        if ((response.status == 200) || response.ok) {
-            returnValue = true;
-    
-            if (okCallback) {
-                okCallback(response);
-            }
-
-            return returnValue || true;
-        }
+        okCallback(response);
     }).catch((e: any) => console.log(e));
-
-    return returnValue;
 }
 
+type GET_profile = undefined;
+export function get_profile(body: GET_profile, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(USER_PROFILE_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type GET_user = undefined;
+export function get_user(body: GET_user, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(USER_PROFILE_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type GET_kanban = undefined;
+export function get_kanban(body: GET_kanban, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"?columns=true", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_kanban = {
+    title: string
+};
+export function post_kanban(body: POST_kanban, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_kanban = undefined;
+export function delete_kanban(body: DELETE_kanban, kanbanId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/"+kanbanId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type GET_column = undefined;
+export function get_columns(body: GET_column, kanbanId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/"+kanbanId+"/columns"+"?cards=true", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_column = {
+    kanbanId: SystemID,
+    title: string
+};
+export function post_column(body: POST_column, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(COLUMN_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_column = undefined;
+export function delete_column(body: DELETE_column, columnId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(COLUMN_ROUTE+"/"+columnId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type PATCH_column = {
+    title: string
+};
+export function patch_column(body: PATCH_column, columnId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(COLUMN_ROUTE+"/"+columnId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_card = {
+    kanbanId: SystemID,
+    title: string
+};
+export function post_card(body: POST_column, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(COLUMN_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
 
 /* Essa função é usada em @/app/utils/dashboard/functions/Page/Card.ts */
 type POST_checklistBody = { cardId: SystemID, name: string }

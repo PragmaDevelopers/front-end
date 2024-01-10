@@ -1,4 +1,4 @@
-import { Card, Column, Member, SystemID, Comment, userValueDT } from "../types/KanbanTypes";
+import { Card, Column, Member, SystemID, Comment, userValueDT, Kanban } from "../types/KanbanTypes";
 
 export interface CardElementProps {
     card: Card,
@@ -128,5 +128,10 @@ export interface CommentEntryProps extends Comment {
 
 export interface UserContextProps {
     userValue: userValueDT;
-    updateUserValue: (newValue: userValueDT) => void;
+    setUserValue: (newValue: userValueDT) => void;
 }
+
+export interface KanbanContextProps {
+    kanbanValues: Kanban[];
+    setKanbanValues: (newValue: Kanban[]) => void;
+};

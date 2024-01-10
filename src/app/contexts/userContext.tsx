@@ -11,7 +11,7 @@ interface UserContextProviderProps {
 export const UserContextProvider: React.FC<UserContextProviderProps> = ({ children }) => {
   const [userValue, setUserValue] = useState<userValueDT>({
     token: '',
-    userData: {
+    profileData: {
       email: '',
       gender: '',
       id: 0,
@@ -23,15 +23,11 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
       registrationDate: '',
       role: '',
     },
-    usersList: [],
+    userList: [],
   });
 
-  const updateUserValue = (newValue: userValueDT) => {
-    setUserValue(newValue);
-  };
-
   return (
-    <UserContext.Provider value={{ userValue, updateUserValue }}>
+    <UserContext.Provider value={{ userValue, setUserValue }}>
       {children}
     </UserContext.Provider>
   );

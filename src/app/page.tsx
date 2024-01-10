@@ -1,21 +1,55 @@
 "use client";
 import { ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
 import { API_BASE_URL } from "./utils/variables";
-import { userValueDT } from "./types/KanbanTypes";
+import { userData, userValueDT } from "./types/KanbanTypes";
+import { post_login, get_profile, get_user, post_signup } from "./utils/fetchs";
 
 interface InfoScreenProps {
-    emailState: boolean;
-    passwordState: boolean;
-    formSubmit: boolean;
+    isFailLogin: boolean,
+    isFailPassword: boolean,
+    isEmailExists: boolean
 }
 
-function InfoScreen(props: InfoScreenProps) {
+function InfoScreen({isFailLogin,isFailPassword,isEmailExists}:InfoScreenProps) {
     const baseStyle: string = "w-max absolute top-0 z-10 select-none";
 
-    if (!props.passwordState && !props.emailState) {
+    if (isFailLogin) {
+        return (
+            <div className={baseStyle}>
+                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
+                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
+                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
+                    <h3>Seu email ou senha estão incorretos.</h3>
+                </div>
+            </div>
+        );
+    } else if (isFailPassword) {
+        return (
+            <div className={baseStyle}>
+                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
+                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
+                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
+                    <h3>Confirmação da senha está incorreta.</h3>
+                </div>
+            </div>
+        )
+    } else if (isEmailExists) {
+        return (
+            <div className={baseStyle}>
+                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
+                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
+                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
+                    <h3>Esse email já está cadastrado em nosso banco de dados</h3>
+                </div>
+            </div>
+        )
+    } else {
         return (
             <div className={baseStyle}>
                 <h1 className="text-2xl font-semibold text-neutral-950">Bem-Vindo(a)!</h1>
@@ -25,63 +59,27 @@ function InfoScreen(props: InfoScreenProps) {
                     <h3>Caso não esteja cadastrado, ultilize o botão <span className="bg-neutral-50 p-2 drop-shadow-md rounded-md ml-2 text-neutral-950">Cadastrar-se</span></h3>
                 </div>
             </div>
-        );
-    } else if (!props.passwordState) {
-        return (
-            <div className={baseStyle}>
-                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
-                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
-                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
-                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
-                    <h3>Sua senha está incorreta.</h3>
-                </div>
-            </div>
-        );
-    } else if (!props.emailState) {
-        return (
-            <div className={baseStyle}>
-                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
-                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
-                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
-                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
-                    <h3>Seu email está incorreto.</h3>
-                </div>
-            </div>
-        );
-    } else {
-        return (
-            <div className={baseStyle}>
-                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
-                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
-                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
-                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
-                    <h3>Seu email e sua senha estão incorretos.</h3>
-                </div>
-            </div>
-        );
+        );    
     }
 }
 
 export default function Page() {
     const [cadastrarSe, setCadastrarSe] = useState<boolean>(false);
-    const [passwordCheck, setPasswordCheck] = useState<boolean>(false);
-    const [emailCheck, setEmailCheck] = useState<boolean>(false);
-    const [userCanLogin, setUserCanLogin] = useState<boolean>(false);
-    const [formFirstSubmit, setFormFirstSubmit] = useState<boolean>(false);
+    const [isFailLogin, setIsFailLogin] = useState<boolean>(false);
+    const [isFailPassword, setIsFailPassword] = useState<boolean>(false);
+    const [isEmailExists, setEmailExists] = useState<boolean>(false);
     const switchCadastrarSe = () => setCadastrarSe(!cadastrarSe);
     const router = useRouter();
-    const { userValue, updateUserValue } = useUserContext();
-    const [userData, setUserData] = useState<userValueDT>({} as userValueDT);
-    const [collectedUserToken, setCollectedUserToken] = useState<boolean>(false);
-    const [collectedUserData, setCollectedUserData] = useState<boolean>(false);
-    const [collectedUsersList, setCollectedUsersList] = useState<boolean>(false);
+    const { userValue, setUserValue } = useUserContext();
 
-    const loginUser = (e: any) => {
+    const loginUser = async (e: any) => {
         e.preventDefault();
-        setFormFirstSubmit(true);
-
+        setIsFailLogin(false);
+        setIsFailPassword(false);
+        setEmailExists(false);
         if (cadastrarSe) {
-            const useremail: string = e?.target?.useremail?.value;
+            console.log(e)
+            const email: string = e?.target?.email?.value;
             const userpassword: string = e?.target?.userpassword?.value;
             const userpasswordconf: string = e?.target?.userpasswordconf?.value;
             const usernat: string = e?.target?.usernat?.value.toLowerCase();
@@ -89,214 +87,87 @@ export default function Page() {
             const usergender: string = e?.target?.usergender?.value.toLowerCase();
 
             let passmatch: boolean = userpassword == userpasswordconf;
-            setPasswordCheck(passmatch);
+
+            if (!passmatch) {
+                setIsFailPassword(true);
+            }
 
             if (passmatch) {
-                const responseBody: { [Key: string]: string } = {
+                const responseBody = {
                     "name": username,
-                    "email": useremail,
+                    "email": email,
                     "password": userpassword,
                     "nationality": usernat,
                     "gender": usergender,
                 }
 
-                const sendData = () => {
-                    fetch(`${API_BASE_URL}/api/public/signup`, {
-                        method: "POST",
-                        //credentials: "include",
-                        body: JSON.stringify(responseBody),
-                        headers: {
-                            "content-type": "application/json",
-                        },
-                    }).then((response: any) => {
-                        console.log(response);
-                        if (response.status == 200 || response.ok) {
-                            setUserCanLogin(true);
-                            router.push("/dashboard");
-                            return;
-
-                        }
-                    }).catch((e: any) => console.log(e));
-                }
-                sendData();
+                post_signup(responseBody,(response)=>{
+                    if (response.status == 200) {
+                        setCadastrarSe(false);
+                    }else{
+                        setEmailExists(true);
+                    }
+                });
             }
         } else {
-            const useremail: string = e?.target?.useremail?.value;
+            const email: string = e?.target?.email?.value;
             const userpassword: string = e?.target?.userpassword?.value;
-            const responseBody: { [Key: string]: string } = {
-                "email": useremail,
-                "password": userpassword,
+            const responseBody: { email:string,password:string } = {
+                email: email,
+                password: userpassword,
             }
 
-            const getUserList = (token: string, userTempData: userValueDT) => {
-                if (token != "") {
-                    fetch(`${API_BASE_URL}/api/private/users/search`, {
-                        method: "GET",
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    }).then((response: Response) => {
-                        const RESP: Response = response;
-                        console.log(RESP);
-                        if (RESP.status == 200 || RESP.ok) {
-                            setCollectedUsersList(true);
-                            return RESP.json();
-
-                        }
-                    }).then((data: any) => {
-                        setCollectedUsersList(true);
-                        let dt: any = data;
-                        userTempData.usersList = dt;
-                        setUserData((prevData: userValueDT) => {
-                            return {
-                                ...prevData,
-                                usersList: dt,
-                            };
-                        });
-                        console.log(userTempData);
-                        console.log(dt);
-                        console.log(userValue, userData);
-                        updateUserValue(userData);
-
-                        if (JSON.stringify(userValue) != JSON.stringify(userTempData)) {
-                            updateUserValue(userTempData);
-                            setUserData(userTempData);
-
-                        }
-
-
-                        if (JSON.stringify(userTempData.usersList) == JSON.stringify(dt)) {
-                            router.push("/dashboard");
-                            return;
-                        }
-
-                        setUserCanLogin(collectedUserToken && collectedUserData && collectedUsersList);
-                        console.log(collectedUserToken, collectedUserData, collectedUsersList, userCanLogin);
-                        if (userCanLogin || (collectedUserToken && collectedUserData && collectedUsersList)) {
-                            router.push("/dashboard");
-                            return;
-                        }
-
-                    }).catch((e: any) => console.log(e));
+            post_login(responseBody,(response)=>response.text().then((token:string)=>{
+                console.log(token);
+                if (response.status == 200 || response.ok) {
+                    const newUserValue = userValue;
+                    newUserValue.token = token;
+                    setUserValue(newUserValue);
+                    getUserProfile();
+                }else{
+                    setIsFailLogin(true);
                 }
+            }));
+
+            const getUserProfile = () => {
+                get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:userData)=>{
+                    const newUserValue = userValue;
+                    newUserValue.profileData = profileData;
+                    setUserValue(newUserValue);
+                    getUserList();
+                }));
+            }
+            
+            const getUserList = () => {
+                get_user(undefined,userValue.token,(response)=>response.json().then((userList:userData[])=>{
+                    const newUserValue = userValue;
+                    newUserValue.userList = userList;
+                    setUserValue(newUserValue);
+                    router.push("/dashboard");
+                }));
             }
 
-            const getUserData = (token: string, userTempData: userValueDT) => {
-                console.log(`Bearer ${token}`);
-                if (token != "") {
-                    fetch(`${API_BASE_URL}/api/private/user/profile`, {
-                        method: "GET",
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    }).then((response: Response) => {
-                        const RESP: Response = response;
-                        console.log(RESP);
-                        if (RESP.status == 200 || RESP.ok) {
-                            setCollectedUserData(true);
-                            return RESP.json();
-
-                        }
-                    }).then((data: any) => {
-                        setCollectedUserData(true);
-                        let dt: any = data;
-                        userTempData.userData = dt;
-                        setUserData((prevData: userValueDT) => {
-                            return {
-                                ...prevData,
-                                userData: dt,
-                            };
-                        });
-                        console.log(userTempData);
-                        console.log(dt);
-                        console.log(userValue, userData);
-                        updateUserValue(userData);
-
-                        if (JSON.stringify(userValue) != JSON.stringify(userTempData)) {
-                            updateUserValue(userTempData);
-                            setUserData(userTempData);
-
-                        }
-
-                        getUserList(token, userTempData);
-
-                    }).catch((e: any) => console.log(e));
-                }
-            }
-
-            const getUserToken = () => {
-                let userTempData: userValueDT = {
-                    token: '',
-                    userData: {
-                        email: '',
-                        gender: '',
-                        id: 0,
-                        name: '',
-                        nationality: '',
-                        permissionLevel: '',
-                        profilePicture: null,
-                        pushEmail: null,
-                        registrationDate: '',
-                        role: '',
-                    },
-                    usersList: [],
-                };
-                fetch(`${API_BASE_URL}/api/public/login`, {
-                    method: "POST",
-                    //credentials: "include",
-                    body: JSON.stringify(responseBody),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }).then((response: Response) => {
-                    if (response.status == 200 || response.ok) {
-                        setCollectedUserToken(true);
-                        return response.text();
-
-                    }
-                }).then((data: any) => {
-                    setCollectedUserToken(true);
-                    const dt: any = data;
-                    userTempData.token = dt;
-                    console.log(userTempData);
-                    setUserData((prevData: userValueDT) => {
-                        return {
-                            ...prevData,
-                            token: dt,
-                        };
-                    });
-                    console.log(dt);
-                    console.log(userValue, userData);
-                    if (userTempData.token != "") {
-                        getUserData(dt, userTempData);
-                    }
-                }).catch((e: any) => console.log(e));
-            }
-
-            getUserToken();
             e.target.reset();
         }
-
-
-        if (userCanLogin) {
-            router.push("/dashboard");
-            return;
-        }
     }
+
+    useEffect(()=>{
+        setIsFailLogin(false);
+        setIsFailPassword(false);
+        setEmailExists(false);
+    },[cadastrarSe])
 
     return (
         <main className="bg-neutral-50 text-neutral-950 flex flex-row justify-center items-center w-screen h-screen transition-all">
             <div className="h-[90%] w-[60%] relative flex justify-center items-center">
-                <InfoScreen emailState={emailCheck} passwordState={passwordCheck} formSubmit={formFirstSubmit} />
+                <InfoScreen isEmailExists={isEmailExists} isFailPassword={isFailPassword} isFailLogin={isFailLogin} />
                 <form className="flex flex-col items-center mb-4 h-48" onSubmit={loginUser}>
                     {cadastrarSe ? (
                         <div className="h-fit bg-neutral-50 drop-shadow-md rounded-md p-2 border-neutral-200 border-[1px]">
                             <div className="flex flex-col">
                                 <input name="username" type="text" placeholder="Insira seu nome" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
-                                <input name="useremail" type="email" placeholder="Insira seu email" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
-                                <select name="usernat" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1">
+                                <input name="email" type="email" placeholder="Insira seu email" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
+                                <select defaultValue="BR" name="usernat" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1">
                                     <option value="AF">AF - Afeganistão</option>
                                     <option value="ZA">ZA - África do Sul</option>
                                     <option value="AL">AL - Albânia</option>
@@ -322,7 +193,7 @@ export default function Page() {
                                     <option value="BO">BO - Bolívia</option>
                                     <option value="BA">BA - Bósnia e Herzegovina</option>
                                     <option value="BW">BW - Botsuana</option>
-                                    <option value="BR" selected={true}>BR - Brasil</option>
+                                    <option value="BR">BR - Brasil</option>
                                     <option value="BN">BN - Brunei</option>
                                     <option value="BG">BG - Bulgária</option>
                                     <option value="BF">BF - Burkina Faso</option>
@@ -502,7 +373,7 @@ export default function Page() {
                         </div>
                     ) : (
                         <div className="w-96 flex flex-col bg-neutral-50 drop-shadow-md rounded-md p-2 border-neutral-200 border-[1px]">
-                            <input name="useremail" type="email" placeholder="Insira seu email" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
+                            <input name="email" type="email" placeholder="Insira seu email" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
                             <input name="userpassword" type="password" placeholder="Insira sua senha" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" autoComplete="current-password" />
                         </div>
                     )}

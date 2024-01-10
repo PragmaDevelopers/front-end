@@ -17,7 +17,7 @@ function LinkToAdminPage() {
 
 export default function Page() {
     const router = useRouter();
-    const { userValue, updateUserValue } = useUserContext();
+    const { userValue } = useUserContext();
 
     useEffect(() => {
         console.log(userValue);
@@ -49,7 +49,7 @@ export default function Page() {
                             </div>
                         </div>
                     </form>
-                    {userValue.userData.role === "ROLE_ADMIN" ? <LinkToAdminPage /> : null}
+                    {userValue.profileData.role === "ROLE_ADMIN" ? <LinkToAdminPage /> : null}
                 </div>
 
             </div>

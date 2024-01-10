@@ -11,6 +11,7 @@ import {
     DragOverEvent
 } from '@dnd-kit/core';
 import {
+    SetStateAction,
     useEffect,
     useMemo,
     useRef,
@@ -28,6 +29,7 @@ import {
     Card,
     Column,
     DateValue,
+    Kanban,
     SystemID,
 } from '@/app/types/KanbanTypes';
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -46,21 +48,14 @@ import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashb
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
 import { PageAddInnerCard, PageCreateInnerCard, PageEditInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 import { API_BASE_URL } from '@/app/utils/variables';
+import { useKanbanContext } from '@/app/contexts/kanbanContext';
+import { get_columns } from '@/app/utils/fetchs';
 
 
 export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
-    const [kanbanData, setKanbanData] = useState<any>({});
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [, setActiveCard] = useState<Card | null>(null);
-    const columnsId = useMemo(() => {
-        console.log("memo")
-        if (kanbanData && kanbanData.columns && kanbanData.columns.length > 0) {
-            return kanbanData.columns.map((col: any) => col.id);
-        } else {
-            return [];
-        }
-    }, [kanbanData]);
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
     const [tempColumnID, setTempColumnID] = useState<SystemID>("");
     const [tempCard, setTempCard] = useState<any>({});
@@ -79,8 +74,23 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [modalFocusRef, setModalFocusRef] = useState<any>();
     const [kanbansArray, setKanbansArray] = useState<{ id: SystemID, title: string }[]>([]);
     const [kanbansColumnsArray, setKanbansColumnsArray] = useState<{id: SystemID, columns: Column[]}[]>([]);
-    const [kanbanTitle, setKanbanTitle] = useState<string>("");
     const { userValue } = useUserContext();
+    const { kanbanValues, setKanbanValues } : {kanbanValues:Kanban[],setKanbanValues:any} = useKanbanContext();
+    const [kanban, setKanban] = useState<Kanban>({
+        id: 0,
+        title: "",
+        columns: []
+    });
+    const [tempColumn, setTempColumn] = useState<Column>();
+    const columnsId = useMemo(() => {
+        const ids:SystemID[] = [];
+        kanbanValues?.forEach(kanban=>{
+            if(kanban.columns && kanban.columns.length > 0){
+                kanban.columns.forEach(column=>ids.push(column.id));
+            }
+        });
+        return ids;
+    }, [kanbanValues]);
     const editorRef = useRef<MDXEditorMethods>(null);
     const noButtonRef = useRef<HTMLButtonElement>(null);
     const sensors = useSensors(useSensor(PointerSensor, {
@@ -89,40 +99,41 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         }
     }));
 
-
-    
-
     useEffect(() => {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userValue.token}`,
-            },
-        };
-        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then((data: {id: SystemID, title:string}[]) => {
-            data.forEach((element: { id: SystemID, title: string }) => {
-                let id = element.id;
-                let title = element.title;
-                if ((id as number) === parseInt(params.id as string)) {
-                    setKanbanTitle(title);
-                }
-                fetch(`${API_BASE_URL}/api/private/user/kanban/${id}/columns?cards=true`,requestOptions).then(response => response.json()).then((data: any) => {
-                    let _newEntry = {
-                        kanbanId: id,
-                        columns: data
-                    }
-                    setKanbanData(_newEntry);
-                })
-            });
-            setKanbansArray(data);
-        })
-    }, [setKanbansArray, userValue, kanbansColumnsArray, setKanbansColumnsArray, setKanbanTitle, params]);
+        const kanbanIndex = kanbanValues?.findIndex(kanban=>kanban.id==params.id);
+        if(kanbanIndex != -1){
+            const tempKanban = kanbanValues[kanbanIndex];
+            if(tempKanban.columns && tempKanban.columns.length > 0){
+                get_columns(undefined,params.id,userValue.token,(response=>response.json().then((columns:Column[])=>{
+                    setKanban({
+                        id: tempKanban.id,
+                        title: tempKanban.title,
+                        columns: columns
+                    });
+                    // setKanbanValues((prevState:Kanban[]) => {
+                    //     const newKanbanValues = [...prevState];
+                    //     newKanbanValues[kanbanIndex] = {
+                    //         ...newKanbanValues[kanbanIndex],
+                    //         columns: columns
+                    //     };
+                    //     return newKanbanValues;
+                    // });
+                })));
+            }else{
+                setKanban(tempKanban);
+            }
+        }
+    }, [tempColumn]);
 
 
-
-
-
+    // function getIntervalColumns(){
+    //     get_columns(undefined,Number(params.id),userValue.token,(response=>response.json().then((column:Column)=>{
+    //         const kanbanIndex = kanbanValues?.findIndex(kanban=>kanban.id==params.id);
+    //         if(kanbanIndex != -1){
+    //             const newKanbanValues = 
+    //         }
+    //     })));
+    // }
 
     //useEffect(() => {
     //    fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
@@ -148,56 +159,56 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const onDragEnd = (event: DragEndEvent) => {
-        OnDragEnd(
-            event,
-            userValue,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            setKanbanData,
-            setActiveColumn,
-            setActiveCard,
-            tempDragState,
-        );
+        // OnDragEnd(
+        //     event,
+        //     userValue,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     setKanbanValues,
+        //     setActiveColumn,
+        //     setActiveCard,
+        //     tempDragState,
+        // );
     }
 
     const onDragOver = (event: DragOverEvent) => {
-        OnDragOver(
-            event,
-            userValue,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            setKanbanData,            
-        );
+        // OnDragOver(
+        //     event,
+        //     userValue,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     setKanbanValues,            
+        // );
     }
 
     const handleCreateCardForm = (event: any, isEdition: boolean) => {
-        CreateCardForm(
-            event,
-            isEdition,
-            editorRef,
-            tempColumnID,
-            tempCard,
-            setKanbanData,
-            userValue,
-            setTempColumnID,
-            setEditorText,
-            setTempCard,
-            setShowCreateCardForm,
-        );
+        // CreateCardForm(
+        //     event,
+        //     isEdition,
+        //     editorRef,
+        //     tempColumnID,
+        //     tempCard,
+        //     setKanbanValues,
+        //     userValue,
+        //     setTempColumnID,
+        //     setEditorText,
+        //     setTempCard,
+        //     setShowCreateCardForm,
+        // );
     }
 
     const handleUpdateListTitle = (listIndex: number, value: string) => {
@@ -213,7 +224,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setTempCard,
 
         );
@@ -233,7 +244,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setTempCard,
         );
     }
@@ -249,7 +260,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setTempCard,
         );
     }
@@ -266,7 +277,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setTempCard,
         );
     }
@@ -283,7 +294,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setTempCard,
         );
     }
@@ -301,7 +312,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setTempCard,
         );
     }
@@ -397,19 +408,10 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         return res;
     }
 
-
-
-
-
-
-
-
-
-
     const handleCreateCard = (columnID: SystemID) => {
         CreateCard(
             columnID,
-            userValue.userData,
+            userValue.profileData,
             setModalTitle,
             setModalDescription,
             setModalText,
@@ -429,7 +431,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const handleDeleteCard = (columnID: SystemID, cardID: SystemID) => {
-        DeleteCard(columnID, cardID, setKanbanData);
+        DeleteCard(columnID, cardID, setKanbanValues);
     }
 
     const handleUpdateColumnTitle = (columnID: SystemID, title: string) => {
@@ -437,7 +439,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             columnID, 
             title, 
             userValue, 
-            setKanbanData,
+            setTempColumn
         );
     }
 
@@ -445,8 +447,9 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         RemoveColumn(
             columnIDToRemove, 
             userValue, 
-            setKanbanData, 
-            kanbanData,
+            setTempColumn,
+            setKanban,
+            kanban
         );
     }
 
@@ -462,9 +465,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            setKanbanData,
-            kanbanData,
-            params,
+            setTempColumn,
+            kanban
         );
     }
 
@@ -532,13 +534,13 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 setTempCardsArr={setTempCardsArr}
             />
             <div className="flex justify-between items-center w-[80%] fixed">
-                <h1>{kanbanTitle}</h1>
+                <h1>{kanban.title}</h1>
                 <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-full mt-9 shrink-0">
                     <SortableContext items={columnsId}>
-                        {kanbanData.columns?.map((col: Column) => <ColumnContainer
+                        {kanban.columns?.map((col: Column) => <ColumnContainer
                             createCard={handleCreateCard}
                             deleteCard={handleDeleteCard}
                             updateColumnTitle={handleUpdateColumnTitle}

@@ -3,16 +3,18 @@
 import { useRouter } from "next/navigation";
 import { CalendarIcon, ChartPieIcon, ServerStackIcon, UserGroupIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BuildingOffice2Icon } from "@heroicons/react/24/solid";
 import { generateRandomString } from "../utils/generators";
 import { Cog6ToothIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { useUserContext } from "../contexts/userContext";
+import { useKanbanContext } from "../contexts/kanbanContext";
 import { API_BASE_URL } from "../utils/variables";
 import ConfirmDelete from "../components/ui/ConfirmDelete";
 import { CustomModal, CustomModalButtonAttributes } from "../components/ui/CustomModal";
 import { isFlagSet } from "../utils/checkers";
-import { SystemID } from "../types/KanbanTypes";
+import { Column, Kanban, SystemID } from "../types/KanbanTypes";
+import { delete_kanban, get_kanban, post_kanban } from "../utils/fetchs";
 
 interface BoardMenuEntryProps {
     href: string;
@@ -40,7 +42,7 @@ interface BoardMenuEntryProps {
 
 function BoardMenuEntry(props: BoardMenuEntryProps) {
 
-    const { userValue, updateUserValue } = useUserContext();
+    const { userValue } = useUserContext();
 
     const deleteCurrEntry = () => {
         props.deleteKanban(props.kanbanID);
@@ -70,7 +72,7 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
         (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
 
     const handleDeleteEntry = () => {
-        if (isFlagSet(userValue.userData, "DELETAR_DASHBOARDS")) {
+        if (isFlagSet(userValue.profileData, "DELETAR_DASHBOARDS")) {
             props.setModalTitle("Deletar Dashboard");
             props.setModalDescription("Esta ação é irreversivel.");
             props.setModalText("Tem certeza que deseja continuar?");
@@ -102,8 +104,6 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
         }
     };
 
-
-
     return (
         <div className="flex flex-row items-center relative">
             <Link href={props.href} className="my-2 flex flex-row items-center">
@@ -116,8 +116,9 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 }
 
 export default function Layout({ children }: any) {
-    const { userValue, updateUserValue } = useUserContext();
-
+    const { userValue } = useUserContext();
+    const { kanbanValues, setKanbanValues } = useKanbanContext();
+    const [tempKanban, setTempKanban] = useState<Kanban>();
     const [modalTitle, setModalTitle] = useState<string>("");
     const [modalDescription, setModalDescription] = useState<string>("");
     const [modalText, setModalText] = useState<string>("");
@@ -128,45 +129,28 @@ export default function Layout({ children }: any) {
 
     const noButtonRef = useRef<any>(null);
 
-
-
-
-
     const router = useRouter();
-
-    const [dashboards, setDashboards] = useState<{ id: SystemID, title: string }[]>([]);
-
-    const [kanbanID, setKanbanID] = useState<string>("");
 
     const IconStyles: string = "w-8 aspect-square mr-2";
 
-    useEffect(() => {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userValue.token}`,
-            },
-        };
-        fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.json()).then((data) => {
-            setDashboards(data);
-            console.log(data);
-        })
-    }, [setDashboards, userValue]);
-
-    
-
-    useEffect(() => {
-        const returnToHome = () => {
-            router.push("/");
-        }
+    useLayoutEffect(() => {
         if (userValue.token === "") {
-            returnToHome();
+            router.push("/");
         }
     }, [userValue, router]);
 
+    useEffect(() => {
+        get_kanban(undefined,userValue.token,(response)=>response.json().then((kanbanValues:Kanban[])=>{
+            setKanbanValues(kanbanValues);
+        }));
+    }, [tempKanban]);
+
+    function getIntervalKanban(){
+
+    }
+
     const addDashBoard = (event: any) => {
-        if (!isFlagSet(userValue.userData, "CRIAR_DASHBOARDS")) {
+        if (!isFlagSet(userValue.profileData, "CRIAR_DASHBOARDS")) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
                     text: "Entendido.",
@@ -192,54 +176,28 @@ export default function Layout({ children }: any) {
 
             event.preventDefault();
             let boardname: string = event.target.boardname.value;
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userValue.token}`,
-                },
-                body: JSON.stringify({
-                    "title": boardname,
-                }),
-            };
 
-            fetch(`${API_BASE_URL}/api/private/user/kanban`, requestOptions).then(response => response.text()).then((data) => {
-                console.log("Kanban ID", data);
-                setKanbanID(data);
-
-            const dashboardItem: { title: string, id: SystemID } = {
-                title: boardname, id: data,
-            }
-
-            if (dashboards !== undefined) {
-                if (dashboards?.length >= 0) {
-                    setDashboards([...dashboards as unknown as { title: string, id: SystemID }[], dashboardItem]);
-                } else {
-                    setDashboards([dashboardItem]);
-                }
-            } else {
-                setDashboards([dashboardItem]);
-            }
-            });
-
+            post_kanban({title:boardname},userValue.token,(response)=>response.json().then((id)=>{
+                setTempKanban({
+                    id: id,
+                    title: boardname,
+                    columns: []
+                });
+            }));
         }
     }
 
-    const deleteKanban = (kanbanID: string | number) => {
-        const requestOptions = {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userValue.token}`,
-            },
-        };
-
-        fetch(`${API_BASE_URL}/api/private/user/kanban/${kanbanID}`, requestOptions).then(response => response.text()).then(data => console.log(data));
-
-        setDashboards((dash: { id: SystemID, title: string }[]) => {
-            const newDashboardList: { id: SystemID, title: string }[] = dash.filter((ds: { id: SystemID, title: string }) => ds.id != kanbanID);
-            return newDashboardList as { id: SystemID, title: string }[];
-        });
+    const deleteKanban = (kanbanID: SystemID) => {
+        const filteredKanbanValues = kanbanValues.filter(kanban=>kanban.id!=kanbanID);
+        setKanbanValues(filteredKanbanValues);
+        delete_kanban(undefined,kanbanID,userValue.token,(response=>{
+            if(response.ok){
+                setTempKanban({
+                    id: 0,
+                    title: ""
+                });
+            }
+        }));
     }
 
     return (
@@ -280,7 +238,7 @@ export default function Layout({ children }: any) {
                     <details className="p-2 overflow-x-hidden overflow-y-auto">
                         <summary>Areas de Trabalho</summary>
                         <div className="">
-                            {dashboards?.map((element, index) => <BoardMenuEntry
+                            { kanbanValues?.map((kanban, index) => <BoardMenuEntry
                                 setModalOptions={setModalOptions}
                                 setModalOpen={setModalOpen}
                                 setModalDescription={setModalDescription}
@@ -288,14 +246,13 @@ export default function Layout({ children }: any) {
                                 setModalBorderColor={setModalBorderColor}
                                 setModalTitle={setModalTitle}
                                 setModalText={setModalText}
-                                kanbanID={element.id}
+                                kanbanID={kanban.id}
                                 key={index}
-                                href={`/dashboard/board/${element.id}`}
-                                name={element.title}
-                                deleteKanban={deleteKanban} />)}
+                                href={`/dashboard/board/${kanban.id}`}
+                                name={kanban.title}
+                                deleteKanban={deleteKanban} />) }
                         </div>
                         <div>
-
                             <form onSubmit={addDashBoard} className="flex flex-row justify-center items-center">
                                 <input className="form-input border-none outline-none p-1 w-full mr-1 bg-neutral-50" name="boardname" placeholder="Adicionar nova area" type="text" />
                                 <button type="submit" className="ml-1"><PlusCircleIcon className="aspect-square w-6" /></button>

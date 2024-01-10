@@ -38,7 +38,7 @@ function isFlagSet(userValue: userData, flag: string): boolean {
 function ToggleBitFlag(
   setBit: boolean,
   flag: string,
-  updateUserValue: (selectedUser: userData) => void,
+  setUserValue: (selectedUser: userData) => void,
   selectedUser: userData
 ): void {
   let tempUsr: userData = { ...selectedUser };
@@ -49,7 +49,7 @@ function ToggleBitFlag(
   tempUsr.permissionLevel = binaryNumber.toString(2);
 
   console.log(`SETTING FLAG: ${flag} to ${setBit} for user ${tempUsr.name}; current PermsValue: ${tempUsr.permissionLevel}`);
-  updateUserValue(tempUsr);
+  setUserValue(tempUsr);
 }
 
 function ToggleOption(props: ToggleOptionProps) {
@@ -71,26 +71,26 @@ function ToggleOption(props: ToggleOptionProps) {
   );
 }
 
-function updateSelectedUser(userValue: userValueDT, updateUserValue: (newValue: userValueDT) => void, updatedUser: userData): void {
+function updateSelectedUser(userValue: userValueDT, setUserValue: (newValue: userValueDT) => void, updatedUser: userData): void {
   const tmpUsrVal: userValueDT = {
     ...userValue,
-    usersList: userValue.usersList.map((user: userData) => (user.id === updatedUser.id ? updatedUser : user)),
+    userList: userValue.userList.map((user: userData) => (user.id === updatedUser.id ? updatedUser : user)),
   };
 
-  updateUserValue(tmpUsrVal);
+  setUserValue(tmpUsrVal);
 }
 
 
 export default function Page() {
   const router = useRouter();
-  const { userValue, updateUserValue } = useUserContext();
+  const { userValue, setUserValue } = useUserContext();
   const [usrPermsVal, setUsrPermsVal] = useState<{ [Key: string]: boolean }>({});
   const [isUserSupervisor, setIsUserSupervisor] = useState<boolean>(false);
 
-  const [selected, setSelected] = useState<userData>(userValue.usersList[0]);
+  const [selected, setSelected] = useState<userData>(userValue.userList[0]);
   const [query, setQuery] = useState('');
 
-  const filteredPeople = query === '' ? userValue.usersList : userValue.usersList.filter((person: userData) => person.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredPeople = query === '' ? userValue.userList : userValue.userList.filter((person: userData) => person.name.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     if (selected && selected.permissionLevel) {
@@ -104,7 +104,7 @@ export default function Page() {
   };
 
   const handleUpdateSelectedUser = (selectedUser: userData) => {
-    updateSelectedUser(userValue, updateUserValue, selectedUser);
+    updateSelectedUser(userValue, setUserValue, selectedUser);
   };
 
   const handleSetSelect = (value: userData): void => {

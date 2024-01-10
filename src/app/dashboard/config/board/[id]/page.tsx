@@ -384,7 +384,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
     useEffect(() => {
-        setAllUsersArray(userValue.usersList);
+        setAllUsersArray(userValue.userList);
 
         const requestOptions = {
             method: 'GET',

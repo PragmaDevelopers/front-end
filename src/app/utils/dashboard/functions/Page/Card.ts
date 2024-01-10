@@ -1,5 +1,5 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { Card, KanbanData, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag, DateValue } from "@/app/types/KanbanTypes";
+import { Card, Kanban, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag, DateValue } from "@/app/types/KanbanTypes";
 import { generateRandomString } from "@/app/utils/generators";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -79,7 +79,7 @@ export function CreateCardForm(
     editorRef: RefObject<MDXEditorMethods>,
     tempColumnID: SystemID,
     tempCard: Card,
-    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
+    setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
     userValue: userValueDT,
     setTempColumnID: (arg0: SystemID) => void,
     setEditorText: (arg0: string) => void,
@@ -94,7 +94,7 @@ export function CreateCardForm(
 
     // Check if the card title is not empty before creating the card
     if (cardTitle.trim() !== "") {
-        setKanbanData((prevData: KanbanData) => {
+        setKanban((prevData: Kanban) => {
             let newCard: Card = {
                 ...tempCard,
                 title: cardTitle,
@@ -303,9 +303,9 @@ export function CreateCardForm(
 export function DeleteCard(
     columnID: SystemID, 
     cardID: SystemID,
-    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
+    setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
     ) {
-    setKanbanData((prevData: KanbanData) => {
+    setKanban((prevData: Kanban) => {
         const targetColumn = prevData.columns.find((column) => column?.id === columnID);
         if (!targetColumn) {
             return prevData;

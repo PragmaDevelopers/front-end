@@ -1,6 +1,6 @@
 import { useUserContext } from "@/app/contexts/userContext";
 import { ColumnContainerProps } from "@/app/interfaces/KanbanInterfaces";
-import { Card } from "@/app/types/KanbanTypes";
+import { Card, SystemID } from "@/app/types/KanbanTypes";
 import { EditMode, DeleteColumn } from "@/app/utils/dashboard/functions/Column";
 import { useSortable, SortableContext } from "@dnd-kit/sortable";
 import { XCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
@@ -31,8 +31,16 @@ export function ColumnContainer(props: ColumnContainerProps) {
         setModalText,
     } = props;
     const [editMode, setEditMode] = useState<boolean>(false);
-    const { userValue, updateUserValue } = useUserContext();
-    const cardsIds = useMemo(() => { return column.cards?.map((card: Card) => card.id) }, [column]);
+    const [title, setTitle] = useState<string>(column.title);
+    const { userValue } = useUserContext();
+        
+    const cardsIds = useMemo(() => {
+        const ids:SystemID[] = [];
+        if(column.cards && column.cards.length > 0){
+            column.cards.forEach(card=>ids.push(card.id));
+        }
+        return ids;
+    }, [column]);
 
     const delCol = () => {
         deleteColumn(column.id);
@@ -97,7 +105,7 @@ export function ColumnContainer(props: ColumnContainerProps) {
             setModalOpen,
             noButtonRef,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
             setEditMode,
 
         );
@@ -115,7 +123,7 @@ export function ColumnContainer(props: ColumnContainerProps) {
             noButtonRef,
             modalOptsElements,
             isFlagSet,
-            userValue.userData,
+            userValue.profileData,
         );
     }
 
@@ -132,14 +140,13 @@ export function ColumnContainer(props: ColumnContainerProps) {
                         onKeyDown={(e: any) => {
                             if (e.key !== "Enter") return;
                             setEditMode(false);
+                            updateColumnTitle(column.id, title)
                         }}
-                        defaultValue={column.title}
-                        onChange={(e: any) => {
-                            updateColumnTitle(column.id, e.target.value)
-                        }}
+                        defaultValue={title}
+                        onChange={(e: any) => setTitle(e.target.value)}
                         className='form-input w-full bg-neutral-50 outline-none'
                     /> :
-                        column.title}
+                    title}
                 </div>
                 <button onClick={handleDeleteColumn}>
                     <XCircleIcon className='w-6 aspect-square' />

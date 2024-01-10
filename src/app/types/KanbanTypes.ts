@@ -66,12 +66,7 @@ export type Column = {
     id: SystemID;
     title: string;
     index: number;
-    cards: Card[];
-}
-
-export type KanbanData = {
-    columns: Column[];
-    kanbanId: SystemID;
+    cards?: Card[];
 }
 
 export type Tag = {
@@ -121,9 +116,15 @@ export type userData = {
 
 export type userValueDT = {
     token: string;
-    userData: userData;
-    usersList: userData[];
+    profileData: userData;
+    userList: userData[];
 };
+
+export type Kanban = {
+    id: SystemID,
+    title: string,
+    columns?: Column[]
+}
 
 export type Notification = {
     id: SystemID;

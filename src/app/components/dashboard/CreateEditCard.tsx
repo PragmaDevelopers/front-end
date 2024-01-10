@@ -598,7 +598,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
 
     const handleShowTag = () => {
         ShowTag(
-            userValue.userData,
+            userValue.profileData,
             setViewAddTag,
             viewAddTag,
             setModalOpen,
@@ -613,7 +613,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
     const handleShowDate = () => {
         ShowDate(
-            userValue.userData,
+            userValue.profileData,
             setModalOpen,
             noButtonRef,
             setModalTitle,
@@ -628,7 +628,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
     const handleShowField = () => {
         ShowField(
-            userValue.userData,
+            userValue.profileData,
             setModalOpen,
             noButtonRef,
             setModalTitle,
@@ -643,7 +643,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
     const handleShowMember = () => {
         ShowMember(
-            userValue.userData,
+            userValue.profileData,
             setModalOpen,
             noButtonRef,
             setModalTitle,
@@ -658,7 +658,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
     const handleShowMoveCard = () => {
         ShowMoveCard(
-            userValue.userData,
+            userValue.profileData,
             setModalOpen,
             noButtonRef,
             setModalTitle,
@@ -714,7 +714,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const handleCreateInnerCard = () => {
         console.log("#00 BOOTSTRAP CREATE INNER CARD ON CREATEEDITCARD COMPONENT", tempCardsArr);
         BootstrapCreateInnerCard(
-            userValue.userData,
+            userValue.profileData,
             setModalOpen,
             noButtonRef,
             setModalTitle,
@@ -873,7 +873,7 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                 </form>
                 <div className='w-full h-60 mb-28'>
                     <h1 className="my-2 font-semibold">Comentários</h1>
-                    <CommentSection userData={userValue.userData} />
+                    <CommentSection userData={userValue.profileData} />
                 </div>
             </div>
         </div>

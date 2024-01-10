@@ -10,8 +10,8 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
     const router = useRouter();
-    const { userValue, updateUserValue } = useUserContext();
-    const [profilePictureSource, setProfilePictureSource] = useState<string>(userValue.userData.profilePicture as string);
+    const { userValue, setUserValue } = useUserContext();
+    const [profilePictureSource, setProfilePictureSource] = useState<string>(userValue.profileData.profilePicture as string);
     const [showChangeWarning, setShowChangeWarning] = useState<boolean>(false);
     useEffect(() => {
         setShowChangeWarning(false);
@@ -63,7 +63,7 @@ export default function Page() {
             "profilePicture": subPfp,
         }
 
-        for (let [key, value] of Object.entries(userValue.userData)) {
+        for (let [key, value] of Object.entries(userValue.profileData)) {
             if (compareObj[key] !== value) {
                 sendObj[key] = compareObj[key]
                 console.log(sendObj);
@@ -83,7 +83,7 @@ export default function Page() {
         setShowChangeWarning(true);
 
         /*
-        let newUserObject: userData = userValue.userData;
+        let newUserObject: profileData = userValue.profileData;
         newUserObject.email = subEmail;
         newUserObject.name = subName;
         newUserObject.nationality = subNat;
@@ -92,10 +92,10 @@ export default function Page() {
         const newUserValue: userValueDT = {
             token: userValue.token,
             usersList: userValue.usersList,
-            userData: newUserObject,
+            profileData: newUserObject,
         };
 
-        updateUserValue(newUserValue);
+        setUserValue(newUserValue);
         */
     }
 
@@ -110,10 +110,10 @@ export default function Page() {
             </div>
             <div className="mt-4 flex flex-col items-center justify-between relative p-4">
                 <div className="bg-neutral-50 rounded-lg drop-shadow-md p-4 flex flex-row justify-center items-center ml-4">
-                    <ProfilePicture className="aspect-square w-24 mr-4" size={512} source={userValue.userData?.profilePicture} />
+                    <ProfilePicture className="aspect-square w-24 mr-4" size={512} source={userValue.profileData?.profilePicture} />
                     <div>
-                        <h1 className="text-lg font-bold text-neutral-900 mb-1">{userValue.userData.name}</h1>
-                        <h2 className="text-neutral-700 text-sm my-0.5">{userValue.userData.email}</h2>
+                        <h1 className="text-lg font-bold text-neutral-900 mb-1">{userValue.profileData.name}</h1>
+                        <h2 className="text-neutral-700 text-sm my-0.5">{userValue.profileData.email}</h2>
                         {/*<h3 className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5">Configurar perfil</h3>*/}
                     </div>
                 </div>
@@ -133,7 +133,7 @@ export default function Page() {
                         </div>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Nome</h2>
-                            <input defaultValue={userValue.userData.name} name="namePessoal" id="namePessoal" type="text" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira seu nome" />
+                            <input defaultValue={userValue.profileData.name} name="namePessoal" id="namePessoal" type="text" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira seu nome" />
                             <button type="submit"
                                 className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">
                                 Salvar
@@ -145,7 +145,7 @@ export default function Page() {
 
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Email</h2>
-                            <input defaultValue={userValue.userData.email} name="emailPessoal" id="emailPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
+                            <input defaultValue={userValue.profileData.email} name="emailPessoal" id="emailPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
                             <button type="submit"
                                 className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">
                                 Salvar
@@ -170,7 +170,7 @@ export default function Page() {
                         </div>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Nacionalidade</h2>
-                            <select defaultValue={userValue.userData.nationality} id="nationality" name="nationality" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1">
+                            <select defaultValue={userValue.profileData.nationality} id="nationality" name="nationality" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1">
                                 <option value="AF">AF - Afeganistão</option>
                                 <option value="ZA">ZA - África do Sul</option>
                                 <option value="AL">AL - Albânia</option>
@@ -375,7 +375,7 @@ export default function Page() {
                         </div>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Gênero</h2>
-                            <input name="generoPessoal" id="generoPessoal" type="input"  defaultValue={userValue.userData.gender}
+                            <input name="generoPessoal" id="generoPessoal" type="input"  defaultValue={userValue.profileData.gender}
                                 className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira seu genero" />
                             <button type="submit"
                                 className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">

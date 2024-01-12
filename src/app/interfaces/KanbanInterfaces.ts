@@ -1,22 +1,11 @@
+import { MutableRefObject } from "react";
 import { Card, Column, Member, SystemID, Comment, userValueDT, Kanban } from "../types/KanbanTypes";
 
 export interface CardElementProps {
     card: Card,
-    deleteCard: (columnID: string | number, cardID: string | number) => void;
-    setShowCreateCardForm: (state: boolean) => void;
-    setTempCard: (card: Card) => void;
-    setIsEdition: (state: boolean) => void;
-    setTempColumnID: (id: string | number) => void;
-    setEditorText: any;
-
-    setModalTitle: any;
-    setModalDescription: any;
-    setModalText: any;
-    setModalOptions: any;
-    setModalOpen: any;
-    setModalBorderColor: any;
-    setModalFocusRef: any;
-
+    kanban: Kanban,
+    column: Column,
+    modalContextProps: ModalContextProps
 }
 
 export interface ColumnContainerProps {
@@ -30,14 +19,6 @@ export interface ColumnContainerProps {
     setIsEdition: (state: boolean) => void;
     setTempColumnID: (id: string | number) => void;
     setEditorText: any;
-
-    setModalTitle: any;
-    setModalDescription: any;
-    setModalText: any;
-    setModalOptions: any;
-    setModalOpen: any;
-    setModalBorderColor: any;
-    setModalFocusRef: any;
 }
 
 export interface CreateEditCardProps {
@@ -70,20 +51,12 @@ export interface CreateEditCardProps {
     _appendToTempCardsArray: any;
     _popFromTempCardsArray: any;
 
-    setModalTitle: any;
-    setModalDescription: any;
-    setModalText: any;
-    setModalOptions: any;
-    setModalOpen: any;
-    setModalBorderColor: any;
-    setModalFocusRef: any;
     handleAddDate: any;
-
-    columnsArray: any;
-    dashboards: any;
 
     setTempCard: any;
     setTempCardsArr: any;
+    kanbanValues: Kanban[],
+    kanban: Kanban
 }
 
 export interface RichEditorProps {
@@ -92,7 +65,6 @@ export interface RichEditorProps {
     setMarkdown?: any;
     setMarkdownContent?: string;
     onChange?: any;
-    display?: any;
 }
 
 export interface ConfirmDeleteProps {
@@ -131,7 +103,42 @@ export interface UserContextProps {
     setUserValue: (newValue: userValueDT) => void;
 }
 
+export interface CardManager{
+    isSubmit:boolean;
+    isEditElseCreate: boolean,
+    isShowCreateCard:boolean
+    isShowCreateDeadline: boolean;
+    isShowAddMember: boolean;
+    isShowCreateTag: boolean;
+    isShowCreateCustomField: boolean;
+}
+
 export interface KanbanContextProps {
     kanbanValues: Kanban[];
     setKanbanValues: (newValue: Kanban[]) => void;
+    tempKanban: Kanban;
+    setTempKanban: (newValue: Kanban) => void;
+    tempColumn: Column;
+    setTempColumn: (newValue: Column) => void;
+    tempCard: Card;
+    setTempCard: (newValue: Card) => void;
+    cardManager: CardManager;
+    setCardManager:  (newValue: CardManager) => void
 };
+
+export interface ModalContextProps {
+    modalTitle: string,
+    setModalTitle: (newValue: string) => void;
+    modalDescription: string,
+    setModalDescription: (newValue: string) => void;
+    modalText: string,
+    setModalText: (newValue: string) => void;
+    modalOptions: any,
+    setModalOptions: (newValue: any) => void;
+    modalOpen: boolean,
+    setModalOpen: (newValue: boolean) => void;
+    modalBorderColor: string;
+    setModalBorderColor: (newValue: string) => void;
+    modalFocusRef: MutableRefObject<any>;
+    setModalFocusRef: (newValue: MutableRefObject<any>) => void;
+}

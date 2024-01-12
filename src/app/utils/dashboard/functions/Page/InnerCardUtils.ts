@@ -94,7 +94,13 @@ export function appendTempCardToArray (
         members: [],
         comments: [],
         dropdowns: [],
-        date: "",
+        deadline: {
+            category: "",
+            date: new Date(),
+            id: "",
+            overdue: false,
+            toColumnId: ""
+        },
         customFields: [],
         innerCards: [],
     }

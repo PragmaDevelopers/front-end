@@ -7,7 +7,7 @@ import { forwardRef, Ref } from "react";
 const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
     return (
         <MDXEditor
-            className={"MDXEditor " + (props.display ? "block" : "hidden")}
+            className={"MDXEditor"}
             onChange={props.onChange}
             markdown={props.markdown != undefined ? props?.markdown : ""}
             ref={ref}

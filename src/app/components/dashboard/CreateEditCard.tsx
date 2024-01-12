@@ -1,74 +1,354 @@
-import { useUserContext } from "@/app/contexts/userContext";
+import { UserContextProvider, useUserContext } from "@/app/contexts/userContext";
 import { CreateEditCardProps } from "@/app/interfaces/KanbanInterfaces";
-import { DateValue, Member, CustomFields, Tag, CheckList, CheckListItem, Card, SystemID, userData, Column } from "@/app/types/KanbanTypes";
+import { DateValue, Member, Tag, CheckList, CheckListItem, Card, SystemID, userData, Column, Kanban, userValueDT, CustomField } from "@/app/types/KanbanTypes";
 import { Combobox, Transition } from "@headlessui/react";
 import { XMarkIcon, MinusCircleIcon, CalendarDaysIcon, PlusCircleIcon, ArrowUpOnSquareIcon, ChevronUpDownIcon, CheckIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import { forwardRef, Ref, useRef, useState, ChangeEvent, CSSProperties, Fragment, useEffect } from "react";
+import React, { forwardRef, Ref, useRef, useState, ChangeEvent, CSSProperties, Fragment, useEffect, useContext, RefObject, ReactNode } from "react";
 import Calendar from "react-calendar";
 import { HexColorPicker } from "react-colorful";
 import { InnerCardElement } from "@/app/components/dashboard/InnerCard";
 import RichEditor from "@/app/components/dashboard/RichEditor";
-import { ShowTag, ShowDate, ShowField, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, BootstrapCreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
+import { ShowDate, ShowMember, ShowMoveCard, CustomFieldChange, closeCalendar, closeMoveCard, closeAddMember, BootstrapCreateInnerCard, createNewTag, createNewCustomField } from "@/app/utils/dashboard/functions/CreateEditCard";
 import 'react-calendar/dist/Calendar.css';
 import { CommentSection } from "@/app/components/dashboard/Comment";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
 import { AddCardDate } from "@/app/utils/dashboard/functions/Page/Card";
+import { ModalContextProvider, useModalContext } from "@/app/contexts/modalContext";
+import { useKanbanContext } from "@/app/contexts/kanbanContext";
+import { CustomModalButtonAttributes } from "../ui/CustomModal";
+import { ShowCreateCustomField, ShowCreateDeadline, ShowCreationTag } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
+function ModalCard({children}:{children:React.ReactNode}){
+    return (
+        <div className='absolute top-0 left-0 w-full h-full z-[99999] flex justify-center items-center bg-neutral-950/25'>
+            {children}
+        </div>
+    )
+}
+
+interface CardTitleProps { title: string; }
+function CardTitle(props: CardTitleProps) {
+    const {title} = props;
+    const { tempCard,setTempCard } = useKanbanContext();
+    return (
+        <input 
+            id="CardTitle" 
+            type='text' 
+            defaultValue={title}
+            onChange={(e)=>setTempCard({
+                ...tempCard,
+                title: e.target.value
+            })} 
+            name='title' 
+            placeholder='Digite um titulo' 
+            className='my-3 mx-1 font-bold text-xl form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inne w-full p-1' 
+        />
+    );
+}
+
 interface CardDateSectionProps {
-    cardDateOBJ: dayjs.Dayjs;
-    columnsArray: {id: SystemID, columns: Column[]}[];
-    setDueAction: any;
-    setDestinationKanban: any;
-    setDestinationColumn: any;
-    kanbansArray: { id: SystemID, title: string }[];
-    destinationKanban: any;
-    dateExists: boolean;
-    handleShowDate: any;
+    card: Card;
+    failModalOption: any,
+    noButtonRef: RefObject<HTMLButtonElement>
 }
 function CardDateSection(props: CardDateSectionProps) {
-    const { cardDateOBJ, columnsArray, setDueAction, setDestinationKanban, kanbansArray, setDestinationColumn, destinationKanban, dateExists, handleShowDate } = props;
-    useEffect(() => {
-        console.log("date Exists", dateExists);
-    }, [dateExists])
+    const { card, failModalOption, noButtonRef } = props;
+
+    let isDateValid = false;
+    if(card.deadline != null && dayjs(card.deadline.date).isValid()){
+        isDateValid = true;
+    }
+
+    const [dateExists, setDateExists] = useState(isDateValid);
+
+    const [cardDeadline,setCardDeadline] = useState<Date>(new Date());
+
+    const [toKanban,setToKanban] = useState<SystemID>("");
+
+    const { userValue } = useUserContext();
+    const { cardManager, setCardManager, kanbanValues, tempCard, setTempCard } = useKanbanContext();
+    const modalContextProps = useModalContext();
+
+    useEffect(()=>{
+        const kanban = kanbanValues.find(kanban=>kanban.columns.find(column=>column.id==card.deadline.toColumnId));
+        if(kanban){
+            setToKanban(kanban.id);
+        }
+    },[])
+
+    const handleShowDeadline = () => {
+        ShowCreateDeadline(
+            userValue,
+            setCardManager,
+            cardManager,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        )
+    }
 
     return (
         <div>
-        <button type="button" className={`${dateExists ? 'hidden' : 'flex'} flex-col`} onClick={handleShowDate}>
-            Adicionar Prazo
-        </button>
-        <div className={`${dateExists ? 'flex' : 'hidden'} flex-col`}>
-            <h1 className="text-neutral-700 text-lg font-semibold my-1">
-                Prazo: {cardDateOBJ.format('DD/MM/YYYY')}, tempo restante: {dayjs().to(cardDateOBJ)}
-            </h1>
-            <div className="flex w-full items-center justify-between">
-                <div className="flex flex-col justify-center items-center w-fit">
-                    <h1 className="px-4 py-2 font-semibold">Ação ao finalizar prazo:</h1>
-                    <select className="w-full" defaultValue="MOVE_CARD" onChange={setDueAction}>
-                        <option value="MOVE_CARD">
-                            Mover Card
-                        </option>
-                    </select>
+            {
+                cardManager.isShowCreateDeadline && (
+                    <ModalCard>
+                        <div className='flex bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'>
+                            <Calendar defaultValue={cardDeadline} onChange={(date)=>{setCardDeadline(date as Date)}} />
+                            <div className="flex justify-between w-full">
+                                <button type='button' onClick={()=>{
+                                    setDateExists(true);
+                                    setCardManager({...cardManager,isShowCreateDeadline:false})
+                                }} className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Adicionar</button>
+                                <button type='button' onClick={()=>{
+                                    setCardManager({...cardManager,isShowCreateDeadline:false})
+                                }} className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Voltar</button>
+                            </div>
+                        </div>
+                    </ModalCard>
+                )
+            }
+            <button type="button" className={`${dateExists ? 'hidden' : 'flex'}`} onClick={handleShowDeadline}>
+                <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                Criar prazo
+            </button>
+            <div className={`${dateExists ? 'flex' : 'hidden'} flex-col`}>
+                <div className="flex justify-between">
+                    <h1 className="text-neutral-700 text-lg font-semibold my-1">
+                        Prazo: {dayjs(cardDeadline).format('DD/MM/YYYY')}, tempo restante: {dayjs().to(cardDeadline)}
+                    </h1>
+                    <button type="button" onClick={() => {
+                        setTempCard({...tempCard,deadline:{
+                            id: "",
+                            date: null,
+                            category: "",
+                            overdue: false,
+                            toColumnId: ""
+                        }})
+                        setDateExists(false);
+                    }}><XCircleIcon className='w-8 aspect-square' /></button>
                 </div>
-                <div className="flex flex-col justify-center items-center w-fit">
-                    <h1 className="px-4 py-2 font-semibold">Dashboard de destino:</h1>
-                    <select className="w-full" onChange={setDestinationKanban}>
-                        {kanbansArray.map((e: { id: SystemID, title: string }, i: number) => <option key={i} value={e.id}>{e.title}</option>)}
-                    </select>
-                </div>
-                <div className="flex flex-col justify-center items-center w-fit">
-                    <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
-                    <select className="w-full" onChange={setDestinationColumn}>
-                        {columnsArray.filter((element) => destinationKanban?.id === element.id).map((e) => e.columns.map((e: Column, i: number) => <option key={i} value={e.id}>{e.title}</option>))}
-                    </select>
+                <div className="flex w-full items-center justify-between">
+                    <div className="flex flex-col justify-center items-center w-fit">
+                        <h1 className="px-4 py-2 font-semibold">Ação ao finalizar prazo:</h1>
+                        <select defaultValue={card.deadline.category} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>
+                            setTempCard({...tempCard,deadline:{
+                                ...tempCard.deadline,
+                                category: e.target.value            
+                            }})
+                        }>
+                            <option value="" disabled> -- Nenhuma -- </option>
+                            <option value="MOVE_CARD">
+                                Mover Card
+                            </option>
+                        </select>
+                    </div>
+                    <div className="flex flex-col justify-center items-center w-fit">
+                        <h1 className="px-4 py-2 font-semibold">Dashboard de destino:</h1>
+                        <select defaultValue={toKanban} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
+                            setToKanban(e.target.value);
+                        }}>
+                            <option value="" disabled> -- Nenhuma -- </option>
+                            {kanbanValues.map((kanban) => <option key={kanban.id} value={kanban.id}>{kanban.title}</option>)}
+                        </select>
+                    </div>
+                    <div className="flex flex-col justify-center items-center w-fit">
+                        <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
+                        <select defaultValue={card.deadline.toColumnId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
+                            setTempCard({...tempCard,deadline:{
+                                ...tempCard.deadline,
+                                toColumnId: e.target.value            
+                            }})
+                        }}>
+                            <option value="" disabled> -- Nenhuma -- </option>
+                            {kanbanValues.filter((kanban) => kanban.id == toKanban)
+                            .map((kanban) => kanban.columns.map((column) => <option key={column.id} value={column.id}>{column.title}</option>))}
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
+    );
+}
+
+interface CustomFieldSectionProps { 
+    customFieldsArray: CustomField[];
+    failModalOption: any,
+    noButtonRef: RefObject<HTMLButtonElement>
+}
+function CustomFieldsSection(props: CustomFieldSectionProps) {
+
+    const [managerCustomField,setManagerCustomField] = useState<{
+        type: "text" | "number",
+        value: string,
+        name: string
+    }>({
+        type: "text",
+        value: "",
+        name: ""
+    });
+
+    const { customFieldsArray,noButtonRef,failModalOption } = props;
+    const { userValue } = useUserContext();
+    const { cardManager, setCardManager, kanbanValues, tempCard, setTempCard } = useKanbanContext();
+    const modalContextProps = useModalContext();
+
+    const handleShowField = () => {
+        ShowCreateCustomField(
+            userValue,
+            setCardManager,
+            cardManager,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        )
+    }
+
+    return (
+        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
+            {
+                cardManager.isShowCreateCustomField && (
+                    <div className=' bg-neutral-50 p-2 mb-3 drop-shadow-md rounded-md flex-col items-center'>
+                        <div className='flex flex-col items-center'>
+                            <div className="flex justify-between w-full gap-3">
+                                <input type={managerCustomField.type} onChange={(e)=>{
+                                    setManagerCustomField({...managerCustomField,name:e.target.value});
+                                }} placeholder='Field Name' name="field_name" className='form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner w-[60%]' />
+                                <select name='fieldType' onChange={(e)=>{}} className='form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner w-[40%]'>
+                                    <option value="text">Text</option>
+                                    <option value="number">Number</option>
+                                </select>
+                            </div>
+                            <div className="flex justify-between w-full">
+                                <button type='button' onClick={()=>{
+                                    setTempCard({...tempCard,customFields:[
+                                        ...tempCard.customFields,
+                                        {
+                                            id: "",
+                                            fieldType: managerCustomField.type,
+                                            value: "",
+                                            name: managerCustomField.name
+                                        }
+                                    ]})
+                                }} className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Adicionar Campo</button>
+                                <button type='button' onClick={()=>{
+                                    setCardManager({...cardManager,isShowCreateCustomField:false})
+                                }} className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Voltar</button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+            <button type='button' className={`${cardManager.isShowCreateCustomField ? 'hidden' : 'flex'} transition-all`}
+                onClick={handleShowField}>
+                <PlusCircleIcon className='aspect-square w-6 mr-2' />
+            </button>
+            <div className='flex flex-col gap-2 w-full'>
+                {customFieldsArray?.map((item: CustomField, idx: any) => {
+                    return (
+                        <div key={idx} className='w-full flex justify-center gap-3 items-center '>
+                            <h1 className="text-nowrap">{item.name}:</h1>
+                            <input className='min-w-[25%] w-full form-input bg-neutral-50 border-[1px] border-neutral-200 rounded-md shadow-inner' 
+                            type={item.fieldType} name={item.name} defaultValue={item.value} 
+                            onChange={(e)=>{
+                                const customFields = customFieldsArray;
+                                customFields[idx].value = e.target.value;
+                                setTempCard({...tempCard,customFields:customFields});
+                            }} placeholder='Digite um valor' />
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+interface AddTagFormProps {
+    viewAddTag: boolean;
+    handleCreateNewTag: any;
+    color: any;
+    setColor: any;
+}
+function AddTagForm(props: AddTagFormProps) {
+    const { color, handleCreateNewTag, setColor, viewAddTag } = props;
+    return (
+        <div className={(viewAddTag ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+            <form onSubmit={handleCreateNewTag}>
+                <input type='text' name='title' placeholder='Nome da Etiqueta' className='form-input bg-neutral-100 w-48 border-[1px] border-neutral-200 rounded-md p-1 shadow-inner my-2' />
+                <HexColorPicker color={color} onChange={setColor} className='my-2' />
+                <button type='submit' className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Criar</button>
+            </form>
+        </div>
+    );
+}
+
+interface TagsSectionProps { 
+    tagsArray: Tag[]; 
+    failModalOption: any,
+    noButtonRef: RefObject<HTMLButtonElement>
+}
+function TagsSection(props: TagsSectionProps) {
+    const { tagsArray, failModalOption, noButtonRef } = props;
+
+    const [managerTag,setManagerTag] = useState<Tag>({
+        id: "",
+        color: "#4C5C54",
+        name: ""
+    })
+
+    const { userValue } = useUserContext();
+    const { cardManager, setCardManager, kanbanValues, tempCard, setTempCard } = useKanbanContext();
+    const modalContextProps = useModalContext();
+
+    const handleShowTag = () => {
+        ShowCreationTag(
+            userValue,
+            setCardManager,
+            cardManager,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        )
+    }
+    return (
+        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
+            {
+                cardManager.isShowCreateTag && (
+                    <div className='flex bg-neutral-50 p-2 drop-shadow-md flex-col rounded-md mb-3 items-center'>
+                        <div className="flex items-center gap-3">
+                            <input type='text' name='title' placeholder='Nome da Etiqueta' className='form-input bg-neutral-100 w-48 border-[1px] border-neutral-200 rounded-md p-1 shadow-inner my-2' />
+                            <HexColorPicker color={managerTag.color} onChange={(hex)=>{
+                                setManagerTag({...managerTag,color:hex})
+                            }} className='my-2' />
+                        </div>
+                        <div className="flex justify-between w-full">
+                            <button type='button' onClick={()=>{
+
+                            }} className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Criar</button>
+                            <button type='button' onClick={()=>{
+                                setCardManager({...cardManager,isShowCreateTag:false})
+                            }} className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Voltar</button>
+                        </div>
+                    </div>   
+                )
+            }
+            <div className='grid grid-cols-6 auto-rows-auto gap-2 overflow-auto h-fit'>
+                {tagsArray?.map((item: Tag, index: number) => (
+                    <div key={index} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: item?.color } as CSSProperties}>
+                        <button type='button' onClick={() => {}}><XMarkIcon className='aspect-square w-4' /></button>
+                        <h1 style={{ backgroundColor: item?.color } as CSSProperties} className='ml-1'>{item?.name}</h1>
+                    </div>
+                ))}
+                <button className='transition-all' type='button'
+                    onClick={handleShowTag}>
+                    <PlusCircleIcon className='aspect-square w-6 mr-2' />
+                </button>
+            </div>
         </div>
     );
 }
@@ -157,48 +437,10 @@ function AddMemberForm(props: AddMemberFormProps) {
     );
 }
 
-interface AddCardDateFormProps {
-    viewAddDate: boolean;
-    handleCloseCalendar: any;
-    cardDate: any;
-    setCardDate: any;
-}
-function AddCardDateForm(props: AddCardDateFormProps) {
-    const { cardDate, handleCloseCalendar, setCardDate, viewAddDate } = props;
-    return (
-        <div className={(viewAddDate ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-            <form onSubmit={handleCloseCalendar}>
-                <Calendar value={cardDate} onChange={setCardDate} />
-                <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Adicionar</button>
-            </form>
-        </div>
-    );
-}
-
-interface AddCustomFieldForm {
-    viewAddField: boolean;
-    handleCreateNewCustomField: any;
-}
-function AddCustomFieldForm(props: AddCustomFieldForm) {
-    const {viewAddField, handleCreateNewCustomField} = props;
-    return (
-        <div className={(viewAddField ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-            <form onSubmit={handleCreateNewCustomField} className='flex flex-col items-center'>
-                <input type='text' name='fieldTitle' placeholder='Field Name' className='bg-neutral-50 border-none outline-none' />
-                <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
-                    <option value="text">Text</option>
-                    <option value="number">Number</option>
-                </select>
-                <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Adicionar Campo</button>
-            </form>
-        </div>
-    );
-}
-
 interface MoveCardFormProps {
     viewMoveCard: boolean;
     handleCloseMoveCard: any;
-    dashboardsArray: { id: string, name: string }[];
+    dashboardsArray: Kanban[];
 }
 function MoveCardForm(props: MoveCardFormProps) {
     const { dashboardsArray, handleCloseMoveCard, viewMoveCard } = props;
@@ -206,114 +448,13 @@ function MoveCardForm(props: MoveCardFormProps) {
         <div className={(viewMoveCard ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
             <form onSubmit={handleCloseMoveCard} className='flex flex-col items-center'>
                 <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
-                    {dashboardsArray?.map((kanban: { id: string, name: string }) => {
+                    {dashboardsArray?.map((kanban) => {
                         console.log(kanban.id)
-                        return <option value={kanban?.id} key={kanban?.id}>{kanban?.name}</option>;
+                        return <option value={kanban?.id} key={kanban?.id}>{kanban?.title}</option>;
                     })}
                 </select>
                 <button type='submit' className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Mover</button>
             </form>
-        </div>
-    );
-}
-
-interface AddTagFormProps {
-    viewAddTag: boolean;
-    handleCreateNewTag: any;
-    color: any;
-    setColor: any;
-}
-function AddTagForm(props: AddTagFormProps) {
-    const { color, handleCreateNewTag, setColor, viewAddTag } = props;
-    return (
-        <div className={(viewAddTag ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
-            <form onSubmit={handleCreateNewTag}>
-                <input type='text' name='title' placeholder='Nome da Etiqueta' className='form-input bg-neutral-100 w-48 border-[1px] border-neutral-200 rounded-md p-1 shadow-inner my-2' />
-                <HexColorPicker color={color} onChange={setColor} className='my-2' />
-                <button type='submit' className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Criar</button>
-            </form>
-        </div>
-    );
-}
-
-
-interface CardTitleProps { title: string; }
-function CardTitle(props: CardTitleProps) {
-    const {title} = props;
-    return (
-        <input 
-            id="CardTitle" 
-            type='text' 
-            defaultValue={title} 
-            name='title' 
-            placeholder='Digite um titulo' 
-            className='my-3 mx-1 font-bold text-xl form-input bg-neutral-50 w-full border-none outline-none p-1 rounded-md' 
-        />
-    );
-}
-
-interface CustomFieldsSectionProps { 
-    customFieldsArray: CustomFields[];
-    handleCustomFieldChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    handleShowField: () => void;
-}
-function CustomFieldsSection(props: CustomFieldsSectionProps) {
-    const { customFieldsArray, handleCustomFieldChange, handleShowField } = props;
-    return (
-        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
-        <div className='p-2 grid grid-cols-4 auto-rows-auto gap-2'>
-            {customFieldsArray?.map((item: CustomFields, idx: any) => {
-                console.log("MAP LOOP", item?.fieldType);
-                if (item?.fieldType === "text") {
-                    return (
-                        <div key={idx} className='w-fit flex justify-center items-center'>
-                            <h1 className='mr-1'>{item?.name}:</h1>
-                            <input 
-                            className='w-32 bg-neutral-50 border-none outline-none' 
-                            type='text' name={item?.name}  defaultValue={item?.value}
-                            onChange={handleCustomFieldChange} placeholder='Digite um valor' />
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div key={idx} className='w-fit flex justify-center items-center'>
-                            <h1 className='mr-1'>{item?.name}:</h1>
-                            <input 
-                            className='w-32 bg-neutral-50 border-none outline-none' 
-                            type='number' name={item?.name} defaultValue={item?.value} 
-                            onChange={handleCustomFieldChange} placeholder='Digite um valor' />
-                        </div>
-                    );
-                }
-            })}
-            <button type='button' className='transition-all'
-                onClick={handleShowField}>
-                <PlusCircleIcon className='aspect-square w-6 mr-2' />
-            </button>
-        </div>
-        </div>
-    );
-}
-interface TagsSectionProps { tagsArray: Tag[]; removeCurrentTag: (arg0: SystemID) => void; handleShowTag: () => void; }
-function TagsSection(props: TagsSectionProps) {
-    const { tagsArray, removeCurrentTag, handleShowTag } = props;
-    useEffect(() => {
-        console.log(tagsArray);
-    }, [tagsArray]);
-    return (
-        <div className="bg-neutral-100 border-[1px] border-neutral-100 rounded-md shadow-inner p-1 my-1">
-        <div className='grid grid-cols-6 auto-rows-auto gap-2 overflow-auto h-fit'>
-            {tagsArray?.map((item: Tag, index: number) => (
-                <div key={index} className='w-fit h-fit py-1 pr-2 pl-1 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: item?.color } as CSSProperties}>
-                    <button type='button' onClick={() => removeCurrentTag(item?.id)}><XMarkIcon className='aspect-square w-4' /></button>
-                    <h1 style={{ backgroundColor: item?.color } as CSSProperties} className='ml-1'>{item?.name}</h1>
-                </div>
-            ))}
-            <button className='transition-all' type='button'
-                onClick={handleShowTag}>
-                <PlusCircleIcon className='aspect-square w-6 mr-2' />
-            </button>
-        </div>
         </div>
     );
 }
@@ -489,11 +630,9 @@ function MembersSection(props: MembersSectionProps) {
 }
 
 const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEditorMethods> | undefined) => {
+    
     const { 
-        setShowCreateCardForm,
-        showCreateCardForm,
         createCardForm,
-        card,
         handleAddList,
         handleRemoveInput,
         handleRemoveList,
@@ -504,8 +643,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         isEdition,
         addNewTag,
         removeCurrentTag,
-        //cardDate,
-        //setCardDate,
         editorText,
         setEditorText,
         addCustomField,
@@ -518,23 +655,17 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
         isEdittingInnerCard,
         _appendToTempCardsArray,
         _popFromTempCardsArray,
-
-        setModalTitle,
-        setModalDescription,
-        setModalOptions,
-        setModalOpen,
-        setModalBorderColor,
-        setModalFocusRef,
-        setModalText,
         handleAddDate,
-        columnsArray,
-        dashboards,
         setTempCardsArr,
-        setTempCard,
+        kanbanValues,
+        kanban
     } = props;
 
-    const { userValue, updateUserValue } = useUserContext();
-    const noButtonRef = useRef<HTMLButtonElement>(null);
+    const modalContextProps = useModalContext();
+
+    const { userValue } = useUserContext();
+    const { tempCard, setTempCard, cardManager, setCardManager } = useKanbanContext();
+    const cardDescriptionRef = useRef<MDXEditorMethods>(null);
 
     const [color, setColor] = useState<string>("#aabbcc");
     const [viewAddTag, setViewAddTag] = useState<boolean>(false);
@@ -542,7 +673,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     const [viewAddDate, setViewAddDate] = useState<boolean>(false);
     const [viewAddField, setViewAddField] = useState<boolean>(false);
     const [viewMoveCard, setViewMoveCard] = useState<boolean>(false);
-    const [cardDate, setCardDate] = useState<DateValue>(new Date());
     const [textFieldValue, setTextFieldValue] = useState<string>("");
     const [numberFieldValue, setNumberFieldValue] = useState<number>(0);
     const [customFieldsData, setCustomFieldsData] = useState<{ [key: string]: string | number }>({});
@@ -567,109 +697,80 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
             })
 
 
+    const handleCreateCardForm = (e: any) => {
+        e.preventDefault();
+        // const clickedButton = e.nativeEvent.submitter;
+        // console.log("[INFO]", isCreatingInnerCard, clickedButton.id);
+        const description = cardDescriptionRef.current?.getMarkdown() || "";
+        setTempCard({...tempCard,description:description})
 
-    const handleCreateCardForm = (event: any) => {
-        const clickedButton = event.nativeEvent.submitter;
-        console.log("[INFO]", isCreatingInnerCard, clickedButton.id);
-        if (isCreatingInnerCard || (clickedButton.id === "innerCard")) {
-            console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
-            createInnerCard(event, isEdittingInnerCard);
-            console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
-        } else {
-            if ((tempCardsArr.length > 0) || isEdittingInnerCard) {
-                console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
-                if (isEdittingInnerCard) {
-                    console.log("=== EDIT === isEdittingInnerCard", isEdittingInnerCard);
-                    createInnerCard(event, isEdittingInnerCard);
-                } else {
-                    addInnerCard(event, isEdittingInnerCard);
-                }
-                console.log(`SUBMIT ADDING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
-            } else {
-                console.log(`SUBMIT CRETING FINAL CARD START ${tempCardsArr.length}`, tempCardsArr)
-                createCardForm(event, isEdition);
-                console.log(`SUBMIT CRETING FINAL CARD END ${tempCardsArr.length}`, tempCardsArr)
-            }
-        }
+        console.log(tempCard)
+        
+        // if (isCreatingInnerCard || (clickedButton.id === "innerCard")) {
+        //     console.log(`SUBMIT CRETING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
+        //     createInnerCard(event, isEdittingInnerCard);
+        //     console.log(`SUBMIT CRETING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
+        // } else {
+        //     if ((tempCardsArr.length > 0) || isEdittingInnerCard) {
+        //         console.log(`SUBMIT ADDING INNER CARD START ${tempCardsArr.length}`, tempCardsArr)
+        //         if (isEdittingInnerCard) {
+        //             console.log("=== EDIT === isEdittingInnerCard", isEdittingInnerCard);
+        //             createInnerCard(event, isEdittingInnerCard);
+        //         } else {
+        //             addInnerCard(event, isEdittingInnerCard);
+        //         }
+        //         console.log(`SUBMIT ADDING INNER CARD END ${tempCardsArr.length}`, tempCardsArr)
+        //     } else {
+        //         console.log(`SUBMIT CRETING FINAL CARD START ${tempCardsArr.length}`, tempCardsArr)
+        //         createCardForm(event, isEdition);
+        //         console.log(`SUBMIT CRETING FINAL CARD END ${tempCardsArr.length}`, tempCardsArr)
+        //     }
+        // }
 
     }
 
-    
+    const noButtonRef = useRef<HTMLButtonElement>(null);
+
+    const failOption: CustomModalButtonAttributes[] = [
+        {
+            text: "Entendido.",
+            onclickfunc: () => modalContextProps.setModalOpen(false),
+            ref: noButtonRef,
+            type: "button",
+            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+        }
+    ];
+
+    const failModalOption: any = failOption.map(
+        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+    );
 
     const handleShowTag = () => {
-        ShowTag(
-            userValue.profileData,
-            setViewAddTag,
-            viewAddTag,
-            setModalOpen,
-            noButtonRef,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-        )
+        // ShowTag(
+        //     userValue.profileData,
+        //     setViewAddTag,
+        //     viewAddTag,
+        //     noButtonRef,
+        //     modalContextProps
+        // )
     }
-    const handleShowDate = () => {
-        ShowDate(
-            userValue.profileData,
-            setModalOpen,
-            noButtonRef,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setViewAddDate,
-            viewAddDate,
-        )
-    }
-    const handleShowField = () => {
-        ShowField(
-            userValue.profileData,
-            setModalOpen,
-            noButtonRef,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setViewAddField,
-            viewAddField,
-        )
-    }
+    
+    
     const handleShowMember = () => {
-        ShowMember(
-            userValue.profileData,
-            setModalOpen,
-            noButtonRef,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setViewAddMember,
-            viewAddMember,
-        )
+        // ShowMember(
+        //     userValue.profileData,
+        //     noButtonRef,
+        //     setViewAddMember,
+        //     viewAddMember,
+        // )
     }
     const handleShowMoveCard = () => {
-        ShowMoveCard(
-            userValue.profileData,
-            setModalOpen,
-            noButtonRef,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setViewMoveCard,
-            viewMoveCard,
-        )
+        // ShowMoveCard(
+        //     userValue.profileData,
+        //     noButtonRef,
+        //     setViewMoveCard,
+        //     viewMoveCard,
+        // )
     }
     const handleCustomFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
         CustomFieldChange(
@@ -693,12 +794,6 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
             addCustomField,
         )
     }
-    const handleCloseCalendar = (e: any) => {
-        closeCalendar(
-            e,
-            setViewAddDate
-        )
-    }
     const handleCloseMoveCard = (e: any) => {
         closeMoveCard(
             e,
@@ -713,34 +808,16 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
     const handleCreateInnerCard = () => {
         console.log("#00 BOOTSTRAP CREATE INNER CARD ON CREATEEDITCARD COMPONENT", tempCardsArr);
-        BootstrapCreateInnerCard(
-            userValue.profileData,
-            setModalOpen,
-            noButtonRef,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setIsCreatingInnerCard,
-            tempCardsArr,
-        )
+        // BootstrapCreateInnerCard(
+        //     userValue.profileData,
+        //     noButtonRef,
+        //     setIsCreatingInnerCard,
+        //     tempCardsArr,
+        // )
         console.log("#### isCreatingInnerCard", isCreatingInnerCard);
     }
 
-    const cardDateOBJ = dayjs(card.date);
-    let _dExists = cardDateOBJ.isValid();
-    const [dateExists, setDateExists] = useState(!_dExists);
-    useEffect(() => {
-        console.log("USE EFFECT dateExists", dateExists, "_dExists", _dExists);
-    }, [dateExists, _dExists]);
-
-    const _handleAddCardDate = (value: any) => {
-        setDateExists(true);
-        handleAddDate(value);
-        setCardDate(value);
-    }
+    
 
     const [destinationKanban, setDestinationKanban] = useState();
     const [destinationColumn, setDestinationColumn] = useState();
@@ -752,8 +829,8 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
     }
 
     return (
-        <div className={(showCreateCardForm ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-[1] justify-center items-center bg-neutral-950/25'}>
-            <div className={`${(viewAddTag || viewAddMember || viewAddDate || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full bg-neutral-950/25 absolute justify-center items-center z-[99999]`}>
+        <div className={(cardManager?.isShowCreateCard ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-[1] justify-center items-center bg-neutral-950/25'}>
+            {/* <div className={`${(viewAddTag || viewAddMember || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full bg-neutral-950/25 absolute justify-center items-center z-[99999]`}>
                     <AddMemberForm
                         filteredPeople={filteredPeople}
                         handleCloseAddMember={handleCloseAddMember}
@@ -763,18 +840,13 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         viewAddMember={viewAddMember}
                         query={query}
                     />
-                    <AddCardDateForm 
-                        cardDate={cardDate}
-                        handleCloseCalendar={handleCloseCalendar}
-                        setCardDate={_handleAddCardDate}
-                        viewAddDate={viewAddDate}
-                    />
+                    
                     <AddCustomFieldForm 
                         handleCreateNewCustomField={handleCreateNewCustomField}
                         viewAddField={viewAddField}
                     />
                     <MoveCardForm 
-                        dashboardsArray={dashboards}
+                        dashboardsArray={kanbanValues}
                         handleCloseMoveCard={handleCloseMoveCard}
                         viewMoveCard={viewMoveCard}
                     />
@@ -784,52 +856,51 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         setColor={setColor}
                         viewAddTag={viewAddTag}
                     />
-                </div>
+                </div> */}
 
-            <div className='w-[80%] h-[80%] relative bg-neutral-50 rounded-lg px-8 drop-shadow-lg overflow-y-auto'>
-                <form className='w-full h-fit relative' onSubmit={handleCreateCardForm}>
+            <div className={`${(
+                cardManager.isShowCreateDeadline 
+            ) ? "overflow-hidden" : "overflow-y-auto"} overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
+                <form className='w-full h-fit' onSubmit={handleCreateCardForm}>
                     <div className="w-full h-fit flex justify-center items-center relative">
                         <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
-                        <button type="button" onClick={() => setShowCreateCardForm(false)}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
+                        <button type="button" onClick={() => setCardManager({
+                            ...cardManager,
+                            isSubmit: false,
+                            isShowCreateCard:false
+                        })}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
                     </div>
-                    <CardTitle title={card.title} />
+                    <CardTitle title={tempCard.title} />
                     <CardDateSection
-                        cardDateOBJ={cardDateOBJ}
-                        handleShowDate={handleShowDate}
-                        columnsArray={columnsArray}
-                        setDueAction={setDueAction}
-                        setDestinationKanban={setDestinationKanban}
-                        setDestinationColumn={setDestinationColumn}
-                        kanbansArray={dashboards}
-                        destinationKanban={destinationKanban}
-                        dateExists={dateExists}
+                        card={tempCard}
+                        failModalOption={failModalOption}
+                        noButtonRef={noButtonRef}
                     />
                     <h1 className="my-2 font-semibold">Descrição</h1>
                     <RichEditor 
-                        ref={ref} 
+                        ref={cardDescriptionRef} 
                         onChange={console.log} 
                         getMarkdown={setEditorText} 
-                        markdown={card?.description} 
-                        display={showCreateCardForm}
+                        markdown={tempCard.description} 
                     />
                     <h1 className="my-2 font-semibold">Campos</h1>
                     <CustomFieldsSection 
-                        customFieldsArray={card?.customFields} 
-                        handleCustomFieldChange={handleCustomFieldChange}
-                        handleShowField={handleShowField}
+                        customFieldsArray={tempCard.customFields} 
+                        failModalOption={failModalOption}
+                        noButtonRef={noButtonRef}
                     />
                     
                     <h1 className="my-2 font-semibold">Etiquetas</h1>
                     <TagsSection 
-                        removeCurrentTag={_remTag} 
-                        tagsArray={card.tags} 
-                        handleShowTag={handleShowTag}
+                        tagsArray={tempCard.tags} 
+                        failModalOption={failModalOption}
+                        noButtonRef={noButtonRef}
                     />
                     <div className="flex justify-between items-center">
                         <div className="w-full mr-2">
                             <h1 className="my-2 font-semibold">Tarefas</h1>
                             <ChecklistsSection 
-                                checklistArray={card?.checklists} 
+                                checklistArray={tempCard.checklists} 
                                 handleAddInput={handleAddInput}  
                                 handleAddList={handleAddList} 
                                 handleInputChange={handleInputChange}
@@ -841,12 +912,12 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         </div>
                         <div className="w-full ml-2">
                             <h1 className="my-2 font-semibold">Membros</h1>
-                            <MembersSection membersList={card?.members} />
+                            <MembersSection membersList={tempCard.members} />
                         </div>
                     </div>
                     <h1 className="my-2 font-semibold">Cartões Internos</h1>
                     <InnerCardSection
-                        innerCardsArray={card?.innerCards}
+                        innerCardsArray={tempCard.innerCards}
                         _appendToTempCardsArray={_appendToTempCardsArray}
                         _popFromTempCardsArray={_popFromTempCardsArray}
                         addInnerCard={addInnerCard}
@@ -859,9 +930,9 @@ const CreateEditCard = forwardRef((props: CreateEditCardProps, ref: Ref<MDXEdito
                         handleCreateInnerCard={handleCreateInnerCard}
                         setTempCard={setTempCard}
                         setTempCardsArr={setTempCardsArr}
-                        tempCard={card}
+                        tempCard={tempCard}
                     />
-                    <div className="w-full -bottom-80 absolute flex justify-center items-center">
+                    <div className="w-full -bottom-80 flex justify-center items-center">
                         <button 
                             className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'
                             id="outerCard" 

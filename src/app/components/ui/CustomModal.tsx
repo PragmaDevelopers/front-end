@@ -6,7 +6,7 @@ interface CustomModalProps {
     description: string;
     text: string;
     options: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>[];
-    setIsOpen: Dispatch<SetStateAction<boolean>>;
+    setIsOpen: (newValue: boolean) => void;
     isOpen: boolean;
     focusRef: MutableRefObject<any>;
     panelClassName?: string;

@@ -102,7 +102,7 @@ export default function Page() {
     const [notificationsArray, setNotificationsArray] = useState<Notification[]>([]);
     const [parsedNotifications, setParsedNotifications] = useState<parsedNotification[]>([]);
     const [cachedNotifications, setCachedNotifications] = useState<parsedNotification[] | Notification[]>([]);
-    const { userValue, updateUserValue } = useUserContext();
+    const { userValue } = useUserContext();
     useEffect(() => {
         const requestOptions = {
             method: 'GET',
@@ -116,7 +116,7 @@ export default function Page() {
         ).then((value: any) => {
             setNotificationsArray(value);
             console.log("[INFO] @ Page notificationsArray", value);
-            let pNot: parsedNotification[] = parseRawNotificationsArray(value, userValue.usersList);
+            let pNot: parsedNotification[] = parseRawNotificationsArray(value, userValue.userList);
             setParsedNotifications(pNot);
             setCachedNotifications(pNot);
             console.log("[INFO] @ Page parsedNotifications", pNot);

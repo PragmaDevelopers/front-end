@@ -16,21 +16,12 @@ export type Dropdown = {
     items: DropdownItem[];
 }
 
-export type CustomFieldText = {
+export type CustomField = {
     name: string;
     value: string;
     id: SystemID;
-    fieldType: "text";
-}
-
-export type CustomFieldNumber = {
-    name: string;
-    value: number;
-    id: SystemID;
-    fieldType: "number";
-}
-
-export type CustomFields = CustomFieldNumber | CustomFieldText;
+    fieldType: "text" | "number";
+};
 
 
 export type CheckList = {
@@ -49,15 +40,21 @@ export type CheckListItem = {
 export type Card = {
     title: string;
     id: SystemID;
-    columnID: SystemID;
+    columnID: SystemID,
     description: string;
     checklists: CheckList[];
     tags: Tag[];
     members: Member[];
     comments: Comment[];
     dropdowns: Dropdown[];
-    date: string;
-    customFields: CustomFields[];
+    deadline: {
+        id: SystemID,
+        date: Date | null,
+        overdue: boolean,
+        category: string,
+        toColumnId: SystemID
+    };
+    customFields: CustomField[];
     innerCards: Card[];
     outerCardID?: SystemID;
 }
@@ -66,7 +63,7 @@ export type Column = {
     id: SystemID;
     title: string;
     index: number;
-    cards?: Card[];
+    cards: Card[];
 }
 
 export type Tag = {
@@ -123,7 +120,7 @@ export type userValueDT = {
 export type Kanban = {
     id: SystemID,
     title: string,
-    columns?: Column[]
+    columns: Column[]
 }
 
 export type Notification = {

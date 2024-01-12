@@ -15,6 +15,7 @@ import { CustomModal, CustomModalButtonAttributes } from "../components/ui/Custo
 import { isFlagSet } from "../utils/checkers";
 import { Column, Kanban, SystemID } from "../types/KanbanTypes";
 import { delete_kanban, get_kanban, post_kanban } from "../utils/fetchs";
+import { useModalContext } from "../contexts/modalContext";
 
 interface BoardMenuEntryProps {
     href: string;
@@ -118,14 +119,16 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 export default function Layout({ children }: any) {
     const { userValue } = useUserContext();
     const { kanbanValues, setKanbanValues } = useKanbanContext();
+    const { 
+        modalTitle, setModalTitle,
+        modalDescription, setModalDescription,
+        modalText, setModalText,
+        modalOptions, setModalOptions,
+        modalOpen, setModalOpen,
+        modalBorderColor, setModalBorderColor,
+        modalFocusRef, setModalFocusRef 
+    } = useModalContext();
     const [tempKanban, setTempKanban] = useState<Kanban>();
-    const [modalTitle, setModalTitle] = useState<string>("");
-    const [modalDescription, setModalDescription] = useState<string>("");
-    const [modalText, setModalText] = useState<string>("");
-    const [modalOptions, setModalOptions] = useState<any>();
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [modalBorderColor, setModalBorderColor] = useState<string>("");
-    const [modalFocusRef, setModalFocusRef] = useState<any>();
 
     const noButtonRef = useRef<any>(null);
 
@@ -194,7 +197,8 @@ export default function Layout({ children }: any) {
             if(response.ok){
                 setTempKanban({
                     id: 0,
-                    title: ""
+                    title: "",
+                    columns: []
                 });
             }
         }));
@@ -202,16 +206,9 @@ export default function Layout({ children }: any) {
 
     return (
         <main className="w-full h-full max-h-[90vh] flex flex-row items-start justify-between overflow-hidden">
-            <CustomModal
-                title={modalTitle}
-                description={modalDescription}
-                text={modalText}
-                options={modalOptions}
-                isOpen={modalOpen}
-                setIsOpen={setModalOpen}
-                borderColor={modalBorderColor}
-                focusRef={modalFocusRef}
-            />
+            <CustomModal description={modalDescription} focusRef={modalFocusRef} 
+            isOpen={modalOpen} options={modalOptions} 
+            setIsOpen={setModalOpen} text={modalText} title={modalTitle} borderColor={modalBorderColor} />
             <div className="grow relative w-[20%] h-full flex flex-col justify-start items-start shrink-0">
                 <details className="p-2 hidden">
                     <summary>Seções</summary>

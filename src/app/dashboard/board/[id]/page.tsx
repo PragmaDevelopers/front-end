@@ -33,23 +33,23 @@ import {
     SystemID,
 } from '@/app/types/KanbanTypes';
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import { CustomModal } from '@/app/components/ui/CustomModal';
+import { CustomModal, CustomModalButtonAttributes } from '@/app/components/ui/CustomModal';
 import Link from 'next/link';
 import { useUserContext } from '@/app/contexts/userContext';
 import { isFlagSet } from '@/app/utils/checkers';
 import { ColumnContainer } from '@/app/components/dashboard/Column';
 import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
 import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
-import { AddCardDate, CreateCard, CreateCardForm, DeleteCard } from '@/app/utils/dashboard/functions/Page/Card';
+import { AddCardDate, CreateCardForm, DeleteCard } from '@/app/utils/dashboard/functions/Page/Card';
 import { UpdateListTitle, InputChange, AddList, AddInput, RemoveList, RemoveInput, ToggleCheckbox } from '@/app/utils/dashboard/functions/Page/Checklist';
 import { UpdateColumnTitle, RemoveColumn, CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
-import { AddCustomField } from '@/app/utils/dashboard/functions/Page/CustomField';
 import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashboard/functions/Page/InnerCardUtils';
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
 import { PageAddInnerCard, PageCreateInnerCard, PageEditInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 import { API_BASE_URL } from '@/app/utils/variables';
 import { useKanbanContext } from '@/app/contexts/kanbanContext';
 import { get_columns } from '@/app/utils/fetchs';
+import { useModalContext } from '@/app/contexts/modalContext';
 
 
 export default function Page({ params }: { params: { id: SystemID } }) {
@@ -57,7 +57,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [, setActiveCard] = useState<Card | null>(null);
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
-    const [tempColumnID, setTempColumnID] = useState<SystemID>("");
     const [tempCard, setTempCard] = useState<any>({});
     const [isEdition, setIsEdition] = useState<boolean>(false);
     const [cardDate, setCardDate] = useState<DateValue>(new Date());
@@ -65,23 +64,14 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempCardsArr, setTempCardsArrr] = useState<Card[]>([]);
     const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
     const [isEdittingInnerCard, setIsEdittingInnerCard] = useState<boolean>(false);
-    const [modalTitle, setModalTitle] = useState<string>("");
-    const [modalDescription, setModalDescription] = useState<string>("");
-    const [modalText, setModalText] = useState<string>("");
-    const [modalOptions, setModalOptions] = useState<any>();
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [modalBorderColor, setModalBorderColor] = useState<string>("");
-    const [modalFocusRef, setModalFocusRef] = useState<any>();
-    const [kanbansArray, setKanbansArray] = useState<{ id: SystemID, title: string }[]>([]);
-    const [kanbansColumnsArray, setKanbansColumnsArray] = useState<{id: SystemID, columns: Column[]}[]>([]);
     const { userValue } = useUserContext();
-    const { kanbanValues, setKanbanValues } : {kanbanValues:Kanban[],setKanbanValues:any} = useKanbanContext();
+    const { kanbanValues, tempColumn, setTempColumn } = useKanbanContext();
     const [kanban, setKanban] = useState<Kanban>({
         id: 0,
         title: "",
         columns: []
     });
-    const [tempColumn, setTempColumn] = useState<Column>();
+    const noButtonRef = useRef<HTMLButtonElement>(null);
     const columnsId = useMemo(() => {
         const ids:SystemID[] = [];
         kanbanValues?.forEach(kanban=>{
@@ -91,13 +81,13 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         });
         return ids;
     }, [kanbanValues]);
-    const editorRef = useRef<MDXEditorMethods>(null);
-    const noButtonRef = useRef<HTMLButtonElement>(null);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
             distance: 2,  // 2px
         }
     }));
+
+    const modalContextProps = useModalContext();
 
     useEffect(() => {
         const kanbanIndex = kanbanValues?.findIndex(kanban=>kanban.id==params.id);
@@ -140,22 +130,22 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     //    })
     //}, [params]);
     const onDragStart = (event: DragStartEvent) => {
-        OnDragStart(
-            event,
-            userValue,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            setActiveCard,
-            setActiveColumn,
-            setTempDragState,
-        );
+        // OnDragStart(
+        //     event,
+        //     userValue,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     setActiveCard,
+        //     setActiveColumn,
+        //     setTempDragState,
+        // );
     }
 
     const onDragEnd = (event: DragEndEvent) => {
@@ -212,109 +202,109 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const handleUpdateListTitle = (listIndex: number, value: string) => {
-        UpdateListTitle(
-            listIndex,
-            value,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setTempCard,
+        // UpdateListTitle(
+        //     listIndex,
+        //     value,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     userValue.profileData,
+        //     setTempCard,
 
-        );
+        // );
     }
 
     const handleInputChange = (listIndex: number, inputIndex: number, value: string) => {
-        InputChange(
-            listIndex,
-            inputIndex,
-            value,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setTempCard,
-        );
+        // InputChange(
+        //     listIndex,
+        //     inputIndex,
+        //     value,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     userValue.profileData,
+        //     setTempCard,
+        // );
     }
 
     const handleAddList = () => {
-        AddList(
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setTempCard,
-        );
+        // AddList(
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     userValue.profileData,
+        //     setTempCard,
+        // );
     }
 
     const handleAddInput = (listIndex: number) => {
-        AddInput(
-            listIndex,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setTempCard,
-        );
+        // AddInput(
+        //     listIndex,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     userValue.profileData,
+        //     setTempCard,
+        // );
     }
 
     const handleRemoveList = (listIndex: number,) => {
-        RemoveList(
-            listIndex,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setTempCard,
-        );
+        // RemoveList(
+        //     listIndex,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     userValue.profileData,
+        //     setTempCard,
+        // );
     }
 
     const handleRemoveInput = (listIndex: number, inputIndex: number) => {
-        RemoveInput(
-            listIndex,
-            inputIndex,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setTempCard,
-        );
+        // RemoveInput(
+        //     listIndex,
+        //     inputIndex,
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     userValue.profileData,
+        //     setTempCard,
+        // );
     }
 
     const handleToggleCheckbox = (listIndex: number, itemIndex: number) => {
@@ -343,12 +333,12 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const handleAddCustomField = (name: string, value: string | number, fieldType: "text" | "number") => {
-        AddCustomField(
-            name,
-            value,
-            fieldType,
-            setTempCard,
-        );
+        // AddCustomField(
+        //     name,
+        //     value,
+        //     fieldType,
+        //     setTempCard,
+        // );
     }
 
 
@@ -364,40 +354,33 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
     const handleAddInnerCard = (event: any, isEdittingInnerCard: boolean) => {
         console.log("#0 HANDLE ADD INNER CARD ON PAGE FILE", tempCardsArr);
-        PageAddInnerCard(
-            event,
-            isEdittingInnerCard,
-            editorRef,
-            tempCard,
-            setEditorText,
-            tempCardsArr,
-            setTempCardsArr,
-            setTempCard,
-        );
+        // PageAddInnerCard(
+        //     event,
+        //     isEdittingInnerCard,
+        //     editorRef,
+        //     tempCard,
+        //     setEditorText,
+        //     tempCardsArr,
+        //     setTempCardsArr,
+        //     setTempCard,
+        // );
     }
 
     const handleCreateInnerCard = (event: any, isEdittingInnerCard: boolean) => {
         console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", tempCardsArr);
         console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", isEdittingInnerCard);
-        PageCreateInnerCard(
-                event,
-                isEdittingInnerCard,
-                editorRef,
-                tempCard,
-                setEditorText,
-                setIsCreatingInnerCard,
-                tempCardsArr,
-                setTempCardsArr,
-                setTempCard,
-            );
+        // PageCreateInnerCard(
+        //         event,
+        //         isEdittingInnerCard,
+        //         editorRef,
+        //         tempCard,
+        //         setEditorText,
+        //         setIsCreatingInnerCard,
+        //         tempCardsArr,
+        //         setTempCardsArr,
+        //         setTempCard,
+        //     );
     }
-
-
-
-
-
-
-
 
     const handleAppendToTempCardsArray = (newCard: Card) => {
         AppendToTempCardsArray(newCard, tempCardsArr, setTempCardsArr);
@@ -408,65 +391,26 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         return res;
     }
 
-    const handleCreateCard = (columnID: SystemID) => {
-        CreateCard(
-            columnID,
-            userValue.profileData,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            setTempColumnID,
-            setEditorText,
-            setTempCard,
-            setIsEdition,
-            setShowCreateCardForm,
-            editorRef,
-        );
-    }
-
-    const handleDeleteCard = (columnID: SystemID, cardID: SystemID) => {
-        DeleteCard(columnID, cardID, setKanbanValues);
-    }
-
-    const handleUpdateColumnTitle = (columnID: SystemID, title: string) => {
-        UpdateColumnTitle(
-            columnID, 
-            title, 
-            userValue, 
-            setTempColumn
-        );
-    }
-
-    const handleRemoveColumn = (columnIDToRemove: SystemID) => {
-        RemoveColumn(
-            columnIDToRemove, 
-            userValue, 
-            setTempColumn,
-            setKanban,
-            kanban
-        );
-    }
-
     const handleCreateNewColumn = () => {
+        const optAttrs: CustomModalButtonAttributes[] = [
+            {
+                text: "Entendido.",
+                onclickfunc: () => modalContextProps.setModalOpen(false),
+                ref: noButtonRef,
+                type: "button",
+                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+            }
+        ];
+        const modalOpt: any = optAttrs.map(
+            (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+        );
         CreateNewColumn(
             userValue,
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
             setTempColumn,
-            kanban
+            kanban,
+            modalOpt,
+            noButtonRef,
+            modalContextProps
         );
     }
 
@@ -475,21 +419,12 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const editEditorText = (text: string) => {
-        editorRef.current?.setMarkdown(text);
+        // editorRef.current?.setMarkdown(text);
     }
 
     return (
         <main className="w-full h-full overflow-x-auto overflow-y-hidden shrink-0">
-            <CustomModal
-                title={modalTitle}
-                description={modalDescription}
-                text={modalText}
-                options={modalOptions}
-                isOpen={modalOpen}
-                setIsOpen={setModalOpen}
-                borderColor={modalBorderColor}
-                focusRef={modalFocusRef}
-            />
+            {/* <CustomModal /> */}
             <CreateEditCard
                 showCreateCardForm={showCreateCardForm}
                 setShowCreateCardForm={setShowCreateCardForm}
@@ -509,7 +444,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 setCardDate={setCardDate}
                 editorText={editorText}
                 setEditorText={editEditorText}
-                ref={editorRef}
                 addCustomField={handleAddCustomField}
                 addInnerCard={handleAddInnerCard}
                 createInnerCard={handleCreateInnerCard}
@@ -520,18 +454,11 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 setIsEdittingInnerCard={setIsEdittingInnerCard}
                 _appendToTempCardsArray={handleAppendToTempCardsArray}
                 _popFromTempCardsArray={handlePopFromTempCardsArray}
-                setModalOptions={setModalOptions}
-                setModalOpen={setModalOpen}
-                setModalDescription={setModalDescription}
-                setModalFocusRef={setModalFocusRef}
-                setModalBorderColor={setModalBorderColor}
-                setModalTitle={setModalTitle}
-                setModalText={setModalText}
                 handleAddDate={handleAddDate}
-                columnsArray={kanbansColumnsArray}
-                dashboards={kanbansArray}
                 setTempCard={setTempCard}
                 setTempCardsArr={setTempCardsArr}
+                kanbanValues={kanbanValues}
+                kanban={kanban}
             />
             <div className="flex justify-between items-center w-[80%] fixed">
                 <h1>{kanban.title}</h1>
@@ -540,25 +467,11 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-full mt-9 shrink-0">
                     <SortableContext items={columnsId}>
-                        {kanban.columns?.map((col: Column) => <ColumnContainer
-                            createCard={handleCreateCard}
-                            deleteCard={handleDeleteCard}
-                            updateColumnTitle={handleUpdateColumnTitle}
-                            key={col.id}
-                            column={col}
-                            deleteColumn={handleRemoveColumn}
-                            setShowCreateCardForm={setShowCreateCardForm}
-                            setTempCard={setTempCard}
-                            setIsEdition={setIsEdition}
-                            setTempColumnID={setTempColumnID}
-                            setEditorText={editEditorText}
-                            setModalOptions={setModalOptions}
-                            setModalOpen={setModalOpen}
-                            setModalDescription={setModalDescription}
-                            setModalFocusRef={setModalFocusRef}
-                            setModalBorderColor={setModalBorderColor}
-                            setModalTitle={setModalTitle}
-                            setModalText={setModalText}
+                        {kanban.columns?.map((column) => <ColumnContainer
+                            key={column.id}
+                            column={column}
+                            kanban={kanban}
+                            setKanban={setKanban}
                         />)}
                     </SortableContext>
                     <button 
@@ -571,23 +484,9 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 {createPortal(
                     <DragOverlay className='w-full h-full'>
                         {activeColumn && <ColumnContainer
-                            deleteCard={handleDeleteCard}
-                            createCard={handleCreateCard}
-                            updateColumnTitle={handleUpdateColumnTitle}
                             column={activeColumn}
-                            deleteColumn={handleRemoveColumn}
-                            setTempCard={setTempCard}
-                            setShowCreateCardForm={setShowCreateCardForm}
-                            setIsEdition={setIsEdition}
-                            setTempColumnID={setTempColumnID}
-                            setEditorText={setEditorText}
-                            setModalOptions={setModalOptions}
-                            setModalOpen={setModalOpen}
-                            setModalDescription={setModalDescription}
-                            setModalFocusRef={setModalFocusRef}
-                            setModalBorderColor={setModalBorderColor}
-                            setModalTitle={setModalTitle}
-                            setModalText={setModalText}
+                            kanban={kanban}
+                            setKanban={setKanban}
                         />}
                     </DragOverlay>,
                     document.body)}

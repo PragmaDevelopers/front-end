@@ -8,26 +8,18 @@ import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { useRef } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
+import { useModalContext } from "@/app/contexts/modalContext";
+import { Card } from "@/app/types/KanbanTypes";
+import { useKanbanContext } from "@/app/contexts/kanbanContext";
 
 export function CardElement(props: CardElementProps) {
     const {
         card,
-        deleteCard,
-        setShowCreateCardForm,
-        setTempCard,
-        setIsEdition,
-        setTempColumnID,
-        setEditorText,
-        setModalTitle,
-        setModalDescription,
-        setModalOptions,
-        setModalOpen,
-        setModalBorderColor,
-        setModalFocusRef,
-        setModalText,
     } = props;
     const noButtonRef = useRef<any>(null);
     const { userValue } = useUserContext();
+    const { kanbanValues } = useKanbanContext();
+    const modalContextProps = useModalContext();
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: card.id,
@@ -51,8 +43,8 @@ export function CardElement(props: CardElementProps) {
 
 
     const delCard = () => {
-        deleteCard(card.columnID, card.id);
-        setModalOpen(false);
+        // deleteCard(card.columnID, card.id);
+        modalContextProps.setModalOpen(false);
     }
 
 
@@ -65,7 +57,7 @@ export function CardElement(props: CardElementProps) {
         },
         {
             text: "Não",
-            onclickfunc: () => setModalOpen(false),
+            onclickfunc: () => modalContextProps.setModalOpen(false),
             ref: noButtonRef,
             type: "button",
             className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -77,40 +69,40 @@ export function CardElement(props: CardElementProps) {
     );
 
     const handleDeleteCard = () => {
-        DeleteCard(
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            modalOptsElements,
-            isFlagSet,
-            userValue.profileData,
-        );
+        // DeleteCard(
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     modalOptsElements,
+        //     isFlagSet,
+        //     userValue.profileData,
+        // );
     }
 
     const handleEditCard = () => {
-        EditCard(
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
-            noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setTempCard,
-            setTempColumnID,
-            setEditorText,
-            setIsEdition,
-            setShowCreateCardForm,
-            card,
-        );
+        // EditCard(
+        //     setModalTitle,
+        //     setModalDescription,
+        //     setModalText,
+        //     setModalBorderColor,
+        //     setModalFocusRef,
+        //     setModalOptions,
+        //     setModalOpen,
+        //     noButtonRef,
+        //     isFlagSet,
+        //     userValue.profileData,
+        //     setTempCard,
+        //     setTempColumnID,
+        //     setEditorText,
+        //     setIsEdition,
+        //     setShowCreateCardForm,
+        //     card,
+        // );
     }
 
     return (

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Kanban } from '../types/KanbanTypes';
+import { Card, Column, Kanban } from '../types/KanbanTypes';
 import { KanbanContextProps } from '../interfaces/KanbanInterfaces';
 
 const KanbanContext = createContext<KanbanContextProps | undefined>(undefined);
@@ -10,9 +10,56 @@ interface KanbanContextProviderProps {
 
 export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ children }) => {
   const [kanbanValues, setKanbanValues] = useState<Kanban[]>([]);
+  const [tempKanban, setTempKanban] = useState<Kanban>({
+    id: 0,
+    title: "",
+    columns: []
+  });
+  const [tempColumn, setTempColumn] = useState<Column>({
+    id: 0,
+    title: "",
+    index: 0,
+    cards: []
+  });
+  const [tempCard, setTempCard] = useState<Card>({
+    id: "",
+    columnID: "",
+    title: "",
+    description: "",
+    checklists: [],
+    tags: [],
+    members: [],
+    comments: [],
+    dropdowns: [],
+    deadline: {
+      id: "",
+      category: "",
+      date: new Date(),
+      overdue: false,
+      toColumnId: ""
+    },
+    customFields: [],
+    innerCards: []
+  });
+
+  const [cardManager,setCardManager] = useState({
+    isSubmit: false,
+    isEditElseCreate: false,
+    isShowCreateCard: false,
+    isShowCreateDeadline: false,
+    isShowAddMember: false,
+    isShowCreateTag: false,
+    isShowCreateCustomField: false
+  });
 
   return (
-    <KanbanContext.Provider value={{ kanbanValues, setKanbanValues }}>
+    <KanbanContext.Provider value={{ 
+      kanbanValues, setKanbanValues,
+      tempKanban, setTempKanban,
+      tempColumn, setTempColumn,
+      tempCard, setTempCard,
+      cardManager,setCardManager 
+    }}>
       {children}
     </KanbanContext.Provider>
   );

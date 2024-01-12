@@ -1,5 +1,5 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { userValueDT, userData, KanbanData, Column, Card, SystemID } from "@/app/types/KanbanTypes";
+import { userValueDT, userData, Kanban, Column, Card, SystemID } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { DragStartEvent, DragEndEvent, DragOverEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -22,7 +22,7 @@ export function OnDragStart(
     setTempDragState: (arg0: DragStartEvent) => void,
     ) {
     //console.log("DRAG START", event);
-    if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
+    if (!(isFlagSet(userValue.profileData, "MOVER_COLUNAS") && isFlagSet(userValue.profileData, "MOVER_CARDS"))) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {
                 text: "Entendido.",
@@ -51,7 +51,7 @@ export function OnDragStart(
 
         if (event.active.data.current !== undefined) {
             if (event.active.data.current.type === "COLUMN") {
-                if (isFlagSet(userValue.userData, "MOVER_COLUNAS")) {
+                if (isFlagSet(userValue.profileData, "MOVER_COLUNAS")) {
                     setActiveColumn(event.active.data.current.column);
                     return;
                 }
@@ -84,7 +84,7 @@ export function OnDragStart(
 
         if (event.active.data.current !== undefined) {
             if (event.active.data.current.type === "CARD") {
-                if (isFlagSet(userValue.userData, "MOVER_CARDS")) {
+                if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
                     setActiveCard(event.active.data.current.card);
                     return;
                 }
@@ -143,12 +143,12 @@ export function OnDragEnd(
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
     isFlagSet: (value: userData, flag: string) => boolean,
-    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
+    setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
     setActiveColumn: (arg0: Column | null | any) => void,
     setActiveCard: (arg0: Card | null | any) => void,
     tempDragState: DragEndEvent | DragStartEvent | DragOverEvent,
     ) {
-    if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
+    if (!(isFlagSet(userValue.profileData, "MOVER_COLUNAS") && isFlagSet(userValue.profileData, "MOVER_CARDS"))) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {
                 text: "Entendido.",
@@ -185,18 +185,18 @@ export function OnDragEnd(
 
         //console.log("ON DRAG END EVENT", event);
         if (active.data.current?.type === "COLUMN") {
-            if (isFlagSet(userValue.userData, "MOVER_COLUNAS")) {
+            if (isFlagSet(userValue.profileData, "MOVER_COLUNAS")) {
                 //console.log("ACTIVE COLUMN");
-                setKanbanData((prevKanbanData: KanbanData) => {
-                    const activeColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col?.id === activeColumnID);
-                    const overColumnIndex = prevKanbanData.columns.findIndex((col: Column) => col?.id === overColumnID);
-                    const newColumnsArray: Column[] = arrayMove(prevKanbanData.columns, activeColumnIndex, overColumnIndex);
+                setKanban((prevKanban: Kanban) => {
+                    const activeColumnIndex = prevKanban.columns.findIndex((col: Column) => col?.id === activeColumnID);
+                    const overColumnIndex = prevKanban.columns.findIndex((col: Column) => col?.id === overColumnID);
+                    const newColumnsArray: Column[] = arrayMove(prevKanban.columns, activeColumnIndex, overColumnIndex);
 
                     const requestOptions = {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
                         body: JSON.stringify({
-                            "columnId": prevKanbanData.columns[activeColumnIndex].id,
+                            "columnId": prevKanban.columns[activeColumnIndex].id,
                             "toIndex": overColumnIndex,
                         }),
                     };
@@ -204,7 +204,7 @@ export function OnDragEnd(
 
 
                     return {
-                        ...prevKanbanData,
+                        ...prevKanban,
                         columns: newColumnsArray,
                     };
                 });
@@ -236,14 +236,14 @@ export function OnDragEnd(
         } else {
             //console.log("ACTIVE CARD", active.data.current?.type);
 
-            if (isFlagSet(userValue.userData, "MOVER_COLUNAS")) {
+            if (isFlagSet(userValue.profileData, "MOVER_COLUNAS")) {
                 if (over.data.current?.type === "COLUMN") {
                     //console.log("OVER COLUMN");
-                    setKanbanData((prevKanbanData: KanbanData) => {
+                    setKanban((prevKanban: Kanban) => {
                         // Drop on other column
                         const cardEl: Card = active.data.current?.card;
                         const destCol: Column = over.data.current?.column;
-                        const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
+                        const srcCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
                         if (!srcCol) return;
 
                         const updatedCardsList = srcCol.cards.filter((card) => card.id !== cardEl.id);
@@ -263,7 +263,7 @@ export function OnDragEnd(
                             cards: [...destCol.cards, newCard],
                         }
 
-                        const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
+                        const updatedSrcColumns: Column[] = prevKanban.columns.map((column: Column) =>
                             column?.id === updatedColumn.id ? updatedColumn : column
                         );
 
@@ -272,7 +272,7 @@ export function OnDragEnd(
 
 
                         return {
-                            ...prevKanbanData,
+                            ...prevKanban,
                             columns: updatedColumns,
                         };
 
@@ -307,14 +307,14 @@ export function OnDragEnd(
 
             } else if (over.data.current?.type === "CARD") {
                 //console.log("OVER CARD");
-                if (isFlagSet(userValue.userData, "MOVER_CARDS")) {
+                if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
 
                     if (Object.keys(active.data.current as any).length !== 0) {
                         //console.log("CURRENT NOT EMPTY", event);
-                        setKanbanData((prevKanbanData: KanbanData) => {
+                        setKanban((prevKanban: Kanban) => {
                             const cardEl: Card = active.data.current?.card;
-                            const destCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
-                            const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
+                            const destCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
+                            const srcCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
                             if (!srcCol) return;
                             if (destCol === undefined) return;
 
@@ -335,14 +335,14 @@ export function OnDragEnd(
                                 cards: [...destCol.cards, newCard],
                             }
 
-                            const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
+                            const updatedSrcColumns: Column[] = prevKanban.columns.map((column: Column) =>
                                 column?.id === updatedColumn.id ? updatedColumn : column
                             );
 
                             const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
 
                             return {
-                                ...prevKanbanData,
+                                ...prevKanban,
                                 columns: updatedColumns,
                             };
 
@@ -376,12 +376,12 @@ export function OnDragEnd(
 
                 } else {
                     //console.log("CURRENT EMPTY");
-                    if (isFlagSet(userValue.userData, "MOVER_CARDS")) {
-                        setKanbanData((prevKanbanData: KanbanData) => {
+                    if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
+                        setKanban((prevKanban: Kanban) => {
                             const tempEndDragState: DragEndEvent = tempDragState as DragEndEvent;
                             const cardEl: Card = tempEndDragState.active.data.current?.card;
-                            const destCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
-                            const srcCol: Column | undefined = prevKanbanData.columns.find((col: Column) => col?.id === tempEndDragState.active.data.current?.card.columnID);
+                            const destCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
+                            const srcCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === tempEndDragState.active.data.current?.card.columnID);
                             if (!srcCol) return;
                             if (destCol === undefined) return;
 
@@ -401,14 +401,14 @@ export function OnDragEnd(
                                 cards: [...destCol.cards, newCard],
                             }
 
-                            const updatedSrcColumns: Column[] = prevKanbanData.columns.map((column: Column) =>
+                            const updatedSrcColumns: Column[] = prevKanban.columns.map((column: Column) =>
                                 column?.id === updatedColumn.id ? updatedColumn : column
                             );
 
                             const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
 
                             return {
-                                ...prevKanbanData,
+                                ...prevKanban,
                                 columns: updatedColumns,
                             };
 
@@ -458,9 +458,9 @@ export function OnDragOver(
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
     isFlagSet: (value: userData, flag: string) => boolean,
-    setKanbanData: (arg0: (prevKanbanData: KanbanData) => KanbanData | KanbanData | undefined) => void,
+    setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
     ) {
-    if (!(isFlagSet(userValue.userData, "MOVER_COLUNAS") && isFlagSet(userValue.userData, "MOVER_CARDS"))) {
+    if (!(isFlagSet(userValue.profileData, "MOVER_COLUNAS") && isFlagSet(userValue.profileData, "MOVER_CARDS"))) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {
                 text: "Entendido.",
@@ -497,12 +497,12 @@ export function OnDragOver(
         const isOverCard = over.data.current?.type === "CARD";
 
         if (isActiveCard && isOverCard) {
-            setKanbanData((prevKanbanData: KanbanData) => {
+            setKanban((prevKanban: Kanban) => {
                 if (active.data.current?.card.columnID === over.data.current?.card.columnID) {
-                    if (isFlagSet(userValue.userData, "MOVER_CARDS")) {
+                    if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
 
-                        const targetColumn = prevKanbanData.columns.find((column) => column?.id === active.data.current?.card.columnID);
-                        if (!targetColumn) return prevKanbanData;
+                        const targetColumn = prevKanban.columns.find((column) => column?.id === active.data.current?.card.columnID);
+                        if (!targetColumn) return prevKanban;
 
                         const activeCardIndex = targetColumn.cards.findIndex((card: Card) => card?.id === activeID);
                         const overCardIndex = targetColumn.cards.findIndex((card: Card) => card?.id === overID);
@@ -514,12 +514,12 @@ export function OnDragOver(
                             cards: newCardArray,
                         };
 
-                        const updatedColumns = prevKanbanData.columns.map((column: Column) =>
+                        const updatedColumns = prevKanban.columns.map((column: Column) =>
                             column?.id === active.data.current?.card.columnID ? updatedColumn : column
                         );
 
                         return {
-                            ...prevKanbanData,
+                            ...prevKanban,
                             columns: updatedColumns,
                         };
                     } else {
@@ -547,12 +547,12 @@ export function OnDragOver(
                         return;
                     }
                 } else {
-                    if (isFlagSet(userValue.userData, "MOVER_COLUNAS")) {
+                    if (isFlagSet(userValue.profileData, "MOVER_COLUNAS")) {
 
-                        const sourceColumn = prevKanbanData.columns.find((column) => column?.id === active.data.current?.card.columnID);
-                        if (!sourceColumn) return prevKanbanData;
-                        const destColumn = prevKanbanData.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
-                        if (!destColumn) return prevKanbanData;
+                        const sourceColumn = prevKanban.columns.find((column) => column?.id === active.data.current?.card.columnID);
+                        if (!sourceColumn) return prevKanban;
+                        const destColumn = prevKanban.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
+                        if (!destColumn) return prevKanban;
 
                         //const srcCardIndex = sourceColumn.cardsList.findIndex((card: Card) => card?.id === activeID);
                         //const destCardIndex = destColumn.cardsList.findIndex((card: Card) => card?.id === overID);
@@ -564,12 +564,12 @@ export function OnDragOver(
                             cards: updatedSourceCardsList,
                         };
 
-                        const updatedColumns = prevKanbanData.columns.map((column: Column) =>
+                        const updatedColumns = prevKanban.columns.map((column: Column) =>
                             column?.id === active.data.current?.card.columnID ? updatedSourceColumn : column
                         );
 
                         return {
-                            ...prevKanbanData,
+                            ...prevKanban,
                             columns: updatedColumns,
                         };
                     } else {

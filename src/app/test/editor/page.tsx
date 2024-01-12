@@ -10,7 +10,7 @@ export default function Page() {
         <main className="w-full h-full">
             <div className="w-[75%] h-[75%]">
                 <div className='z-[2]'>
-                    <RichEditor display={true} ref={editorRef} markdown='' onChange={console.log}/>
+                    <RichEditor ref={editorRef} markdown='' onChange={console.log}/>
                 </div>
             </div>
         </main>

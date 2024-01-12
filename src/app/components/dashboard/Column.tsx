@@ -1,7 +1,6 @@
 import { useUserContext } from "@/app/contexts/userContext";
 import { ColumnContainerProps } from "@/app/interfaces/KanbanInterfaces";
-import { Card, SystemID } from "@/app/types/KanbanTypes";
-import { EditMode, DeleteColumn } from "@/app/utils/dashboard/functions/Column";
+import { Card, Column, Kanban, SystemID } from "@/app/types/KanbanTypes";
 import { useSortable, SortableContext } from "@dnd-kit/sortable";
 import { XCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useState, useMemo, useRef } from "react";
@@ -9,30 +8,19 @@ import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { CardElement } from "./Card";
 import { CSS } from '@dnd-kit/utilities';
 import { isFlagSet } from "@/app/utils/checkers";
+import { useModalContext } from "@/app/contexts/modalContext";
+import { ConfirmRemoveColumn, RemoveColumn, UpdateColumnTitle } from "@/app/utils/dashboard/functions/Page/Column";
+import { delete_column } from "@/app/utils/fetchs";
+import { ShowCreateCard } from "@/app/utils/dashboard/functions/Page/Card";
+import { useKanbanContext } from "@/app/contexts/kanbanContext";
 
-export function ColumnContainer(props: ColumnContainerProps) {
-    const {
-        column,
-        deleteColumn,
-        updateColumnTitle,
-        createCard,
-        deleteCard,
-        setShowCreateCardForm,
-        setTempCard,
-        setIsEdition,
-        setTempColumnID,
-        setEditorText,
-        setModalTitle,
-        setModalDescription,
-        setModalOptions,
-        setModalOpen,
-        setModalBorderColor,
-        setModalFocusRef,
-        setModalText,
-    } = props;
+export function ColumnContainer({column,kanban,setKanban}:{column:Column,kanban:Kanban,setKanban:(prevState: Kanban) => void}) {
+
     const [editMode, setEditMode] = useState<boolean>(false);
     const [title, setTitle] = useState<string>(column.title);
     const { userValue } = useUserContext();
+    const modalContextProps = useModalContext();
+    const { setTempColumn, setTempCard, cardManager,setCardManager } = useKanbanContext();
         
     const cardsIds = useMemo(() => {
         const ids:SystemID[] = [];
@@ -42,32 +30,63 @@ export function ColumnContainer(props: ColumnContainerProps) {
         return ids;
     }, [column]);
 
-    const delCol = () => {
-        deleteColumn(column.id);
-        setModalOpen(false);
-    }
-
     const noButtonRef = useRef<HTMLButtonElement>(null);
 
-    const modalOpts: CustomModalButtonAttributes[] = [
+    const failOption: CustomModalButtonAttributes[] = [
         {
-            text: "Sim",
-            onclickfunc: delCol,
-            type: "button",
-            className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-        },
-        {
-            text: "Não",
-            onclickfunc: () => setModalOpen(false),
+            text: "Entendido.",
+            onclickfunc: () => modalContextProps.setModalOpen(false),
             ref: noButtonRef,
             type: "button",
             className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
         }
-    ]
+    ];
 
-    const modalOptsElements: any = modalOpts.map(
-        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
+    const failModalOption: any = failOption.map(
+        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+    );
 
+    function handleRemoveColumn(){
+        
+        const delCol = () => {
+            RemoveColumn(
+                column.id,
+                userValue,
+                setTempColumn,
+                setKanban,
+                kanban
+            );
+            modalContextProps.setModalOpen(false);
+        }
+
+        const successOption: CustomModalButtonAttributes[] = [
+            {
+                text: "Sim",
+                onclickfunc: delCol,
+                type: "button",
+                className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            },
+            {
+                text: "Não",
+                onclickfunc: () => modalContextProps.setModalOpen(false),
+                ref: noButtonRef,
+                type: "button",
+                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+            }
+        ]
+
+        const successModalOption: any = successOption.map(
+            (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+        );
+
+        ConfirmRemoveColumn(
+            userValue,
+            successModalOption,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        );
+    }
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: column.id,
@@ -90,41 +109,28 @@ export function ColumnContainer(props: ColumnContainerProps) {
         );
     }
 
-    const handleCreateCard = () => {
-        createCard(column.id);
-    }
-
     const handleEditMode = () => {
-        EditMode(
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
+        UpdateColumnTitle(
+            column.id,
+            userValue,
+            setTempColumn,
+            title,
+            failModalOption,
             noButtonRef,
-            isFlagSet,
-            userValue.profileData,
-            setEditMode,
-
+            modalContextProps
         );
     }
 
-    const handleDeleteColumn = () => {
-        DeleteColumn(
-            setModalTitle,
-            setModalDescription,
-            setModalText,
-            setModalBorderColor,
-            setModalFocusRef,
-            setModalOptions,
-            setModalOpen,
+    function handleShowCreateCard(){
+        ShowCreateCard(
+            userValue,
+            setCardManager,
+            setTempCard,
+            cardManager,
+            failModalOption,
             noButtonRef,
-            modalOptsElements,
-            isFlagSet,
-            userValue.profileData,
-        );
+            modalContextProps         
+        )
     }
 
     return (
@@ -132,7 +138,7 @@ export function ColumnContainer(props: ColumnContainerProps) {
             ref={setNodeRef} style={style} {...attributes} {...listeners} >
             <div className='w-full bg-neutral-50 rounded-md drop-shadow p-2 mb-4 flex flex-row justify-between items-center'>
                 <div
-                    onClick={handleEditMode}>
+                    onClick={()=>setEditMode(true)}>
                     {editMode ? <input
                         type='text'
                         autoFocus
@@ -140,7 +146,7 @@ export function ColumnContainer(props: ColumnContainerProps) {
                         onKeyDown={(e: any) => {
                             if (e.key !== "Enter") return;
                             setEditMode(false);
-                            updateColumnTitle(column.id, title)
+                            handleEditMode()
                         }}
                         defaultValue={title}
                         onChange={(e: any) => setTitle(e.target.value)}
@@ -148,34 +154,25 @@ export function ColumnContainer(props: ColumnContainerProps) {
                     /> :
                     title}
                 </div>
-                <button onClick={handleDeleteColumn}>
+                <button onClick={handleRemoveColumn}>
                     <XCircleIcon className='w-6 aspect-square' />
                 </button>
             </div>
             <div>
                 <SortableContext items={cardsIds}>
                     {column.cards?.map((card: Card) => {
+                        card.columnID = column.id;
                         return <CardElement
-                            setTempColumnID={setTempColumnID}
-                            setTempCard={setTempCard}
-                            setShowCreateCardForm={setShowCreateCardForm}
-                            card={card}
-                            deleteCard={deleteCard}
-                            setIsEdition={setIsEdition}
                             key={card.id}
-                            setEditorText={setEditorText}
-                            setModalOptions={props.setModalOptions}
-                            setModalOpen={props.setModalOpen}
-                            setModalDescription={props.setModalDescription}
-                            setModalFocusRef={props.setModalFocusRef}
-                            setModalBorderColor={props.setModalBorderColor}
-                            setModalTitle={props.setModalTitle}
-                            setModalText={props.setModalText}
+                            card={card}
+                            kanban={kanban}
+                            column={column}
+                            modalContextProps={modalContextProps}
                         />
                     })}
                 </SortableContext>
             </div>
-            <button onClick={handleCreateCard} className='relative rounded-md drop-shadow bg-neutral-50 p-2 flex w-full items-center justify-center'>
+            <button onClick={handleShowCreateCard} className='relative rounded-md drop-shadow bg-neutral-50 p-2 flex w-full items-center justify-center'>
                 <PlusCircleIcon className='w-8 aspect-square absolute top-1 left-2' />
                 <h1 className='w-full text-center'>Add Card</h1>
             </button>

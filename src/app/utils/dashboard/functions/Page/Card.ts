@@ -1,75 +1,55 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Kanban, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag, DateValue } from "@/app/types/KanbanTypes";
+import { isFlagSet } from "@/app/utils/checkers";
 import { generateRandomString } from "@/app/utils/generators";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { RefObject } from "react";
 
-export function CreateCard(
-        columnID: SystemID,
-        userData: userData,
-        setModalTitle: (value: string) => void,
-        setModalDescription: (value: string) => void,
-        setModalText: (value: string) => void,
-        setModalBorderColor: (value: string) => void,
-        setModalFocusRef: (value: any) => void,
-        setModalOptions: (value: any) => void,
-        setModalOpen: (value: boolean) => void,
+export function ShowCreateCard(
+        userData: userValueDT,
+        setCardManager: (newValue: CardManager) => void,
+        setTempCard: (newValue: Card) => void,
+        cardManager: CardManager,
+        failModalOptions: any,
         noButtonRef: RefObject<HTMLButtonElement>,
-        isFlagSet: (value: userData, flag: string) => boolean,
-        setTempColumnID: (arg0: SystemID) => void,
-        setEditorText: (arg0: string) => void,
-        setTempCard: (arg0: Card) => void,
-        setIsEdition: (arg0: boolean) => void,
-        setShowCreateCardForm: (arg0: boolean) => void,
-        editorRef: RefObject<MDXEditorMethods>,
+        modalContextProps: ModalContextProps
     ) {
-    if (!isFlagSet(userData, "CRIAR_CARDS")) {
-        const optAttrs: CustomModalButtonAttributes[] = [
-            {
-                text: "Entendido.",
-                onclickfunc: () => setModalOpen(false),
-                ref: noButtonRef,
-                type: "button",
-                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
-            }
-        ];
-
-        const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
-            );
-
-        setModalTitle("Ação Negada.");
-        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-        setModalText("Fale com seu administrador se isto é um engano.");
-        setModalBorderColor("border-red-500");
-        setModalFocusRef(noButtonRef);
-        setModalOptions(modalOpt);
-        setModalOpen(true);
+    if (!isFlagSet(userData.profileData, "CRIAR_CARDS")) {
+        modalContextProps.setModalTitle("Ação Negada.");
+        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+        modalContextProps.setModalBorderColor("border-red-500");
+        modalContextProps.setModalFocusRef(noButtonRef);
+        modalContextProps.setModalOptions(failModalOptions);
+        modalContextProps.setModalOpen(true);
         return;
     }
 
-    setTempColumnID(columnID);
-    setEditorText("");
-
+    setCardManager({...cardManager,isSubmit:false,isEditElseCreate:false,isShowCreateCard:true})
+    
     setTempCard({
-        id: generateRandomString(),
+        id: "",
+        columnID: "",
         title: "",
-        columnID: columnID,
         description: "",
         checklists: [],
         tags: [],
         members: [],
         comments: [],
         dropdowns: [],
-        date: "",
+        deadline: {
+        id: "",
+        category: "",
+        date: new Date(),
+        overdue: false,
+        toColumnId: ""
+        },
         customFields: [],
-        innerCards: [],
-        backendID: 0,
-    } as Card);
-    setIsEdition(false);
-    setShowCreateCardForm(true);
-    editorRef.current?.setMarkdown("");
+        innerCards: []
+    })
+
     console.log("CREATING CARD");
 };
 
@@ -282,20 +262,20 @@ export function CreateCardForm(
     event.target.reset();
     setEditorText("");
     setTempColumnID("");
-    setTempCard({
-        id: generateRandomString(),                                         /////////////////////////////////////////////////////////////////////////////
-        title: "",
-        columnID: "",
-        description: "",
-        checklists: [],
-        tags: [],
-        members: [],
-        comments: [],
-        dropdowns: [],
-        date: "",
-        customFields: [],
-        innerCards: [],
-    } as Card);
+    // setTempCard({
+    //     id: generateRandomString(),                                         /////////////////////////////////////////////////////////////////////////////
+    //     title: "",
+    //     columnID: "",
+    //     description: "",
+    //     checklists: [],
+    //     tags: [],
+    //     members: [],
+    //     comments: [],
+    //     dropdowns: [],
+    //     date: "",
+    //     customFields: [],
+    //     innerCards: [],
+    // } as Card);
     setShowCreateCardForm(false);
 };
 
@@ -330,9 +310,9 @@ export function DeleteCard(
 };
 
 export function AddCardDate(dateOBJ: DateValue, tempCard: Card, setTempCard: (arg0: Card) => void) {
-    const newCard: Card  = {
-        ...tempCard,
-        date: dateOBJ === undefined ? "" : dateOBJ === null ? "" : dateOBJ.toString(),
-    }
-    setTempCard(newCard);
+    // const newCard: Card  = {
+    //     ...tempCard,
+    //     date: dateOBJ === undefined ? "" : dateOBJ === null ? "" : dateOBJ.toString(),
+    // }
+    // setTempCard(newCard);
 }

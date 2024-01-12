@@ -1,44 +1,28 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Column, Kanban, SystemID, userData, userValueDT } from "@/app/types/KanbanTypes";
+import { isFlagSet } from "@/app/utils/checkers";
 import { delete_column, patch_column, post_column } from "@/app/utils/fetchs";
 import { API_BASE_URL } from "@/app/utils/variables";
-import { RefObject } from "react";
+import { RefObject, useRef } from "react";
 
 export async function CreateNewColumn(
     userValue: userValueDT,
-    setModalTitle: (value: string) => void,
-    setModalDescription: (value: string) => void,
-    setModalText: (value: string) => void,
-    setModalBorderColor: (value: string) => void,
-    setModalFocusRef: (value: any) => void,
-    setModalOptions: (value: any) => void,
-    setModalOpen: (value: boolean) => void,
-    noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
     setTempColumn: (prevState: Column) => void,
-    kanban: Kanban
+    kanban: Kanban,
+    falseModalOptions: any,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    modalContextProps: ModalContextProps
 ) {
-    if (!isFlagSet(userValue.profileData, "CRIAR_COLUNAS")) {
-        const optAttrs: CustomModalButtonAttributes[] = [
-            {
-                text: "Entendido.",
-                onclickfunc: () => setModalOpen(false),
-                ref: noButtonRef,
-                type: "button",
-                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
-            }
-        ];
-        const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => `<button className=${el?.className} type=${el.type} key=${idx} onClick=${el.onclickfunc} ref=${el?.ref}>${el.text}</button>`
-        );
 
-        setModalTitle("Ação Negada.");
-        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-        setModalText("Fale com seu administrador se isto é um engano.");
-        setModalBorderColor("border-red-500");
-        setModalFocusRef(noButtonRef);
-        setModalOptions(modalOpt);
-        setModalOpen(true);
+    if (!isFlagSet(userValue.profileData, "CRIAR_COLUNAS")) {
+        modalContextProps.setModalTitle("Ação Negada.");
+        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+        modalContextProps.setModalBorderColor("border-red-500");
+        modalContextProps.setModalFocusRef(noButtonRef);
+        modalContextProps.setModalOptions(falseModalOptions);
+        modalContextProps.setModalOpen(true);
         return;
     }
 
@@ -58,21 +42,52 @@ export async function CreateNewColumn(
     }))
 }
 
+export function ConfirmRemoveColumn(
+    userValue: userValueDT, 
+    trueModalOptions:any,
+    failModalOptions:any,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    modalContextProps: ModalContextProps
+) {
+
+    if (!isFlagSet(userValue.profileData, "DELETAR_COLUNAS")) {
+        //NÃO TEM AUTORIZAÇÃO
+        modalContextProps.setModalTitle("Ação Negada.");
+        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+        modalContextProps.setModalBorderColor("border-red-500");
+        modalContextProps.setModalFocusRef(noButtonRef);
+        modalContextProps.setModalOptions(failModalOptions);
+        modalContextProps.setModalOpen(true);
+        return
+    }
+
+    modalContextProps.setModalTitle("Deletar Coluna");
+    modalContextProps.setModalDescription("Esta ação é irreversivel.");
+    modalContextProps.setModalText("Tem certeza que deseja continuar?");
+    modalContextProps.setModalBorderColor("border-red-500");
+    modalContextProps.setModalFocusRef(noButtonRef);
+    modalContextProps.setModalOptions(trueModalOptions);
+    modalContextProps.setModalOpen(true);
+}
+
 export function RemoveColumn(
     columnIDToRemove: SystemID, 
     userValue: userValueDT, 
     setTempColumn: (prevState: Column) => void,
     setKanban: (prevState: Kanban) => void,
-    kanban: Kanban
+    kanban: Kanban,
 ) {
     const columns = kanban.columns;
     if(columns){
         const filteredColumns = columns.filter(column=>column.id!=columnIDToRemove);
         kanban.columns = filteredColumns;
+        console.log(filteredColumns)
         setKanban(kanban);
     }
     delete_column(undefined,columnIDToRemove,userValue.token,(response)=>{
         if(response.ok){
+            console.log("DELETE COLUMN SUCCESS")
             setTempColumn({
                 id: 0,
                 title: "",
@@ -85,16 +100,31 @@ export function RemoveColumn(
 
 export function UpdateColumnTitle(
     columnID: SystemID, 
-    title: string, 
     userValue: userValueDT, 
-    setTempColumn: (prevState: Column) => void
+    setTempColumn: (prevState: Column) => void,
+    title: string,
+    failModalOptions: any,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    modalContextProps: ModalContextProps
 ) {
+    if (!isFlagSet(userValue.profileData, "EDITAR_COLUNAS")) {
+        modalContextProps.setModalTitle("Ação Negada.");
+        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+        modalContextProps.setModalBorderColor("border-red-500");
+        modalContextProps.setModalFocusRef(noButtonRef);
+        modalContextProps.setModalOptions(failModalOptions);
+        modalContextProps.setModalOpen(true);
+        return
+    }    
     patch_column({title:title},columnID,userValue.token,(response)=>response.text().then(()=>{
         if(response.ok){
+            console.log("UPDATE COLUMN SUCCESS")
             setTempColumn({
                 id: 0,
                 title: title,
-                index: 0
+                index: 0,
+                cards: []
             });
         }
     }))

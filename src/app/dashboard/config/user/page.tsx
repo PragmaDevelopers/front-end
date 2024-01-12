@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
     const router = useRouter();
-    const { userValue, setUserValue } = useUserContext();
+    const { userValue } = useUserContext();
     const [profilePictureSource, setProfilePictureSource] = useState<string>(userValue.profileData.profilePicture as string);
     const [showChangeWarning, setShowChangeWarning] = useState<boolean>(false);
     useEffect(() => {

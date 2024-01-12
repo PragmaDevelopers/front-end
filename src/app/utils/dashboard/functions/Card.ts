@@ -25,7 +25,7 @@ export function EditCard(
 ) {
     if (isFlagSet(userData, "EDITAR_CARDS")) {
         setTempCard(card as Card);
-        setTempColumnID(card.columnID);
+        // setTempColumnID(card.columnID);
         setEditorText(card.description);
         setIsEdition(true);
         setShowCreateCardForm(true);

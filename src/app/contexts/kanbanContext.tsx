@@ -9,10 +9,11 @@ interface KanbanContextProviderProps {
 }
 
 export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ children }) => {
-  const [kanbanValues, setKanbanValues] = useState<Kanban[]>([]);
+  const [kanbanList, setKanbanList] = useState<Kanban[]>([]);
   const [tempKanban, setTempKanban] = useState<Kanban>({
     id: 0,
     title: "",
+    members: [],
     columns: []
   });
   const [tempColumn, setTempColumn] = useState<Column>({
@@ -24,7 +25,9 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
   const [tempCard, setTempCard] = useState<Card>({
     id: "",
     columnID: "",
+    kanbanID: "",
     title: "",
+    index: 0,
     description: "",
     checklists: [],
     tags: [],
@@ -49,12 +52,13 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     isShowCreateDeadline: false,
     isShowAddMember: false,
     isShowCreateTag: false,
-    isShowCreateCustomField: false
+    isShowCreateCustomField: false,
+    isShowCreateInnerCard: false
   });
 
   return (
     <KanbanContext.Provider value={{ 
-      kanbanValues, setKanbanValues,
+      kanbanList, setKanbanList,
       tempKanban, setTempKanban,
       tempColumn, setTempColumn,
       tempCard, setTempCard,

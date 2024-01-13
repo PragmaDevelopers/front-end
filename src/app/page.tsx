@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
 import { API_BASE_URL } from "./utils/variables";
-import { userData, userValueDT } from "./types/KanbanTypes";
+import { User, userValueDT } from "./types/KanbanTypes";
 import { post_login, get_profile, get_user, post_signup } from "./utils/fetchs";
 
 interface InfoScreenProps {
@@ -78,7 +78,6 @@ export default function Page() {
         setIsFailPassword(false);
         setEmailExists(false);
         if (cadastrarSe) {
-            console.log(e)
             const email: string = e?.target?.email?.value;
             const userpassword: string = e?.target?.userpassword?.value;
             const userpasswordconf: string = e?.target?.userpasswordconf?.value;
@@ -118,7 +117,6 @@ export default function Page() {
             }
 
             post_login(responseBody,(response)=>response.text().then((token:string)=>{
-                console.log(token);
                 if (response.status == 200 || response.ok) {
                     const newUserValue = userValue;
                     newUserValue.token = token;
@@ -130,7 +128,7 @@ export default function Page() {
             }));
 
             const getUserProfile = () => {
-                get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:userData)=>{
+                get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{
                     const newUserValue = userValue;
                     newUserValue.profileData = profileData;
                     setUserValue(newUserValue);
@@ -139,7 +137,7 @@ export default function Page() {
             }
             
             const getUserList = () => {
-                get_user(undefined,userValue.token,(response)=>response.json().then((userList:userData[])=>{
+                get_user(undefined,userValue.token,(response)=>response.json().then((userList:User[])=>{
                     const newUserValue = userValue;
                     newUserValue.userList = userList;
                     setUserValue(newUserValue);

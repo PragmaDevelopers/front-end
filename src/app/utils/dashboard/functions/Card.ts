@@ -1,5 +1,5 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { Card, SystemID, userData } from "@/app/types/KanbanTypes";
+import { Card, SystemID, User } from "@/app/types/KanbanTypes";
 import { RefObject } from "react";
 
 export function EditCard(
@@ -13,8 +13,8 @@ export function EditCard(
 
     noButtonRef: RefObject<HTMLButtonElement>,
 
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+    isFlagSet: (value: User, flag: string) => boolean,
+    userData: User,
 
     setTempCard: (card: Card) => void,
     setTempColumnID: (id: SystemID) => void,
@@ -66,10 +66,10 @@ export function DeleteCard(
     noButtonRef: RefObject<HTMLButtonElement>,
     modalOptsElements: HTMLButtonElement[],
 
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData
+    isFlagSet: (value: User, flag: string) => boolean,
+    User: User
 ) {
-    if (isFlagSet(userData, "DELETAR_CARDS")) {
+    if (isFlagSet(User, "DELETAR_CARDS")) {
         setModalTitle("Deletar Card");
         setModalDescription("Esta ação é irreversivel.");
         setModalText("Tem certeza que deseja continuar?");

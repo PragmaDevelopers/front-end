@@ -1,5 +1,5 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { Card, CheckListItem, userData } from "@/app/types/KanbanTypes";
+import { Card, CheckListItem, User } from "@/app/types/KanbanTypes";
 import { RefObject } from "react";
 
 export function InputChange(
@@ -14,11 +14,11 @@ export function InputChange(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+    isFlagSet: (value: User, flag: string) => boolean,
+    User: User,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
     ) {
-    if (isFlagSet(userData, "CRIAR_CHECKLISTS") || isFlagSet(userData, "EDITAR_CHECKLISTS")) {
+    if (isFlagSet(User, "CRIAR_CHECKLISTS") || isFlagSet(User, "EDITAR_CHECKLISTS")) {
 
         setTempCard((prevCard: Card) => {
             const newChecklists = [...prevCard.checklists];
@@ -65,11 +65,11 @@ export function UpdateListTitle(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+    isFlagSet: (value: User, flag: string) => boolean,
+    User: User,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
     ) {
-    if (isFlagSet(userData, "CRIAR_CHECKLISTS") || isFlagSet(userData, "EDITAR_CHECKLISTS")) {
+    if (isFlagSet(User, "CRIAR_CHECKLISTS") || isFlagSet(User, "EDITAR_CHECKLISTS")) {
 
         setTempCard((prevCard: Card) => {
             const newChecklists = [...prevCard.checklists];
@@ -115,12 +115,12 @@ export function AddList(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+    isFlagSet: (value: User, flag: string) => boolean,
+    User: User,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
 
 ) {
-    if (isFlagSet(userData, "CRIAR_CHECKLISTS")) {
+    if (isFlagSet(User, "CRIAR_CHECKLISTS")) {
         const checklistId = "";                                         /////////////////////////////////////////////////////////////////////////////
         setTempCard((prevCard: Card) => ({
             ...prevCard,
@@ -169,11 +169,11 @@ export function AddInput(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+    isFlagSet: (value: User, flag: string) => boolean,
+    User: User,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
     ) {
-    if (isFlagSet(userData, "CRIAR_CHECKLISTS")) {
+    if (isFlagSet(User, "CRIAR_CHECKLISTS")) {
 
         setTempCard((prevCard: Card) => {
             const newChecklists = [...prevCard.checklists];
@@ -221,11 +221,11 @@ export function RemoveInput(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+    isFlagSet: (value: User, flag: string) => boolean,
+    User: User,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
     ) {
-    if (isFlagSet(userData, "DELETAR_CHECKLISTS")) {
+    if (isFlagSet(User, "DELETAR_CHECKLISTS")) {
 
         setTempCard((prevCard: Card) => {
             const newChecklists = [...prevCard.checklists];
@@ -271,11 +271,11 @@ export function RemoveList(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
-    userData: userData,
+    isFlagSet: (value: User, flag: string) => boolean,
+    User: User,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
     ) {
-    if (isFlagSet(userData, "DELETAR_CHECKLISTS")) {
+    if (isFlagSet(User, "DELETAR_CHECKLISTS")) {
 
         setTempCard((prevCard: Card) => {
             const newChecklists = [...prevCard.checklists];
@@ -316,7 +316,7 @@ export function ToggleCheckbox(
     itemIndex: number,
     setTempCard: (arg0: (prevCard: Card) => Card | Card) => void,
     ) {
-    //if (isFlagSet(userData, "CRIAR_CHECKLISTS")) {
+    //if (isFlagSet(User, "CRIAR_CHECKLISTS")) {
     setTempCard((prevCard: Card) => {
         const newChecklists = [...prevCard.checklists];
         newChecklists[listIndex].items[itemIndex].completed = !newChecklists[listIndex].items[itemIndex].completed;

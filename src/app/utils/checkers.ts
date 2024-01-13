@@ -1,7 +1,7 @@
-import { userData } from "../types/KanbanTypes";
+import { User } from "../types/KanbanTypes";
 import { PERMISSIONS_LIST, SYSTEM_PERMISSIONS } from "./variables";
 
-export function isFlagSet(userValue: userData, flag: string): boolean {
+export function isFlagSet(userValue: User, flag: string): boolean {
     //let bitMask: number = SYSTEM_PERMISSIONS[flag];
     //let binaryValue: number = parseInt(userValue.permissionLevel, 2);
     //return (binaryValue & bitMask) !== 0;
@@ -44,6 +44,9 @@ export function getUserPerms(userPerms: string): { [Key: string]: boolean } {
         "DELETAR_TAG": false,
         "CRIAR_CAMPO": false,
         "DELETAR_CAMPO": false,
+        "CRIAR_CHECKLISTITEMS": false,
+        "DELETAR_CHECKLISTITEMS": false,
+        "EDITAR_CHECKLISTITEMS": false,
     }
     let permsList: string[] = PERMISSIONS_LIST;
 

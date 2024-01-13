@@ -1,6 +1,7 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
-import { Column, Kanban, SystemID, userData, userValueDT } from "@/app/types/KanbanTypes";
+import { Column, Kanban, SystemID, userValueDT } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
 import { delete_column, patch_column, post_column } from "@/app/utils/fetchs";
 import { API_BASE_URL } from "@/app/utils/variables";
@@ -8,8 +9,8 @@ import { RefObject, useRef } from "react";
 
 export async function CreateNewColumn(
     userValue: userValueDT,
-    setTempColumn: (prevState: Column) => void,
-    kanban: Kanban,
+    setTempKanban: (newValue:Kanban) => void,
+    tempKanban: Kanban,
     falseModalOptions: any,
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
@@ -26,20 +27,21 @@ export async function CreateNewColumn(
         return;
     }
 
-    const columnCount = kanban.columns != undefined ? kanban.columns.length : 0;
+    const columnCount = tempKanban.columns != undefined ? tempKanban.columns.length : 0;
 
     post_column({
-        kanbanId: kanban.id,
+        kanbanId: tempKanban.id,
         title: `Column ${columnCount}`
     },userValue.token,(response)=>response.json().then((id)=>{
-        console.log(id)
-        setTempColumn({
+        console.log("CREATE COLUMN SUCCESS")
+        setTempKanban({...tempKanban,columns:[...tempKanban.columns,{
             id: id,
             title: `Column ${columnCount}`,
             index: columnCount,
             cards: []
-        }); 
+        }]});
     }))
+
 }
 
 export function ConfirmRemoveColumn(
@@ -72,28 +74,21 @@ export function ConfirmRemoveColumn(
 }
 
 export function RemoveColumn(
-    columnIDToRemove: SystemID, 
+    columnID: SystemID, 
     userValue: userValueDT, 
     setTempColumn: (prevState: Column) => void,
-    setKanban: (prevState: Kanban) => void,
-    kanban: Kanban,
+    setTempKanban: (prevState: Kanban) => void,
+    tempKanban: Kanban,
 ) {
-    const columns = kanban.columns;
+    const columns = tempKanban.columns;
     if(columns){
-        const filteredColumns = columns.filter(column=>column.id!=columnIDToRemove);
-        kanban.columns = filteredColumns;
-        console.log(filteredColumns)
-        setKanban(kanban);
+        const filteredColumns = columns.filter(column=>column.id!=columnID);
+        tempKanban.columns = filteredColumns;
+        setTempKanban(tempKanban);
     }
-    delete_column(undefined,columnIDToRemove,userValue.token,(response)=>{
+    delete_column(undefined,columnID,userValue.token,(response)=>{
         if(response.ok){
-            console.log("DELETE COLUMN SUCCESS")
-            setTempColumn({
-                id: 0,
-                title: "",
-                index: 0,
-                cards: []
-            });
+            console.log("DELETE COLUMN SUCCESS");
         }
     });
 }
@@ -101,7 +96,8 @@ export function RemoveColumn(
 export function UpdateColumnTitle(
     columnID: SystemID, 
     userValue: userValueDT, 
-    setTempColumn: (prevState: Column) => void,
+    setTempKanban: (prevState: Kanban) => void,
+    tempKanban: Kanban,
     title: string,
     failModalOptions: any,
     noButtonRef: RefObject<HTMLButtonElement>,
@@ -117,15 +113,16 @@ export function UpdateColumnTitle(
         modalContextProps.setModalOpen(true);
         return
     }    
+    const columns = tempKanban.columns;
+    const columnIndex = columns.findIndex(column=>column.id!=columnID);
+    if(columnIndex != -1){
+        columns[columnIndex].title = title;
+        tempKanban.columns = columns;
+        setTempKanban(tempKanban);
+    }
     patch_column({title:title},columnID,userValue.token,(response)=>response.text().then(()=>{
         if(response.ok){
             console.log("UPDATE COLUMN SUCCESS")
-            setTempColumn({
-                id: 0,
-                title: title,
-                index: 0,
-                cards: []
-            });
         }
     }))
 };

@@ -1,5 +1,5 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
-import { userValueDT, userData, Kanban, Column, Card, SystemID } from "@/app/types/KanbanTypes";
+import { userValueDT, User, Kanban, Column, Card, SystemID } from "@/app/types/KanbanTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { DragStartEvent, DragEndEvent, DragOverEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -16,7 +16,7 @@ export function OnDragStart(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
+    isFlagSet: (value: User, flag: string) => boolean,
     setActiveCard: (arg0:  Card | null | any) => void,
     setActiveColumn: (arg0:  Column | null | any) => void,
     setTempDragState: (arg0: DragStartEvent) => void,
@@ -142,7 +142,7 @@ export function OnDragEnd(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
+    isFlagSet: (value: User, flag: string) => boolean,
     setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
     setActiveColumn: (arg0: Column | null | any) => void,
     setActiveCard: (arg0: Card | null | any) => void,
@@ -457,7 +457,7 @@ export function OnDragOver(
     setModalOptions: (value: any) => void,
     setModalOpen: (value: boolean) => void,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: userData, flag: string) => boolean,
+    isFlagSet: (value: User, flag: string) => boolean,
     setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
     ) {
     if (!(isFlagSet(userValue.profileData, "MOVER_COLUNAS") && isFlagSet(userValue.profileData, "MOVER_CARDS"))) {

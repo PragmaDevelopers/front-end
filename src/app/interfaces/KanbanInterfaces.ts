@@ -1,12 +1,5 @@
 import { MutableRefObject } from "react";
-import { Card, Column, Member, SystemID, Comment, userValueDT, Kanban } from "../types/KanbanTypes";
-
-export interface CardElementProps {
-    card: Card,
-    kanban: Kanban,
-    column: Column,
-    modalContextProps: ModalContextProps
-}
+import { Card, Column, User, SystemID, Comment, userValueDT, Kanban } from "../types/KanbanTypes";
 
 export interface ColumnContainerProps {
     column: Column;
@@ -21,50 +14,8 @@ export interface ColumnContainerProps {
     setEditorText: any;
 }
 
-export interface CreateEditCardProps {
-    showCreateCardForm: boolean;
-    createCardForm: (event: any, isEdition: boolean) => void;
-    card: Card;
-    updateListTitle: any;
-    handleRemoveInput: any;
-    handleRemoveList: any;
-    handleAddList: any;
-    handleAddInput: any;
-    setShowCreateCardForm: any;
-    handleInputChange: any;
-    handleToggleCheckbox: any;
-    isEdition: boolean;
-    addNewTag: any;
-    removeCurrentTag: any;
-    cardDate: any;
-    setCardDate: any;
-    editorText: any;
-    setEditorText: any;
-    addCustomField: any;
-    addInnerCard: any;
-    createInnerCard: any;
-    tempCardsArr: Card[];
-    isCreatingInnerCard: boolean;
-    setIsCreatingInnerCard: any;
-    isEdittingInnerCard: boolean;
-    setIsEdittingInnerCard: any;
-    _appendToTempCardsArray: any;
-    _popFromTempCardsArray: any;
-
-    handleAddDate: any;
-
-    setTempCard: any;
-    setTempCardsArr: any;
-    kanbanValues: Kanban[],
-    kanban: Kanban
-}
-
 export interface RichEditorProps {
-    markdown?: string;
-    getMarkdown?: any;
-    setMarkdown?: any;
-    setMarkdownContent?: string;
-    onChange?: any;
+    markdown: string;
 }
 
 export interface ConfirmDeleteProps {
@@ -93,7 +44,7 @@ export interface InnerCardElementProps {
 }
 
 export interface CommentEntryProps extends Comment {
-    setIsAnswering: (arg0: { isAnswering: boolean, answeringUser: Member, commentId: SystemID }) => void;
+    setIsAnswering: (arg0: { isAnswering: boolean, answeringUser: User, commentId: SystemID }) => void;
     removeCurrentComment: (targetId: SystemID) => void,
     editComment: (arg0: Comment) => void,
 }
@@ -111,11 +62,12 @@ export interface CardManager{
     isShowAddMember: boolean;
     isShowCreateTag: boolean;
     isShowCreateCustomField: boolean;
+    isShowCreateInnerCard: boolean;
 }
 
 export interface KanbanContextProps {
-    kanbanValues: Kanban[];
-    setKanbanValues: (newValue: Kanban[]) => void;
+    kanbanList: Kanban[];
+    setKanbanList: (newValue: Kanban[]) => void;
     tempKanban: Kanban;
     setTempKanban: (newValue: Kanban) => void;
     tempColumn: Column;

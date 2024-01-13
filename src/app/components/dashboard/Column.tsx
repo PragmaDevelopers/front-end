@@ -3,7 +3,7 @@ import { ColumnContainerProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Column, Kanban, SystemID } from "@/app/types/KanbanTypes";
 import { useSortable, SortableContext } from "@dnd-kit/sortable";
 import { XCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { CardElement } from "./Card";
 import { CSS } from '@dnd-kit/utilities';
@@ -14,13 +14,13 @@ import { delete_column } from "@/app/utils/fetchs";
 import { ShowCreateCard } from "@/app/utils/dashboard/functions/Page/Card";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 
-export function ColumnContainer({column,kanban,setKanban}:{column:Column,kanban:Kanban,setKanban:(prevState: Kanban) => void}) {
+export function ColumnContainer({column}:{column:Column}) {
 
     const [editMode, setEditMode] = useState<boolean>(false);
     const [title, setTitle] = useState<string>(column.title);
     const { userValue } = useUserContext();
     const modalContextProps = useModalContext();
-    const { setTempColumn, setTempCard, cardManager,setCardManager } = useKanbanContext();
+    const { setTempColumn, setTempCard, tempKanban, setTempKanban,cardManager,setCardManager } = useKanbanContext();
         
     const cardsIds = useMemo(() => {
         const ids:SystemID[] = [];
@@ -53,8 +53,8 @@ export function ColumnContainer({column,kanban,setKanban}:{column:Column,kanban:
                 column.id,
                 userValue,
                 setTempColumn,
-                setKanban,
-                kanban
+                setTempKanban,
+                tempKanban
             );
             modalContextProps.setModalOpen(false);
         }
@@ -113,7 +113,8 @@ export function ColumnContainer({column,kanban,setKanban}:{column:Column,kanban:
         UpdateColumnTitle(
             column.id,
             userValue,
-            setTempColumn,
+            setTempKanban,
+            tempKanban,
             title,
             failModalOption,
             noButtonRef,
@@ -160,14 +161,10 @@ export function ColumnContainer({column,kanban,setKanban}:{column:Column,kanban:
             </div>
             <div>
                 <SortableContext items={cardsIds}>
-                    {column.cards?.map((card: Card) => {
-                        card.columnID = column.id;
+                    {column.cards?.sort((a,b)=>a.index-b.index).map((card: Card) => {
                         return <CardElement
                             key={card.id}
                             card={card}
-                            kanban={kanban}
-                            column={column}
-                            modalContextProps={modalContextProps}
                         />
                     })}
                 </SortableContext>

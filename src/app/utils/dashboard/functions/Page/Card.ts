@@ -1,6 +1,6 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
-import { Card, Kanban, CheckList, CheckListItem, userData, SystemID, userValueDT, Tag, DateValue } from "@/app/types/KanbanTypes";
+import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
 import { generateRandomString } from "@/app/utils/generators";
 import { API_BASE_URL } from "@/app/utils/variables";
@@ -32,7 +32,9 @@ export function ShowCreateCard(
     setTempCard({
         id: "",
         columnID: "",
+        kanbanID: "",
         title: "",
+        index: 0,
         description: "",
         checklists: [],
         tags: [],
@@ -40,11 +42,11 @@ export function ShowCreateCard(
         comments: [],
         dropdowns: [],
         deadline: {
-        id: "",
-        category: "",
-        date: new Date(),
-        overdue: false,
-        toColumnId: ""
+            id: "",
+            category: "",
+            date: new Date(),
+            overdue: false,
+            toColumnId: ""
         },
         customFields: [],
         innerCards: []

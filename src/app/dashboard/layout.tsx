@@ -118,7 +118,7 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 
 export default function Layout({ children }: any) {
     const { userValue } = useUserContext();
-    const { kanbanValues, setKanbanValues } = useKanbanContext();
+    const { kanbanList, setKanbanList, tempKanban,setTempCard } = useKanbanContext();
     const { 
         modalTitle, setModalTitle,
         modalDescription, setModalDescription,
@@ -128,7 +128,6 @@ export default function Layout({ children }: any) {
         modalBorderColor, setModalBorderColor,
         modalFocusRef, setModalFocusRef 
     } = useModalContext();
-    const [tempKanban, setTempKanban] = useState<Kanban>();
 
     const noButtonRef = useRef<any>(null);
 
@@ -143,14 +142,21 @@ export default function Layout({ children }: any) {
     }, [userValue, router]);
 
     useEffect(() => {
-        get_kanban(undefined,userValue.token,(response)=>response.json().then((kanbanValues:Kanban[])=>{
-            setKanbanValues(kanbanValues);
-        }));
-    }, [tempKanban]);
+        function getKanbanList(){
+            get_kanban(undefined,userValue.token,(response)=>response.json().then((kanbanList:Kanban[])=>{
+                setKanbanList(kanbanList);
+            }));
+        }
 
-    function getIntervalKanban(){
+        getKanbanList();
 
-    }
+        const intervalId = setInterval(()=>{
+            // console.log("Tempo real: Lista de Kanban")
+            // getKanbanList();
+        },5000)
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     const addDashBoard = (event: any) => {
         if (!isFlagSet(userValue.profileData, "CRIAR_DASHBOARDS")) {
@@ -181,25 +187,23 @@ export default function Layout({ children }: any) {
             let boardname: string = event.target.boardname.value;
 
             post_kanban({title:boardname},userValue.token,(response)=>response.json().then((id)=>{
-                setTempKanban({
+                console.log("CREATE KANBAN SUCCESS");
+                setKanbanList([...kanbanList,{
                     id: id,
                     title: boardname,
+                    members: [],
                     columns: []
-                });
+                }]);
             }));
         }
     }
 
     const deleteKanban = (kanbanID: SystemID) => {
-        const filteredKanbanValues = kanbanValues.filter(kanban=>kanban.id!=kanbanID);
-        setKanbanValues(filteredKanbanValues);
+        const filteredKanbanList = kanbanList.filter(kanban=>kanban.id!=kanbanID);
+        setKanbanList(filteredKanbanList);
         delete_kanban(undefined,kanbanID,userValue.token,(response=>{
             if(response.ok){
-                setTempKanban({
-                    id: 0,
-                    title: "",
-                    columns: []
-                });
+                console.log("DELETE KANBAN SUCCESS");
             }
         }));
     }
@@ -235,7 +239,7 @@ export default function Layout({ children }: any) {
                     <details className="p-2 overflow-x-hidden overflow-y-auto">
                         <summary>Areas de Trabalho</summary>
                         <div className="">
-                            { kanbanValues?.map((kanban, index) => <BoardMenuEntry
+                            { kanbanList?.map((kanban, index) => <BoardMenuEntry
                                 setModalOptions={setModalOptions}
                                 setModalOpen={setModalOpen}
                                 setModalDescription={setModalDescription}

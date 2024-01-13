@@ -1,7 +1,7 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { ChangeEvent, RefObject } from "react";
 import { isFlagSet } from "../../checkers";
-import { Card, userData } from "@/app/types/KanbanTypes";
+import { Card, User } from "@/app/types/KanbanTypes";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 
@@ -9,13 +9,13 @@ import { ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 
 
 export function ShowDate(
-    userData: userData, 
+    User: User, 
     setViewAddDate: (arg0: boolean) => void,
     viewAddDate: boolean,
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
 ) {
-    if (isFlagSet(userData, "CRIAR_PRAZOS")) {
+    if (isFlagSet(User, "CRIAR_PRAZOS")) {
         setViewAddDate(!viewAddDate)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -46,13 +46,13 @@ export function ShowDate(
 
 
 export function ShowMember(
-    userData: userData, 
+    User: User, 
     setViewAddMember: (arg0: boolean) => void,
     viewAddMember: boolean,
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
 ) {
-    if (isFlagSet(userData, "CONVIDAR_PARA_O_KANBAN")) {
+    if (isFlagSet(User, "CONVIDAR_PARA_O_KANBAN")) {
         setViewAddMember(!viewAddMember)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -81,13 +81,13 @@ export function ShowMember(
 };
 
 export function ShowMoveCard(
-    userData: userData, 
+    User: User, 
     setViewMoveCard: (arg0: boolean) => void,
     viewMoveCard: boolean,
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
     ) {
-    if (isFlagSet(userData, "MOVER_CARDS")) {
+    if (isFlagSet(User, "MOVER_CARDS")) {
         setViewMoveCard(!viewMoveCard)
     } else {
         const optAttrs: CustomModalButtonAttributes[] = [
@@ -171,13 +171,13 @@ export function closeAddMember(e: any, setViewAddMember: (arg0: boolean) => void
 }
 
 export function BootstrapCreateInnerCard(
-    userData: userData, 
+    User: User, 
     setIsCreatingInnerCard: (arg0: boolean) => void,
     tempCardsArr: Card[],
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
 ) {
-    if (isFlagSet(userData, "CRIAR_CARDS")) {
+    if (isFlagSet(User, "CRIAR_CARDS")) {
         console.log(`BUTTON PUSH CREATE INNER CARD ${tempCardsArr}`, tempCardsArr);
         setIsCreatingInnerCard(true);
     } else {

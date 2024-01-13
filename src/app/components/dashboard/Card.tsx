@@ -1,5 +1,4 @@
 import { useUserContext } from "@/app/contexts/userContext";
-import { CardElementProps } from "@/app/interfaces/KanbanInterfaces";
 import { isFlagSet } from "@/app/utils/checkers";
 import { DeleteCard } from "@/app/utils/dashboard/functions/Card";
 import { EditCard } from "@/app/utils/dashboard/functions/Card";
@@ -12,13 +11,11 @@ import { useModalContext } from "@/app/contexts/modalContext";
 import { Card } from "@/app/types/KanbanTypes";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 
-export function CardElement(props: CardElementProps) {
-    const {
-        card,
-    } = props;
+export function CardElement({card}:{card:Card}) {
+
     const noButtonRef = useRef<any>(null);
     const { userValue } = useUserContext();
-    const { kanbanValues } = useKanbanContext();
+    const { kanbanList } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({

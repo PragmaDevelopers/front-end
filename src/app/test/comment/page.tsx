@@ -1,6 +1,6 @@
 "use client";
 
-import { Member, SystemID } from "@/app/types/KanbanTypes";
+import { User, SystemID } from "@/app/types/KanbanTypes";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
@@ -13,7 +13,7 @@ dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
 type Comment = {
-    user: Member;
+    user: User;
     content: string;
     id: SystemID;
     answers: Comment[];

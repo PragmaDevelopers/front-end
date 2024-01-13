@@ -1,7 +1,7 @@
 "use client";
 import SwitchButton from "@/app/components/ui/SwitchButton";
 import { useUserContext } from "@/app/contexts/userContext";
-import { userData, userValueDT } from "@/app/types/KanbanTypes";
+import { User, userValueDT } from "@/app/types/KanbanTypes";
 import { SYSTEM_PERMISSIONS, SYSTEM_PERMISSIONS_BOOLEAN } from "@/app/utils/variables";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
@@ -29,7 +29,7 @@ function binaryStringToPermissions(binaryString: string): { [Key: string]: boole
   return permissions;
 }
 
-function isFlagSet(userValue: userData, flag: string): boolean {
+function isFlagSet(userValue: User, flag: string): boolean {
   let bitMask: number = SYSTEM_PERMISSIONS[flag];
   let binaryValue: number = parseInt(userValue.permissionLevel, 2);
   return (binaryValue & bitMask) !== 0;
@@ -38,10 +38,10 @@ function isFlagSet(userValue: userData, flag: string): boolean {
 function ToggleBitFlag(
   setBit: boolean,
   flag: string,
-  setUserValue: (selectedUser: userData) => void,
-  selectedUser: userData
+  setUserValue: (selectedUser: User) => void,
+  selectedUser: User
 ): void {
-  let tempUsr: userData = { ...selectedUser };
+  let tempUsr: User = { ...selectedUser };
 
   let binaryNumber = parseInt(tempUsr.permissionLevel, 2);
   const bitmask: number = SYSTEM_PERMISSIONS[flag];
@@ -71,10 +71,10 @@ function ToggleOption(props: ToggleOptionProps) {
   );
 }
 
-function updateSelectedUser(userValue: userValueDT, setUserValue: (newValue: userValueDT) => void, updatedUser: userData): void {
+function updateSelectedUser(userValue: userValueDT, setUserValue: (newValue: userValueDT) => void, updatedUser: User): void {
   const tmpUsrVal: userValueDT = {
     ...userValue,
-    userList: userValue.userList.map((user: userData) => (user.id === updatedUser.id ? updatedUser : user)),
+    userList: userValue.userList.map((user: User) => (user.id === updatedUser.id ? updatedUser : user)),
   };
 
   setUserValue(tmpUsrVal);
@@ -87,10 +87,10 @@ export default function Page() {
   const [usrPermsVal, setUsrPermsVal] = useState<{ [Key: string]: boolean }>({});
   const [isUserSupervisor, setIsUserSupervisor] = useState<boolean>(false);
 
-  const [selected, setSelected] = useState<userData>(userValue.userList[0]);
+  const [selected, setSelected] = useState<User>(userValue.userList[0]);
   const [query, setQuery] = useState('');
 
-  const filteredPeople = query === '' ? userValue.userList : userValue.userList.filter((person: userData) => person.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredPeople = query === '' ? userValue.userList : userValue.userList.filter((person: User) => person.name.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     if (selected && selected.permissionLevel) {
@@ -103,11 +103,11 @@ export default function Page() {
     ToggleBitFlag(value, flagName, handleUpdateSelectedUser, selected);
   };
 
-  const handleUpdateSelectedUser = (selectedUser: userData) => {
+  const handleUpdateSelectedUser = (selectedUser: User) => {
     updateSelectedUser(userValue, setUserValue, selectedUser);
   };
 
-  const handleSetSelect = (value: userData): void => {
+  const handleSetSelect = (value: User): void => {
     if (value !== selected) {
       setSelected(value);
     }

@@ -175,7 +175,15 @@ export function get_profile(body: GET_profile, userToken: string,okCallback: (re
 type GET_user = undefined;
 export function get_user(body: GET_user, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
-    fetch(USER_PROFILE_ROUTE, requestObject).then((response: Response) => {
+    fetch(USER_SEARCH_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type GET_kanban_members = undefined;
+export function get_kanban_members(body: GET_kanban_members, kanbanId: SystemID, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/"+kanbanId+"/members", requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -198,9 +206,38 @@ export function post_kanban(body: POST_kanban, userToken: string,okCallback: (re
     }).catch((e: any) => console.log(e));
 }
 
+type POST_invite_kanban = {
+    kanbanId: SystemID,
+    userId: SystemID
+};
+export function post_invite_kanban(body: POST_invite_kanban, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/invite", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_uninvite_kanban = undefined;
+export function delete_uninvite_kanban(body: DELETE_uninvite_kanban, kanbanId:SystemID,userId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/"+kanbanId+"/uninvite/user/"+userId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type DELETE_kanban = undefined;
 export function delete_kanban(body: DELETE_kanban, kanbanId: SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/"+kanbanId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type PATCH_kanban = {
+    title: string
+};
+export function patch_kanban(body: PATCH_kanban, kanbanId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
     fetch(KANBAN_ROUTE+"/"+kanbanId, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));

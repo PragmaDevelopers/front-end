@@ -1,14 +1,16 @@
 "use client";
 
-import { Member, SystemID, Comment, userData } from "@/app/types/KanbanTypes";
+import {  SystemID, Comment, User } from "@/app/types/KanbanTypes";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import { BACKEND_DATE_FORMAT } from "@/app/utils/variables";
 import { CommentEntryProps } from "@/app/interfaces/KanbanInterfaces";
+import { useKanbanContext } from "@/app/contexts/kanbanContext";
+import { useUserContext } from "@/app/contexts/userContext";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -42,75 +44,80 @@ function ChatBubbleLeftEllipsisIcon(props: IconsProps) {
     );
 }
 
-function CommentEntry(props: CommentEntryProps) {
-    const { content, user, answers, date, edited, id, setIsAnswering, removeCurrentComment, editComment } = props;
-    const currDate = dayjs();
-    const sinceDate: string = currDate.to(dayjs(date, BACKEND_DATE_FORMAT));
+// function CommentEntry(props: CommentEntryProps) {
+//     const { content, user, answers, date, edited, id, setIsAnswering, removeCurrentComment, editComment } = props;
+//     const currDate = dayjs();
+//     const sinceDate: string = currDate.to(dayjs(date, BACKEND_DATE_FORMAT));
 
-    let currComment: Comment = {
-        answers: answers,
-        content: content,
-        date: date,
-        edited: edited,
-        id: id,
-        user: user
-    }
+//     let currComment: Comment = {
+//         answers: answers,
+//         content: content,
+//         date: date,
+//         edited: edited,
+//         id: id,
+//         user: user
+//     }
 
-    const renderAnswers = (answers: Comment[]): JSX.Element[] => {
-        return answers.map((element: Comment, index: number) => (
-            <CommentEntry
-                answers={element.answers}
-                content={element.content}
-                date={element.date}
-                edited={element.edited}
-                id={element.id}
-                user={element.user}
-                key={index}
-                setIsAnswering={setIsAnswering}
-                removeCurrentComment={removeCurrentComment}
-                editComment={editComment}
-            />
-        ));
-    };
+//     const renderAnswers = (answers: Comment[]): JSX.Element[] => {
+//         return answers.map((element: Comment, index: number) => (
+//             <CommentEntry
+//                 answers={element.answers}
+//                 content={element.content}
+//                 date={element.date}
+//                 edited={element.edited}
+//                 id={element.id}
+//                 user={element.user}
+//                 key={index}
+//                 setIsAnswering={setIsAnswering}
+//                 removeCurrentComment={removeCurrentComment}
+//                 editComment={editComment}
+//             />
+//         ));
+//     };
 
-    return (
-        <div className="flex flex-col justify-start items-start w-full h-fit p-1 my-2">
-            <div className="flex justify-between items-center mb-1 w-full h-fit">
-                <div className="flex flex-row justify-start items-center w-fit h-fit mr-1">
-                    <Image width={64} height={64} alt="Profile" src="/84693449.png" className="w-8 aspect-square rounded-full mr-1" />
-                    <h1 className="ml-2 flex font-medium text-base">{user.name}</h1>
-                </div>
-                <div className="flex justify-center items-center">
-                    <h2 className="text-sm ml-1 text-neutral-500">{sinceDate}</h2>
-                    <div className="flex justify-center items-center mx-1">
-                        <button className="mx-0.5" type="submit" onClick={() => editComment(currComment)} value="commentEdit" id="commentEdit" name="commentEdit">
-                            <PencilSquareIcon className="aspect-square w-5 fill-neutral-500" />
-                        </button>
-                        <button className="mx-0.5" type="button" onClick={() => setIsAnswering({ isAnswering: true, answeringUser: user, commentId: id })}>
-                            <ChatBubbleLeftEllipsisIcon className="aspect-square w-5 fill-neutral-500" />
-                        </button>
-                        <button className="mx-0.5" type="button" onClick={() => removeCurrentComment(id)}>
-                            <XCircleIcon className="aspect-square w-5 fill-neutral-500" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <p className="mt-1 text-justify text-sm">
-                {content}
-            </p>
-            <div className="pl-2 border-l-2 border-neutral-200 w-full">
-                {renderAnswers(answers)}
-            </div>
-        </div>
-    );
-}
+//     return (
+//         <div className="flex flex-col justify-start items-start w-full h-fit p-1 my-2">
+//             <div className="flex justify-between items-center mb-1 w-full h-fit">
+//                 <div className="flex flex-row justify-start items-center w-fit h-fit mr-1">
+//                     <Image width={64} height={64} alt="Profile" src="/84693449.png" className="w-8 aspect-square rounded-full mr-1" />
+//                     <h1 className="ml-2 flex font-medium text-base">{user.name}</h1>
+//                 </div>
+//                 <div className="flex justify-center items-center">
+//                     <h2 className="text-sm ml-1 text-neutral-500">{sinceDate}</h2>
+//                     <div className="flex justify-center items-center mx-1">
+//                         <button className="mx-0.5" type="submit" onClick={() => editComment(currComment)} value="commentEdit" id="commentEdit" name="commentEdit">
+//                             <PencilSquareIcon className="aspect-square w-5 fill-neutral-500" />
+//                         </button>
+//                         <button className="mx-0.5" type="button" onClick={() => setIsAnswering({ isAnswering: true, answeringUser: user, commentId: id })}>
+//                             <ChatBubbleLeftEllipsisIcon className="aspect-square w-5 fill-neutral-500" />
+//                         </button>
+//                         <button className="mx-0.5" type="button" onClick={() => removeCurrentComment(id)}>
+//                             <XCircleIcon className="aspect-square w-5 fill-neutral-500" />
+//                         </button>
+//                     </div>
+//                 </div>
+//             </div>
+//             <p className="mt-1 text-justify text-sm">
+//                 {content}
+//             </p>
+//             <div className="pl-2 border-l-2 border-neutral-200 w-full">
+//                 {renderAnswers(answers)}
+//             </div>
+//         </div>
+//     );
+// }
 
 interface CommentSectionProps {
-    userData: userData;
+    commentsArray: Comment[];
+    failModalOption: any;
+    noButtonRef: RefObject<HTMLButtonElement>;
 }
 
 export function CommentSection(props: CommentSectionProps) {
-    const { userData } = props;
+    const { commentsArray, failModalOption, noButtonRef } = props;
+
+    const { tempCard, setTempCard } = useKanbanContext();
+    const { userValue } = useUserContext();
 
     const [commentUIDs, setCommentsUIDs] = useState<number>(2);
     const incrementCommentUIDs = () => {
@@ -121,7 +128,7 @@ export function CommentSection(props: CommentSectionProps) {
 
     const [isAnswering, setIsAnswering] = useState<{
         isAnswering: boolean;
-        answeringUser: Member;
+        answeringUser: User;
         commentId: SystemID;
     }>();
 
@@ -133,234 +140,248 @@ export function CommentSection(props: CommentSectionProps) {
     const [textAreaDefaultValue, setTextAreaDefaultValue] = useState<string>("");
 
 
-    const findCommentById = (comments: Comment[], targetId: SystemID): Comment | null => {
-        for (const comment of comments) {
-            const result = findCommentInTree(comment, targetId);
-            if (result !== null) {
-                return result;
-            }
-        }
+    // const findCommentById = (comments: Comment[], targetId: SystemID): Comment | null => {
+    //     for (const comment of comments) {
+    //         const result = findCommentInTree(comment, targetId);
+    //         if (result !== null) {
+    //             return result;
+    //         }
+    //     }
 
-        return null;
-    };
+    //     return null;
+    // };
 
-    const addAnswerById = (node: Comment, targetId: SystemID, newAnswer: Comment): void => {
-        console.log("[INFO] @ addAnswerById Looking at node", node);
-        console.log("[INFO] @ addAnswerById Target ID", targetId);
-        const recursiveAddAnswerById = (json: Comment, tId: SystemID, nAnswer: Comment): void => {
-            if (json.id === tId) {
-                json.answers.push(nAnswer);
-                return;
-            }
+    // const addAnswerById = (node: Comment, targetId: SystemID, newAnswer: Comment): void => {
+    //     console.log("[INFO] @ addAnswerById Looking at node", node);
+    //     console.log("[INFO] @ addAnswerById Target ID", targetId);
+    //     const recursiveAddAnswerById = (json: Comment, tId: SystemID, nAnswer: Comment): void => {
+    //         if (json.id === tId) {
+    //             json.answers.push(nAnswer);
+    //             return;
+    //         }
 
-            for (const answer of json.answers) {
-                recursiveAddAnswerById(answer, tId, nAnswer);
-            }
-        }
-        let tempComments = comments;
-        for (let comment of tempComments) {
-            recursiveAddAnswerById(comment, targetId, newAnswer);
-        }
-        setComments(tempComments);
-        console.log("[INFO] @ addAnswerById Updated Array", tempComments);
-        return;
-    };
+    //         for (const answer of json.answers) {
+    //             recursiveAddAnswerById(answer, tId, nAnswer);
+    //         }
+    //     }
+    //     let tempComments = comments;
+    //     for (let comment of tempComments) {
+    //         recursiveAddAnswerById(comment, targetId, newAnswer);
+    //     }
+    //     setComments(tempComments);
+    //     console.log("[INFO] @ addAnswerById Updated Array", tempComments);
+    //     return;
+    // };
 
-    const removeCommentById = (targetId: SystemID): void => {
-        const recursiveRemoveCommentById = (json: Comment, tId: SystemID): void => {
-            json.answers = json.answers.filter((answer) => answer.id !== tId);
+    // const removeCommentById = (targetId: SystemID): void => {
+    //     const recursiveRemoveCommentById = (json: Comment, tId: SystemID): void => {
+    //         json.answers = json.answers.filter((answer) => answer.id !== tId);
 
-            for (const answer of json.answers) {
-                recursiveRemoveCommentById(answer, tId);
-            }
-        };
+    //         for (const answer of json.answers) {
+    //             recursiveRemoveCommentById(answer, tId);
+    //         }
+    //     };
 
-        let tempComments = [...comments];
-        tempComments = tempComments.filter((comment) => comment.id !== targetId);
+    //     let tempComments = [...comments];
+    //     tempComments = tempComments.filter((comment) => comment.id !== targetId);
 
-        for (let comment of tempComments) {
-            recursiveRemoveCommentById(comment, targetId);
-        }
+    //     for (let comment of tempComments) {
+    //         recursiveRemoveCommentById(comment, targetId);
+    //     }
 
-        setComments(tempComments);
-    };
+    //     setComments(tempComments);
+    // };
 
-    const findCommentInTree = (node: Comment, targetId: SystemID): Comment | null => {
-        console.log("[INFO] @ findCommentInTree Looking at node", node);
-        if (node.id === targetId) {
-            return node;
-        }
+    // const findCommentInTree = (node: Comment, targetId: SystemID): Comment | null => {
+    //     console.log("[INFO] @ findCommentInTree Looking at node", node);
+    //     if (node.id === targetId) {
+    //         return node;
+    //     }
 
-        for (const answer of node.answers) {
-            const result = findCommentInTree(answer, targetId);
-            if (result !== null) {
-                return result;
-            }
-        }
+    //     for (const answer of node.answers) {
+    //         const result = findCommentInTree(answer, targetId);
+    //         if (result !== null) {
+    //             return result;
+    //         }
+    //     }
 
-        return null;
-    };
-
-
-    const getContentById = (comments: Comment[], targetId: SystemID): string | null => {
-        const recursiveGetContentById = (json: Comment, tId: SystemID): string | null => {
-            if (json.id === tId) {
-                return json.content;
-            }
-
-            for (const answer of json.answers) {
-                const result = recursiveGetContentById(answer, tId);
-                if (result !== null) {
-                    return result;
-                }
-            }
-
-            return null;
-        };
-
-        for (let comment of comments) {
-            const content = recursiveGetContentById(comment, targetId);
-            if (content !== null) {
-                return content;
-            }
-        }
-
-        return null;
-    };
+    //     return null;
+    // };
 
 
+    // const getContentById = (comments: Comment[], targetId: SystemID): string | null => {
+    //     const recursiveGetContentById = (json: Comment, tId: SystemID): string | null => {
+    //         if (json.id === tId) {
+    //             return json.content;
+    //         }
 
-    const replaceContentById = (
-        comments: Comment[],
-        targetId: SystemID,
-        newContent: string,
-        setComments: Dispatch<SetStateAction<Comment[]>>
-    ): void => {
-        const recursiveReplaceContentById = (json: Comment, tId: SystemID): void => {
-            if (json.id === tId) {
-                json.content = newContent;
-                json.edited = true;
-                return;
-            }
+    //         for (const answer of json.answers) {
+    //             const result = recursiveGetContentById(answer, tId);
+    //             if (result !== null) {
+    //                 return result;
+    //             }
+    //         }
 
-            for (const answer of json.answers) {
-                recursiveReplaceContentById(answer, tId);
-            }
-        };
+    //         return null;
+    //     };
 
-        let tempComments: Comment[] = comments;
-        for (let comment of tempComments) {
-            recursiveReplaceContentById(comment, targetId);
-        }
+    //     for (let comment of comments) {
+    //         const content = recursiveGetContentById(comment, targetId);
+    //         if (content !== null) {
+    //             return content;
+    //         }
+    //     }
 
-        setComments(tempComments);
-    };
+    //     return null;
+    // };
 
 
-    const handleEditComment = (comment: Comment) => {
-        console.log("[INFO] @ handleEditComment Editing Comment of #ID", comment.id);
-        const commentValue: string | null = getContentById(comments, comment.id);
-        if (commentValue !== null) {
-            setIsEditing({ isEditing: true, editingComment: comment });
-            setTextAreaDefaultValue(commentValue);
-        }
-    }
 
-    const addComment = (e: React.FormEvent<HTMLFormElement>) => {
-        //e.preventDefault();
-        incrementCommentUIDs();
-        const commentcont = (e.target as any).commentarea.value;
+    // const replaceContentById = (
+    //     comments: Comment[],
+    //     targetId: SystemID,
+    //     newContent: string,
+    //     setComments: Dispatch<SetStateAction<Comment[]>>
+    // ): void => {
+    //     const recursiveReplaceContentById = (json: Comment, tId: SystemID): void => {
+    //         if (json.id === tId) {
+    //             json.content = newContent;
+    //             json.edited = true;
+    //             return;
+    //         }
 
-        setComments((prevComments) => {
-            if (isAnswering?.isAnswering === true) {
-                const answeredComment = findCommentById(prevComments, isAnswering.commentId);
-                if (answeredComment) {
-                    const currId = commentUIDs;
-                    const newAnswer: Comment = {
-                        user: userData,
-                        content: commentcont,
-                        id: currId,
-                        edited: false,
-                        date: dayjs().toISOString(),
-                        answers: [],
-                    };
-                    addAnswerById(answeredComment, isAnswering.commentId, newAnswer);
+    //         for (const answer of json.answers) {
+    //             recursiveReplaceContentById(answer, tId);
+    //         }
+    //     };
 
-                    console.log("[INFO] @ addComment New Answer", newAnswer);
-                    console.log("[INFO] @ addComment Answered Comment", answeredComment);
-                }
-            } else {
-                const currId = commentUIDs;
-                const newComment: Comment = {
-                    user: userData,
-                    content: commentcont,
-                    id: currId,
-                    edited: false,
-                    date: dayjs().toISOString(),
-                    answers: [],
-                };
-                return [...prevComments, newComment];
-            }
+    //     let tempComments: Comment[] = comments;
+    //     for (let comment of tempComments) {
+    //         recursiveReplaceContentById(comment, targetId);
+    //     }
 
-            return prevComments;
+    //     setComments(tempComments);
+    // };
+
+    // const handleEditComment = (comment: Comment) => {
+    //     console.log("[INFO] @ handleEditComment Editing Comment of #ID", comment.id);
+    //     const commentValue: string | null = getContentById(comments, comment.id);
+    //     if (commentValue !== null) {
+    //         setIsEditing({ isEditing: true, editingComment: comment });
+    //         setTextAreaDefaultValue(commentValue);
+    //     }
+    // }
+
+    // const addComment = (e: React.FormEvent<HTMLFormElement>) => {
+    //     //e.preventDefault();
+    //     incrementCommentUIDs();
+    //     const commentcont = (e.target as any).commentarea.value;
+
+    //     setComments((prevComments) => {
+    //         if (isAnswering?.isAnswering === true) {
+    //             const answeredComment = findCommentById(prevComments, isAnswering.commentId);
+    //             if (answeredComment) {
+    //                 const currId = commentUIDs;
+    //                 const newAnswer: Comment = {
+    //                     user: userData,
+    //                     content: commentcont,
+    //                     id: currId,
+    //                     edited: false,
+    //                     date: new Date(),
+    //                     answers: [],
+    //                 };
+    //                 addAnswerById(answeredComment, isAnswering.commentId, newAnswer);
+
+    //                 console.log("[INFO] @ addComment New Answer", newAnswer);
+    //                 console.log("[INFO] @ addComment Answered Comment", answeredComment);
+    //             }
+    //         } else {
+    //             const currId = commentUIDs;
+    //             const newComment: Comment = {
+    //                 user: userData,
+    //                 content: commentcont,
+    //                 id: currId,
+    //                 edited: false,
+    //                 date: new Date(),
+    //                 answers: [],
+    //             };
+    //             return [...prevComments, newComment];
+    //         }
+
+    //         return prevComments;
+    //     });
+
+    //     setIsAnswering(undefined);
+    //     //(e.target as any).commentarea.value = "";
+    // }
+
+    // const handleSetIsAnswering = (isAnsweringProps: { isAnswering: boolean; answeringUser: Member; commentId: SystemID }): void => {
+    //     setIsAnswering(isAnsweringProps);
+    //     console.log("[INFO] @ handleSetIsAnswering Comments Stateful Array", comments);
+    // };
+
+    function processComments(comments:Comment[]) {
+        const commentElements: JSX.Element[] = [];
+      
+        comments.forEach((comment,index) => {
+          // Processar o comentário atual
+          const commentObj = (
+            <>
+                {index > 0 && <div className="bg-neutral-300 w-full h-1 opacity-55 rounded-sm"></div>}
+                <div className="flex flex-col overflow-x-hidden justify-start items-start w-full h-fit p-1 my-2">
+                    <div className="flex justify-between items-center w-full h-fit">
+                        <div className="flex flex-row justify-start items-center w-fit h-fit mr-1">
+                            <Image width={64} height={64} alt="Profile" src={comment.user.profilePicture || ""} className="w-8 aspect-square rounded-full mr-1" />
+                            <h1 className="ml-2 flex font-medium text-base">{comment.user.name}</h1>
+                        </div>
+                        <div className="flex justify-center items-center">
+                            <h2 className="text-sm ml-1 text-neutral-500">{comment.registrationDate.toDateString()}</h2>
+                            <div className="flex justify-center items-center mx-1">
+                                {/* <button className="mx-0.5" type="submit" onClick={() => {
+                                    
+                                }} value="commentEdit" id="commentEdit" name="commentEdit">
+                                    <PencilSquareIcon className="aspect-square w-5 fill-neutral-500" />
+                                </button> */}
+                                <button className="mx-0.5" type="button" onClick={() => {}}>
+                                    <ChatBubbleLeftEllipsisIcon className="aspect-square w-5 fill-neutral-500" />
+                                </button>
+                                <button className="mx-0.5" type="button" onClick={() => {}}>
+                                    <XCircleIcon className="aspect-square w-5 fill-neutral-500" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p className="mt-1 text-justify text-sm p-3">
+                        {comment.content}
+                    </p>
+                    <div className={`${(comment.answers == undefined || comment.answers.length == 0) && "hidden"} ms-5 border-l-2 bg-neutral-200 w-full mt-2 rounded-sm h-fit ps-2 pe-4`}>
+                        {comment.answers && comment.answers.length > 0 && (
+                            processComments(comment.answers)
+                        )}
+                    </div>
+                </div>
+            </>
+        );
+      
+          commentElements.push(commentObj);
         });
-
-        setIsAnswering(undefined);
-        //(e.target as any).commentarea.value = "";
-    }
-
-    const submitComment = (e: React.FormEvent<HTMLFormElement>): void => {
-        e.preventDefault();
-        const clickedButton = (e.nativeEvent as any).submitter;
-        console.log("[INFO] @ submitComment buttonValue", clickedButton);
-        if (clickedButton && clickedButton.id === "commentEdit") {
-            console.log("[INFO] @ submitComment textAreaDefaultValue", textAreaDefaultValue);
-            (e.target as any).commentarea.value = textAreaDefaultValue;
-        } else {
-            if (isEditing !== undefined) {
-                let boolIsEditing: boolean = isEditing.isEditing;
-                if (!boolIsEditing) {
-                    addComment(e);
-                    (e.target as any).commentarea.value = "";
-                    setTextAreaDefaultValue("");
-                } else {
-                    const commentcont = (e.target as any).commentarea.value;
-                    replaceContentById(comments, isEditing.editingComment.id as SystemID, commentcont, setComments);
-                    setIsEditing(undefined);
-                }
-                (e.target as any).commentarea.value = "";
-                setTextAreaDefaultValue("");
-            } else {
-                addComment(e);
-                (e.target as any).commentarea.value = "";
-                setTextAreaDefaultValue("");
-            }
-        }
-
-    };
-
-    const handleSetIsAnswering = (isAnsweringProps: { isAnswering: boolean; answeringUser: Member; commentId: SystemID }): void => {
-        setIsAnswering(isAnsweringProps);
-        console.log("[INFO] @ handleSetIsAnswering Comments Stateful Array", comments);
-    };
+      
+        return commentElements;
+      }      
 
     return (
-        <form onSubmit={submitComment} className="flex flex-col justify-start items-start h-full w-full">
-            <div className="h-64 overflow-auto mb-1 shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 divide-y divide-neutral-300 w-full">
-                {comments.map((comment, idx) => (
-                    <CommentEntry
-                        key={idx}
-                        user={comment.user}
-                        content={comment.content}
-                        id={comment.id}
-                        answers={comment.answers}
-                        edited={comment.edited}
-                        date={comment.date}
-                        setIsAnswering={handleSetIsAnswering}
-                        removeCurrentComment={removeCommentById}
-                        editComment={handleEditComment}
-                    />
-                ))}
+        <div className="flex flex-col justify-start overflow-y-auto max-h-96 items-start h-full w-full">
+            <div className="h-full overflow-auto shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 w-full">
+                {processComments([{
+                    content: "Conteudo do comentario",edited:false,id:1,registrationDate:new Date(),user:userValue.profileData,answers:[
+                    {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[
+                        {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]}
+                    ]},
+                    {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]},
+                ],},
+                {content: "Conteudo do comentario",edited:false,id:2,registrationDate:new Date(),user:userValue.profileData,answers:[]},
+                {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]},
+                {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]}])}
             </div>
             <div className="w-full flex flex-col items-center">
                 <div className="w-full flex flex-row items-center">
@@ -379,6 +400,6 @@ export function CommentSection(props: CommentSectionProps) {
                     </button>
                 </div>
             </div>
-        </form>
+        </div>
     );
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserContext } from "@/app/contexts/userContext";
-import { Member, Notification, userData } from "@/app/types/KanbanTypes";
+import { User, Notification } from "@/app/types/KanbanTypes";
 import { API_BASE_URL, NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
 import { ArrowTopRightOnSquareIcon, TagIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -12,12 +12,12 @@ type parsedNotification = {
     message: string;
     category: string;
     viewed: boolean;
-    user: Member;
+    user: User;
 }
-function parseRawNotificationsArray(notificationsArray: Notification[], userList: userData[]): parsedNotification[] {
+function parseRawNotificationsArray(notificationsArray: Notification[], userList: User[]): parsedNotification[] {
     let newArray: parsedNotification[] = [];
     notificationsArray.forEach((notification: Notification) => {
-        let user: Member = userList.filter((value: userData) => {
+        let user: User = userList.filter((value: User) => {
             if (value.id === notification.sender_user_id) {
                 return value;
             }

@@ -13,6 +13,7 @@ import {
 import {
     SetStateAction,
     useEffect,
+    useLayoutEffect,
     useMemo,
     useRef,
     useState,
@@ -48,7 +49,7 @@ import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
 import { PageAddInnerCard, PageCreateInnerCard, PageEditInnerCard } from '@/app/utils/dashboard/functions/Page/InnerCard';
 import { API_BASE_URL } from '@/app/utils/variables';
 import { useKanbanContext } from '@/app/contexts/kanbanContext';
-import { get_columns } from '@/app/utils/fetchs';
+import { get_columns, get_kanban_members } from '@/app/utils/fetchs';
 import { useModalContext } from '@/app/contexts/modalContext';
 
 
@@ -57,30 +58,11 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [, setActiveCard] = useState<Card | null>(null);
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
-    const [tempCard, setTempCard] = useState<any>({});
-    const [isEdition, setIsEdition] = useState<boolean>(false);
-    const [cardDate, setCardDate] = useState<DateValue>(new Date());
-    const [editorText, setEditorText] = useState<string>("");
     const [tempCardsArr, setTempCardsArrr] = useState<Card[]>([]);
-    const [isCreatingInnerCard, setIsCreatingInnerCard] = useState<boolean>(false);
-    const [isEdittingInnerCard, setIsEdittingInnerCard] = useState<boolean>(false);
     const { userValue } = useUserContext();
-    const { kanbanValues, tempColumn, setTempColumn } = useKanbanContext();
-    const [kanban, setKanban] = useState<Kanban>({
-        id: 0,
-        title: "",
-        columns: []
-    });
+    const { kanbanList, tempKanban, setTempKanban,tempColumn, setTempColumn } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
-    const columnsId = useMemo(() => {
-        const ids:SystemID[] = [];
-        kanbanValues?.forEach(kanban=>{
-            if(kanban.columns && kanban.columns.length > 0){
-                kanban.columns.forEach(column=>ids.push(column.id));
-            }
-        });
-        return ids;
-    }, [kanbanValues]);
+    const [columnsId,setColumnsId] = useState<SystemID[]>([]);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
             distance: 2,  // 2px
@@ -90,40 +72,27 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const modalContextProps = useModalContext();
 
     useEffect(() => {
-        const kanbanIndex = kanbanValues?.findIndex(kanban=>kanban.id==params.id);
-        if(kanbanIndex != -1){
-            const tempKanban = kanbanValues[kanbanIndex];
-            if(tempKanban.columns && tempKanban.columns.length > 0){
-                get_columns(undefined,params.id,userValue.token,(response=>response.json().then((columns:Column[])=>{
-                    setKanban({
-                        id: tempKanban.id,
-                        title: tempKanban.title,
-                        columns: columns
-                    });
-                    // setKanbanValues((prevState:Kanban[]) => {
-                    //     const newKanbanValues = [...prevState];
-                    //     newKanbanValues[kanbanIndex] = {
-                    //         ...newKanbanValues[kanbanIndex],
-                    //         columns: columns
-                    //     };
-                    //     return newKanbanValues;
-                    // });
-                })));
-            }else{
-                setKanban(tempKanban);
-            }
+        async function getKanbanValues(){
+            const kanban = kanbanList[kanbanIndex];
+            await get_columns(undefined,params.id,userValue.token,(response=>response.json().then((columns:Column[])=>{
+                if(columns.length > 0){
+                    setTempKanban({...kanban,columns:columns});
+                }else{
+                    setTempKanban(kanban);
+                }
+            })));
+            get_kanban_members(undefined,params.id,userValue.token,(response)=>response.json().then((members)=>{
+                setTempKanban({...kanban,members:members});
+            }));
+            const ids:SystemID[] = [];
+            tempKanban.columns.forEach(col=>ids.push(col.id));
+            setColumnsId(ids);
         }
-    }, [tempColumn]);
-
-
-    // function getIntervalColumns(){
-    //     get_columns(undefined,Number(params.id),userValue.token,(response=>response.json().then((column:Column)=>{
-    //         const kanbanIndex = kanbanValues?.findIndex(kanban=>kanban.id==params.id);
-    //         if(kanbanIndex != -1){
-    //             const newKanbanValues = 
-    //         }
-    //     })));
-    // }
+        const kanbanIndex = kanbanList.findIndex(kanban=>kanban.id==params.id);
+        if(kanbanIndex != -1){
+            getKanbanValues()
+        }
+    }, []);
 
     //useEffect(() => {
     //    fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
@@ -185,153 +154,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         // );
     }
 
-    const handleCreateCardForm = (event: any, isEdition: boolean) => {
-        // CreateCardForm(
-        //     event,
-        //     isEdition,
-        //     editorRef,
-        //     tempColumnID,
-        //     tempCard,
-        //     setKanbanValues,
-        //     userValue,
-        //     setTempColumnID,
-        //     setEditorText,
-        //     setTempCard,
-        //     setShowCreateCardForm,
-        // );
-    }
-
-    const handleUpdateListTitle = (listIndex: number, value: string) => {
-        // UpdateListTitle(
-        //     listIndex,
-        //     value,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     userValue.profileData,
-        //     setTempCard,
-
-        // );
-    }
-
-    const handleInputChange = (listIndex: number, inputIndex: number, value: string) => {
-        // InputChange(
-        //     listIndex,
-        //     inputIndex,
-        //     value,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     userValue.profileData,
-        //     setTempCard,
-        // );
-    }
-
-    const handleAddList = () => {
-        // AddList(
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     userValue.profileData,
-        //     setTempCard,
-        // );
-    }
-
-    const handleAddInput = (listIndex: number) => {
-        // AddInput(
-        //     listIndex,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     userValue.profileData,
-        //     setTempCard,
-        // );
-    }
-
-    const handleRemoveList = (listIndex: number,) => {
-        // RemoveList(
-        //     listIndex,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     userValue.profileData,
-        //     setTempCard,
-        // );
-    }
-
-    const handleRemoveInput = (listIndex: number, inputIndex: number) => {
-        // RemoveInput(
-        //     listIndex,
-        //     inputIndex,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     userValue.profileData,
-        //     setTempCard,
-        // );
-    }
-
-    const handleToggleCheckbox = (listIndex: number, itemIndex: number) => {
-        ToggleCheckbox(
-            listIndex, 
-            itemIndex,
-            setTempCard,
-        );
-    }
-
-    const handleAddTag = (tagTitle: string, tagColor: string) => {
-        AddTag(
-            tagTitle,
-            tagColor,
-            setTempCard,
-            userValue,
-        );
-    }
-
-    const handleRemoveCurrentTag = (tagID: SystemID) => {
-        console.log("HANDLE REMOVE TAG, ID", tagID);
-        RemoveTag(
-            tagID,
-            setTempCard,
-        );
-    }
-
     const handleAddCustomField = (name: string, value: string | number, fieldType: "text" | "number") => {
         // AddCustomField(
         //     name,
@@ -348,12 +170,12 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
 
     const setTempCardsArr = (value: any) => {
-        console.log("## APPENDING VALUE", value, "TO", tempCardsArr);
-        setTempCardsArrr(value);
+        // console.log("## APPENDING VALUE", value, "TO", tempCardsArr);
+        // setTempCardsArrr(value);
     }
 
     const handleAddInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        console.log("#0 HANDLE ADD INNER CARD ON PAGE FILE", tempCardsArr);
+        // console.log("#0 HANDLE ADD INNER CARD ON PAGE FILE", tempCardsArr);
         // PageAddInnerCard(
         //     event,
         //     isEdittingInnerCard,
@@ -367,8 +189,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const handleCreateInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", tempCardsArr);
-        console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", isEdittingInnerCard);
+        // console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", tempCardsArr);
+        // console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", isEdittingInnerCard);
         // PageCreateInnerCard(
         //         event,
         //         isEdittingInnerCard,
@@ -383,11 +205,11 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     const handleAppendToTempCardsArray = (newCard: Card) => {
-        AppendToTempCardsArray(newCard, tempCardsArr, setTempCardsArr);
+        // AppendToTempCardsArray(newCard, tempCardsArr, setTempCardsArr);
     }
 
     const handlePopFromTempCardsArray = (): Card | undefined => {
-        const res = PopFromTempCardsArray(tempCardsArr, setTempCardsArr);
+        const res = PopFromTempCardsArray([], setTempCardsArr);
         return res;
     }
 
@@ -406,72 +228,28 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         );
         CreateNewColumn(
             userValue,
-            setTempColumn,
-            kanban,
+            setTempKanban,
+            tempKanban,
             modalOpt,
             noButtonRef,
             modalContextProps
         );
     }
 
-    const handleAddDate = (value: any) => {
-        AddCardDate(value, tempCard, setTempCard);
-    }
-
-    const editEditorText = (text: string) => {
-        // editorRef.current?.setMarkdown(text);
-    }
-
     return (
         <main className="w-full h-full overflow-x-auto overflow-y-hidden shrink-0">
             {/* <CustomModal /> */}
-            <CreateEditCard
-                showCreateCardForm={showCreateCardForm}
-                setShowCreateCardForm={setShowCreateCardForm}
-                card={tempCard as Card}
-                createCardForm={handleCreateCardForm}
-                updateListTitle={handleUpdateListTitle}
-                handleInputChange={handleInputChange}
-                handleAddList={handleAddList}
-                handleAddInput={handleAddInput}
-                handleRemoveList={handleRemoveList}
-                handleRemoveInput={handleRemoveInput}
-                handleToggleCheckbox={handleToggleCheckbox}
-                isEdition={isEdition}
-                addNewTag={handleAddTag}
-                removeCurrentTag={handleRemoveCurrentTag}
-                cardDate={cardDate}
-                setCardDate={setCardDate}
-                editorText={editorText}
-                setEditorText={editEditorText}
-                addCustomField={handleAddCustomField}
-                addInnerCard={handleAddInnerCard}
-                createInnerCard={handleCreateInnerCard}
-                tempCardsArr={tempCardsArr}
-                isCreatingInnerCard={isCreatingInnerCard}
-                setIsCreatingInnerCard={setIsCreatingInnerCard}
-                isEdittingInnerCard={isEdittingInnerCard}
-                setIsEdittingInnerCard={setIsEdittingInnerCard}
-                _appendToTempCardsArray={handleAppendToTempCardsArray}
-                _popFromTempCardsArray={handlePopFromTempCardsArray}
-                handleAddDate={handleAddDate}
-                setTempCard={setTempCard}
-                setTempCardsArr={setTempCardsArr}
-                kanbanValues={kanbanValues}
-                kanban={kanban}
-            />
+            <CreateEditCard />
             <div className="flex justify-between items-center w-[80%] fixed">
-                <h1>{kanban.title}</h1>
+                <h1>{tempKanban.title}</h1>
                 <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-full mt-9 shrink-0">
                     <SortableContext items={columnsId}>
-                        {kanban.columns?.map((column) => <ColumnContainer
+                        {tempKanban.columns.sort((a,b)=>a.index-b.index).map((column) => <ColumnContainer
                             key={column.id}
                             column={column}
-                            kanban={kanban}
-                            setKanban={setKanban}
                         />)}
                     </SortableContext>
                     <button 
@@ -485,8 +263,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                     <DragOverlay className='w-full h-full'>
                         {activeColumn && <ColumnContainer
                             column={activeColumn}
-                            kanban={kanban}
-                            setKanban={setKanban}
                         />}
                     </DragOverlay>,
                     document.body)}

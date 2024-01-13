@@ -2,7 +2,7 @@
 import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
 import ImageUploader from "@/app/components/global/ImageUploader";
 import { useUserContext } from "@/app/contexts/userContext";
-import { userData, userValueDT } from "@/app/types/KanbanTypes";
+import { User, userValueDT } from "@/app/types/KanbanTypes";
 import { API_BASE_URL, NATIONALITIES_ARRAY } from "@/app/utils/variables";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";

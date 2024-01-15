@@ -99,6 +99,8 @@ const COLUMN_MOVE_ROUTE: string = `${KANBAN_ROUTE}/move/column`;
 const CARD_ROUTE: string = `${COLUMN_ROUTE}/card`;
 const CARD_MOVE_ROUTE: string = `{${COLUMN_ROUTE}/move/card}`
 
+const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
+
 const CHECKLIST_ROUTE: string = `${PRIVATE_ROUTE}/user/kanban/column/card/checkList`;
 const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checkListItem`;
 
@@ -246,7 +248,7 @@ export function patch_kanban(body: PATCH_kanban, kanbanId: SystemID,userToken: s
 type GET_column = undefined;
 export function get_columns(body: GET_column, kanbanId: SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
-    fetch(KANBAN_ROUTE+"/"+kanbanId+"/columns"+"?cards=true", requestObject).then((response: Response) => {
+    fetch(KANBAN_ROUTE+"/"+kanbanId+"/columns?cards=true", requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -280,13 +282,67 @@ export function patch_column(body: PATCH_column, columnId: SystemID,userToken: s
     }).catch((e: any) => console.log(e));
 }
 
-type POST_card = {
-    kanbanId: SystemID,
-    title: string
+type MOVE_column = {
+    columnId: SystemID,
+    toIndex: number
 };
-export function post_card(body: POST_column, userToken: string,okCallback: (response: Response) => void) {
+export function move_column(body: MOVE_column, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(COLUMN_ROUTE+"/move", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_card = {
+    columnId: SystemID,
+    title: string,
+    description?: string,
+    members?: SystemID[]
+};
+export function post_card(body: POST_card, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
-    fetch(COLUMN_ROUTE, requestObject).then((response: Response) => {
+    fetch(CARD_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_card = undefined;
+export function delete_card(body: DELETE_card, cardId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(CARD_ROUTE+"/"+cardId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type MOVE_card = {
+    cardId: SystemID,
+    toColumnId: SystemID,
+    toIndex: number
+};
+export function move_card(body: MOVE_card, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(CARD_ROUTE+"/move", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_deadline = {
+    cardId: SystemID,
+    date: Date,
+    category?: string,
+    toColumnId?: SystemID
+};
+export function post_deadline(body: POST_deadline, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(DEADLINE_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type GET_notification = undefined;
+export function get_notifications(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(USER_ROUTE+"/notifications", requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

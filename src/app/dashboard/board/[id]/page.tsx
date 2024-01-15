@@ -32,6 +32,7 @@ import {
     DateValue,
     Kanban,
     SystemID,
+    User,
 } from '@/app/types/KanbanTypes';
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { CustomModal, CustomModalButtonAttributes } from '@/app/components/ui/CustomModal';
@@ -41,8 +42,6 @@ import { isFlagSet } from '@/app/utils/checkers';
 import { ColumnContainer } from '@/app/components/dashboard/Column';
 import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
 import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
-import { AddCardDate, CreateCardForm, DeleteCard } from '@/app/utils/dashboard/functions/Page/Card';
-import { UpdateListTitle, InputChange, AddList, AddInput, RemoveList, RemoveInput, ToggleCheckbox } from '@/app/utils/dashboard/functions/Page/Checklist';
 import { UpdateColumnTitle, RemoveColumn, CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
 import { AppendToTempCardsArray, PopFromTempCardsArray } from '@/app/utils/dashboard/functions/Page/InnerCardUtils';
 import { AddTag, RemoveTag } from '@/app/utils/dashboard/functions/Page/Tag';
@@ -51,18 +50,18 @@ import { API_BASE_URL } from '@/app/utils/variables';
 import { useKanbanContext } from '@/app/contexts/kanbanContext';
 import { get_columns, get_kanban_members } from '@/app/utils/fetchs';
 import { useModalContext } from '@/app/contexts/modalContext';
+import { CardElement } from '@/app/components/dashboard/Card';
 
 
 export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-    const [, setActiveCard] = useState<Card | null>(null);
+    const [activeCard, setActiveCard] = useState<Card | null>(null);
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
     const [tempCardsArr, setTempCardsArrr] = useState<Card[]>([]);
     const { userValue } = useUserContext();
-    const { kanbanList, tempKanban, setTempKanban,tempColumn, setTempColumn } = useKanbanContext();
+    const { kanbanList, setKanbanList, tempKanban, setTempKanban,tempColumn, setTempColumn } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
-    const [columnsId,setColumnsId] = useState<SystemID[]>([]);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
             distance: 2,  // 2px
@@ -71,146 +70,67 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
     const modalContextProps = useModalContext();
 
+    const columnsId = useMemo(() => {
+        if (!tempKanban) {
+            return [];
+        }
+        const ids:SystemID[] = [];
+        tempKanban?.columns.forEach(col=>ids.push(col.id));
+        return ids;
+    }, [tempKanban]);
+
     useEffect(() => {
-        async function getKanbanValues(){
+        function getKanbanValues(kanbanIndex:number){
             const kanban = kanbanList[kanbanIndex];
-            await get_columns(undefined,params.id,userValue.token,(response=>response.json().then((columns:Column[])=>{
-                if(columns.length > 0){
-                    setTempKanban({...kanban,columns:columns});
-                }else{
-                    setTempKanban(kanban);
-                }
+            setTempKanban(kanban);
+            get_columns(undefined,params.id,userValue.token,(response=>response.json().then((dbKanban:{members:User[],columns:Column[]})=>{
+                setTempKanban({...kanban,columns:dbKanban.columns,members:dbKanban.members});
             })));
-            get_kanban_members(undefined,params.id,userValue.token,(response)=>response.json().then((members)=>{
-                setTempKanban({...kanban,members:members});
-            }));
-            const ids:SystemID[] = [];
-            tempKanban.columns.forEach(col=>ids.push(col.id));
-            setColumnsId(ids);
         }
         const kanbanIndex = kanbanList.findIndex(kanban=>kanban.id==params.id);
         if(kanbanIndex != -1){
-            getKanbanValues()
+            getKanbanValues(kanbanIndex);
         }
-    }, []);
+    }, [tempKanban]);
 
     //useEffect(() => {
     //    fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {
     //    })
     //}, [params]);
     const onDragStart = (event: DragStartEvent) => {
-        // OnDragStart(
-        //     event,
-        //     userValue,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     setActiveCard,
-        //     setActiveColumn,
-        //     setTempDragState,
-        // );
+        OnDragStart(
+            event,
+            userValue,
+            modalContextProps,
+            noButtonRef,
+            setActiveCard,
+            setActiveColumn,
+            setTempDragState,
+        );
     }
 
     const onDragEnd = (event: DragEndEvent) => {
-        // OnDragEnd(
-        //     event,
-        //     userValue,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     setKanbanValues,
-        //     setActiveColumn,
-        //     setActiveCard,
-        //     tempDragState,
-        // );
+        OnDragEnd(
+            event,
+            userValue,
+            modalContextProps,
+            noButtonRef,
+            setTempKanban,
+            setActiveColumn,
+            setActiveCard,
+            tempDragState,
+        );
     }
 
     const onDragOver = (event: DragOverEvent) => {
-        // OnDragOver(
-        //     event,
-        //     userValue,
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     setKanbanValues,            
-        // );
-    }
-
-    const handleAddCustomField = (name: string, value: string | number, fieldType: "text" | "number") => {
-        // AddCustomField(
-        //     name,
-        //     value,
-        //     fieldType,
-        //     setTempCard,
-        // );
-    }
-
-
-
-
-
-
-
-    const setTempCardsArr = (value: any) => {
-        // console.log("## APPENDING VALUE", value, "TO", tempCardsArr);
-        // setTempCardsArrr(value);
-    }
-
-    const handleAddInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        // console.log("#0 HANDLE ADD INNER CARD ON PAGE FILE", tempCardsArr);
-        // PageAddInnerCard(
-        //     event,
-        //     isEdittingInnerCard,
-        //     editorRef,
-        //     tempCard,
-        //     setEditorText,
-        //     tempCardsArr,
-        //     setTempCardsArr,
-        //     setTempCard,
-        // );
-    }
-
-    const handleCreateInnerCard = (event: any, isEdittingInnerCard: boolean) => {
-        // console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", tempCardsArr);
-        // console.log("#0 HANDLE CREATE INNER CARD ON PAGE FILE", isEdittingInnerCard);
-        // PageCreateInnerCard(
-        //         event,
-        //         isEdittingInnerCard,
-        //         editorRef,
-        //         tempCard,
-        //         setEditorText,
-        //         setIsCreatingInnerCard,
-        //         tempCardsArr,
-        //         setTempCardsArr,
-        //         setTempCard,
-        //     );
-    }
-
-    const handleAppendToTempCardsArray = (newCard: Card) => {
-        // AppendToTempCardsArray(newCard, tempCardsArr, setTempCardsArr);
-    }
-
-    const handlePopFromTempCardsArray = (): Card | undefined => {
-        const res = PopFromTempCardsArray([], setTempCardsArr);
-        return res;
+        OnDragOver(
+            event,
+            userValue,
+            modalContextProps,
+            noButtonRef,
+            setTempKanban,
+            setTempDragState
+        );
     }
 
     const handleCreateNewColumn = () => {
@@ -241,13 +161,13 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             {/* <CustomModal /> */}
             <CreateEditCard />
             <div className="flex justify-between items-center w-[80%] fixed">
-                <h1>{tempKanban.title}</h1>
+                <h1>{tempKanban?.title}</h1>
                 <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-full mt-9 shrink-0">
                     <SortableContext items={columnsId}>
-                        {tempKanban.columns.sort((a,b)=>a.index-b.index).map((column) => <ColumnContainer
+                        {tempKanban?.columns.sort((a,b)=>a.index-b.index).map((column) => <ColumnContainer
                             key={column.id}
                             column={column}
                         />)}
@@ -264,8 +184,11 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                         {activeColumn && <ColumnContainer
                             column={activeColumn}
                         />}
+                        {activeCard && <CardElement
+                            card={activeCard}
+                        />}
                     </DragOverlay>,
-                    document.body)}
+                    document?.body)}
             </DndContext>
         </main>
     );

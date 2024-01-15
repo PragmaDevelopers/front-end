@@ -13,12 +13,11 @@ import { CommentSection } from "@/app/components/dashboard/Comment";
 import dayjs, { Dayjs } from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
-import { AddCardDate } from "@/app/utils/dashboard/functions/Page/Card";
+import { CreateCard } from "@/app/utils/dashboard/functions/Page/Card";
 import { ModalContextProvider, useModalContext } from "@/app/contexts/modalContext";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
-import { AddMember, ConfirmDeleteChecklist, ConfirmDeleteChecklistItem, ConfirmDeleteCustomField, ConfirmDeleteDeadline, ConfirmDeleteTag, CreateChecklist, CreateChecklistItem, ShowCreateCustomField, ShowCreateDeadline, ShowCreateTag } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
-import { get_kanban_members } from "@/app/utils/fetchs";
+import { ConfirmDeleteChecklist, ConfirmDeleteChecklistItem, ConfirmDeleteCustomField, ConfirmDeleteDeadline, ConfirmDeleteTag, CreateChecklist, CreateChecklistItem, ShowCreateCustomField, ShowCreateDeadline, ShowCreateTag } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -59,14 +58,9 @@ interface CardDateSectionProps {
 function CardDateSection(props: CardDateSectionProps) {
     const { card, failModalOption, noButtonRef } = props;
 
-    let isDateValid = false;
-    if(card.deadline != null && dayjs(card.deadline.date).isValid()){
-        isDateValid = true;
-    }
+    const [dateExists, setDateExists] = useState(false);
 
-    const [dateExists, setDateExists] = useState(isDateValid);
-
-    const [cardDeadline,setCardDeadline] = useState<Date>(new Date());
+    const [cardDeadline,setCardDeadline] = useState<Date>();
 
     const [toKanban,setToKanban] = useState<SystemID>("");
 
@@ -78,6 +72,9 @@ function CardDateSection(props: CardDateSectionProps) {
         const kanban = kanbanList.find(kanban=>kanban.columns.find(column=>column.id==card.deadline.toColumnId));
         if(kanban){
             setToKanban(kanban.id);
+        }
+        if(card.deadline != null && card.deadline.id != "" && dayjs(card.deadline.date).isValid()){
+            setDateExists(true);
         }
     },[])
 
@@ -141,7 +138,13 @@ function CardDateSection(props: CardDateSectionProps) {
                 cardManager.isShowCreateDeadline && (
                     <ModalCard>
                         <div className='flex bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'>
-                            <Calendar defaultValue={cardDeadline} onChange={(date)=>{setCardDeadline(date as Date)}} />
+                            <Calendar defaultValue={cardDeadline} onChange={(date)=>{
+                                setTempCard({...tempCard,deadline:{
+                                    ...tempCard.deadline,
+                                    date: date as Date
+                                }})
+                                setCardDeadline(date as Date);
+                            }} />
                             <div className="flex justify-between w-full">
                                 <button type='button' onClick={()=>{
                                     setDateExists(true);
@@ -667,7 +670,6 @@ function MembersSection(props: MembersSectionProps) {
 
     const { userValue } = useUserContext();
     const { cardManager, setCardManager, tempKanban, tempCard, setTempCard } = useKanbanContext();
-    const modalContextProps = useModalContext();
 
     function updateFilteredUsers(){
         const newFilteredUsers = tempKanban.members.filter(user=>{
@@ -675,17 +677,6 @@ function MembersSection(props: MembersSectionProps) {
             return !isMember;
         })
         setFilteredUsers(newFilteredUsers);
-    }
-
-    const handleShowAddMember = () => {
-        AddMember(
-            userValue,
-            setCardManager,
-            cardManager,
-            failModalOption,
-            noButtonRef,
-            modalContextProps
-        );
     }
 
     return (
@@ -770,7 +761,7 @@ function MembersSection(props: MembersSectionProps) {
                 )
             }
             <button className={`${cardManager.isShowAddMember ? 'hidden' : 'flex'} transition-all`} type='button'
-                onClick={handleShowAddMember}>
+                onClick={()=>setCardManager({...cardManager,isShowAddMember:true})}>
                 <PlusCircleIcon className='aspect-square w-6 mr-2' />
             </button>
             <div className="flex flex-col gap-2 p-2 relative z-10 overflow-y-auto max-h-64">
@@ -806,8 +797,9 @@ interface MoveCardFormProps {
 }
 function MoveCardForm(props: MoveCardFormProps) {
     const { dashboardsArray, handleCloseMoveCard, viewMoveCard } = props;
+    const { cardManager } = useKanbanContext();
     return (
-        <div className={(viewMoveCard ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
+        <div className={(cardManager.isEditElseCreate ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'}>
             <form onSubmit={handleCloseMoveCard} className='flex flex-col items-center'>
                 <select name='fieldType' className='bg-neutral-50 border-none outline-none w-full'>
                     {dashboardsArray?.map((kanban) => {
@@ -893,34 +885,27 @@ const CreateEditCard = () => {
     const modalContextProps = useModalContext();
 
     const { userValue } = useUserContext();
-    const { tempCard, setTempCard, cardManager, setCardManager } = useKanbanContext();
+    const { tempCard, setTempCard, setTempKanban, tempColumn, tempKanban, cardManager, setCardManager } = useKanbanContext();
     const cardDescriptionRef = useRef<MDXEditorMethods>(null);
 
     const [members, setMembers] = useState<User[]>([]);
-    // const [dashboards, setDashboards] = useState<{ kanbanId: string, name: string }[]>([
-    //     { kanbanId: "wwepLJuRkq-VxFtGrcbC8-RQ5vDvohgN", name: "Test" },
-    //     { kanbanId: "FZnHPlm7ni-ckiACczVhu-Oe4LoyQj30", name: "Example" },
-    // ]);
-    //useEffect(() => {
-    //    fetch("http://localhost:8080/api/dashboard/kanban/getall").then(response => response.json()).then(data => setDashboards(data))
-    //}, [setDashboards]);
-
 
     const [selected, setSelected] = useState(members[0])
     const [query, setQuery] = useState('')
-
-    const filteredPeople =
-        query === ''
-            ? members
-            : members.filter((person: any) => {
-                return person.name.toLowerCase().includes(query.toLowerCase())
-            })
-
 
     const handleCreateCardForm = (e: any) => {
         e.preventDefault();
         const description = cardDescriptionRef.current?.getMarkdown() || "";
         setTempCard({...tempCard,description:description})
+        CreateCard(
+            userValue,
+            setTempKanban,
+            setCardManager,
+            tempColumn,
+            tempCard,
+            tempKanban,
+            cardManager
+        );
     }
 
     const noButtonRef = useRef<HTMLButtonElement>(null);
@@ -978,17 +963,16 @@ const CreateEditCard = () => {
                     />
                 </div> */}
 
-            <div className={`${(
-                cardManager.isShowCreateDeadline 
-            ) ? "overflow-hidden" : "overflow-y-auto"} overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
+            <div className={`${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
                 <form className='w-full h-fit' onSubmit={handleCreateCardForm}>
                     <div className="w-full h-fit flex justify-center items-center relative">
                         <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
-                        <button type="button" onClick={() => setCardManager({
-                            ...cardManager,
-                            isSubmit: false,
-                            isShowCreateCard:false
-                        })}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
+                        <button type="button" onClick={() => {
+                            setCardManager({
+                                ...cardManager,
+                                isShowCreateCard:false
+                            })
+                        }}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
                     </div>
                     <CardTitle title={tempCard.title} />
                     <CardDateSection
@@ -1032,6 +1016,8 @@ const CreateEditCard = () => {
                             />
                         </div>
                     </div>
+                    {/* <h1 className="my-2 font-semibold">Mover Card</h1>
+                    <MoveCardForm /> */}
                     <h1 className="my-2 font-semibold">Cartões Internos</h1>
                     {/* <InnerCardSection
                         innerCardsArray={tempCard.innerCards}

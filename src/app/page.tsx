@@ -74,6 +74,7 @@ export default function Page() {
 
     const loginUser = async (e: any) => {
         e.preventDefault();
+        
         setIsFailLogin(false);
         setIsFailPassword(false);
         setEmailExists(false);
@@ -159,7 +160,7 @@ export default function Page() {
         <main className="bg-neutral-50 text-neutral-950 flex flex-row justify-center items-center w-screen h-screen transition-all">
             <div className="h-[90%] w-[60%] relative flex justify-center items-center">
                 <InfoScreen isEmailExists={isEmailExists} isFailPassword={isFailPassword} isFailLogin={isFailLogin} />
-                <form className="flex flex-col items-center mb-4 h-48" onSubmit={loginUser}>
+                <form method="POST" className="flex flex-col items-center mb-4 h-48" onSubmit={loginUser}>
                     {cadastrarSe ? (
                         <div className="h-fit bg-neutral-50 drop-shadow-md rounded-md p-2 border-neutral-200 border-[1px]">
                             <div className="flex flex-col">

@@ -37,7 +37,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     deadline: {
       id: "",
       category: "",
-      date: new Date(),
+      date: null,
       overdue: false,
       toColumnId: ""
     },
@@ -53,6 +53,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     isShowAddMember: false,
     isShowCreateTag: false,
     isShowCreateCustomField: false,
+    isShowCreateAnsweredComment: false,
     isShowCreateInnerCard: false
   });
 

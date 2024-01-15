@@ -5,9 +5,6 @@ import { Card, User } from "@/app/types/KanbanTypes";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 
-
-
-
 export function ShowDate(
     User: User, 
     setViewAddDate: (arg0: boolean) => void,

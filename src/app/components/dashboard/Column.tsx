@@ -20,15 +20,15 @@ export function ColumnContainer({column}:{column:Column}) {
     const [title, setTitle] = useState<string>(column.title);
     const { userValue } = useUserContext();
     const modalContextProps = useModalContext();
-    const { setTempColumn, setTempCard, tempKanban, setTempKanban,cardManager,setCardManager } = useKanbanContext();
+    const { setTempColumn, setTempCard, tempCard, tempKanban, setTempKanban,cardManager,setCardManager } = useKanbanContext();
         
     const cardsIds = useMemo(() => {
         const ids:SystemID[] = [];
         if(column.cards && column.cards.length > 0){
-            column.cards.forEach(card=>ids.push(card.id));
+            column.cards.forEach(card=>ids.push(card?.id));
         }
         return ids;
-    }, [column]);
+    }, [tempKanban]);
 
     const noButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -125,6 +125,8 @@ export function ColumnContainer({column}:{column:Column}) {
     function handleShowCreateCard(){
         ShowCreateCard(
             userValue,
+            tempKanban.id,
+            column.id,
             setCardManager,
             setTempCard,
             cardManager,
@@ -161,7 +163,7 @@ export function ColumnContainer({column}:{column:Column}) {
             </div>
             <div>
                 <SortableContext items={cardsIds}>
-                    {column.cards?.sort((a,b)=>a.index-b.index).map((card: Card) => {
+                    {column?.cards.sort((a,b)=>a.index-b.index).map((card: Card) => {
                         return <CardElement
                             key={card.id}
                             card={card}

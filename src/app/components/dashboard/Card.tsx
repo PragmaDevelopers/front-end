@@ -1,7 +1,5 @@
 import { useUserContext } from "@/app/contexts/userContext";
 import { isFlagSet } from "@/app/utils/checkers";
-import { DeleteCard } from "@/app/utils/dashboard/functions/Card";
-import { EditCard } from "@/app/utils/dashboard/functions/Card";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { useRef } from 'react';
@@ -10,12 +8,13 @@ import { useSortable } from '@dnd-kit/sortable';
 import { useModalContext } from "@/app/contexts/modalContext";
 import { Card } from "@/app/types/KanbanTypes";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
+import { ConfirmDeleteCard, DeleteCard } from "@/app/utils/dashboard/functions/Page/Card";
 
 export function CardElement({card}:{card:Card}) {
 
     const noButtonRef = useRef<any>(null);
     const { userValue } = useUserContext();
-    const { kanbanList } = useKanbanContext();
+    const { kanbanList, tempKanban,setTempKanban } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -37,51 +36,63 @@ export function CardElement({card}:{card:Card}) {
                 ref={setNodeRef} style={style} />
         );
     }
-
-
-    const delCard = () => {
-        // deleteCard(card.columnID, card.id);
-        modalContextProps.setModalOpen(false);
-    }
-
-
-    const modalOpts: CustomModalButtonAttributes[] = [
+    
+    const failOption: CustomModalButtonAttributes[] = [
         {
-            text: "Sim",
-            onclickfunc: delCard,
-            type: "button",
-            className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-        },
-        {
-            text: "Não",
+            text: "Entendido.",
             onclickfunc: () => modalContextProps.setModalOpen(false),
             ref: noButtonRef,
             type: "button",
             className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
         }
-    ]
+    ];
 
-    const modalOptsElements: any = modalOpts.map(
+    const failModalOption: any = failOption.map(
         (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
     );
 
     const handleDeleteCard = () => {
-        // DeleteCard(
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     modalOptsElements,
-        //     isFlagSet,
-        //     userValue.profileData,
-        // );
+        const delCard = () => {
+            DeleteCard(
+                card.id,
+                card.columnID,
+                userValue,
+                setTempKanban,
+                tempKanban
+            );
+            modalContextProps.setModalOpen(false);
+        }
+
+        const successOption: CustomModalButtonAttributes[] = [
+            {
+                text: "Sim",
+                onclickfunc: delCard,
+                type: "button",
+                className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            },
+            {
+                text: "Não",
+                onclickfunc: () => modalContextProps.setModalOpen(false),
+                ref: noButtonRef,
+                type: "button",
+                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+            }
+        ]
+
+        const successModalOption: any = successOption.map(
+            (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+        );
+        ConfirmDeleteCard(
+            userValue,
+            successModalOption,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        )
     }
 
     const handleEditCard = () => {
+        console.log(tempKanban)
         // EditCard(
         //     setModalTitle,
         //     setModalDescription,

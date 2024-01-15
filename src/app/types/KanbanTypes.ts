@@ -109,15 +109,16 @@ export type Kanban = {
     members: User[]
 }
 
-export type Notification = {
+export type NotificationProps = {
     id: SystemID;
     message: string;
     viewed: boolean;
+    registrationDate: string,
     category: string;
     sender_user_id: SystemID;
     sender_user_name: string;
-    recipient_user_id: SystemID | undefined;
-    recipient_user_name: string | undefined;
+    recipient_user_id?: SystemID;
+    recipient_user_name?: string;
     changed_id: SystemID;
 }
 

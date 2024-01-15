@@ -1,16 +1,19 @@
 "use client";
 
-import {  SystemID, Comment, User } from "@/app/types/KanbanTypes";
+import {  SystemID, Comment, User, Kanban, Card } from "@/app/types/KanbanTypes";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { Dispatch, RefObject, SetStateAction, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
 import { BACKEND_DATE_FORMAT } from "@/app/utils/variables";
 import { CommentEntryProps } from "@/app/interfaces/KanbanInterfaces";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { useUserContext } from "@/app/contexts/userContext";
+import { ConfirmDeleteOtherComment, ConfirmDeleteYourComment, CreateComment, ShowCreateAnsweredComment } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
+import { useModalContext } from "@/app/contexts/modalContext";
+import { CustomModalButtonAttributes } from "../ui/CustomModal";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -116,286 +119,218 @@ interface CommentSectionProps {
 export function CommentSection(props: CommentSectionProps) {
     const { commentsArray, failModalOption, noButtonRef } = props;
 
-    const { tempCard, setTempCard } = useKanbanContext();
+    const { cardManager, setCardManager, tempCard, setTempCard } = useKanbanContext();
     const { userValue } = useUserContext();
+    const modalContextProps = useModalContext();
 
-    const [commentUIDs, setCommentsUIDs] = useState<number>(2);
-    const incrementCommentUIDs = () => {
-        let newValue: number = commentUIDs + 1;
-        setCommentsUIDs(newValue);
+    const [answerComment,setAnswerComment] = useState<{
+        parentComment?: Comment,
+        newComment?: Comment
+    }>();
+    const [newComment,setNewComment] = useState<string>("");
+
+    function deleteCommentById(comments: Comment[], commentId: SystemID): Comment[] {
+        return comments.filter(comment => {
+          if (comment.id == commentId) {
+            // Se encontrarmos o comentário com o ID correspondente, não o incluímos na nova lista
+            return false;
+          } else if (comment.answers && comment.answers.length > 0) {
+            // Se o comentário tiver respostas, chamamos recursivamente a função para processar as respostas
+            comment.answers = deleteCommentById(comment.answers, commentId);
+            return true; // Incluímos o comentário na nova lista, pois não é o comentário que estamos excluindo
+          } else {
+            return true; // Incluímos o comentário na nova lista, pois não é o comentário que estamos excluindo
+          }
+        });
+      }
+
+    function handleRemoveComment(comment:Comment){
+        const delComment = () => {
+            const commentsAfterDeletion = deleteCommentById(commentsArray,comment.id);
+            setTempCard({...tempCard,comments:commentsAfterDeletion});
+            modalContextProps.setModalOpen(false);
+        }
+
+        const successOption: CustomModalButtonAttributes[] = [
+            {
+                text: "Sim",
+                onclickfunc: delComment,
+                type: "button",
+                className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            },
+            {
+                text: "Não",
+                onclickfunc: () => modalContextProps.setModalOpen(false),
+                ref: noButtonRef,
+                type: "button",
+                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+            }
+        ]
+
+        const successModalOption: any = successOption.map(
+            (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+        );
+
+        if(comment.user.id == userValue.profileData.id){
+            ConfirmDeleteYourComment(
+                userValue,
+                cardManager,
+                successModalOption,
+                failModalOption,
+                noButtonRef,
+                modalContextProps
+            );
+        }else{
+            ConfirmDeleteOtherComment(
+                userValue,
+                cardManager,
+                successModalOption,
+                failModalOption,
+                noButtonRef,
+                modalContextProps
+            );
+        }
     }
-    const [comments, setComments] = useState<Comment[]>([]);
 
-    const [isAnswering, setIsAnswering] = useState<{
-        isAnswering: boolean;
-        answeringUser: User;
-        commentId: SystemID;
-    }>();
+    function addCommentToAnswers(comments: Comment[], parentId: SystemID, newComment: Comment): Comment[] {
+        return comments.map(comment => {
+            if (comment.id == parentId) {
+                // Se encontrarmos o comentário com o ID correspondente, adicionamos o novo comentário às respostas
+                return {
+                    ...comment,
+                    answers: comment.answers ? [...comment.answers, newComment] : [newComment],
+                };
+            } else if (comment.answers && comment.answers.length > 0) {
+                // Se o comentário tiver respostas, chamamos recursivamente a função para processar as respostas
+                return {
+                    ...comment,
+                    answers: addCommentToAnswers(comment.answers, parentId, newComment),
+                };
+            } else {
+                return comment;
+            }
+        });
+    }
 
-    const [isEditing, setIsEditing] = useState<{
-        isEditing: boolean,
-        editingComment: Comment,
-    }>();
+    function handleAddCommentToAnswers(){
+        const parentId = answerComment?.parentComment?.id;
+        const newComment = answerComment?.newComment;
+        if(parentId && newComment){
+            const commentsWithNewAnswer = addCommentToAnswers(commentsArray,parentId,newComment);
+            setTempCard({...tempCard,comments:commentsWithNewAnswer});
+            setCardManager({...cardManager,isShowCreateAnsweredComment:false});
+        }
+    }      
 
-    const [textAreaDefaultValue, setTextAreaDefaultValue] = useState<string>("");
+    function handleAddComment(){
+        CreateComment(
+            userValue,
+            newComment,
+            setNewComment,
+            setTempCard,
+            tempCard,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        );
+    }
 
+    function handleShowCreateAnsweredComment(){
+        ShowCreateAnsweredComment(
+            userValue,
+            setCardManager,
+            cardManager,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        );
+    }
 
-    // const findCommentById = (comments: Comment[], targetId: SystemID): Comment | null => {
-    //     for (const comment of comments) {
-    //         const result = findCommentInTree(comment, targetId);
-    //         if (result !== null) {
-    //             return result;
-    //         }
-    //     }
-
-    //     return null;
-    // };
-
-    // const addAnswerById = (node: Comment, targetId: SystemID, newAnswer: Comment): void => {
-    //     console.log("[INFO] @ addAnswerById Looking at node", node);
-    //     console.log("[INFO] @ addAnswerById Target ID", targetId);
-    //     const recursiveAddAnswerById = (json: Comment, tId: SystemID, nAnswer: Comment): void => {
-    //         if (json.id === tId) {
-    //             json.answers.push(nAnswer);
-    //             return;
-    //         }
-
-    //         for (const answer of json.answers) {
-    //             recursiveAddAnswerById(answer, tId, nAnswer);
-    //         }
-    //     }
-    //     let tempComments = comments;
-    //     for (let comment of tempComments) {
-    //         recursiveAddAnswerById(comment, targetId, newAnswer);
-    //     }
-    //     setComments(tempComments);
-    //     console.log("[INFO] @ addAnswerById Updated Array", tempComments);
-    //     return;
-    // };
-
-    // const removeCommentById = (targetId: SystemID): void => {
-    //     const recursiveRemoveCommentById = (json: Comment, tId: SystemID): void => {
-    //         json.answers = json.answers.filter((answer) => answer.id !== tId);
-
-    //         for (const answer of json.answers) {
-    //             recursiveRemoveCommentById(answer, tId);
-    //         }
-    //     };
-
-    //     let tempComments = [...comments];
-    //     tempComments = tempComments.filter((comment) => comment.id !== targetId);
-
-    //     for (let comment of tempComments) {
-    //         recursiveRemoveCommentById(comment, targetId);
-    //     }
-
-    //     setComments(tempComments);
-    // };
-
-    // const findCommentInTree = (node: Comment, targetId: SystemID): Comment | null => {
-    //     console.log("[INFO] @ findCommentInTree Looking at node", node);
-    //     if (node.id === targetId) {
-    //         return node;
-    //     }
-
-    //     for (const answer of node.answers) {
-    //         const result = findCommentInTree(answer, targetId);
-    //         if (result !== null) {
-    //             return result;
-    //         }
-    //     }
-
-    //     return null;
-    // };
-
-
-    // const getContentById = (comments: Comment[], targetId: SystemID): string | null => {
-    //     const recursiveGetContentById = (json: Comment, tId: SystemID): string | null => {
-    //         if (json.id === tId) {
-    //             return json.content;
-    //         }
-
-    //         for (const answer of json.answers) {
-    //             const result = recursiveGetContentById(answer, tId);
-    //             if (result !== null) {
-    //                 return result;
-    //             }
-    //         }
-
-    //         return null;
-    //     };
-
-    //     for (let comment of comments) {
-    //         const content = recursiveGetContentById(comment, targetId);
-    //         if (content !== null) {
-    //             return content;
-    //         }
-    //     }
-
-    //     return null;
-    // };
-
-
-
-    // const replaceContentById = (
-    //     comments: Comment[],
-    //     targetId: SystemID,
-    //     newContent: string,
-    //     setComments: Dispatch<SetStateAction<Comment[]>>
-    // ): void => {
-    //     const recursiveReplaceContentById = (json: Comment, tId: SystemID): void => {
-    //         if (json.id === tId) {
-    //             json.content = newContent;
-    //             json.edited = true;
-    //             return;
-    //         }
-
-    //         for (const answer of json.answers) {
-    //             recursiveReplaceContentById(answer, tId);
-    //         }
-    //     };
-
-    //     let tempComments: Comment[] = comments;
-    //     for (let comment of tempComments) {
-    //         recursiveReplaceContentById(comment, targetId);
-    //     }
-
-    //     setComments(tempComments);
-    // };
-
-    // const handleEditComment = (comment: Comment) => {
-    //     console.log("[INFO] @ handleEditComment Editing Comment of #ID", comment.id);
-    //     const commentValue: string | null = getContentById(comments, comment.id);
-    //     if (commentValue !== null) {
-    //         setIsEditing({ isEditing: true, editingComment: comment });
-    //         setTextAreaDefaultValue(commentValue);
-    //     }
-    // }
-
-    // const addComment = (e: React.FormEvent<HTMLFormElement>) => {
-    //     //e.preventDefault();
-    //     incrementCommentUIDs();
-    //     const commentcont = (e.target as any).commentarea.value;
-
-    //     setComments((prevComments) => {
-    //         if (isAnswering?.isAnswering === true) {
-    //             const answeredComment = findCommentById(prevComments, isAnswering.commentId);
-    //             if (answeredComment) {
-    //                 const currId = commentUIDs;
-    //                 const newAnswer: Comment = {
-    //                     user: userData,
-    //                     content: commentcont,
-    //                     id: currId,
-    //                     edited: false,
-    //                     date: new Date(),
-    //                     answers: [],
-    //                 };
-    //                 addAnswerById(answeredComment, isAnswering.commentId, newAnswer);
-
-    //                 console.log("[INFO] @ addComment New Answer", newAnswer);
-    //                 console.log("[INFO] @ addComment Answered Comment", answeredComment);
-    //             }
-    //         } else {
-    //             const currId = commentUIDs;
-    //             const newComment: Comment = {
-    //                 user: userData,
-    //                 content: commentcont,
-    //                 id: currId,
-    //                 edited: false,
-    //                 date: new Date(),
-    //                 answers: [],
-    //             };
-    //             return [...prevComments, newComment];
-    //         }
-
-    //         return prevComments;
-    //     });
-
-    //     setIsAnswering(undefined);
-    //     //(e.target as any).commentarea.value = "";
-    // }
-
-    // const handleSetIsAnswering = (isAnsweringProps: { isAnswering: boolean; answeringUser: Member; commentId: SystemID }): void => {
-    //     setIsAnswering(isAnsweringProps);
-    //     console.log("[INFO] @ handleSetIsAnswering Comments Stateful Array", comments);
-    // };
-
-    function processComments(comments:Comment[]) {
+    function processComments(comments:Comment[],asweredComment?:Comment) {
         const commentElements: JSX.Element[] = [];
-      
+        
         comments.forEach((comment,index) => {
-          // Processar o comentário atual
-          const commentObj = (
-            <>
-                {index > 0 && <div className="bg-neutral-300 w-full h-1 opacity-55 rounded-sm"></div>}
-                <div className="flex flex-col overflow-x-hidden justify-start items-start w-full h-fit p-1 my-2">
-                    <div className="flex justify-between items-center w-full h-fit">
-                        <div className="flex flex-row justify-start items-center w-fit h-fit mr-1">
-                            <Image width={64} height={64} alt="Profile" src={comment.user.profilePicture || ""} className="w-8 aspect-square rounded-full mr-1" />
-                            <h1 className="ml-2 flex font-medium text-base">{comment.user.name}</h1>
-                        </div>
-                        <div className="flex justify-center items-center">
-                            <h2 className="text-sm ml-1 text-neutral-500">{comment.registrationDate.toDateString()}</h2>
-                            <div className="flex justify-center items-center mx-1">
-                                {/* <button className="mx-0.5" type="submit" onClick={() => {
-                                    
-                                }} value="commentEdit" id="commentEdit" name="commentEdit">
-                                    <PencilSquareIcon className="aspect-square w-5 fill-neutral-500" />
-                                </button> */}
-                                <button className="mx-0.5" type="button" onClick={() => {}}>
-                                    <ChatBubbleLeftEllipsisIcon className="aspect-square w-5 fill-neutral-500" />
-                                </button>
-                                <button className="mx-0.5" type="button" onClick={() => {}}>
-                                    <XCircleIcon className="aspect-square w-5 fill-neutral-500" />
-                                </button>
+            // Processar o comentário atual
+            const commentObj = (
+                <div key={index}>
+                    {index > 0 && <div className="bg-neutral-300 w-full h-1 opacity-55 rounded-sm"></div>}
+                    <div className={`${asweredComment ? "mt-2" : "my-2"} flex flex-col overflow-x-hidden justify-start items-start w-full h-fit p-1`}>
+                        <div className="flex justify-between items-center w-full h-fit">
+                            <div className="flex flex-row justify-start items-center w-fit h-fit mr-1">
+                                <Image width={64} height={64} alt="Profile" src={comment.user.profilePicture || ""} className="w-8 aspect-square rounded-full mr-1" />
+                                <h1 className="ml-2 flex font-medium text-base">{comment.user.name} { asweredComment && " | respondeu #"+ asweredComment.id}</h1>
+                            </div>
+                            <div className="flex justify-center items-center">
+                                <h2 className="text-sm ml-1 text-neutral-500">{comment.registrationDate.toDateString()}</h2>
+                                <div className="flex justify-center items-center mx-1">
+                                    {/* <button className="mx-0.5" type="submit" onClick={() => {}} value="commentEdit" id="commentEdit" name="commentEdit">
+                                        <PencilSquareIcon className="aspect-square w-5 fill-neutral-500" />
+                                    </button> */}
+                                    <button className="mx-0.5" type="button" onClick={() => {
+                                        handleShowCreateAnsweredComment();
+                                        setAnswerComment({parentComment:comment});
+                                    }}>
+                                        <ChatBubbleLeftEllipsisIcon className="aspect-square w-5 fill-neutral-500" />
+                                    </button>
+                                    <button className="mx-0.5" type="button" onClick={() => {
+                                        handleRemoveComment(comment);
+                                    }}>
+                                        <XCircleIcon className="aspect-square w-5 fill-neutral-500" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <p className="mt-1 text-justify text-sm p-3">
-                        {comment.content}
-                    </p>
-                    <div className={`${(comment.answers == undefined || comment.answers.length == 0) && "hidden"} ms-5 border-l-2 bg-neutral-200 w-full mt-2 rounded-sm h-fit ps-2 pe-4`}>
-                        {comment.answers && comment.answers.length > 0 && (
-                            processComments(comment.answers)
-                        )}
+                        <p className="mt-1 text-justify text-sm p-3">
+                            #{comment.id} - {comment.content}
+                        </p>
+                        <div className={`${(comment.answers == undefined || comment.answers.length == 0) && "hidden"} 
+                            ${!asweredComment && "ps-2 ms-5 pe-4"} border-l-2 bg-neutral-200 w-full mt-2 rounded-sm h-fit`}>
+                            {comment.answers && comment.answers.length > 0 && (
+                                processComments(comment.answers,comment)
+                            )}
+                        </div>
                     </div>
                 </div>
-            </>
-        );
-      
-          commentElements.push(commentObj);
+            );
+            commentElements.push(commentObj);
         });
       
         return commentElements;
-      }      
+    }
 
     return (
-        <div className="flex flex-col justify-start overflow-y-auto max-h-96 items-start h-full w-full">
+        <div className="flex flex-col justify-start overflow-y-auto relative max-h-96 items-start h-full w-full">
             <div className="h-full overflow-auto shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 w-full">
-                {processComments([{
-                    content: "Conteudo do comentario",edited:false,id:1,registrationDate:new Date(),user:userValue.profileData,answers:[
-                    {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[
-                        {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]}
-                    ]},
-                    {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]},
-                ],},
-                {content: "Conteudo do comentario",edited:false,id:2,registrationDate:new Date(),user:userValue.profileData,answers:[]},
-                {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]},
-                {content: "Resposta do comentário",edited:false,id:3,registrationDate:new Date(),user:userValue.profileData,answers:[]}])}
+                {processComments(commentsArray)}
+                { 
+                    cardManager.isShowCreateAnsweredComment && (
+                        <div className="p-3 w-full h-full flex justify-center items-center absolute top-0 left-0">
+                            <div className="bg-neutral-50 shadow-xl rounded-md border-2 border-neutral-400 w-full max-w-[75%] p-4">
+                                <span>#{answerComment?.parentComment?.id} - {answerComment?.parentComment?.user.name}</span>
+                                <input className="w-full" onChange={(e)=>{setAnswerComment({...answerComment,newComment:{
+                                    content: e.target.value,
+                                    edited: false,
+                                    id: "prov"+tempCard.comments.length,
+                                    user: userValue.profileData,
+                                    registrationDate: new Date()
+                                }})}} placeholder="Digite sua resposta" type="text" />
+                                <div className="flex justify-between">
+                                    <button type="button" onClick={()=>handleAddCommentToAnswers()}
+                                    className="bg-neutral-200 p-2 drop-shadow rounded-md mt-3">Adicionar</button>
+                                    <button type="button" onClick={()=>setCardManager({...cardManager,isShowCreateAnsweredComment:false})}
+                                    className="bg-neutral-200 p-2 drop-shadow rounded-md mt-3">Voltar</button>
+                                </div>
+                            </div>
+                        </div>
+                    ) 
+                }
             </div>
-            <div className="w-full flex flex-col items-center">
+            <div className="w-full flex flex-col items-center mb-3">
                 <div className="w-full flex flex-row items-center">
                     <div className="w-full mt-1 flex flex-col">
-                        {isAnswering?.isAnswering ? (
-                            <div className="text-center flex items-center justify-center w-full shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-1 mb-1 transition-all">
-                                <h1 className="italic font-semibold">
-                                    Respondendo ao usuário <span className="text-blue-700">@{isAnswering?.answeringUser?.name}</span>
-                                </h1>
-                            </div>
-                        ) : null}
-                        <textarea id="commentarea" name="commentarea" className="w-full resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1 transition-all" placeholder="Insira um comentário" />
+                        <textarea value={newComment} onChange={(e)=>setNewComment(e.target.value)} id="commentarea" name="commentarea" className="w-full resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1 transition-all" placeholder="Insira um comentário" />
                     </div>
-                    <button type="submit" className="ml-2" value="commentSend" id="commentSend" name="commentSend">
+                    <button type="button" onClick={handleAddComment} className="ml-2" value="commentSend" id="commentSend" name="commentSend">
                         <PaperAirplaneIcon className="w-8 aspect-square stroke-neutral-950 hover:stroke-green-600 fill-neutral-100 hover:fill-green-100 transition-all" />
                     </button>
                 </div>

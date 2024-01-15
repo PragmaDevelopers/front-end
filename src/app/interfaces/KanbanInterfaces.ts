@@ -63,6 +63,7 @@ export interface CardManager{
     isShowCreateTag: boolean;
     isShowCreateCustomField: boolean;
     isShowCreateInnerCard: boolean;
+    isShowCreateAnsweredComment: boolean;
 }
 
 export interface KanbanContextProps {

@@ -44,6 +44,7 @@ interface BoardMenuEntryProps {
 function BoardMenuEntry(props: BoardMenuEntryProps) {
 
     const { userValue } = useUserContext();
+    const { setTempKanban,tempKanban } = useKanbanContext();
 
     const deleteCurrEntry = () => {
         props.deleteKanban(props.kanbanID);
@@ -107,7 +108,11 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 
     return (
         <div className="flex flex-row items-center relative">
-            <Link href={props.href} className="my-2 flex flex-row items-center">
+            <Link href={props.href} onClick={()=>{
+                if(tempKanban.id != props.kanbanID){
+                    setTempKanban({id:"",columns:[],members:[],title:""});
+                }
+            }} className="my-2 flex flex-row items-center">
                 <BuildingOffice2Icon className="w-6 aspect-square mr-2" />
                 <h1>{props.name}</h1>
             </Link>
@@ -118,7 +123,7 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 
 export default function Layout({ children }: any) {
     const { userValue } = useUserContext();
-    const { kanbanList, setKanbanList, tempKanban,setTempCard } = useKanbanContext();
+    const { kanbanList, setKanbanList, tempKanban,setTempKanban } = useKanbanContext();
     const { 
         modalTitle, setModalTitle,
         modalDescription, setModalDescription,
@@ -141,7 +146,7 @@ export default function Layout({ children }: any) {
         }
     }, [userValue, router]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         function getKanbanList(){
             get_kanban(undefined,userValue.token,(response)=>response.json().then((kanbanList:Kanban[])=>{
                 setKanbanList(kanbanList);
@@ -201,6 +206,9 @@ export default function Layout({ children }: any) {
     const deleteKanban = (kanbanID: SystemID) => {
         const filteredKanbanList = kanbanList.filter(kanban=>kanban.id!=kanbanID);
         setKanbanList(filteredKanbanList);
+        if(tempKanban.id == kanbanID){
+            setTempKanban({id:"",columns:[],members:[],title:""});
+        }
         delete_kanban(undefined,kanbanID,userValue.token,(response=>{
             if(response.ok){
                 console.log("DELETE KANBAN SUCCESS");

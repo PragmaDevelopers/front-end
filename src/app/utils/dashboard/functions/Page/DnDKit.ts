@@ -1,5 +1,8 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { userValueDT, User, Kanban, Column, Card, SystemID } from "@/app/types/KanbanTypes";
+import { isFlagSet } from "@/app/utils/checkers";
+import { move_card, move_column } from "@/app/utils/fetchs";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { DragStartEvent, DragEndEvent, DragOverEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -8,15 +11,8 @@ import { RefObject } from "react";
 export function OnDragStart(
     event: DragStartEvent,
     userValue: userValueDT,
-    setModalTitle: (value: string) => void,
-    setModalDescription: (value: string) => void,
-    setModalText: (value: string) => void,
-    setModalBorderColor: (value: string) => void,
-    setModalFocusRef: (value: any) => void,
-    setModalOptions: (value: any) => void,
-    setModalOpen: (value: boolean) => void,
+    modalContextProps: ModalContextProps,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: User, flag: string) => boolean,
     setActiveCard: (arg0:  Card | null | any) => void,
     setActiveColumn: (arg0:  Column | null | any) => void,
     setTempDragState: (arg0: DragStartEvent) => void,
@@ -26,7 +22,7 @@ export function OnDragStart(
         const optAttrs: CustomModalButtonAttributes[] = [
             {
                 text: "Entendido.",
-                onclickfunc: () => setModalOpen(false),
+                onclickfunc: () => modalContextProps.setModalOpen(false),
                 ref: noButtonRef,
                 type: "button",
                 className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -37,13 +33,13 @@ export function OnDragStart(
             (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
             );
 
-        setModalTitle("Ação Negada.");
-        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-        setModalText("Fale com seu administrador se isto é um engano.");
-        setModalBorderColor("border-red-500");
-        setModalFocusRef(noButtonRef);
-        setModalOptions(modalOpt);
-        setModalOpen(true);
+        modalContextProps.setModalTitle("Ação Negada.");
+        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+        modalContextProps.setModalBorderColor("border-red-500");
+        modalContextProps.setModalFocusRef(noButtonRef);
+        modalContextProps.setModalOptions(modalOpt);
+        modalContextProps.setModalOpen(true);
         return;
     } else {
 
@@ -59,7 +55,7 @@ export function OnDragStart(
                     const optAttrs: CustomModalButtonAttributes[] = [
                         {
                             text: "Entendido.",
-                            onclickfunc: () => setModalOpen(false),
+                            onclickfunc: () => modalContextProps.setModalOpen(false),
                             ref: noButtonRef,
                             type: "button",
                             className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -70,13 +66,13 @@ export function OnDragStart(
                         (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
                         );
 
-                    setModalTitle("Ação Negada.");
-                    setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                    setModalText("Fale com seu administrador se isto é um engano.");
-                    setModalBorderColor("border-red-500");
-                    setModalFocusRef(noButtonRef);
-                    setModalOptions(modalOpt);
-                    setModalOpen(true);
+                    modalContextProps.setModalTitle("Ação Negada.");
+                    modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                    modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+                    modalContextProps.setModalBorderColor("border-red-500");
+                    modalContextProps.setModalFocusRef(noButtonRef);
+                    modalContextProps.setModalOptions(modalOpt);
+                    modalContextProps.setModalOpen(true);
                     return;
                 }
             }
@@ -92,7 +88,7 @@ export function OnDragStart(
                     const optAttrs: CustomModalButtonAttributes[] = [
                         {
                             text: "Entendido.",
-                            onclickfunc: () => setModalOpen(false),
+                            onclickfunc: () => modalContextProps.setModalOpen(false),
                             ref: noButtonRef,
                             type: "button",
                             className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -103,76 +99,45 @@ export function OnDragStart(
                         (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
                         );
 
-                    setModalTitle("Ação Negada.");
-                    setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                    setModalText("Fale com seu administrador se isto é um engano.");
-                    setModalBorderColor("border-red-500");
-                    setModalFocusRef(noButtonRef);
-                    setModalOptions(modalOpt);
-                    setModalOpen(true);
+                    modalContextProps.setModalTitle("Ação Negada.");
+                    modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                    modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+                    modalContextProps.setModalBorderColor("border-red-500");
+                    modalContextProps.setModalFocusRef(noButtonRef);
+                    modalContextProps.setModalOptions(modalOpt);
+                    modalContextProps.setModalOpen(true);
                     return;
                 }
             }
         }
 
-        // if (event.active.data.current !== undefined) {
-        //     if (event.active.data.current.type === "COLUMN") {
-        //         setActiveColumn(event.active.data.current.column);
-        //         return;
-        //     }
-        // }
+        if (event.active.data.current !== undefined) {
+            if (event.active.data.current.type === "COLUMN") {
+                setActiveColumn(event.active.data.current.column);
+                return;
+            }
+        }
 
-        // if (event.active.data.current !== undefined) {
-        //     if (event.active.data.current.type === "CARD") {
-        //         setActiveCard(event.active.data.current.card);
-        //         return;
-        //     }
-        // }
+        if (event.active.data.current !== undefined) {
+            if (event.active.data.current.type === "CARD") {
+                setActiveCard(event.active.data.current.card);
+                return;
+            }
+        }
     }
 }
 
 export function OnDragEnd(
     event: DragEndEvent,
     userValue: userValueDT,
-    setModalTitle: (value: string) => void,
-    setModalDescription: (value: string) => void,
-    setModalText: (value: string) => void,
-    setModalBorderColor: (value: string) => void,
-    setModalFocusRef: (value: any) => void,
-    setModalOptions: (value: any) => void,
-    setModalOpen: (value: boolean) => void,
+    modalContextProps: ModalContextProps,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: User, flag: string) => boolean,
-    setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
+    setKanban: any,
     setActiveColumn: (arg0: Column | null | any) => void,
     setActiveCard: (arg0: Card | null | any) => void,
-    tempDragState: DragEndEvent | DragStartEvent | DragOverEvent,
+    tempDragState: any,
     ) {
-    if (!(isFlagSet(userValue.profileData, "MOVER_COLUNAS") && isFlagSet(userValue.profileData, "MOVER_CARDS"))) {
-        const optAttrs: CustomModalButtonAttributes[] = [
-            {
-                text: "Entendido.",
-                onclickfunc: () => setModalOpen(false),
-                ref: noButtonRef,
-                type: "button",
-                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
-            }
-        ];
-
-        const modalOpt: any = optAttrs.map(
-            (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
-            );
-
-        setModalTitle("Ação Negada.");
-        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-        setModalText("Fale com seu administrador se isto é um engano.");
-        setModalBorderColor("border-red-500");
-        setModalFocusRef(noButtonRef);
-        setModalOptions(modalOpt);
-        setModalOpen(true);
-        return;
-    } else {
-
+   
         setActiveColumn(null);
         setActiveCard(null);
 
@@ -181,7 +146,7 @@ export function OnDragEnd(
 
         const activeColumnID = active.id;
         const overColumnID = over.id;
-        if (activeColumnID === overColumnID) return;
+        if (activeColumnID == overColumnID) return;
 
         //console.log("ON DRAG END EVENT", event);
         if (active.data.current?.type === "COLUMN") {
@@ -192,27 +157,28 @@ export function OnDragEnd(
                     const overColumnIndex = prevKanban.columns.findIndex((col: Column) => col?.id === overColumnID);
                     const newColumnsArray: Column[] = arrayMove(prevKanban.columns, activeColumnIndex, overColumnIndex);
 
-                    const requestOptions = {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userValue.token}` },
-                        body: JSON.stringify({
-                            "columnId": prevKanban.columns[activeColumnIndex].id,
-                            "toIndex": overColumnIndex,
-                        }),
-                    };
-                    fetch(`${API_BASE_URL}/api/private/user/kanban/move/column`, requestOptions).then(response => response.text()).then(data => console.log(data))
-
+                    move_column({
+                        columnId: prevKanban.columns[activeColumnIndex].id,
+                        toIndex: overColumnIndex,
+                    },userValue.token,(response)=>response.text().then(()=>{
+                        if(response.ok){
+                            console.log("MOVE COLUMN SUCCESS");
+                        }
+                    }))
 
                     return {
                         ...prevKanban,
-                        columns: newColumnsArray,
+                        columns: newColumnsArray.map((column,index)=>{
+                            column.index = index;
+                            return column;
+                        })
                     };
                 });
             } else {
                 const optAttrs: CustomModalButtonAttributes[] = [
                     {
                         text: "Entendido.",
-                        onclickfunc: () => setModalOpen(false),
+                        onclickfunc: () => modalContextProps.setModalOpen(false),
                         ref: noButtonRef,
                         type: "button",
                         className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -223,248 +189,113 @@ export function OnDragEnd(
                     (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
                     );
 
-                setModalTitle("Ação Negada.");
-                setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                setModalText("Fale com seu administrador se isto é um engano.");
-                setModalBorderColor("border-red-500");
-                setModalFocusRef(noButtonRef);
-                setModalOptions(modalOpt);
-                setModalOpen(true);
+                modalContextProps.setModalTitle("Ação Negada.");
+                modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+                modalContextProps.setModalBorderColor("border-red-500");
+                modalContextProps.setModalFocusRef(noButtonRef);
+                modalContextProps.setModalOptions(modalOpt);
+                modalContextProps.setModalOpen(true);
                 return;
 
             }
         } else {
             //console.log("ACTIVE CARD", active.data.current?.type);
 
-            if (isFlagSet(userValue.profileData, "MOVER_COLUNAS")) {
-                if (over.data.current?.type === "COLUMN") {
-                    //console.log("OVER COLUMN");
-                    setKanban((prevKanban: Kanban) => {
-                        // Drop on other column
-                        const cardEl: Card = active.data.current?.card;
-                        const destCol: Column = over.data.current?.column;
-                        const srcCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
-                        if (!srcCol) return;
+            if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
+                const cardEl: Card = tempDragState.active?.data.current.card || active.data.current?.card;
+                const columnElId: SystemID | undefined = over.data.current?.card?.columnID || over.data.current?.column.id;
+                setKanban((prevKanban: Kanban) => {
+                    const destCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === columnElId);
+                    const srcCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === cardEl?.columnID);
 
-                        const updatedCardsList = srcCol.cards.filter((card) => card.id !== cardEl.id);
+                    if (!srcCol || !destCol) return prevKanban;
 
-                        const updatedColumn = {
-                            ...srcCol,
-                            cards: updatedCardsList,
-                        };
-
-                        const newCard: Card = {
-                            ...cardEl,
-                            columnID: destCol.id,
-                        }
-
-                        const resultDestCol: Column = {
-                            ...destCol,
-                            cards: [...destCol.cards, newCard],
-                        }
-
-                        const updatedSrcColumns: Column[] = prevKanban.columns.map((column: Column) =>
-                            column?.id === updatedColumn.id ? updatedColumn : column
-                        );
-
-                        const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
-
-
-
-                        return {
-                            ...prevKanban,
-                            columns: updatedColumns,
-                        };
-
-                        // drop on card in other column
-
-                    })
-                } else {
-                    const optAttrs: CustomModalButtonAttributes[] = [
-                        {
-                            text: "Entendido.",
-                            onclickfunc: () => setModalOpen(false),
-                            ref: noButtonRef,
-                            type: "button",
-                            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
-                        }
-                    ];
-
-                    const modalOpt: any = optAttrs.map(
-                        (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
-                        );
-
-                    setModalTitle("Ação Negada.");
-                    setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                    setModalText("Fale com seu administrador se isto é um engano.");
-                    setModalBorderColor("border-red-500");
-                    setModalFocusRef(noButtonRef);
-                    setModalOptions(modalOpt);
-                    setModalOpen(true);
-                    return;
-
-                }
-
-            } else if (over.data.current?.type === "CARD") {
-                //console.log("OVER CARD");
-                if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
-
-                    if (Object.keys(active.data.current as any).length !== 0) {
-                        //console.log("CURRENT NOT EMPTY", event);
-                        setKanban((prevKanban: Kanban) => {
-                            const cardEl: Card = active.data.current?.card;
-                            const destCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
-                            const srcCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === active.data.current?.card.columnID);
-                            if (!srcCol) return;
-                            if (destCol === undefined) return;
-
-                            //console.log(destCol, srcCol);
-                            const updatedCardsList = srcCol.cards.filter((card) => card.id !== cardEl.id);
-
-                            const updatedColumn = {
-                                ...srcCol,
-                                cards: updatedCardsList,
-                            };
-
-                            const newCard: Card = {
-                                ...cardEl,
-                                columnID: destCol.id,
-                            }
-                            const resultDestCol: Column = {
-                                ...destCol,
-                                cards: [...destCol.cards, newCard],
-                            }
-
-                            const updatedSrcColumns: Column[] = prevKanban.columns.map((column: Column) =>
-                                column?.id === updatedColumn.id ? updatedColumn : column
-                            );
-
-                            const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
-
-                            return {
-                                ...prevKanban,
-                                columns: updatedColumns,
-                            };
-
-                        });
-
-                    } else {
-                        const optAttrs: CustomModalButtonAttributes[] = [
-                            {
-                                text: "Entendido.",
-                                onclickfunc: () => setModalOpen(false),
-                                ref: noButtonRef,
-                                type: "button",
-                                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
-                            }
-                        ];
-
-                        const modalOpt: any = optAttrs.map(
-                            (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
-                            );
-
-                        setModalTitle("Ação Negada.");
-                        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                        setModalText("Fale com seu administrador se isto é um engano.");
-                        setModalBorderColor("border-red-500");
-                        setModalFocusRef(noButtonRef);
-                        setModalOptions(modalOpt);
-                        setModalOpen(true);
-                        return;
-
+                    let destIndex = destCol.cards.length;
+                    if(over.data.current?.type == "CARD"){
+                        destIndex = over.data.current.card.index;
                     }
 
-                } else {
-                    //console.log("CURRENT EMPTY");
-                    if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
-                        setKanban((prevKanban: Kanban) => {
-                            const tempEndDragState: DragEndEvent = tempDragState as DragEndEvent;
-                            const cardEl: Card = tempEndDragState.active.data.current?.card;
-                            const destCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === over.data.current?.card.columnID);
-                            const srcCol: Column | undefined = prevKanban.columns.find((col: Column) => col?.id === tempEndDragState.active.data.current?.card.columnID);
-                            if (!srcCol) return;
-                            if (destCol === undefined) return;
-
-                            const updatedCardsList = srcCol.cards.filter((card) => card.id !== cardEl.id);
-
-                            const updatedColumn = {
-                                ...srcCol,
-                                cards: updatedCardsList,
-                            };
-
-                            const newCard: Card = {
-                                ...cardEl,
-                                columnID: destCol.id,
-                            }
-                            const resultDestCol: Column = {
-                                ...destCol,
-                                cards: [...destCol.cards, newCard],
-                            }
-
-                            const updatedSrcColumns: Column[] = prevKanban.columns.map((column: Column) =>
-                                column?.id === updatedColumn.id ? updatedColumn : column
-                            );
-
-                            const updatedColumns: Column[] = updatedSrcColumns.map((col: Column) => col?.id === resultDestCol.id ? resultDestCol : col);
-
-                            return {
-                                ...prevKanban,
-                                columns: updatedColumns,
-                            };
-
+                    if(srcCol.id == destCol.id){
+                        destCol.cards = destCol.cards.filter((card)=>card.id != cardEl?.id);
+                        destCol.cards.splice(destIndex,0,cardEl);
+                        destCol.cards = destCol.cards.map((card,index)=>{
+                            card.index = index;
+                            return card;
                         });
-                    } else {
-                        const optAttrs: CustomModalButtonAttributes[] = [
-                            {
-                                text: "Entendido.",
-                                onclickfunc: () => setModalOpen(false),
-                                ref: noButtonRef,
-                                type: "button",
-                                className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
-                            }
-                        ];
-
-                        const modalOpt: any = optAttrs.map(
-                            (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
-                            );
-
-                        setModalTitle("Ação Negada.");
-                        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                        setModalText("Fale com seu administrador se isto é um engano.");
-                        setModalBorderColor("border-red-500");
-                        setModalFocusRef(noButtonRef);
-                        setModalOptions(modalOpt);
-                        setModalOpen(true);
-                        return;
-
+                        prevKanban.columns[destCol.index] = srcCol;
+                    }else{
+                        console.log(cardEl)
+                        const newSrcCol = srcCol;
+                        newSrcCol.cards = newSrcCol.cards.filter((card) => card.id != cardEl?.id);
+                        newSrcCol.cards = newSrcCol.cards.map((card,index)=>{
+                            card.index = index;
+                            return card;
+                        });
+                        cardEl.columnID = destCol.id;
+                        const newDestCol = destCol;
+                        newDestCol.cards.push(cardEl);
+                        newDestCol.cards = newDestCol.cards.map((card,index)=>{
+                            card.index = index;
+                            return card;
+                        });
+                        prevKanban.columns[srcCol.index] = newSrcCol;
+                        prevKanban.columns[destCol.index] = newDestCol;
                     }
-                }
+
+                    move_card({cardId:cardEl.id,toColumnId:destCol.id,toIndex:destIndex},userValue.token,(response)=>response.text().then(()=>{
+                        if(response.ok){
+                            console.log("MOVE CARD SUCCESS");
+                        }
+                    }));
+
+                    return prevKanban;
+                });
+
+            } else {
+                const optAttrs: CustomModalButtonAttributes[] = [
+                    {
+                        text: "Entendido.",
+                        onclickfunc: () => modalContextProps.setModalOpen(false),
+                        ref: noButtonRef,
+                        type: "button",
+                        className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                    }
+                ];
+
+                const modalOpt: any = optAttrs.map(
+                    (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
+                    );
+
+                modalContextProps.setModalTitle("Ação Negada.");
+                modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+                modalContextProps.setModalBorderColor("border-red-500");
+                modalContextProps.setModalFocusRef(noButtonRef);
+                modalContextProps.setModalOptions(modalOpt);
+                modalContextProps.setModalOpen(true);
+                return;
+
             }
+
         }
 
-        //console.log("DRAG END", event);
-    }
+    //console.log("DRAG END", event);
 }
 
 export function OnDragOver(
     event: DragOverEvent,
     userValue: userValueDT,
-    setModalTitle: (value: string) => void,
-    setModalDescription: (value: string) => void,
-    setModalText: (value: string) => void,
-    setModalBorderColor: (value: string) => void,
-    setModalFocusRef: (value: any) => void,
-    setModalOptions: (value: any) => void,
-    setModalOpen: (value: boolean) => void,
+    modalContextProps: ModalContextProps,
     noButtonRef: RefObject<HTMLButtonElement>,
-    isFlagSet: (value: User, flag: string) => boolean,
-    setKanban: (arg0: (prevKanban: Kanban) => Kanban | Kanban | undefined) => void,
+    setKanban: any,
+    setTempDragState: any,
     ) {
     if (!(isFlagSet(userValue.profileData, "MOVER_COLUNAS") && isFlagSet(userValue.profileData, "MOVER_CARDS"))) {
         const optAttrs: CustomModalButtonAttributes[] = [
             {
                 text: "Entendido.",
-                onclickfunc: () => setModalOpen(false),
+                onclickfunc: () => modalContextProps.setModalOpen(false),
                 ref: noButtonRef,
                 type: "button",
                 className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -475,13 +306,13 @@ export function OnDragOver(
             (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
             );
 
-        setModalTitle("Ação Negada.");
-        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-        setModalText("Fale com seu administrador se isto é um engano.");
-        setModalBorderColor("border-red-500");
-        setModalFocusRef(noButtonRef);
-        setModalOptions(modalOpt);
-        setModalOpen(true);
+        modalContextProps.setModalTitle("Ação Negada.");
+        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+        modalContextProps.setModalBorderColor("border-red-500");
+        modalContextProps.setModalFocusRef(noButtonRef);
+        modalContextProps.setModalOptions(modalOpt);
+        modalContextProps.setModalOpen(true);
         return;
     } else {
         const { active, over } = event;
@@ -500,6 +331,8 @@ export function OnDragOver(
             setKanban((prevKanban: Kanban) => {
                 if (active.data.current?.card.columnID === over.data.current?.card.columnID) {
                     if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
+
+                        setTempDragState(active.data.current);
 
                         const targetColumn = prevKanban.columns.find((column) => column?.id === active.data.current?.card.columnID);
                         if (!targetColumn) return prevKanban;
@@ -526,7 +359,7 @@ export function OnDragOver(
                         const optAttrs: CustomModalButtonAttributes[] = [
                             {
                                 text: "Entendido.",
-                                onclickfunc: () => setModalOpen(false),
+                                onclickfunc: () => modalContextProps.setModalOpen(false),
                                 ref: noButtonRef,
                                 type: "button",
                                 className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -537,13 +370,13 @@ export function OnDragOver(
                             (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
                             );
 
-                        setModalTitle("Ação Negada.");
-                        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                        setModalText("Fale com seu administrador se isto é um engano.");
-                        setModalBorderColor("border-red-500");
-                        setModalFocusRef(noButtonRef);
-                        setModalOptions(modalOpt);
-                        setModalOpen(true);
+                        modalContextProps.setModalTitle("Ação Negada.");
+                        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+                        modalContextProps.setModalBorderColor("border-red-500");
+                        modalContextProps.setModalFocusRef(noButtonRef);
+                        modalContextProps.setModalOptions(modalOpt);
+                        modalContextProps.setModalOpen(true);
                         return;
                     }
                 } else {
@@ -576,7 +409,7 @@ export function OnDragOver(
                         const optAttrs: CustomModalButtonAttributes[] = [
                             {
                                 text: "Entendido.",
-                                onclickfunc: () => setModalOpen(false),
+                                onclickfunc: () => modalContextProps.setModalOpen(false),
                                 ref: noButtonRef,
                                 type: "button",
                                 className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -587,13 +420,13 @@ export function OnDragOver(
                             (el: CustomModalButtonAttributes, idx: number) => `<button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>`
                             );
 
-                        setModalTitle("Ação Negada.");
-                        setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-                        setModalText("Fale com seu administrador se isto é um engano.");
-                        setModalBorderColor("border-red-500");
-                        setModalFocusRef(noButtonRef);
-                        setModalOptions(modalOpt);
-                        setModalOpen(true);
+                        modalContextProps.setModalTitle("Ação Negada.");
+                        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+                        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+                        modalContextProps.setModalBorderColor("border-red-500");
+                        modalContextProps.setModalFocusRef(noButtonRef);
+                        modalContextProps.setModalOptions(modalOpt);
+                        modalContextProps.setModalOpen(true);
                         return;
                     }
                 }

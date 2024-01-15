@@ -270,7 +270,7 @@ export function ConfirmDeleteChecklistItem(
     modalContextProps.setModalOpen(true);
 }
 
-export function AddMember(
+export function ShowCreateAnsweredComment(
     userData: userValueDT,
     setCardManager: (newValue: CardManager) => void,
     cardManager: CardManager, 
@@ -278,7 +278,7 @@ export function AddMember(
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
 ){
-    if (!isFlagSet(userData.profileData, "CONVIDAR_PARA_O_KANBAN")) {
+    if (!isFlagSet(userData.profileData, "CRIAR_COMENTÁRIOS")) {
         modalContextProps.setModalTitle("Ação Negada.");
         modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
         modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
@@ -288,5 +288,96 @@ export function AddMember(
         modalContextProps.setModalOpen(true);
         return;
     }
-    setCardManager({...cardManager,isShowAddMember:true});
+    setCardManager({...cardManager,isShowCreateAnsweredComment:true});
+}
+
+export function CreateComment(
+    userData: userValueDT,
+    content: string,
+    setContent: (newValue: string) => void,
+    setTempCard: (newValue: Card) => void,
+    tempCard: Card, 
+    failModalOptions: any,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    modalContextProps: ModalContextProps
+){
+    if (!isFlagSet(userData.profileData, "CRIAR_COMENTÁRIOS")) {
+        modalContextProps.setModalTitle("Ação Negada.");
+        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+        modalContextProps.setModalBorderColor("border-red-500");
+        modalContextProps.setModalFocusRef(noButtonRef);
+        modalContextProps.setModalOptions(failModalOptions);
+        modalContextProps.setModalOpen(true);
+        return;
+    }
+    setTempCard({...tempCard,comments:[...tempCard.comments,{
+        content: content,
+        edited: false,
+        id: "prov"+tempCard.comments.length ,
+        registrationDate: new Date(),
+        user: userData.profileData,
+        answers: []
+    }]});
+    setContent("");
+}
+
+export function ConfirmDeleteOtherComment(
+    userValue: userValueDT, 
+    cardManager: CardManager,
+    trueModalOptions:any,
+    failModalOptions:any,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    modalContextProps: ModalContextProps
+) {
+    if(cardManager.isEditElseCreate){
+        if (!isFlagSet(userValue.profileData, "DELETAR_COMENTÁRIOS_EXTERNOS")) {
+            //NÃO TEM AUTORIZAÇÃO
+            modalContextProps.setModalTitle("Ação Negada.");
+            modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+            modalContextProps.setModalBorderColor("border-red-500");
+            modalContextProps.setModalFocusRef(noButtonRef);
+            modalContextProps.setModalOptions(failModalOptions);
+            modalContextProps.setModalOpen(true);
+            return
+        }
+    }
+    modalContextProps.setModalTitle("Deletar Comentário");
+    modalContextProps.setModalDescription("Esta ação é irreversivel.");
+    modalContextProps.setModalText("Tem certeza que deseja continuar?");
+    modalContextProps.setModalBorderColor("border-red-500");
+    modalContextProps.setModalFocusRef(noButtonRef);
+    modalContextProps.setModalOptions(trueModalOptions);
+    modalContextProps.setModalOpen(true);
+}
+
+export function ConfirmDeleteYourComment(
+    userValue: userValueDT, 
+    cardManager: CardManager,
+    trueModalOptions:any,
+    failModalOptions:any,
+    noButtonRef: RefObject<HTMLButtonElement>,
+    modalContextProps: ModalContextProps
+) {
+    if(cardManager.isEditElseCreate){
+        if (!isFlagSet(userValue.profileData, "DELETAR_COMENTÁRIOS_PRÓPRIOS")) {
+            //NÃO TEM AUTORIZAÇÃO
+            modalContextProps.setModalTitle("Ação Negada.");
+            modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+            modalContextProps.setModalBorderColor("border-red-500");
+            modalContextProps.setModalFocusRef(noButtonRef);
+            modalContextProps.setModalOptions(failModalOptions);
+            modalContextProps.setModalOpen(true);
+            return
+        }
+    }
+    modalContextProps.setModalTitle("Deletar Comentário");
+    modalContextProps.setModalDescription("Esta ação é irreversivel.");
+    modalContextProps.setModalText("Tem certeza que deseja continuar?");
+    modalContextProps.setModalBorderColor("border-red-500");
+    modalContextProps.setModalFocusRef(noButtonRef);
+    modalContextProps.setModalOptions(trueModalOptions);
+    modalContextProps.setModalOpen(true);
 }

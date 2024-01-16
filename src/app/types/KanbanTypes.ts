@@ -100,6 +100,7 @@ export type userValueDT = {
     token: string;
     profileData: User;
     userList: User[];
+    notifications: NotificationUser[]
 };
 
 export type Kanban = {
@@ -109,7 +110,7 @@ export type Kanban = {
     members: User[]
 }
 
-export type NotificationProps = {
+export type NotificationUser = {
     id: SystemID;
     message: string;
     viewed: boolean;

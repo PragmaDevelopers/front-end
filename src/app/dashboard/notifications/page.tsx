@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserContext } from "@/app/contexts/userContext";
-import { User, NotificationProps } from "@/app/types/KanbanTypes";
+import { User, NotificationUser } from "@/app/types/KanbanTypes";
 import { API_BASE_URL, NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
 import { ArrowTopRightOnSquareIcon, TagIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -14,9 +14,9 @@ type parsedNotification = {
     viewed: boolean;
     user: User;
 }
-function parseRawNotificationsArray(notificationsArray: NotificationProps[], userList: User[]): parsedNotification[] {
+function parseRawNotificationsArray(notificationsArray: NotificationUser[], userList: User[]): parsedNotification[] {
     let newArray: parsedNotification[] = [];
-    notificationsArray.forEach((notification: NotificationProps) => {
+    notificationsArray.forEach((notification: NotificationUser) => {
         let user: User = userList.filter((value: User) => {
             if (value.id === notification.sender_user_id) {
                 return value;
@@ -60,7 +60,7 @@ function NotificationElement(props: NotificationElementProps) {
                     <h2 className="truncate text-sm text-neutral-600">{message}</h2>
                 </div>
                 {/* <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" /> */}
-                <TrashIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" />
+                {/* <TrashIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" /> */}
             </div>
         </Link>
     );
@@ -104,23 +104,8 @@ export default function Page() {
     const [cachedNotifications, setCachedNotifications] = useState<parsedNotification[] | Notification[]>([]);
     const { userValue } = useUserContext();
     useEffect(() => {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userValue.token}`,
-            },
-        };
-        fetch(`${API_BASE_URL}/api/private/user/notifications`, requestOptions).then(
-            (response: Response) => response.json()
-        ).then((value: any) => {
-            setNotificationsArray(value);
-            console.log("[INFO] @ Page notificationsArray", value);
-            let pNot: parsedNotification[] = parseRawNotificationsArray(value, userValue.userList);
+            let pNot: parsedNotification[] = parseRawNotificationsArray(userValue.notifications, userValue.userList);
             setParsedNotifications(pNot);
-            setCachedNotifications(pNot);
-            console.log("[INFO] @ Page parsedNotifications", pNot);
-        });
     }, [userValue]);
 
     return (

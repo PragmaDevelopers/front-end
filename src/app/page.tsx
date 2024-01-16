@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
 import { API_BASE_URL } from "./utils/variables";
-import { User, userValueDT } from "./types/KanbanTypes";
-import { post_login, get_profile, get_user, post_signup } from "./utils/fetchs";
+import { NotificationUser, User, userValueDT } from "./types/KanbanTypes";
+import { post_login, get_profile, get_user, post_signup, get_notifications } from "./utils/fetchs";
 
 interface InfoScreenProps {
     isFailLogin: boolean,
@@ -141,6 +141,15 @@ export default function Page() {
                 get_user(undefined,userValue.token,(response)=>response.json().then((userList:User[])=>{
                     const newUserValue = userValue;
                     newUserValue.userList = userList;
+                    setUserValue(newUserValue);
+                    getNotificationUser();
+                }));
+            }
+
+            const getNotificationUser = () => {
+                get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
+                    const newUserValue = userValue;
+                    newUserValue.notifications = dbNotifications;
                     setUserValue(newUserValue);
                     router.push("/dashboard");
                 }));

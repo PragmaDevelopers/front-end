@@ -23,6 +23,7 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
       registrationDate: '',
       role: '',
     },
+    notifications: [],
     userList: [],
   });
 

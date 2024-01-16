@@ -28,18 +28,31 @@ export async function CreateNewColumn(
     }
 
     const columnCount = tempKanban.columns != undefined ? tempKanban.columns.length : 0;
+    const provColumnId = "prov"+columnCount;
+
+    tempKanban.columns.push({
+        id: provColumnId,
+        title: `Column ${columnCount}`,
+        index: columnCount,
+        cards: []
+    });
+
+    setTempKanban(tempKanban);
 
     post_column({
         kanbanId: tempKanban.id,
         title: `Column ${columnCount}`
-    },userValue.token,(response)=>response.json().then((id)=>{
-        console.log("CREATE COLUMN SUCCESS")
-        setTempKanban({...tempKanban,columns:[...tempKanban.columns,{
-            id: id,
-            title: `Column ${columnCount}`,
-            index: columnCount,
-            cards: []
-        }]});
+    },userValue.token,(response)=>response.json().then((columnId)=>{
+        console.log("CREATE COLUMN SUCCESS");
+        tempKanban.columns = tempKanban.columns.map((column)=>{
+            if(column.id == provColumnId){
+                column.id = columnId;
+                return column;
+            }else{
+                return column;
+            }
+        });
+        setTempKanban(tempKanban);
     }))
 
 }

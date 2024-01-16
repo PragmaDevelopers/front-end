@@ -332,7 +332,7 @@ export function OnDragOver(
                 if (active.data.current?.card.columnID === over.data.current?.card.columnID) {
                     if (isFlagSet(userValue.profileData, "MOVER_CARDS")) {
 
-                        setTempDragState(active.data.current);
+                        // setTempDragState(active.data.current);
 
                         const targetColumn = prevKanban.columns.find((column) => column?.id === active.data.current?.card.columnID);
                         if (!targetColumn) return prevKanban;

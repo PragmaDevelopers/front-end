@@ -1,5 +1,6 @@
 "use client";
 
+import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
 import { useUserContext } from "@/app/contexts/userContext";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
@@ -31,10 +32,10 @@ export default function Page() {
             </div>
             <div className="mt-4 flex flex-col items-center justify-start">
                 <div className="bg-neutral-50 rounded-lg drop-shadow-md p-4 flex flex-row justify-center items-center">
-                    <UserCircleIcon className="aspect-square w-24 mr-4" />
+                    <ProfilePicture className="aspect-square w-24 mr-4" size={512} source={userValue.profileData?.profilePicture} />
                     <div>
-                        <h1 className="text-lg font-bold text-neutral-900 mb-1">Fulano da Silva</h1>
-                        <h2 className="text-neutral-700 text-sm my-0.5">usuario@exemplo.com</h2>
+                        <h1 className="text-lg font-bold text-neutral-900 mb-1">{userValue.profileData.name}</h1>
+                        <h2 className="text-neutral-700 text-sm my-0.5">{userValue.profileData.name}</h2>
                         <Link className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5" href="/dashboard/config/user">Configurar perfil</Link>
                     </div>
                 </div>

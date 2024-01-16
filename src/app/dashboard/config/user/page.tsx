@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
     const router = useRouter();
-    const { userValue } = useUserContext();
+    const { userValue,setUserValue } = useUserContext();
     const [profilePictureSource, setProfilePictureSource] = useState<string>(userValue.profileData.profilePicture as string);
     const [showChangeWarning, setShowChangeWarning] = useState<boolean>(false);
     useEffect(() => {
@@ -82,21 +82,8 @@ export default function Page() {
         fetch(`${API_BASE_URL}/api/private/user/profile`, headers);
         setShowChangeWarning(true);
 
-        /*
-        let newUserObject: profileData = userValue.profileData;
-        newUserObject.email = subEmail;
-        newUserObject.name = subName;
-        newUserObject.nationality = subNat;
-        newUserObject.gender = subGender;
-        newUserObject.profilePicture = subPfp;
-        const newUserValue: userValueDT = {
-            token: userValue.token,
-            usersList: userValue.usersList,
-            profileData: newUserObject,
-        };
-
-        setUserValue(newUserValue);
-        */
+        userValue.profileData.profilePicture = subPfp;
+        setUserValue(userValue);
     }
 
     return (

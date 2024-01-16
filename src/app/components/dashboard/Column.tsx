@@ -104,7 +104,7 @@ export function ColumnContainer({column}:{column:Column}) {
 
     if (isDragging) {
         return (
-            <div ref={setNodeRef} style={style} className='h-full w-64 bg-neutral-300 rounded-md border-2 border-neutral-950 content-[" "]'>
+            <div ref={setNodeRef} style={style} className='h-full min-w-64 bg-neutral-300 rounded-md border-2 border-neutral-950 content-[" "]'>
             </div>
         );
     }

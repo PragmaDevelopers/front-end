@@ -8,13 +8,13 @@ import { useSortable } from '@dnd-kit/sortable';
 import { useModalContext } from "@/app/contexts/modalContext";
 import { Card } from "@/app/types/KanbanTypes";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
-import { ConfirmDeleteCard, DeleteCard } from "@/app/utils/dashboard/functions/Page/Card";
+import { ConfirmDeleteCard, DeleteCard, ShowEditCard } from "@/app/utils/dashboard/functions/Page/Card";
 
 export function CardElement({card}:{card:Card}) {
 
     const noButtonRef = useRef<any>(null);
     const { userValue } = useUserContext();
-    const { kanbanList, tempKanban,setTempKanban } = useKanbanContext();
+    const { cardManager, setTempCard, setCardManager, tempKanban,setTempKanban } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -91,32 +91,24 @@ export function CardElement({card}:{card:Card}) {
         )
     }
 
-    const handleEditCard = () => {
+    const handleShowEditCard = () => {
         console.log(tempKanban)
-        // EditCard(
-        //     setModalTitle,
-        //     setModalDescription,
-        //     setModalText,
-        //     setModalBorderColor,
-        //     setModalFocusRef,
-        //     setModalOptions,
-        //     setModalOpen,
-        //     noButtonRef,
-        //     isFlagSet,
-        //     userValue.profileData,
-        //     setTempCard,
-        //     setTempColumnID,
-        //     setEditorText,
-        //     setIsEdition,
-        //     setShowCreateCardForm,
-        //     card,
-        // );
+        ShowEditCard(
+            userValue,
+            card,
+            setCardManager,
+            setTempCard,
+            cardManager,
+            failModalOption,
+            noButtonRef,
+            modalContextProps
+        );
     }
 
     return (
         <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <div className='p-2 w-full h-full' onClick={handleEditCard}>
+            <div className='p-2 w-full h-full' onClick={handleShowEditCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
             <button className='absolute top-2 right-2' onClick={handleDeleteCard}>

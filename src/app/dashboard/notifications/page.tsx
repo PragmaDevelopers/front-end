@@ -1,5 +1,6 @@
 "use client";
 
+import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
 import { useUserContext } from "@/app/contexts/userContext";
 import { User, NotificationUser } from "@/app/types/KanbanTypes";
 import { API_BASE_URL, NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
@@ -48,13 +49,14 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
 interface NotificationElementProps {
     title: string;
     message: string;
+    profilePicture: string | null;
 }
 function NotificationElement(props: NotificationElementProps) {
-    const { title, message } = props;
+    const { title, message, profilePicture } = props;
     return (
         <Link href="#" className="w-full h-16 bg-neutral-transparent hover:bg-neutral-50/25 transition-all block overflow-x-hidden">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
-                <UserCircleIcon className="aspect-square w-12 mr-2" />
+                <ProfilePicture className="aspect-square w-12 mr-2" size={512} source={profilePicture} />
                 <div className="flex flex-col mx-2 grow w-12 overflow-hidden">
                     <h1 className="text-lg font-bold">{title}</h1>
                     <h2 className="truncate text-sm text-neutral-600">{message}</h2>
@@ -109,7 +111,7 @@ export default function Page() {
     }, [userValue]);
 
     return (
-        <main className="w-full h-full flex flex-col">
+        <main className="w-full h-full flex flex-col overflow-y-auto">
             <h1 className="font-bold text-xl mt-4 text-center">Central de notificações do sistema.</h1>
             <div className="w-full h-full flex flex-row justify-start items-start">
                 {/* FILTRAGEM DE NOTIFICAÇÕES FICA PRA DPS PQ POR ENQUANTO SÓ EXISTE NOTIFICAÇÃO DE SISTEMA */}
@@ -135,8 +137,8 @@ export default function Page() {
                 <div className="w-[75%] h-[88%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
                     {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement message={element.message} title={element.title} key={index}/>)}
                 </div> */}
-                <div className="w-full h-[88%] shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-4 mt-4 mb-8 rounded-md divide-y divide-neutral-400 overflow-auto">
-                    {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement message={element.message} title={element.title} key={index}/>)}
+                <div className="w-full shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-5 mt-4 mb-8 rounded-md divide-y divide-neutral-400">
+                    {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement message={element.message} title={element.title} profilePicture={element.user.profilePicture} key={index}/>)}
                 </div>
             </div>
         </main>

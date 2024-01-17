@@ -18,7 +18,7 @@ export default function Header(props: HeaderProps) {
     const currentPath: string = usePathname();
     if (currentPath != '/' && currentPath != '/pdf/view') {
         return (
-            <div className='w-full h-16 flex flex-row justify-between items-center p-2'>
+            <div className='w-full h-[8%] flex flex-row justify-between items-center p-2'>
                 <div className="ml-2 p-0.5 w-6 rounded-full border-[1px] border-neutral-950 aspect-square flex justify-center items-center overflow-hidden">
                     <VercelLogo className="fill-neutral-950 aspect-square w-3.5" />
                 </div>

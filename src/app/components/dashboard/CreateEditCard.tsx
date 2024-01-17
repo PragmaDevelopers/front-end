@@ -13,7 +13,7 @@ import { CommentSection } from "@/app/components/dashboard/Comment";
 import dayjs, { Dayjs } from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/pt-br';
-import { CreateCard } from "@/app/utils/dashboard/functions/Page/Card";
+import { CreateCard, EditCard } from "@/app/utils/dashboard/functions/Page/Card";
 import { ModalContextProvider, useModalContext } from "@/app/contexts/modalContext";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
@@ -60,7 +60,7 @@ function CardDateSection(props: CardDateSectionProps) {
 
     const [dateExists, setDateExists] = useState(false);
 
-    const [cardDeadline,setCardDeadline] = useState<Date>();
+    const [cardDeadline,setCardDeadline] = useState<Date | null>(null);
 
     const [toKanban,setToKanban] = useState<SystemID>("");
 
@@ -69,11 +69,11 @@ function CardDateSection(props: CardDateSectionProps) {
     const modalContextProps = useModalContext();
 
     useEffect(()=>{
-        const kanban = kanbanList.find(kanban=>kanban.columns.find(column=>column.id==card.deadline.toColumnId));
+        const kanban = kanbanList.find(kanban=>kanban.columns.find(column=>column.id==card.deadline?.toColumnId));
         if(kanban){
             setToKanban(kanban.id);
         }
-        if(card.deadline != null && card.deadline.id != "" && dayjs(card.deadline.date).isValid()){
+        if(card.deadline != null && card.deadline?.id != "" && dayjs(card.deadline?.date).isValid()){
             setDateExists(true);
         }
     },[])
@@ -172,7 +172,7 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div className="flex w-full items-center justify-between">
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Ação ao finalizar prazo:</h1>
-                        <select defaultValue={card.deadline.category} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>
+                        <select defaultValue={card.deadline?.category} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>
                             setTempCard({...tempCard,deadline:{
                                 ...tempCard.deadline,
                                 category: e.target.value            
@@ -195,7 +195,7 @@ function CardDateSection(props: CardDateSectionProps) {
                     </div>
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
-                        <select defaultValue={card.deadline.toColumnId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
+                        <select defaultValue={card.deadline?.toColumnId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
                             setTempCard({...tempCard,deadline:{
                                 ...tempCard.deadline,
                                 toColumnId: e.target.value            
@@ -888,24 +888,31 @@ const CreateEditCard = () => {
     const { tempCard, setTempCard, setTempKanban, tempColumn, tempKanban, cardManager, setCardManager } = useKanbanContext();
     const cardDescriptionRef = useRef<MDXEditorMethods>(null);
 
-    const [members, setMembers] = useState<User[]>([]);
-
-    const [selected, setSelected] = useState(members[0])
-    const [query, setQuery] = useState('')
-
     const handleCreateCardForm = (e: any) => {
         e.preventDefault();
         const description = cardDescriptionRef.current?.getMarkdown() || "";
-        setTempCard({...tempCard,description:description})
-        CreateCard(
-            userValue,
-            setTempKanban,
-            setCardManager,
-            tempColumn,
-            tempCard,
-            tempKanban,
-            cardManager
-        );
+        setTempCard({...tempCard,description:description});
+        if(cardManager.isEditElseCreate){
+            EditCard(
+                userValue,
+                setTempKanban,
+                setCardManager,
+                tempColumn,
+                tempCard,
+                tempKanban,
+                cardManager
+            );
+        }else{
+            CreateCard(
+                userValue,
+                setTempKanban,
+                setCardManager,
+                tempColumn,
+                tempCard,
+                tempKanban,
+                cardManager
+            );
+        }
     }
 
     const noButtonRef = useRef<HTMLButtonElement>(null);
@@ -935,34 +942,6 @@ const CreateEditCard = () => {
 
     return (
         <div className={(cardManager?.isShowCreateCard ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-[1] justify-center items-center bg-neutral-950/25'}>
-            {/* <div className={`${(viewAddTag || viewAddMember || viewAddField || viewMoveCard ) ? 'flex' : 'hidden'} w-full h-full bg-neutral-950/25 absolute justify-center items-center z-[99999]`}>
-                    <AddMemberForm
-                        filteredPeople={filteredPeople}
-                        handleCloseAddMember={handleCloseAddMember}
-                        selected={selected}
-                        setQuery={setQuery}
-                        setSelected={setSelected}
-                        viewAddMember={viewAddMember}
-                        query={query}
-                    />
-                    
-                    <AddCustomFieldForm 
-                        handleCreateNewCustomField={handleCreateNewCustomField}
-                        viewAddField={viewAddField}
-                    />
-                    <MoveCardForm 
-                        dashboardsArray={kanbanList}
-                        handleCloseMoveCard={handleCloseMoveCard}
-                        viewMoveCard={viewMoveCard}
-                    />
-                    <AddTagForm 
-                        color={color}
-                        handleCreateNewTag={handleCreateNewTag}
-                        setColor={setColor}
-                        viewAddTag={viewAddTag}
-                    />
-                </div> */}
-
             <div className={`${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
                 <form className='w-full h-fit' onSubmit={handleCreateCardForm}>
                     <div className="w-full h-fit flex justify-center items-center relative">
@@ -991,7 +970,6 @@ const CreateEditCard = () => {
                         failModalOption={failModalOption}
                         noButtonRef={noButtonRef}
                     />
-                    
                     <h1 className="my-2 font-semibold">Etiquetas</h1>
                     <TagsSection 
                         tagsArray={tempCard.tags} 
@@ -1018,7 +996,7 @@ const CreateEditCard = () => {
                     </div>
                     {/* <h1 className="my-2 font-semibold">Mover Card</h1>
                     <MoveCardForm /> */}
-                    <h1 className="my-2 font-semibold">Cartões Internos</h1>
+                    {/* <h1 className="my-2 font-semibold">Cartões Internos</h1> */}
                     {/* <InnerCardSection
                         innerCardsArray={tempCard.innerCards}
                         _appendToTempCardsArray={_appendToTempCardsArray}
@@ -1035,14 +1013,14 @@ const CreateEditCard = () => {
                         setTempCardsArr={setTempCardsArr}
                         tempCard={tempCard}
                     /> */}
-                    <div className="w-full -bottom-80 flex justify-center items-center">
+                    <div className="w-full mb-2 mt-4 -bottom-80 flex justify-center items-center">
                         <button 
                             className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'
                             id="outerCard" 
                             type='submit' 
                         >
                             Finalizar
-                        </button> {/* button off the natural flow */}
+                        </button>
                     </div>
                 </form>
                 <div className='w-full max-h-96'>

@@ -100,6 +100,7 @@ const CARD_ROUTE: string = `${COLUMN_ROUTE}/card`;
 const CARD_MOVE_ROUTE: string = `{${COLUMN_ROUTE}/move/card}`
 
 const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
+const CUSTOMFIELD_ROUTE: string = `${CARD_ROUTE}/customField`;
 
 const CHECKLIST_ROUTE: string = `${PRIVATE_ROUTE}/user/kanban/column/card/checkList`;
 const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checkListItem`;
@@ -306,6 +307,18 @@ export function post_card(body: POST_card, userToken: string,okCallback: (respon
     }).catch((e: any) => console.log(e));
 }
 
+type PATCH_card = {
+    title: string,
+    description: string,
+    members: SystemID[]
+};
+export function patch_card(body: PATCH_card, cardId:SystemID, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(CARD_ROUTE+"/"+cardId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type DELETE_card = undefined;
 export function delete_card(body: DELETE_card, cardId: SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
@@ -335,6 +348,19 @@ type POST_deadline = {
 export function post_deadline(body: POST_deadline, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
     fetch(DEADLINE_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_customField = {
+    cardId: SystemID,
+    name: string,
+    value: string,
+    fieldType: string
+};
+export function post_customField(body: POST_customField, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(CUSTOMFIELD_ROUTE, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

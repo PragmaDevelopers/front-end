@@ -4,6 +4,7 @@ import { ArrowRightIcon, ClockIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
 
 export default function Notification() {
     const { userValue } = useUserContext();
@@ -19,7 +20,7 @@ export default function Notification() {
                             return (
                                 <div key={notification.id} className="w-full p-2 h-16 relative flex flex-col justify-start items-start">
                                     <div className="relative w-full h-fit flex flex-row items-center justify-start">
-                                        <h1 className="font-semibold">Notificação</h1>
+                                        <h1 className="font-semibold">{NOTIFICATION_CATEGORIES_TITLE[notification.category]}</h1>
                                         <div className="flex flex-row absolute top-1 right-1 w-fit h-fit p-0.5">
                                             <h2 className="text-neutral-400 font-xs">Há {dayjs(notification.registrationDate).toNow(true)}.</h2>
                                             <ClockIcon className="stoke-neutral-200 w-4 aspect-square ml-1" />

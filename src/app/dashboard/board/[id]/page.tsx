@@ -60,7 +60,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [showCreateCardForm, setShowCreateCardForm] = useState<boolean>(false);
     const [tempCardsArr, setTempCardsArrr] = useState<Card[]>([]);
     const { userValue } = useUserContext();
-    const { kanbanList, setKanbanList, tempKanban, setTempKanban,tempColumn, setTempColumn } = useKanbanContext();
+    const { kanbanList, cardManager, tempKanban, setTempKanban,tempColumn, setTempColumn } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
@@ -158,8 +158,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
     return (
         <main className="w-full h-full overflow-x-auto overflow-y-hidden shrink-0">
-            {/* <CustomModal /> */}
-            <CreateEditCard />
+            { cardManager?.isShowCreateCard && <CreateEditCard />}
             <div className="flex justify-between items-center w-[80%] fixed">
                 <h1>{tempKanban?.title}</h1>
                 <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>

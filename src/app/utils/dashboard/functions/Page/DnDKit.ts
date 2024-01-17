@@ -397,9 +397,14 @@ export function OnDragOver(
                             cards: updatedSourceCardsList,
                         };
 
-                        const updatedColumns = prevKanban.columns.map((column: Column) =>
+                        let updatedColumns = prevKanban.columns.map((column: Column) =>
                             column?.id === active.data.current?.card.columnID ? updatedSourceColumn : column
                         );
+
+                        updatedColumns = prevKanban.columns.map((column,index)=>{
+                            column.index = index;
+                            return column;
+                        });
 
                         return {
                             ...prevKanban,

@@ -249,7 +249,7 @@ export function CommentSection(props: CommentSectionProps) {
     function processComments(comments:Comment[],asweredComment?:Comment) {
         const commentElements: JSX.Element[] = [];
         
-        comments.forEach((comment,index) => {
+        comments?.forEach((comment,index) => {
             // Processar o comentário atual
             const commentObj = (
                 <div key={index}>

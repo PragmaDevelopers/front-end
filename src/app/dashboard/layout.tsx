@@ -217,7 +217,7 @@ export default function Layout({ children }: any) {
     }
 
     return (
-        <main className="w-full h-full max-h-[90vh] flex flex-row items-start justify-between overflow-hidden">
+        <main className="w-full h-[92%] flex flex-row items-start justify-between overflow-y-hidden">
             <CustomModal description={modalDescription} focusRef={modalFocusRef} 
             isOpen={modalOpen} options={modalOptions} 
             setIsOpen={setModalOpen} text={modalText} title={modalTitle} borderColor={modalBorderColor} />
@@ -243,8 +243,8 @@ export default function Layout({ children }: any) {
                         </Link>
                     </div>
                 </details>
-                <div className="h-full flex flex-col justify-between overflow-hidden">
-                    <details className="p-2 overflow-x-hidden overflow-y-auto">
+                <div className="w-full h-full flex flex-col justify-between overflow-hidden">
+                    <details className="h-[95%] p-2 overflow-x-hidden overflow-y-auto">
                         <summary>Areas de Trabalho</summary>
                         <div className="">
                             { kanbanList?.map((kanban, index) => <BoardMenuEntry
@@ -268,7 +268,7 @@ export default function Layout({ children }: any) {
                             </form>
                         </div>
                     </details>
-                    <Link href="/dashboard/config" className="bg-neutral-50 p-2 flex flex-row items-center">
+                    <Link href="/dashboard/config" className="bg-neutral-50 h-[5%] px-2 pt-2 pb-5 flex flex-row items-center">
                         <Cog6ToothIcon className={`${IconStyles} hover:rotate-180 transition-all rotate-0`} />
                         <h1>Configurações</h1>
                     </Link>

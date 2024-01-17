@@ -8,7 +8,7 @@ const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods
     return (
         <MDXEditor
             className={"MDXEditor"}
-            markdown={props.markdown}
+            markdown={typeof props.markdown == "string" ? props.markdown : ""}
             ref={ref}
             plugins={[
                 headingsPlugin(),

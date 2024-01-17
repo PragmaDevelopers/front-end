@@ -101,9 +101,10 @@ const CARD_MOVE_ROUTE: string = `{${COLUMN_ROUTE}/move/card}`
 
 const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
 const CUSTOMFIELD_ROUTE: string = `${CARD_ROUTE}/customField`;
+const TAG_ROUTE: string = `${CARD_ROUTE}/tag`;
 
-const CHECKLIST_ROUTE: string = `${PRIVATE_ROUTE}/user/kanban/column/card/checkList`;
-const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checkListItem`;
+const CHECKLIST_ROUTE: string = `${PRIVATE_ROUTE}/user/kanban/column/card/checklist`;
+const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checklistItem`;
 
 
 /* Essa é uma função local que retorna a rota com ID de um dado elemento */
@@ -365,6 +366,18 @@ export function post_customField(body: POST_customField, userToken: string,okCal
     }).catch((e: any) => console.log(e));
 }
 
+type POST_tag = {
+    cardId: SystemID,
+    name: string,
+    color: string
+};
+export function post_tag(body: POST_tag, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(TAG_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type GET_notification = undefined;
 export function get_notifications(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
@@ -373,45 +386,25 @@ export function get_notifications(body: GET_notification, userToken: string,okCa
     }).catch((e: any) => console.log(e));
 }
 
-/* Essa função é usada em @/app/utils/dashboard/functions/Page/Card.ts */
-type POST_checklistBody = { cardId: SystemID, name: string }
-export function post_checklists(body: POST_checklistBody, userToken: string, 
-    responseCallback?: (response: Response) => void, dataCallback?: (value: string) => void
-): void {
+type POST_checklist = { 
+    cardId: SystemID, 
+    name: string 
+}
+export function post_checklist(body: POST_checklist, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
-
     fetch(CHECKLIST_ROUTE, requestObject).then((response: Response) => {
-        let _response: Response = response;
-        if (responseCallback) {
-            responseCallback(_response);
-        }
-
-        return _response.text();
-    }).then((value: string) => {
-        if (dataCallback) {
-            dataCallback(value);
-        }
+        okCallback(response);
     }).catch((e: any) => console.log(e));
 }
 
-/* Essa função é usada em @/app/utils/dashboard/functions/Page/Card.ts */
-type POST_checklistItemBody = { checklistId: SystemID, name: string }
-export function post_checklistItems(body: POST_checklistItemBody, userToken: string, 
-    responseCallback?: (response: Response) => void, dataCallback?: (value: string) => void
-): void {
+type POST_checklistItem = { 
+    checklistId: SystemID, 
+    name: string 
+}
+export function post_checklistItem(body: POST_checklistItem, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
-
     fetch(CHECKLIST_ITEM_ROUTE, requestObject).then((response: Response) => {
-        let _response: Response = response;
-        if (responseCallback) {
-            responseCallback(_response);
-        }
-
-        return _response.text();
-    }).then((value: string) => {
-        if (dataCallback) {
-            dataCallback(value);
-        }
+        okCallback(response);
     }).catch((e: any) => console.log(e));
 }
 

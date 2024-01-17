@@ -85,13 +85,14 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setTempKanban(kanban);
             get_columns(undefined,params.id,userValue.token,(response=>response.json().then((dbKanban:{members:User[],columns:Column[]})=>{
                 setTempKanban({...kanban,columns:dbKanban.columns,members:dbKanban.members});
+                console.log(dbKanban)
             })));
         }
         const kanbanIndex = kanbanList.findIndex(kanban=>kanban.id==params.id);
         if(kanbanIndex != -1){
             getKanbanValues(kanbanIndex);
         }
-    }, [tempKanban]);
+    }, []);
 
     //useEffect(() => {
     //    fetch(`http://localhost:8080/api/dashboard/column/getall/${params.id}`).then(response => response.json()).then(data => {

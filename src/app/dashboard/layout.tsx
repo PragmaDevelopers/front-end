@@ -155,12 +155,12 @@ export default function Layout({ children }: any) {
 
         getKanbanList();
 
-        const intervalId = setInterval(()=>{
+        // const intervalId = setInterval(()=>{
             // console.log("Tempo real: Lista de Kanban")
             // getKanbanList();
-        },5000)
+        // },5000)
 
-        return () => clearInterval(intervalId);
+        // return () => clearInterval(intervalId);
     }, []);
 
     const addDashBoard = (event: any) => {

@@ -1,8 +1,8 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
-import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column } from "@/app/types/KanbanTypes";
+import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { delete_card, patch_card, post_card, post_checklist, post_checklistItem, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
+import { delete_card, patch_card, post_card, post_checklist, post_checklistItem, post_comment, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { generateRandomString } from "@/app/utils/generators";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -47,6 +47,11 @@ function updateCardId(kanban:Kanban,columnId:SystemID,cardId:SystemID,type?:stri
                                 return checklist;
                             });
                             break;
+                        case "comment":
+                            if(valueIndex != undefined){
+                                card.comments[valueIndex] = value; 
+                            }
+                            break;
                     }
                     return card;
                 }else{
@@ -75,6 +80,18 @@ function addCardInColumn(kanban:Kanban,columnId:SystemID,newCard:Card){
     });
     kanban.columns = newColumns;
     return kanban;
+}
+
+function processComments(comments:Comment[],
+    userValue:userValueDT,
+    tempKanban:Kanban,
+    tempCard:Card,
+    columnId:SystemID,
+    cardId:SystemID,
+    setTempKanban:(newValue:Kanban)=>void,
+    asweredCommentId?:SystemID
+){
+   
 }
 
 export function ShowCreateCard(
@@ -146,7 +163,7 @@ export function CreateCard(
         const provCardId = "prov"+tempColumn.cards.length;
         tempCard.id = provCardId;
         const newKanban = addCardInColumn(tempKanban,columnId,tempCard);
-        setTempKanban(newKanban);
+        setTempKanban({...newKanban});
 
         setCardManager({...cardManager,isShowCreateCard:false})
 
@@ -154,14 +171,14 @@ export function CreateCard(
             if(response.ok){
                 console.log("CREATE CARD SUCESSS");
                 const newKanbanWithCardId = updateCardId(tempKanban,columnId,provCardId,"cardId",cardId);
-                setTempKanban(newKanbanWithCardId);
+                setTempKanban({...newKanbanWithCardId});
 
                 const date = tempCard.deadline.date;
 
                 if(date){
                     const deadline:any = {
                         cardId: cardId,
-                        date: date.toISOString()
+                        date: date
                     }
                     if(tempCard.deadline.category != "" && tempCard.deadline.toColumnId != ""){
                         deadline.category = tempCard.deadline.category;
@@ -177,7 +194,7 @@ export function CreateCard(
                                 overdue: false,
                                 toColumnId: tempCard.deadline.toColumnId
                             });
-                            setTempKanban(newKanbanWithDeadline);
+                            setTempKanban({...newKanbanWithDeadline});
                         }
                     }));
                 }
@@ -193,13 +210,13 @@ export function CreateCard(
                         
                         const provCustomFieldId = "prov"+index;
                         const newKanbanWithoutCustomFieldId = updateCardId(tempKanban,columnId,cardId,"customField",{...bodyCustomField,id:provCustomFieldId},index);
-                        setTempKanban(newKanbanWithoutCustomFieldId);
+                        setTempKanban({...newKanbanWithoutCustomFieldId});
 
                         post_customField({...bodyCustomField,cardId:tempCard.id},userValue.token,(response)=>response.json().then((customFieldId)=>{
                             if(response.ok){
                                 console.log("CREATE CUSTOMFIELD SUCESSS");
                                 const newKanbanWithCustomFieldId = updateCardId(tempKanban,columnId,cardId,"customField",{...bodyCustomField,id:customFieldId},index);
-                                setTempKanban(newKanbanWithCustomFieldId);
+                                setTempKanban({...newKanbanWithCustomFieldId});
                             }
                         }));
                     });
@@ -215,13 +232,13 @@ export function CreateCard(
 
                         const provTagId = "prov"+index;
                         const newKanbanWithoutTagId = updateCardId(tempKanban,columnId,cardId,"tag",{...bodyTag,id:provTagId},index);
-                        setTempKanban(newKanbanWithoutTagId);
+                        setTempKanban({...newKanbanWithoutTagId});
 
                         post_tag({...bodyTag,cardId:tempCard.id},userValue.token,(response)=>response.json().then((tagId)=>{
                             if(response.ok){
                                 console.log("CREATE TAG SUCESSS");
                                 const newKanbanWithTagId = updateCardId(tempKanban,columnId,cardId,"tag",{...bodyTag,id:tagId},index);
-                                setTempKanban(newKanbanWithTagId);
+                                setTempKanban({...newKanbanWithTagId});
                             }
                         }));
                     });
@@ -241,7 +258,7 @@ export function CreateCard(
                             id:provChecklistId
                         },checklistindex);
 
-                        setTempKanban(newKanbanWithoutChecklistId);
+                        setTempKanban({...newKanbanWithoutChecklistId});
 
                         post_checklist({...bodyChecklist,cardId:tempCard.id},userValue.token,(checklistResponse)=>checklistResponse.json().then((checklistId)=>{
                             if(checklistResponse.ok){
@@ -251,7 +268,7 @@ export function CreateCard(
                                     items:[...checklist.items],
                                     id:checklistId
                                 },checklistindex);
-                                setTempKanban(newKanbanWithChecklistId);
+                                setTempKanban({...newKanbanWithChecklistId});
 
                                 const items = checklist.items;
                                 console.log(checklist)
@@ -262,13 +279,13 @@ export function CreateCard(
                                         }
                                         const provItemId = "prov"+itemIndex;
                                         const newKanbanWithoutItemId = updateCardId(tempKanban,columnId,cardId,"checklistItem",{...bodyItem,id:provItemId},itemIndex,checklistId);
-                                        setTempKanban(newKanbanWithoutItemId);
+                                        setTempKanban({...newKanbanWithoutItemId});
 
                                         post_checklistItem({...bodyItem,checklistId:checklistId},userValue.token,(itemResponse)=>itemResponse.json().then((itemId)=>{
                                             if(itemResponse.ok){
                                                 console.log("CREATE CHECKLIST ITEM SUCCESS");
                                                 const newKanbanWithItemId = updateCardId(tempKanban,columnId,cardId,"checklistItem",{...bodyItem,id:itemId},itemIndex,checklistId);
-                                                setTempKanban(newKanbanWithItemId);
+                                                setTempKanban({...newKanbanWithItemId});
                                             }
                                         }));
                                     });
@@ -280,7 +297,41 @@ export function CreateCard(
 
                 const comments = tempCard.comments;
                 if(comments.length > 0){
-                    
+                    comments.map((comment,commentIndex)=>{
+                        const bodyComment = {
+                            content: comment.content
+                        }
+                
+                        const provCommentId = "prov"+commentIndex;
+                        const newKanbanWithoutCommentId = updateCardId(tempKanban,columnId,cardId,"comment",{
+                            ...bodyComment,
+                            edited: comment.edited,
+                            registrationDate: comment.registrationDate,
+                            user: comment.user,
+                            id:provCommentId,
+                            answers: []
+                        },commentIndex);
+                        setTempKanban({...newKanbanWithoutCommentId});
+                
+                        post_comment({...bodyComment,cardId:tempCard.id},userValue.token,(response)=>response.json().then((commentId)=>{
+                            if(response.ok){
+                                console.log("CREATE COMMENT SUCCESS");
+                                const newKanbanWithCommentId = updateCardId(tempKanban,columnId,cardId,"comment",{
+                                    ...bodyComment,
+                                    edited: comment.edited,
+                                    registrationDate: comment.registrationDate,
+                                    user: comment.user,
+                                    id:commentId,
+                                    answers: []
+                                },commentIndex);
+                                setTempKanban({...newKanbanWithCommentId});
+                                if(comment.answers && comment.answers.length > 0){
+                                    processComments(comment.answers,userValue,tempKanban,tempCard,columnId,tempKanban.id,setTempKanban,commentId);
+                                }
+                            }
+                        }));
+                        
+                    });
                 }
             }
         }));
@@ -375,7 +426,6 @@ export function EditCard(
     const title = tempCard.title;
     const description = tempCard.description;
     const members = tempCard.members?.map(member=>member.id) || [];
-
 
     const newKanbanWithNewCard = updateCardId(tempKanban,tempCard.columnID,cardId,"card",{title,description,members});
     setTempKanban(newKanbanWithNewCard);

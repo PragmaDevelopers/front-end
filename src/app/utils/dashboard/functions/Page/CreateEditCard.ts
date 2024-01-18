@@ -315,7 +315,7 @@ export function CreateComment(
         content: content,
         edited: false,
         id: "prov"+tempCard.comments.length ,
-        registrationDate: new Date(),
+        registrationDate: "",
         user: userData.profileData,
         answers: []
     }]});

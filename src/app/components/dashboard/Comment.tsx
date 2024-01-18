@@ -261,12 +261,12 @@ export function CommentSection(props: CommentSectionProps) {
                                 <h1 className="ml-2 flex font-medium text-base">{comment.user.name} { asweredComment && " | respondeu #"+ asweredComment.id}</h1>
                             </div>
                             <div className="flex justify-center items-center">
-                                <h2 className="text-sm ml-1 text-neutral-500">{comment.registrationDate.toDateString()}</h2>
-                                <div className="flex justify-center items-center mx-1">
+                                <h2 className="text-sm ml-1 text-neutral-500">{dayjs(comment.registrationDate).format('DD [de] MMMM [de] YYYY')}</h2>
+                                <div className={`flex justify-center items-center mx-1`}>
                                     {/* <button className="mx-0.5" type="submit" onClick={() => {}} value="commentEdit" id="commentEdit" name="commentEdit">
                                         <PencilSquareIcon className="aspect-square w-5 fill-neutral-500" />
                                     </button> */}
-                                    <button className="mx-0.5" type="button" onClick={() => {
+                                    <button className={`${comment.id == "" || comment.id.toString().includes("prov") ? "pointer-events-none opacity-20" : ""} mx-0.5`} type="button" onClick={() => {
                                         handleShowCreateAnsweredComment();
                                         setAnswerComment({parentComment:comment});
                                     }}>
@@ -312,7 +312,7 @@ export function CommentSection(props: CommentSectionProps) {
                                     edited: false,
                                     id: "prov"+tempCard.comments.length,
                                     user: userValue.profileData,
-                                    registrationDate: new Date()
+                                    registrationDate: null
                                 }})}} placeholder="Digite sua resposta" type="text" />
                                 <div className="flex justify-between">
                                     <button type="button" onClick={()=>handleAddCommentToAnswers()}

@@ -4,6 +4,26 @@
 
 /* flex flex-col my-2 border-[1px] rounded-md border-neutral-200 p-2 outline-none shadow-inner bg-neutral-100 */
 
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.loading-element {
+  animation: pulse 1.5s infinite; /* Ajuste a duração conforme necessário */
+  pointer-events: none;
+}
+
 .prose h1 { @apply font-black text-3xl }
 .prose h2 { @apply font-black text-2xl }
 .prose h3 { @apply font-black text-xl }

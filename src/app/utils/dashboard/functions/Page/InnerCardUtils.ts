@@ -98,7 +98,7 @@ export function appendTempCardToArray (
         dropdowns: [],
         deadline: {
             category: "",
-            date: new Date(),
+            date: "",
             id: "",
             overdue: false,
             toColumnId: ""

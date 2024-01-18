@@ -106,7 +106,7 @@ export function CardElement({card}:{card:Card}) {
     }
 
     return (
-        <div className='my-2 bg-neutral-50 drop-shadow rounded-md relative'
+        <div className={`${card.id == "" || card.id.toString().includes("prov") ? "loading-element" : ""} my-2 bg-neutral-50 drop-shadow rounded-md relative`}
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <div className='p-2 w-full h-full' onClick={handleShowEditCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>

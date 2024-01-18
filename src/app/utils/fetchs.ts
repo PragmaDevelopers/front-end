@@ -102,9 +102,10 @@ const CARD_MOVE_ROUTE: string = `{${COLUMN_ROUTE}/move/card}`
 const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
 const CUSTOMFIELD_ROUTE: string = `${CARD_ROUTE}/customField`;
 const TAG_ROUTE: string = `${CARD_ROUTE}/tag`;
-
-const CHECKLIST_ROUTE: string = `${PRIVATE_ROUTE}/user/kanban/column/card/checklist`;
+const COMMENT_ROUTE: string = `${CARD_ROUTE}/comment`;
+const CHECKLIST_ROUTE: string = `${CARD_ROUTE}/checklist`;
 const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checklistItem`;
+
 
 
 /* Essa é uma função local que retorna a rota com ID de um dado elemento */
@@ -408,25 +409,14 @@ export function post_checklistItem(body: POST_checklistItem, userToken: string,o
     }).catch((e: any) => console.log(e));
 }
 
-
-/* Essa função é usada em @/app/utils/dashboard/functions/Page/Card.ts */
-type PATCH_checklistItemBody = { name: string, completed: boolean }
-export function patch_checklistItems(body: PATCH_checklistItemBody, userToken: string, 
-    responseCallback?: (response: Response) => void, dataCallback?: (value: string) => void
-): void {
-    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
-
-    fetch(CHECKLIST_ITEM_ROUTE, requestObject).then((response: Response) => {
-        let _response: Response = response;
-        if (responseCallback) {
-            responseCallback(_response);
-        }
-
-        return _response.text();
-    }).then((value: string) => {
-        if (dataCallback) {
-            dataCallback(value);
-        }
+type POST_comment = { 
+    cardId: SystemID, 
+    content: string 
+}
+export function post_comment(body: POST_comment, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(COMMENT_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
     }).catch((e: any) => console.log(e));
 }
 

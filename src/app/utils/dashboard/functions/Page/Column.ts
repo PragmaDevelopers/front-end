@@ -30,31 +30,32 @@ export async function CreateNewColumn(
     const columnCount = tempKanban.columns != undefined ? tempKanban.columns.length : 0;
     const provColumnId = "prov"+columnCount;
 
-    tempKanban.columns.push({
+    const newColumnWithoutId = [...tempKanban.columns,{
         id: provColumnId,
         title: `Column ${columnCount}`,
         index: columnCount,
         cards: []
-    });
+    }];
 
-    setTempKanban(tempKanban);
+    setTempKanban({...tempKanban,columns:newColumnWithoutId});
 
     post_column({
         kanbanId: tempKanban.id,
         title: `Column ${columnCount}`
     },userValue.token,(response)=>response.json().then((columnId)=>{
-        console.log("CREATE COLUMN SUCCESS");
-        tempKanban.columns = tempKanban.columns.map((column)=>{
-            if(column.id == provColumnId){
-                column.id = columnId;
-                return column;
-            }else{
-                return column;
-            }
-        });
-        setTempKanban(tempKanban);
+        if(response.ok){
+            console.log("CREATE COLUMN SUCCESS");
+            const newColumnWithId = newColumnWithoutId.map((column)=>{
+                if(column.id == provColumnId){
+                    column.id = columnId;
+                    return column;
+                }else{
+                    return column;
+                }
+            });
+            setTempKanban({...tempKanban,columns:newColumnWithId});
+        }
     }))
-
 }
 
 export function ConfirmRemoveColumn(

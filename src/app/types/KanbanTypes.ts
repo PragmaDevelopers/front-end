@@ -51,7 +51,7 @@ export type Card = {
     dropdowns: Dropdown[];
     deadline: {
         id: SystemID,
-        date: Date | null,
+        date: string | null,
         overdue: boolean,
         category: string,
         toColumnId: SystemID
@@ -80,7 +80,7 @@ export type Comment = {
     id: SystemID;
     answers?: Comment[];
     edited: boolean;
-    registrationDate: Date;
+    registrationDate: string | null;
 }
 
 export type User = {

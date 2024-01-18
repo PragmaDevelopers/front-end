@@ -22,14 +22,6 @@ import { ConfirmDeleteChecklist, ConfirmDeleteChecklistItem, ConfirmDeleteCustom
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-function ModalCard({children}:{children:React.ReactNode}){
-    return (
-        <div className='absolute top-0 left-0 w-full h-full z-[99999] flex justify-center items-center bg-neutral-950/25'>
-            {children}
-        </div>
-    )
-}
-
 interface CardTitleProps { title: string; }
 function CardTitle(props: CardTitleProps) {
     const {title} = props;
@@ -60,7 +52,7 @@ function CardDateSection(props: CardDateSectionProps) {
 
     const [dateExists, setDateExists] = useState(false);
 
-    const [cardDeadline,setCardDeadline] = useState<Date | null>(null);
+    const [cardDeadline,setCardDeadline] = useState<string | null>(null);
 
     const [toKanban,setToKanban] = useState<SystemID>("");
 
@@ -136,14 +128,14 @@ function CardDateSection(props: CardDateSectionProps) {
         <div>
             {
                 cardManager.isShowCreateDeadline && (
-                    <ModalCard>
+                    <div className='absolute top-0 left-0 w-full h-full z-[99999] flex justify-center items-center bg-neutral-950/25'>
                         <div className='flex bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'>
                             <Calendar defaultValue={cardDeadline} onChange={(date)=>{
                                 setTempCard({...tempCard,deadline:{
                                     ...tempCard.deadline,
-                                    date: date as Date
+                                    date: date?.toString() || null
                                 }})
-                                setCardDeadline(date as Date);
+                                setCardDeadline(date?.toString() || null);
                             }} />
                             <div className="flex justify-between w-full">
                                 <button type='button' onClick={()=>{
@@ -155,7 +147,7 @@ function CardDateSection(props: CardDateSectionProps) {
                                 }} className='bg-neutral-50 p-2 drop-shadow rounded-md my-2'>Voltar</button>
                             </div>
                         </div>
-                    </ModalCard>
+                    </div>
                 )
             }
             <button type="button" className={`${dateExists ? 'hidden' : 'flex'}`} onClick={handleShowCreateDeadline}>

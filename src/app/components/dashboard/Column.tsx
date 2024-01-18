@@ -137,7 +137,7 @@ export function ColumnContainer({column}:{column:Column}) {
     }
 
     return (
-        <div className='relative min-w-64 w-64 h-full p-1'
+        <div className={`${column.id == "" || column.id.toString().includes("prov") ? "loading-element" : ""} relative min-w-64 w-64 h-full p-1`}
             ref={setNodeRef} style={style} {...attributes} {...listeners} >
             <div className='w-full bg-neutral-50 rounded-md drop-shadow p-2 mb-4 flex flex-row justify-between items-center'>
                 <div
@@ -172,7 +172,7 @@ export function ColumnContainer({column}:{column:Column}) {
                 </SortableContext>
             </div>
             <button onClick={handleShowCreateCard} className='relative rounded-md drop-shadow bg-neutral-50 p-2 flex w-full items-center justify-center'>
-                <PlusCircleIcon className='w-8 aspect-square absolute top-1 left-2' />
+                <PlusCircleIcon className='w-6 aspect-square absolute top-1 left-2' />
                 <h1 className='w-full text-center'>Add Card</h1>
             </button>
         </div>

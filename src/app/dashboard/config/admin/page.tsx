@@ -3,7 +3,7 @@ import SwitchButton from "@/app/components/ui/SwitchButton";
 import { useUserContext } from "@/app/contexts/userContext";
 import { User, userValueDT } from "@/app/types/KanbanTypes";
 import { SYSTEM_PERMISSIONS, SYSTEM_PERMISSIONS_BOOLEAN } from "@/app/utils/variables";
-import { Combobox, Transition } from "@headlessui/react";
+import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
@@ -127,10 +127,11 @@ export default function Page() {
         <div className="w-[75%] flex flex-row justify-center items-center">
           <h1 className="mr-2">Editando permissões para o usuário: </h1>
           <div className="w-96 ml-2">
-            <Combobox value={selected} onChange={handleSetSelect}>
+            {/* <Combobox value={selected} onChange={handleSetSelect}>
               <div className="relative mt-1">
+                
               </div>
-            </Combobox>
+            </Combobox> */}
           </div>
         </div>
       </div>

@@ -296,6 +296,14 @@ export function move_column(body: MOVE_column, userToken: string,okCallback: (re
     }).catch((e: any) => console.log(e));
 }
 
+type GET_card_by_id = undefined;
+export function get_card_by_id(body: GET_card_by_id, cardId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(CARD_ROUTE+"/"+cardId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type POST_card = {
     columnId: SystemID,
     title: string,
@@ -383,6 +391,13 @@ type GET_notification = undefined;
 export function get_notifications(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
     fetch(USER_ROUTE+"/notifications", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+export function get_notifications_with_limit(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(USER_ROUTE+"/notifications?isLimit=true", requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

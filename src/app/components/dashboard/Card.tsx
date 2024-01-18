@@ -9,12 +9,13 @@ import { useModalContext } from "@/app/contexts/modalContext";
 import { Card } from "@/app/types/KanbanTypes";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { ConfirmDeleteCard, DeleteCard, ShowEditCard } from "@/app/utils/dashboard/functions/Page/Card";
+import { System } from "@mdxeditor/editor";
 
 export function CardElement({card}:{card:Card}) {
 
     const noButtonRef = useRef<any>(null);
     const { userValue } = useUserContext();
-    const { cardManager, setTempCard, setCardManager, tempKanban,setTempKanban } = useKanbanContext();
+    const { cardManager, setTempCard, setCardManager, tempCard,tempKanban,setTempKanban } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -92,7 +93,6 @@ export function CardElement({card}:{card:Card}) {
     }
 
     const handleShowEditCard = () => {
-        console.log(tempKanban)
         ShowEditCard(
             userValue,
             card,

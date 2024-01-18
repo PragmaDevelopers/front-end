@@ -934,7 +934,10 @@ const CreateEditCard = () => {
 
     return (
         <div className={(cardManager?.isShowCreateCard ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-[1] justify-center items-center bg-neutral-950/25'}>
-            <div className={`${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
+            <div className={`
+            ${cardManager.isEditElseCreate && (tempCard.id == "" || tempCard.id.toString().includes("prov")) ? "loading-element" : ""}
+            ${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} 
+            overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
                 <form className='w-full h-fit' onSubmit={handleCreateCardForm}>
                     <div className="w-full h-fit flex justify-center items-center relative">
                         <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>

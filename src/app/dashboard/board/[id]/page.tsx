@@ -83,17 +83,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         function getKanbanValues(kanbanIndex:number){
             const kanban = kanbanList[kanbanIndex];
             setTempKanban(kanban);
-            get_columns(undefined,params.id,userValue.token,(response=>response.json().then((dbKanban:{members:User[],columns:Column[]})=>{
-                setTempKanban({...kanban,columns:dbKanban.columns,members:dbKanban.members});
-                console.log(dbKanban)
-                if(tempCard.id != "" && !tempCard.id.toString().includes("prov") && cardManager.isEditElseCreate == true){
-                    dbKanban.columns.forEach((column)=>{
-                        const card = column.cards.find(card=>card.id == tempCard.id);
-                        if(card){
-                            setTempCard(card);
-                        }
-                    });
-                }
+            get_kanban_members(undefined,params.id,userValue.token,(response=>response.json().then((members:User[])=>{
+                setTempKanban({...kanban,members:members});
             })));
         }
         const kanbanIndex = kanbanList.findIndex(kanban=>kanban.id==params.id);

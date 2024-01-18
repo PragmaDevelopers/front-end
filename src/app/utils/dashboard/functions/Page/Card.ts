@@ -2,7 +2,7 @@ import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { delete_card, patch_card, post_card, post_checklist, post_checklistItem, post_comment, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
+import { delete_card, get_card_by_id, patch_card, post_card, post_checklist, post_checklistItem, post_comment, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { generateRandomString } from "@/app/utils/generators";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -386,7 +386,7 @@ export function DeleteCard(
 }
 
 export function ShowEditCard(
-    userData: userValueDT,
+    userValue: userValueDT,
     card: Card,
     setCardManager: (newValue: CardManager) => void,
     setTempCard: (newValue: Card) => void,
@@ -395,7 +395,7 @@ export function ShowEditCard(
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
 ){
-    if (!isFlagSet(userData.profileData, "EDITAR_CARDS")) {
+    if (!isFlagSet(userValue.profileData, "EDITAR_CARDS")) {
         modalContextProps.setModalTitle("Ação Negada.");
         modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
         modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
@@ -406,7 +406,33 @@ export function ShowEditCard(
         return;
     }
 
-    setTempCard(card)
+    setTempCard({
+        id: "",
+        columnID: "",
+        kanbanID: "",
+        title: "",
+        index: 0,
+        description: "",
+        checklists: [],
+        tags: [],
+        members: [],
+        comments: [],
+        dropdowns: [],
+        deadline: {
+            id: "",
+            category: "",
+            date: null,
+            overdue: false,
+            toColumnId: ""
+        },
+        customFields: [],
+        innerCards: []
+    })
+
+    get_card_by_id(undefined,card.id,userValue.token,(response)=>response.json().then((card:Card)=>{
+        setTempCard(card);
+        console.log("FINDING CARD");
+    }));
 
     setCardManager({...cardManager,isEditElseCreate:true,isShowCreateCard:true})
 

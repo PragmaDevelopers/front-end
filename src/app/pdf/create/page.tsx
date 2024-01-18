@@ -240,7 +240,7 @@ function EditPdf() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
+    <div className="mx-auto h-full overflow-y-auto max-w-5xl">
       <div className="flex justify-between items-center">
         <div className="flex gap-3 pb-3">
           <select defaultValue="" className="bg-slate-400 p-2 rounded-md me-2" onChange={(e) => setVariable(e.target.value)}>

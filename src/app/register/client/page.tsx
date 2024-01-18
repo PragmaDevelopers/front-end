@@ -125,7 +125,7 @@ export default function SignUpPageB() {
 
     return (
         <div className="w-full h-full overflow-auto flex justify-center items-start">
-            <div className="px-2 w-full max-w-4xl my-3">
+            <div className="px-2 w-full h-full max-w-4xl my-3">
                 <button className="bg-gray-200 p-2 mb-4 border-b-2 me-3 border-gray-400" onClick={() => {
                     inputCreateModal ? setInputCreateModal(false) : setInputCreateModal(true);
                     setInputRemoveModal(false);
@@ -161,7 +161,7 @@ export default function SignUpPageB() {
                         />
                     }
                 </div>
-                <form onSubmit={(e:any)=>{
+                <form className="h-full" onSubmit={(e:any)=>{
                     e.preventDefault();
                     let clientSignUp:any = {};
                     for(let i = 0;i < e.target.length;i++){
@@ -303,7 +303,7 @@ export default function SignUpPageB() {
                             <div className="bg-gray-200 p-5 border-b-2 border-gray-400 h-[100%]"></div>
                         )
                     }
-                    <button className="bg-gray-200 p-2 mt-4 border-b-2 me-3 border-gray-400" type="submit">Gerar Contrato/Criar PDF</button>
+                    <button className="bg-gray-200 p-2 my-4 border-b-2 me-3 border-gray-400" type="submit">Gerar Contrato/Criar PDF</button>
                 </form>
             </div>
         </div>

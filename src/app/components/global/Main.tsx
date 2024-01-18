@@ -27,7 +27,7 @@ export default function Main({ children }: any) {
                         <div className={(showNotification ? "block" : "hidden") + " w-full h-full bg-transparent z-10 absolute top-[4.5rem] left-0"}>
                             <Notification />
                         </div>
-                        <div className='w-full h-full'>
+                        <div className='w-full h-[92%]'>
                             {children}
                         </div>
                     </div>

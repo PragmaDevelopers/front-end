@@ -217,7 +217,7 @@ export default function Layout({ children }: any) {
     }
 
     return (
-        <main className="w-full h-[92%] flex flex-row items-start justify-between overflow-y-hidden">
+        <main className="w-full h-full flex flex-row items-start justify-between overflow-y-hidden">
             <CustomModal description={modalDescription} focusRef={modalFocusRef} 
             isOpen={modalOpen} options={modalOptions} 
             setIsOpen={setModalOpen} text={modalText} title={modalTitle} borderColor={modalBorderColor} />

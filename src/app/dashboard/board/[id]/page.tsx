@@ -173,7 +173,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     return (
         <main className={`${generalLoading ? "loading-element" : ""} w-full h-full overflow-x-auto overflow-y-hidden shrink-0`}>
             { cardManager?.isShowCreateCard && <CreateEditCard />}
-            <div className="flex justify-between items-center w-[80%] fixed">
+            <div className="flex justify-between items-center w-[80%] h-[4%] fixed">
                 <h1>{tempKanban?.title}</h1>
                 <div className="flex items-center gap-3">
                     <button onClick={handleGetKanban} type='button'><CircleStackIcon className="aspect-square w-8" /></button>
@@ -181,7 +181,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 </div>
             </div>
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
-                <div className="flex flex-row justify-start items-start gap-x-2 w-full h-full mt-9 shrink-0">
+                <div className="flex flex-row justify-start items-start gap-x-2 w-full h-[92%] mt-[4%] shrink-0">
                     <SortableContext items={columnsId}>
                         {tempKanban?.columns.sort((a,b)=>a.index-b.index).map((column) => {
                             return <ColumnContainer

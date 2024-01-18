@@ -142,6 +142,7 @@ export default function Page() {
                     newUserValue.userList = userList;
                     setUserValue(newUserValue);
                     getNotificationUser();
+                    router.push("/dashboard");
                 }));
             }
 
@@ -150,7 +151,6 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.notifications = dbNotifications;
                     setUserValue(newUserValue);
-                    router.push("/dashboard");
                 }));
             }
 

@@ -760,7 +760,7 @@ function MembersSection(props: MembersSectionProps) {
                 {membersList?.map((member: User, index: number) => {
                     return (
                         <div className="flex flex-col items-center bg-neutral-50 p-2 drop-shadow-md rounded-md" key={index}>
-                            <button onClick={()=>{
+                            <button type="button" onClick={()=>{
                                 membersList.splice(index,1);
                                 setTempCard(tempCard);
                             }} className="text-end w-full">

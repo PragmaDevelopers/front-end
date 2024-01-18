@@ -5,11 +5,21 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
+import { get_notifications, get_notifications_with_limit } from "@/app/utils/fetchs";
+import { NotificationUser } from "@/app/types/KanbanTypes";
 
-export default function Notification() {
-    const { userValue } = useUserContext();
-    dayjs.locale('pt-br');
-    dayjs.extend(relativeTime);
+dayjs.locale('pt-br');
+dayjs.extend(relativeTime);
+
+export default function Notification({isShow}:{isShow:boolean}) {
+    const { userValue,setUserValue } = useUserContext();
+    useEffect(()=>{
+        get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
+            const newUserValue = userValue;
+            newUserValue.notifications = dbNotifications;
+            setUserValue(newUserValue);
+        }));
+    },[isShow])
     return (
         <div className="bg-transparent w-full h-full relative">
             <div className="bg-neutral-50 drop-shadow-lg rounded-md w-96 m-4 absolute top-0 right-4 p-2">

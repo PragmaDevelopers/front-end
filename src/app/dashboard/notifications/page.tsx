@@ -3,8 +3,9 @@
 import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
 import { useUserContext } from "@/app/contexts/userContext";
 import { User, NotificationUser } from "@/app/types/KanbanTypes";
+import { get_notifications } from "@/app/utils/fetchs";
 import { API_BASE_URL, NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
-import { ArrowTopRightOnSquareIcon, TagIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowTopRightOnSquareIcon, CircleStackIcon, TagIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -25,8 +26,6 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
         })[0];
 
         let message: string = notification.message;
-        console.log(NOTIFICATION_CATEGORIES_TITLE);
-        console.log(NOTIFICATION_CATEGORIES_TITLE["CARDTAG_UPDATE"]);
         let title: string = NOTIFICATION_CATEGORIES_TITLE[notification.category];
         let category: string = notification.category;
         let viewed: boolean = notification.viewed;
@@ -103,16 +102,28 @@ function filterNotifications(category: string, notificationsArray: parsedNotific
 export default function Page() {
     const [notificationsArray, setNotificationsArray] = useState<Notification[]>([]);
     const [parsedNotifications, setParsedNotifications] = useState<parsedNotification[]>([]);
-    const [cachedNotifications, setCachedNotifications] = useState<parsedNotification[] | Notification[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { userValue } = useUserContext();
     useEffect(() => {
             let pNot: parsedNotification[] = parseRawNotificationsArray(userValue.notifications, userValue.userList);
             setParsedNotifications(pNot);
     }, [userValue]);
 
+    function handleRefleshNotification(){
+        setIsLoading(true);
+        get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
+            let pNot: parsedNotification[] = parseRawNotificationsArray(dbNotifications, userValue.userList);
+            setParsedNotifications(pNot);
+            setIsLoading(false);
+        }));
+    }
+
     return (
-        <main className="w-full h-full flex flex-col overflow-y-auto">
+        <main className={`${isLoading ? "loading-element" : ""} w-full h-full flex flex-col overflow-y-auto`}>
             <h1 className="font-bold text-xl mt-4 text-center">Central de notificações do sistema.</h1>
+            <div className="w-full text-end">
+                <button onClick={handleRefleshNotification} type='button'><CircleStackIcon className="aspect-square w-8" /></button>
+            </div>
             <div className="w-full h-full flex flex-row justify-start items-start">
                 {/* FILTRAGEM DE NOTIFICAÇÕES FICA PRA DPS PQ POR ENQUANTO SÓ EXISTE NOTIFICAÇÃO DE SISTEMA */}
                 {/* <div className="h-[88%] ml-4 mr-4 mt-4 mb-8 shadow-inner border-[1px] border-neutral-300 bg-neutral-200 rounded-md w-[20%]">

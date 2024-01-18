@@ -351,13 +351,25 @@ export function move_card(body: MOVE_card, userToken: string,okCallback: (respon
 
 type POST_deadline = {
     cardId: SystemID,
-    date: Date,
+    date: string,
     category?: string,
     toColumnId?: SystemID
 };
 export function post_deadline(body: POST_deadline, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
     fetch(DEADLINE_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type PATCH_deadline = {
+    date: Date,
+    category?: string,
+    toColumnId?: SystemID
+};
+export function patch_deadline(body: PATCH_deadline, deadlineId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(DEADLINE_ROUTE+"/"+deadlineId, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

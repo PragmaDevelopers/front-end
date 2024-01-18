@@ -16,6 +16,7 @@ export default function Main({ children }: any) {
 
     const handleShowNotifications = () => {
         setShowNotifications(!showNotification);
+       
     }
 
     return (
@@ -25,7 +26,7 @@ export default function Main({ children }: any) {
                     <div className="w-full h-full relative">
                         <Header showNotifications={handleShowNotifications} />
                         <div className={(showNotification ? "block" : "hidden") + " w-full h-full bg-transparent z-10 absolute top-[4.5rem] left-0"}>
-                            <Notification />
+                            <Notification isShow={showNotification} />
                         </div>
                         <div className='w-full h-[92%]'>
                             {children}

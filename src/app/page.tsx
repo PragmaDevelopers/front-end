@@ -3,9 +3,8 @@ import { ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/2
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
-import { API_BASE_URL } from "./utils/variables";
 import { NotificationUser, User, userValueDT } from "./types/KanbanTypes";
-import { post_login, get_profile, get_user, post_signup, get_notifications } from "./utils/fetchs";
+import { post_login, get_profile, get_user, post_signup, get_notifications, get_notifications_with_limit } from "./utils/fetchs";
 
 interface InfoScreenProps {
     isFailLogin: boolean,
@@ -143,15 +142,15 @@ export default function Page() {
                     newUserValue.userList = userList;
                     setUserValue(newUserValue);
                     getNotificationUser();
-                    router.push("/dashboard");
                 }));
             }
 
             const getNotificationUser = () => {
-                get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
+                get_notifications_with_limit(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
                     const newUserValue = userValue;
                     newUserValue.notifications = dbNotifications;
                     setUserValue(newUserValue);
+                    router.push("/dashboard");
                 }));
             }
 

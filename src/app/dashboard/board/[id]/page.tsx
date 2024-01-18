@@ -93,7 +93,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         }
     }, []);
 
-    function handleGetKanban(){
+    function handleRefleshKanban(){
         setGeneralLoading(true);
         get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
             setKanbanList(dbKanbanList);
@@ -167,7 +167,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             <div className="flex justify-between items-center w-[80%] h-[4%] fixed">
                 <h1>{tempKanban?.title}</h1>
                 <div className="flex items-center gap-3">
-                    <button onClick={handleGetKanban} type='button'><CircleStackIcon className="aspect-square w-8" /></button>
+                    <button onClick={handleRefleshKanban} type='button'><CircleStackIcon className="aspect-square w-8" /></button>
                     <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
                 </div>
             </div>

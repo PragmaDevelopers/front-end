@@ -2,7 +2,7 @@ import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { delete_card, get_card_by_id, patch_card, post_card, post_checklist, post_checklistItem, post_comment, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
+import { delete_card, get_card_by_id, patch_card, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { generateRandomString } from "@/app/utils/generators";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -94,6 +94,30 @@ function processComments(comments:Comment[],
    
 }
 
+function handlePostDeadline(tempCard:Card,userValue:userValueDT,tempKanban:Kanban,setTempKanban:(newValue:Kanban)=>void){
+    const bodyDeadline = {
+        cardId: tempCard.id,
+        date: tempCard.deadline.date || ""
+    }
+    if(tempCard.deadline.category != "" && tempCard.deadline.toColumnId != ""){
+        tempCard.deadline.category = tempCard.deadline.category;
+        tempCard.deadline.toColumnId = tempCard.deadline.toColumnId;
+    }
+    post_deadline(bodyDeadline,userValue.token,(response)=>response.json().then((deadlineId)=>{
+        if(response.ok){
+            console.log("CREATE DEADLINE SUCESSS");
+            const newKanbanWithDeadline = updateCardId(tempKanban,tempCard.columnID,tempCard.id,"deadline",{
+                id: deadlineId,
+                category: tempCard.deadline.category,
+                date: tempCard.deadline.date,
+                overdue: false,
+                toColumnId: tempCard.deadline.toColumnId
+            });
+            setTempKanban({...newKanbanWithDeadline});
+        }
+    }));
+}
+
 export function ShowCreateCard(
         userData: userValueDT,
         kanbanId: SystemID,
@@ -175,28 +199,8 @@ export function CreateCard(
 
                 const date = tempCard.deadline.date;
 
-                if(date){
-                    const deadline:any = {
-                        cardId: cardId,
-                        date: date
-                    }
-                    if(tempCard.deadline.category != "" && tempCard.deadline.toColumnId != ""){
-                        deadline.category = tempCard.deadline.category;
-                        deadline.toColumnId = tempCard.deadline.toColumnId;
-                    }
-                    post_deadline(deadline,userValue.token,(response)=>response.json().then((deadlineId)=>{
-                        if(response.ok){
-                            console.log("CREATE DEADLINE SUCESSS");
-                            const newKanbanWithDeadline = updateCardId(tempKanban,columnId,cardId,"deadline",{
-                                id: deadlineId,
-                                category: tempCard.deadline.category,
-                                date: date,
-                                overdue: false,
-                                toColumnId: tempCard.deadline.toColumnId
-                            });
-                            setTempKanban({...newKanbanWithDeadline});
-                        }
-                    }));
+                if(!date && date != ""){
+                    handlePostDeadline(tempCard,userValue,tempKanban,setTempKanban);
                 }
 
                 const customFields = tempCard.customFields;
@@ -464,4 +468,33 @@ export function EditCard(
         }
     }));
 
+    const date = tempCard.deadline.date;
+
+    if(!date && date != ""){
+        if(tempCard.deadline.id == ""){
+            handlePostDeadline(tempCard,userValue,tempKanban,setTempKanban);
+        }else{
+            const deadline:any = {
+                date: date
+            }
+        
+            if(tempCard.deadline.category != "" && tempCard.deadline.toColumnId != ""){
+                deadline.category = tempCard.deadline.category;
+                deadline.toColumnId = tempCard.deadline.toColumnId;
+            }
+            patch_deadline(deadline,tempCard.deadline.id,userValue.token,(response)=>response.json().then((deadlineId)=>{
+                if(response.ok){
+                    console.log("CREATE DEADLINE SUCESSS");
+                    const newKanbanWithDeadline = updateCardId(tempKanban,tempCard.columnID,cardId,"deadline",{
+                        id: deadlineId,
+                        category: tempCard.deadline.category,
+                        date: date,
+                        overdue: false,
+                        toColumnId: tempCard.deadline.toColumnId
+                    });
+                    setTempKanban({...newKanbanWithDeadline});
+                }
+            }));
+        }
+    }
 }

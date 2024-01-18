@@ -14,7 +14,8 @@ function EditPdf() {
   const [signUpData, setSignUpData] = useState<IFormSignUpInputs>();
   const [variable, setVariable] = useState<string>("");
   const [editorOpacity, setEditorOpacity] = useState<number>(1);
-  const [isLoadImage,setisLoadImage] = useState(false)
+  const [showSidebarBackgroundImage,setShowSidebarBackgroundImage] = useState<boolean>(false)
+  const [isLoadImage,setisLoadImage] = useState<boolean>(false)
 
   const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null)
@@ -241,8 +242,9 @@ function EditPdf() {
 
   return (
     <div className="mx-auto h-full overflow-y-auto max-w-5xl">
+      {showSidebarBackgroundImage && <img className="p-2 absolute left-0 top-0" src="https://placehold.co/300x300?text=Imagem+de+fundo" />}
       <div className="flex justify-between items-center">
-        <div className="flex gap-3 pb-3">
+        <div className="flex gap-3 pb-3 items-center">
           <select defaultValue="" className="bg-slate-400 p-2 rounded-md me-2" onChange={(e) => setVariable(e.target.value)}>
             <option disabled value=""> -- Escolha uma opção -- </option>
             {selectList(signUpData).map((option) => {
@@ -257,11 +259,12 @@ function EditPdf() {
               },500)
             }
           }} className="bg-slate-400 p-2 rounded-md" type="button">Adicionar Variável</button>
-          {/* <img className="p-2" src="https://placehold.co/300x300?text=Imagem+de+fundo" /> */}
         </div>
+        <button onClick={() => setShowSidebarBackgroundImage(!showSidebarBackgroundImage)} type="button" className="bg-slate-400 p-2 rounded-md">Imagem de fundo</button>
         <button onClick={() => formSubmit()} type="button" className="bg-slate-400 p-2 rounded-md">Criar PDF</button>
       </div>
       <div
+        className="relative"
         style={{opacity: editorOpacity,transition:"0.3s"}} 
         onClick={(e:any)=>{
           setTimeout(()=>{
@@ -354,6 +357,7 @@ function EditPdf() {
           }
         }}
       >
+        {/* <img className="absolute left-1/2 top-1/2 -right-1/2 -bottom-1/2" src="https://placehold.co/300x300?text=Imagem+de+fundo" /> */}
         <MDXEditor contentEditableClassName="prose" className="mb-3" ref={editorRef} markdown={""}
           toMarkdownOptions={{handlers:{
             image:(e)=>{

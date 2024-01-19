@@ -15,7 +15,8 @@ export interface ColumnContainerProps {
 }
 
 export interface RichEditorProps {
-    markdown: string;
+    setTempCard: (newValue:Card)=>void,
+    tempCard: Card
 }
 
 export interface ConfirmDeleteProps {

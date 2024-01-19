@@ -68,7 +68,7 @@ export default function SignUpPageB() {
             }
         };
         console.log(userValue)
-        fetch(`${API_BASE_URL}/api/private/user/signup/client/templates`, requestOptions)
+        fetch(`${API_BASE_URL}/api/private/user/signup/client/templates?value=false`, requestOptions)
         .then(response => response.json()).then((
             data: {
                 id:number,
@@ -176,8 +176,23 @@ export default function SignUpPageB() {
                             clientSignUp[e.target[i].name] = e.target[i].value;
                         }
                     }
-                    sessionStorage.setItem("clientSignUp",JSON.stringify(clientSignUp));
-                    router.push("/pdf/create");                
+                    sessionStorage.setItem("clientSignUp",JSON.stringify(clientSignUp));   
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userValue.token}`,
+                        },
+                        body: JSON.stringify({
+                            name: e.target.nome_identificador,
+                            template: JSON.stringify(clientSignUp)
+                        })
+    
+                    };
+                    fetch(`${API_BASE_URL}/api/private/user/signup/client/template?value=true`, requestOptions)
+                    .then(response => response.json()).then((id:number) => {
+                        console.log("CREATE CLIENT SUCCESS");
+                    });  
                 }}>
                     {
                         currentTemplate[typePerson].length != 0 ? (
@@ -303,7 +318,8 @@ export default function SignUpPageB() {
                             <div className="bg-gray-200 p-5 border-b-2 border-gray-400 h-[100%]"></div>
                         )
                     }
-                    <button className="bg-gray-200 p-2 my-4 border-b-2 me-3 border-gray-400" type="submit">Gerar Contrato/Criar PDF</button>
+                    <input name="nome_identificador" type="text" placeholder="Nome de identifição"  />
+                    <button className="bg-gray-200 p-2 my-4 border-b-2 me-3 border-gray-400" type="submit">Salvar</button>
                 </form>
             </div>
         </div>

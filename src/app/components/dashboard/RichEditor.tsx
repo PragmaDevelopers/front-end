@@ -2,14 +2,21 @@
 
 import { RichEditorProps } from "@/app/interfaces/KanbanInterfaces";
 import { MDXEditorMethods, MDXEditor, headingsPlugin, listsPlugin, quotePlugin, thematicBreakPlugin, linkPlugin, linkDialogPlugin, tablePlugin, markdownShortcutPlugin, toolbarPlugin, UndoRedo, BlockTypeSelect, BoldItalicUnderlineToggles, InsertTable, ListsToggle, CreateLink } from "@mdxeditor/editor";
-import { forwardRef, Ref } from "react";
+import { forwardRef, Ref, useEffect, useRef, useState } from "react";
 
-const RichEditor = forwardRef((props: RichEditorProps, ref: Ref<MDXEditorMethods> | undefined) => {
+const RichEditor = forwardRef((props: RichEditorProps) => {
+    const cardDescriptionRef = useRef<MDXEditorMethods>(null);
+    useEffect(()=>{
+        cardDescriptionRef.current?.setMarkdown(props.tempCard.description)
+    },[props.tempCard.description])
     return (
         <MDXEditor
+            markdown={""}
             className={"MDXEditor"}
-            markdown={typeof props.markdown == "string" ? props.markdown : ""}
-            ref={ref}
+            ref={cardDescriptionRef}
+            onChange={(value)=>{
+                props.setTempCard({...props.tempCard,description:value});
+            }}
             plugins={[
                 headingsPlugin(),
                 listsPlugin(),

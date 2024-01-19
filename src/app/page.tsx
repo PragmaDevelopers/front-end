@@ -68,6 +68,7 @@ export default function Page() {
     const [isFailPassword, setIsFailPassword] = useState<boolean>(false);
     const [isEmailExists, setEmailExists] = useState<boolean>(false);
     const switchCadastrarSe = () => setCadastrarSe(!cadastrarSe);
+    const [isLoading,setIsloading] = useState<boolean>(false);
     const router = useRouter();
     const { userValue, setUserValue } = useUserContext();
 
@@ -122,6 +123,7 @@ export default function Page() {
                     newUserValue.token = token;
                     setUserValue(newUserValue);
                     getUserProfile();
+                    setIsloading(true);
                 }else{
                     setIsFailLogin(true);
                 }
@@ -142,6 +144,7 @@ export default function Page() {
                     newUserValue.userList = userList;
                     setUserValue(newUserValue);
                     getNotificationUser();
+                    setIsloading(false);
                     router.push("/dashboard");
                 }));
             }
@@ -168,7 +171,7 @@ export default function Page() {
         <main className="bg-neutral-50 text-neutral-950 flex flex-row justify-center items-center w-screen h-screen transition-all">
             <div className="h-[90%] w-[60%] relative flex justify-center items-center">
                 <InfoScreen isEmailExists={isEmailExists} isFailPassword={isFailPassword} isFailLogin={isFailLogin} />
-                <form method="POST" className="flex flex-col items-center mb-4 h-48" onSubmit={loginUser}>
+                <form method="POST" className={`${isLoading ? "loading-element" : ""} flex flex-col items-center mb-4 h-48`} onSubmit={loginUser}>
                     {cadastrarSe ? (
                         <div className="h-fit bg-neutral-50 drop-shadow-md rounded-md p-2 border-neutral-200 border-[1px]">
                             <div className="flex flex-col">
@@ -369,8 +372,6 @@ export default function Page() {
                                     <option value="ZM">ZM - Zâmbia</option>
                                     <option value="ZW">ZW - Zimbábue</option>
                                 </select>
-
-
                                 <input name="usergender" type="text" placeholder="Insira seu genero" className="form-input bg-neutral-100 shadow-inner my-1 border-[1px] border-neutral-200 rounded-md p-1" />
                             </div>
                             <div className="flex flex-row justify-between items-center">

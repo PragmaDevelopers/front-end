@@ -81,7 +81,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     })
 
                 };
-                fetch(`${API_BASE_URL}/api/private/user/signup/client/template`, requestOptions)
+                fetch(`${API_BASE_URL}/api/private/user/signup/client/template?value=false`, requestOptions)
                 .then(response => response.json()).then((id:number) => {
                     setTemplateList([
                         ...templateList,

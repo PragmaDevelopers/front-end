@@ -247,19 +247,24 @@ export default function Layout({ children }: any) {
                     <details className="h-[95%] p-2 overflow-x-hidden overflow-y-auto">
                         <summary>Areas de Trabalho</summary>
                         <div className="">
-                            { kanbanList?.map((kanban, index) => <BoardMenuEntry
-                                setModalOptions={setModalOptions}
-                                setModalOpen={setModalOpen}
-                                setModalDescription={setModalDescription}
-                                setModalFocusRef={setModalFocusRef}
-                                setModalBorderColor={setModalBorderColor}
-                                setModalTitle={setModalTitle}
-                                setModalText={setModalText}
-                                kanbanID={kanban.id}
-                                key={index}
-                                href={`/dashboard/board/${kanban.id}`}
-                                name={kanban.title}
-                                deleteKanban={deleteKanban} />) }
+                            { 
+                                kanbanList?.length > 0  ? 
+                                    kanbanList.map((kanban, index) => <BoardMenuEntry
+                                    setModalOptions={setModalOptions}
+                                    setModalOpen={setModalOpen}
+                                    setModalDescription={setModalDescription}
+                                    setModalFocusRef={setModalFocusRef}
+                                    setModalBorderColor={setModalBorderColor}
+                                    setModalTitle={setModalTitle}
+                                    setModalText={setModalText}
+                                    kanbanID={kanban.id}
+                                    key={index}
+                                    href={`/dashboard/board/${kanban.id}`}
+                                    name={kanban.title}
+                                    deleteKanban={deleteKanban} />)
+                                :
+                                <div>Carregando...</div> 
+                            }
                         </div>
                         <div>
                             <form onSubmit={addDashBoard} className="flex flex-row justify-center items-center">

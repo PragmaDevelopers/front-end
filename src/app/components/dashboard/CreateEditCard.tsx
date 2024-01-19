@@ -878,12 +878,9 @@ const CreateEditCard = () => {
 
     const { userValue } = useUserContext();
     const { tempCard, setTempCard, setTempKanban, tempColumn, tempKanban, cardManager, setCardManager } = useKanbanContext();
-    const cardDescriptionRef = useRef<MDXEditorMethods>(null);
 
     const handleCreateCardForm = (e: any) => {
         e.preventDefault();
-        const description = cardDescriptionRef.current?.getMarkdown() || "";
-        setTempCard({...tempCard,description:description});
         if(cardManager.isEditElseCreate){
             EditCard(
                 userValue,
@@ -956,8 +953,8 @@ const CreateEditCard = () => {
                     />
                     <h1 className="my-2 font-semibold">Descrição</h1>
                     <RichEditor 
-                        ref={cardDescriptionRef} 
-                        markdown={tempCard.description} 
+                        setTempCard={setTempCard}
+                        tempCard={tempCard}
                     />
                     <h1 className="my-2 font-semibold">Campos</h1>
                     <CustomFieldsSection 

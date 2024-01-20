@@ -14,6 +14,7 @@ import { useUserContext } from "@/app/contexts/userContext";
 import { ConfirmDeleteOtherComment, ConfirmDeleteYourComment, CreateComment, ShowCreateAnsweredComment } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
+import { ProfilePicture } from "./user/ProfilePicture";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -257,16 +258,16 @@ export function CommentSection(props: CommentSectionProps) {
                     <div className={`${asweredComment ? "mt-2" : "my-2"} flex flex-col overflow-x-hidden justify-start items-start w-full h-fit p-1`}>
                         <div className="flex justify-between items-center w-full h-fit">
                             <div className="flex flex-row justify-start items-center w-fit h-fit mr-1">
-                                <Image width={64} height={64} alt="Profile" src={comment.user.profilePicture || ""} className="w-8 aspect-square rounded-full mr-1" />
+                                <ProfilePicture className="aspect-square w-24 mr-4" size={64} source={userValue.profileData?.profilePicture} />
                                 <h1 className="ml-2 flex font-medium text-base">{comment.user.name} { asweredComment && " | respondeu #"+ asweredComment.id}</h1>
                             </div>
                             <div className="flex justify-center items-center">
-                                <h2 className="text-sm ml-1 text-neutral-500">{dayjs(comment.registrationDate).format('DD [de] MMMM [de] YYYY')}</h2>
+                                <h2 className="text-sm ml-1 text-neutral-500">{dayjs(comment.registrationDate || new Date()).format('DD [de] MMMM [de] YYYY')}</h2>
                                 <div className={`flex justify-center items-center mx-1`}>
                                     {/* <button className="mx-0.5" type="submit" onClick={() => {}} value="commentEdit" id="commentEdit" name="commentEdit">
                                         <PencilSquareIcon className="aspect-square w-5 fill-neutral-500" />
                                     </button> */}
-                                    <button className={`${comment.id == "" || comment.id.toString().includes("prov") ? "pointer-events-none opacity-20" : ""} mx-0.5`} type="button" onClick={() => {
+                                    <button className={`${comment.id == "" || comment.id.toString().includes("|") ? "pointer-events-none opacity-20" : ""} mx-0.5`} type="button" onClick={() => {
                                         handleShowCreateAnsweredComment();
                                         setAnswerComment({parentComment:comment});
                                     }}>
@@ -310,7 +311,7 @@ export function CommentSection(props: CommentSectionProps) {
                                 <input className="w-full" onChange={(e)=>{setAnswerComment({...answerComment,newComment:{
                                     content: e.target.value,
                                     edited: false,
-                                    id: "prov"+tempCard.comments.length,
+                                    id: "|"+answerComment?.parentComment?.id+"|"+tempCard.comments.length,
                                     user: userValue.profileData,
                                     registrationDate: null
                                 }})}} placeholder="Digite sua resposta" type="text" />

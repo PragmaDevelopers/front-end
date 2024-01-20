@@ -68,8 +68,8 @@ export interface CardManager{
 }
 
 export interface KanbanContextProps {
-    kanbanList: Kanban[];
-    setKanbanList: (newValue: Kanban[]) => void;
+    kanbanList: Kanban[] | null;
+    setKanbanList: (newValue: Kanban[] | null) => void;
     tempKanban: Kanban;
     setTempKanban: (newValue: Kanban) => void;
     tempColumn: Column;

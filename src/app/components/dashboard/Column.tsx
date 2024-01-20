@@ -46,11 +46,11 @@ export function ColumnContainer({column}:{column:Column}) {
         (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
     );
 
-    function handleRemoveColumn(){
+    function handleRemoveColumn(columnId:SystemID){
         
         const delCol = () => {
             RemoveColumn(
-                column.id,
+                columnId,
                 userValue,
                 setTempColumn,
                 setTempKanban,
@@ -137,7 +137,7 @@ export function ColumnContainer({column}:{column:Column}) {
     }
 
     return (
-        <div className={`${column.id == "" || column.id.toString().includes("prov") ? "loading-element" : ""} relative min-w-64 w-64 h-full p-1`}
+        <div className={`${column.id == "" || column.id.toString().includes("|") ? "loading-element" : ""} relative min-w-64 w-64 h-full p-1`}
             ref={setNodeRef} style={style} {...attributes} {...listeners} >
             <div className='w-full bg-neutral-50 rounded-md drop-shadow p-2 mb-4 flex flex-row justify-between items-center'>
                 <div
@@ -157,7 +157,7 @@ export function ColumnContainer({column}:{column:Column}) {
                     /> :
                     title}
                 </div>
-                <button onClick={handleRemoveColumn}>
+                <button onClick={()=>handleRemoveColumn(column.id)}>
                     <XCircleIcon className='w-6 aspect-square' />
                 </button>
             </div>

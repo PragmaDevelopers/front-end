@@ -4,7 +4,7 @@ import { RichEditorProps } from "@/app/interfaces/KanbanInterfaces";
 import { MDXEditorMethods, MDXEditor, headingsPlugin, listsPlugin, quotePlugin, thematicBreakPlugin, linkPlugin, linkDialogPlugin, tablePlugin, markdownShortcutPlugin, toolbarPlugin, UndoRedo, BlockTypeSelect, BoldItalicUnderlineToggles, InsertTable, ListsToggle, CreateLink } from "@mdxeditor/editor";
 import { forwardRef, Ref, useEffect, useRef, useState } from "react";
 
-const RichEditor = forwardRef((props: RichEditorProps) => {
+const RichEditor = (props: RichEditorProps) => {
     const cardDescriptionRef = useRef<MDXEditorMethods>(null);
     useEffect(()=>{
         cardDescriptionRef.current?.setMarkdown(props.tempCard.description)
@@ -42,7 +42,7 @@ const RichEditor = forwardRef((props: RichEditorProps) => {
 
         />
     );
-});
+};
 RichEditor.displayName = "RichEditor";
 
 export default RichEditor;

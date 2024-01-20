@@ -148,8 +148,8 @@ export default function Layout({ children }: any) {
 
     useLayoutEffect(() => {
         function getKanbanList(){
-            get_kanban(undefined,userValue.token,(response)=>response.json().then((kanbanList:Kanban[])=>{
-                setKanbanList(kanbanList);
+            get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
+                setKanbanList(dbKanbanList.length > 0 ? dbKanbanList : null);
             }));
         }
 
@@ -193,7 +193,7 @@ export default function Layout({ children }: any) {
 
             post_kanban({title:boardname},userValue.token,(response)=>response.json().then((id)=>{
                 console.log("CREATE KANBAN SUCCESS");
-                setKanbanList([...kanbanList,{
+                setKanbanList([...kanbanList || [],{
                     id: id,
                     title: boardname,
                     members: [],
@@ -204,7 +204,7 @@ export default function Layout({ children }: any) {
     }
 
     const deleteKanban = (kanbanID: SystemID) => {
-        const filteredKanbanList = kanbanList.filter(kanban=>kanban.id!=kanbanID);
+        const filteredKanbanList = kanbanList?.filter(kanban=>kanban.id!=kanbanID) || [];
         setKanbanList(filteredKanbanList);
         if(tempKanban.id == kanbanID){
             setTempKanban({id:"",columns:[],members:[],title:""});
@@ -248,22 +248,22 @@ export default function Layout({ children }: any) {
                         <summary>Areas de Trabalho</summary>
                         <div className="">
                             { 
-                                kanbanList?.length > 0  ? 
-                                    kanbanList.map((kanban, index) => <BoardMenuEntry
-                                    setModalOptions={setModalOptions}
-                                    setModalOpen={setModalOpen}
-                                    setModalDescription={setModalDescription}
-                                    setModalFocusRef={setModalFocusRef}
-                                    setModalBorderColor={setModalBorderColor}
-                                    setModalTitle={setModalTitle}
-                                    setModalText={setModalText}
-                                    kanbanID={kanban.id}
-                                    key={index}
-                                    href={`/dashboard/board/${kanban.id}`}
-                                    name={kanban.title}
-                                    deleteKanban={deleteKanban} />)
-                                :
-                                <div>Carregando...</div> 
+                                    kanbanList && kanbanList.length > 0  ? 
+                                        kanbanList?.map((kanban, index) => <BoardMenuEntry
+                                        setModalOptions={setModalOptions}
+                                        setModalOpen={setModalOpen}
+                                        setModalDescription={setModalDescription}
+                                        setModalFocusRef={setModalFocusRef}
+                                        setModalBorderColor={setModalBorderColor}
+                                        setModalTitle={setModalTitle}
+                                        setModalText={setModalText}
+                                        kanbanID={kanban.id}
+                                        key={index}
+                                        href={`/dashboard/board/${kanban.id}`}
+                                        name={kanban.title}
+                                        deleteKanban={deleteKanban} />)
+                                    :
+                                    kanbanList?.length == 0 && <div className="ps-2">Carregando...</div> 
                             }
                         </div>
                         <div>

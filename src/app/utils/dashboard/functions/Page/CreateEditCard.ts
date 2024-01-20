@@ -314,8 +314,8 @@ export function CreateComment(
     setTempCard({...tempCard,comments:[...tempCard.comments,{
         content: content,
         edited: false,
-        id: "prov"+tempCard.comments.length ,
-        registrationDate: "",
+        id: "|"+tempCard.comments.length ,
+        registrationDate: new Date().toDateString(),
         user: userData.profileData,
         answers: []
     }]});

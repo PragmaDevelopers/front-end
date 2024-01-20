@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
 import { NotificationUser, User, userValueDT } from "./types/KanbanTypes";
-import { post_login, get_profile, get_user, post_signup, get_notifications, get_notifications_with_limit } from "./utils/fetchs";
+import { post_login, get_profile, get_user, post_signup, get_notifications_with_limit } from "./utils/fetchs";
 
 interface InfoScreenProps {
     isFailLogin: boolean,
@@ -122,7 +122,11 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.token = token;
                     setUserValue(newUserValue);
+
                     getUserProfile();
+                    getNotificationUser();
+                    getUserList();
+                    
                     setIsloading(true);
                 }else{
                     setIsFailLogin(true);
@@ -134,7 +138,9 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.profileData = profileData;
                     setUserValue(newUserValue);
-                    getUserList();
+
+                    setIsloading(false);
+                    router.push("/dashboard");
                 }));
             }
             
@@ -143,9 +149,7 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.userList = userList;
                     setUserValue(newUserValue);
-                    getNotificationUser();
-                    setIsloading(false);
-                    router.push("/dashboard");
+                    console.log("lista de ususários")
                 }));
             }
 
@@ -154,6 +158,7 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.notifications = dbNotifications;
                     setUserValue(newUserValue);
+                    console.log("notificações")
                 }));
             }
 

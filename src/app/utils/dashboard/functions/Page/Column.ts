@@ -7,7 +7,7 @@ import { delete_column, patch_column, post_column } from "@/app/utils/fetchs";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { RefObject, useRef } from "react";
 
-export async function CreateNewColumn(
+export function CreateNewColumn(
     userValue: userValueDT,
     setTempKanban: (newValue:Kanban) => void,
     tempKanban: Kanban,
@@ -28,7 +28,7 @@ export async function CreateNewColumn(
     }
 
     const columnCount = tempKanban.columns != undefined ? tempKanban.columns.length : 0;
-    const provColumnId = "prov"+columnCount;
+    const provColumnId = "|"+columnCount;
 
     const newColumnWithoutId = [...tempKanban.columns,{
         id: provColumnId,

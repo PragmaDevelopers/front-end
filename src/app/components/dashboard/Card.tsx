@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
 import { useModalContext } from "@/app/contexts/modalContext";
-import { Card } from "@/app/types/KanbanTypes";
+import { Card, SystemID } from "@/app/types/KanbanTypes";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { ConfirmDeleteCard, DeleteCard, ShowEditCard } from "@/app/utils/dashboard/functions/Page/Card";
 import { System } from "@mdxeditor/editor";
@@ -52,10 +52,10 @@ export function CardElement({card}:{card:Card}) {
         (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
     );
 
-    const handleDeleteCard = () => {
+    const handleDeleteCard = (cardId:SystemID) => {
         const delCard = () => {
             DeleteCard(
-                card.id,
+                cardId,
                 card.columnID,
                 userValue,
                 setTempKanban,
@@ -106,12 +106,12 @@ export function CardElement({card}:{card:Card}) {
     }
 
     return (
-        <div className={`${card.id == "" || card.id.toString().includes("prov") ? "loading-element" : ""} my-2 bg-neutral-50 drop-shadow rounded-md relative`}
+        <div className={`${card.id == "" || card.id.toString().includes("|") ? "loading-element" : ""} my-2 bg-neutral-50 drop-shadow rounded-md relative`}
             ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <div className='p-2 w-full h-full' onClick={handleShowEditCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
-            <button className='absolute top-2 right-2' onClick={handleDeleteCard}>
+            <button className='absolute top-2 right-2' onClick={()=>handleDeleteCard(card.id)}>
                 <XCircleIcon className='w-6 aspect-square' />
             </button>
         </div>

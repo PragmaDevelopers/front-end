@@ -54,7 +54,8 @@ export type Card = {
         date: string | null,
         overdue: boolean,
         category: string,
-        toColumnId: SystemID
+        toColumnId: SystemID,
+        toKanbanId: SystemID
     };
     customFields: CustomField[];
     innerCards: Card[];

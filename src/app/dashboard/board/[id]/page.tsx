@@ -81,14 +81,17 @@ export default function Page({ params }: { params: { id: SystemID } }) {
 
     useEffect(() => {
         function getKanbanValues(kanbanIndex:number){
-            const kanban = kanbanList[kanbanIndex];
-            setTempKanban(kanban);
-            get_kanban_members(undefined,params.id,userValue.token,(response=>response.json().then((members:User[])=>{
-                setTempKanban({...kanban,members:members});
-            })));
+            if(kanbanList){
+                const kanban = kanbanList[kanbanIndex];
+                setTempKanban(kanban);
+                get_kanban_members(undefined,params.id,userValue.token,(response=>response.json().then((members:User[])=>{
+                    setTempKanban({...kanban,members:members});
+                })));
+            }
         }
-        const kanbanIndex = kanbanList.findIndex(kanban=>kanban.id==params.id);
-        if(kanbanIndex != -1){
+        const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
+        if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
+            console.log("Encontrou")
             getKanbanValues(kanbanIndex);
         }
     }, []);

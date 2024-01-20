@@ -101,7 +101,8 @@ export function appendTempCardToArray (
             date: "",
             id: "",
             overdue: false,
-            toColumnId: ""
+            toColumnId: "",
+            toKanbanId: ""
         },
         customFields: [],
         innerCards: [],

@@ -1,4 +1,4 @@
-import { UserContextProvider, useUserContext } from "@/app/contexts/userContext";
+import { useUserContext } from "@/app/contexts/userContext";
 import { DateValue, Tag, CheckList, CheckListItem, Card, SystemID, User, Column, Kanban, userValueDT, CustomField } from "@/app/types/KanbanTypes";
 import { Combobox, Transition } from "@headlessui/react";
 import { XMarkIcon, MinusCircleIcon, CalendarDaysIcon, PlusCircleIcon, ArrowUpOnSquareIcon, ChevronUpDownIcon, CheckIcon, XCircleIcon } from "@heroicons/react/24/outline";
@@ -10,24 +10,26 @@ import { InnerCardElement } from "@/app/components/dashboard/InnerCard";
 import RichEditor from "@/app/components/dashboard/RichEditor";
 import 'react-calendar/dist/Calendar.css';
 import { CommentSection } from "@/app/components/dashboard/Comment";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import utc from 'dayjs/plugin/utc';
 import 'dayjs/locale/pt-br';
 import { CreateCard, EditCard } from "@/app/utils/dashboard/functions/Page/Card";
-import { ModalContextProvider, useModalContext } from "@/app/contexts/modalContext";
+import { useModalContext } from "@/app/contexts/modalContext";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { ConfirmDeleteChecklist, ConfirmDeleteChecklistItem, ConfirmDeleteCustomField, ConfirmDeleteDeadline, ConfirmDeleteTag, CreateChecklist, CreateChecklistItem, ShowCreateCustomField, ShowCreateDeadline, ShowCreateTag } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 interface CardTitleProps { title: string; }
 function CardTitle(props: CardTitleProps) {
     const {title} = props;
     const { tempCard,setTempCard } = useKanbanContext();
     return (
-        <input 
+        <input
             id="CardTitle" 
             type='text' 
             defaultValue={title}
@@ -37,6 +39,7 @@ function CardTitle(props: CardTitleProps) {
             })} 
             name='title' 
             placeholder='Digite um titulo' 
+            required
             className='my-3 mx-1 font-bold text-xl form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inne w-full p-1' 
         />
     );
@@ -54,21 +57,16 @@ function CardDateSection(props: CardDateSectionProps) {
 
     const [cardDeadline,setCardDeadline] = useState<string | null>(null);
 
-    const [toKanban,setToKanban] = useState<SystemID>("");
-
     const { userValue } = useUserContext();
     const { cardManager, setCardManager, kanbanList, tempCard, setTempCard } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     useEffect(()=>{
-        const kanban = kanbanList.find(kanban=>kanban.columns.find(column=>column.id==card.deadline?.toColumnId));
-        if(kanban){
-            setToKanban(kanban.id);
-        }
-        if(card.deadline != null && card.deadline?.id != "" && dayjs(card.deadline?.date).isValid()){
+        if(card.deadline && card.deadline?.id != ""){
             setDateExists(true);
+            setCardDeadline(card.deadline.date);
         }
-    },[])
+    },[card.deadline?.id])
 
     const handleShowCreateDeadline = () => {
         ShowCreateDeadline(
@@ -88,7 +86,8 @@ function CardDateSection(props: CardDateSectionProps) {
                 date: null,
                 category: "",
                 overdue: false,
-                toColumnId: ""
+                toColumnId: "",
+                toKanbanId: ""
             }})
             setDateExists(false);
             modalContextProps.setModalOpen(false);
@@ -130,10 +129,10 @@ function CardDateSection(props: CardDateSectionProps) {
                 cardManager.isShowCreateDeadline && (
                     <div className='absolute top-0 left-0 w-full h-full z-[99999] flex justify-center items-center bg-neutral-950/25'>
                         <div className='flex bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'>
-                            <Calendar defaultValue={cardDeadline} onChange={(date)=>{
+                            <Calendar minDate={new Date()} defaultValue={cardDeadline} onChange={(date)=>{
                                 setTempCard({...tempCard,deadline:{
                                     ...tempCard.deadline,
-                                    date: date?.toString() || null
+                                    date: dayjs.utc(date?.toString()).format('YYYY-MM-DDTHH:mm:ss.SSSX').replace("X","Z")
                                 }})
                                 setCardDeadline(date?.toString() || null);
                             }} />
@@ -164,37 +163,40 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div className="flex w-full items-center justify-between">
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Ação ao finalizar prazo:</h1>
-                        <select defaultValue={card.deadline?.category} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>
+                        <select value={card.deadline?.category} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>
                             setTempCard({...tempCard,deadline:{
                                 ...tempCard.deadline,
                                 category: e.target.value            
                             }})
                         }>
-                            <option value="" disabled> -- Nenhuma -- </option>
-                            <option value="MOVE_CARD">
+                            <option value=""> -- Nenhuma -- </option>
+                            <option value="CARD_MOVE">
                                 Mover Card
                             </option>
                         </select>
                     </div>
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Dashboard de destino:</h1>
-                        <select defaultValue={toKanban} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
-                            setToKanban(e.target.value);
+                        <select value={card.deadline?.toKanbanId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
+                            setTempCard({...tempCard,deadline:{
+                                ...tempCard.deadline,
+                                toKanbanId: e.target.value            
+                            }})
                         }}>
-                            <option value="" disabled> -- Nenhuma -- </option>
-                            {kanbanList.map((kanban) => <option key={kanban.id} value={kanban.id}>{kanban.title}</option>)}
+                            <option value=""> -- Nenhuma -- </option>
+                            {kanbanList?.map((kanban) => <option key={kanban.id} value={kanban.id}>{kanban.title}</option>)}
                         </select>
                     </div>
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
-                        <select defaultValue={card.deadline?.toColumnId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
+                        <select value={card.deadline?.toColumnId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
                             setTempCard({...tempCard,deadline:{
                                 ...tempCard.deadline,
                                 toColumnId: e.target.value            
                             }})
                         }}>
-                            <option value="" disabled> -- Nenhuma -- </option>
-                            {kanbanList.filter((kanban) => kanban.id == toKanban)
+                            <option value=""> -- Nenhuma -- </option>
+                            {kanbanList?.filter((kanban) => kanban.id == card.deadline?.toKanbanId)
                             .map((kanban) => kanban.columns.map((column) => <option key={column.id} value={column.id}>{column.title}</option>))}
                         </select>
                     </div>
@@ -320,13 +322,9 @@ function CustomFieldsSection(props: CustomFieldSectionProps) {
                 {customFieldsArray?.map((item: CustomField, idx: any) => {
                     return (
                         <div key={idx} className='w-full flex justify-center gap-3 items-center '>
-                            {
-                                !(item.id != "" && cardManager.isEditElseCreate) && <span className="opacity-60 ms-1">-</span>
-                            }
                             <h1 className="text-nowrap">{item.name}:</h1>
                             <input required className={`bg-neutral-50 min-w-[25%] w-full form-input border-[1px] border-neutral-200 rounded-md shadow-inner`} 
                             type={item.fieldType} name={item.name} defaultValue={item.value}
-                            disabled={item.id != "" && cardManager.isEditElseCreate}
                             onChange={(e)=>{
                                 const customFields = customFieldsArray;
                                 customFields[idx].value = e.target.value;
@@ -571,13 +569,9 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
             <div className='p-1 overflow-y-auto max-h-[17.2rem] w-full'>
                 {checklistArray?.map((checklist: CheckList,listIndex: number) => (
                     <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-full h-fit my-2'>
-                        {
-                            !(checklist.id != "" && cardManager.isEditElseCreate) && <span className="opacity-60">-</span>
-                        }
                         <div className='flex items-center mb-4'>
                             <input type='text' required
                                 defaultValue={checklist.name}
-                                disabled={checklist.id != "" && cardManager.isEditElseCreate}
                                 className={`bg-neutral-100" form-input border-[1px] border-neutral-200 rounded-md mr-2 shadow-inner w-full`}
                                 placeholder='Digite o nome da lista' onChange={(e) => {
                                     const checklists = checklistArray;
@@ -597,12 +591,8 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
                         </button>
                         {checklist.items?.map((item: CheckListItem, itemIndex: number) => (
                             <div key={itemIndex} className='flex gap-2 w-full items-center my-2'>
-                                {
-                                    !(item.id != "" && cardManager.isEditElseCreate) && <span className="opacity-60">-</span>
-                                }
                                 <input
                                     type="checkbox"
-                                    disabled={item.id != "" && cardManager.isEditElseCreate}
                                     checked={item.completed}
                                     onChange={(e) => {
                                         const checklists = checklistArray;
@@ -616,7 +606,6 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
                                 <input
                                     className='form-input shadow-inner border-neutral-200 border-[1px] rounded-md bg-neutral-100 p-0.5 w-full'
                                     type="text"
-                                    disabled={item.id != "" && cardManager.isEditElseCreate}
                                     value={item.name}
                                     placeholder='Digite o nome da tarefa'
                                     onChange={(e) => {
@@ -651,16 +640,13 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
 
 interface MembersSectionProps { 
     membersList: User[]; 
-    failModalOption: any;
-    noButtonRef: RefObject<HTMLButtonElement>;
 }
 function MembersSection(props: MembersSectionProps) {
-    const { membersList, failModalOption, noButtonRef } = props;
+    const { membersList } = props;
 
     const [selectedMember,setSelectedMember] = useState<User>();
     const [filteredUsers,setFilteredUsers] = useState<User[]>([]);
 
-    const { userValue } = useUserContext();
     const { cardManager, setCardManager, tempKanban, tempCard, setTempCard } = useKanbanContext();
 
     function updateFilteredUsers(){
@@ -879,6 +865,10 @@ const CreateEditCard = () => {
     const { userValue } = useUserContext();
     const { tempCard, setTempCard, setTempKanban, tempColumn, tempKanban, cardManager, setCardManager } = useKanbanContext();
 
+    useEffect(()=>{
+        console.log(tempCard)
+    },[tempCard])
+
     const handleCreateCardForm = (e: any) => {
         e.preventDefault();
         if(cardManager.isEditElseCreate){
@@ -932,7 +922,7 @@ const CreateEditCard = () => {
     return (
         <div className={(cardManager?.isShowCreateCard ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-[1] justify-center items-center bg-neutral-950/25'}>
             <div className={`
-            ${cardManager.isEditElseCreate && (tempCard.id == "" || tempCard.id.toString().includes("prov")) ? "loading-element" : ""}
+            ${cardManager.isEditElseCreate && (tempCard.id == "" || tempCard.id.toString().includes("|")) ? "loading-element" : ""}
             ${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} 
             overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
                 <form className='w-full h-fit' onSubmit={handleCreateCardForm}>
@@ -981,8 +971,6 @@ const CreateEditCard = () => {
                             <h1 className="my-2 font-semibold">Membros</h1>
                             <MembersSection 
                                 membersList={tempCard.members}
-                                failModalOption={failModalOption}
-                                noButtonRef={noButtonRef}
                             />
                         </div>
                     </div>

@@ -12,7 +12,7 @@ export function ProfilePicture(props: ProfilePictureProps) {
     let element;
     let _size: number = ( size === undefined || size === null ) ? 265 : size;
     if ((source === undefined) || (source === null)) {
-        element = <UserIcon className={className} />
+        element = <UserIcon width={_size - 24} height={_size - 24} className={className} />
     } else {
         element = <div className={className}><Image src={source} width={_size} height={_size} alt="User Profile Picture" /></div>
     }

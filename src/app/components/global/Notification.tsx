@@ -14,11 +14,13 @@ dayjs.extend(relativeTime);
 export default function Notification({isShow}:{isShow:boolean}) {
     const { userValue,setUserValue } = useUserContext();
     useEffect(()=>{
-        get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
-            const newUserValue = userValue;
-            newUserValue.notifications = dbNotifications;
-            setUserValue(newUserValue);
-        }));
+        if(userValue.token != ""){
+            get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
+                const newUserValue = userValue;
+                newUserValue.notifications = dbNotifications;
+                setUserValue(newUserValue);
+            }));
+        }
     },[isShow])
     return (
         <div className="bg-transparent w-full h-full relative">

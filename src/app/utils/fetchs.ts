@@ -103,6 +103,7 @@ const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
 const CUSTOMFIELD_ROUTE: string = `${CARD_ROUTE}/customField`;
 const TAG_ROUTE: string = `${CARD_ROUTE}/tag`;
 const COMMENT_ROUTE: string = `${CARD_ROUTE}/comment`;
+const COMMENT_ANSWER_ROUTE: string = `${CARD_ROUTE}/comment/answer`;
 const CHECKLIST_ROUTE: string = `${CARD_ROUTE}/checklist`;
 const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checklistItem`;
 
@@ -387,6 +388,16 @@ export function post_customField(body: POST_customField, userToken: string,okCal
     }).catch((e: any) => console.log(e));
 }
 
+type PATCH_customField = {
+    value: string
+};
+export function patch_customField(body: PATCH_customField, customFieldId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(CUSTOMFIELD_ROUTE+"/"+customFieldId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type POST_tag = {
     cardId: SystemID,
     name: string,
@@ -425,6 +436,16 @@ export function post_checklist(body: POST_checklist, userToken: string,okCallbac
     }).catch((e: any) => console.log(e));
 }
 
+type PATCH_checklist = { 
+    name: string 
+}
+export function patch_checklist(body: PATCH_checklist, checklistId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(CHECKLIST_ROUTE+"/"+checklistId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type POST_checklistItem = { 
     checklistId: SystemID, 
     name: string 
@@ -436,6 +457,17 @@ export function post_checklistItem(body: POST_checklistItem, userToken: string,o
     }).catch((e: any) => console.log(e));
 }
 
+type PATCH_checklistItem = { 
+    name: string,
+    completed: boolean 
+}
+export function patch_checklistItem(body: PATCH_checklistItem, checklistItemId:SystemID, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(CHECKLIST_ITEM_ROUTE+"/"+checklistItemId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type POST_comment = { 
     cardId: SystemID, 
     content: string 
@@ -443,6 +475,17 @@ type POST_comment = {
 export function post_comment(body: POST_comment, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
     fetch(COMMENT_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_comment_answer = { 
+    commentId: SystemID, 
+    content: string 
+}
+export function post_comment_answer(body: POST_comment_answer, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(COMMENT_ANSWER_ROUTE, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

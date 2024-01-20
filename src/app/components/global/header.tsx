@@ -1,7 +1,8 @@
 "use client";
+import { useUserContext } from "@/app/contexts/userContext";
 import { BellIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface VercelLogoProps { className: string; }
 function VercelLogo(props: VercelLogoProps) {
@@ -16,6 +17,8 @@ function VercelLogo(props: VercelLogoProps) {
 interface HeaderProps { showNotifications?: any };
 export default function Header(props: HeaderProps) {
     const currentPath: string = usePathname();
+    const { setUserValue } = useUserContext();
+    const router = useRouter();
     if (currentPath != '/' && currentPath != '/pdf/view') {
         return (
             <div className='w-full h-[8%] flex flex-row justify-between items-center p-2'>
@@ -30,6 +33,22 @@ export default function Header(props: HeaderProps) {
                     </nav>
                     <button type="button" onClick={props?.showNotifications}>
                         <BellIcon className="aspect-square w-6 mr-2 ml-4" />
+                    </button>
+                    <button type="button" onClick={()=>{
+                        setUserValue({token:"",notifications:[],userList:[],profileData:{
+                            email: "",
+                            id: "",
+                            gender: "",
+                            name: "",
+                            nationality: "",permissionLevel:"",
+                            profilePicture: "",
+                            pushEmail: "",
+                            registrationDate: "",
+                            role: ""
+                        }})
+                        router.push("/");
+                    }}>
+                        Sair
                     </button>
                 </div>
             </div>

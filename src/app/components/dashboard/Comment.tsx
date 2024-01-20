@@ -313,7 +313,8 @@ export function CommentSection(props: CommentSectionProps) {
                                     edited: false,
                                     id: "|"+answerComment?.parentComment?.id+"|"+tempCard.comments.length,
                                     user: userValue.profileData,
-                                    registrationDate: null
+                                    registrationDate: new Date().toDateString(),
+                                    answers: []
                                 }})}} placeholder="Digite sua resposta" type="text" />
                                 <div className="flex justify-between">
                                     <button type="button" onClick={()=>handleAddCommentToAnswers()}

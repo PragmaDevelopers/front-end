@@ -198,6 +198,10 @@ function handleCommentAnswers(
                     }
                 }
             }));
+        }else{
+            if(comment.answers && comment.answers.length > 0){
+                handleCommentAnswers(comment.answers,userValue,comment.id);
+            }
         }
     });
 }

@@ -7,7 +7,6 @@ import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import SwitchButton from "@/app/components/ui/SwitchButton";
-import Modal from 'react-modal';
 import { useRouter } from "next/navigation";
 
 type Permissions = { [Key: string]: boolean };

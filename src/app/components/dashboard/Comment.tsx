@@ -15,6 +15,7 @@ import { ConfirmDeleteOtherComment, ConfirmDeleteYourComment, CreateComment, Sho
 import { useModalContext } from "@/app/contexts/modalContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { ProfilePicture } from "./user/ProfilePicture";
+import { delete_comment } from "@/app/utils/fetchs";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -132,21 +133,26 @@ export function CommentSection(props: CommentSectionProps) {
 
     function deleteCommentById(comments: Comment[], commentId: SystemID): Comment[] {
         return comments.filter(comment => {
-          if (comment.id == commentId) {
+            if (comment.id == commentId) {
             // Se encontrarmos o comentário com o ID correspondente, não o incluímos na nova lista
             return false;
-          } else if (comment.answers && comment.answers.length > 0) {
+            } else if (comment.answers && comment.answers.length > 0) {
             // Se o comentário tiver respostas, chamamos recursivamente a função para processar as respostas
             comment.answers = deleteCommentById(comment.answers, commentId);
             return true; // Incluímos o comentário na nova lista, pois não é o comentário que estamos excluindo
-          } else {
+            } else {
             return true; // Incluímos o comentário na nova lista, pois não é o comentário que estamos excluindo
-          }
+            }
         });
-      }
+    }
 
     function handleRemoveComment(comment:Comment){
         const delComment = () => {
+            delete_comment(undefined,comment.id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("DELETE COMMENT SUCCESS");
+                }
+            }));
             const commentsAfterDeletion = deleteCommentById(commentsArray,comment.id);
             setTempCard({...tempCard,comments:commentsAfterDeletion});
             modalContextProps.setModalOpen(false);
@@ -258,8 +264,8 @@ export function CommentSection(props: CommentSectionProps) {
                     <div className={`${asweredComment ? "mt-2" : "my-2"} flex flex-col overflow-x-hidden justify-start items-start w-full h-fit p-1`}>
                         <div className="flex justify-between items-center w-full h-fit">
                             <div className="flex flex-row justify-start items-center w-fit h-fit mr-1">
-                                <ProfilePicture className="aspect-square w-24 mr-4" size={64} source={userValue.profileData?.profilePicture} />
-                                <h1 className="ml-2 flex font-medium text-base">{comment.user.name} { asweredComment && " | respondeu #"+ asweredComment.id}</h1>
+                                <ProfilePicture className="aspect-square" size={64} source={userValue.profileData?.profilePicture} />
+                                <h1 className="ml-3 flex font-medium text-base">{comment.user.name} { asweredComment && " | respondeu #"+ asweredComment.id}</h1>
                             </div>
                             <div className="flex justify-center items-center">
                                 <h2 className="text-sm ml-1 text-neutral-500">{dayjs(comment.registrationDate || new Date()).format('DD [de] MMMM [de] YYYY')}</h2>

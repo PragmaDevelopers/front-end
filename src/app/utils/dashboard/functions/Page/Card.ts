@@ -2,8 +2,17 @@ import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { delete_card, get_card_by_id, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
+import { delete_card, delete_checklist, delete_checklistItem, delete_customField, delete_deadline, delete_tag, get_card_by_id, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { RefObject } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from 'dayjs/plugin/utc';
+import 'dayjs/locale/pt-br';
+
+
+dayjs.locale('pt-br');
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 function updateCardId(kanban:Kanban,columnId:SystemID,cardId:SystemID,type?:string,value?:any,valueIndex?:number,checklistId?:SystemID){
     const newColumns = kanban.columns.map((column)=>{
@@ -62,8 +71,24 @@ function handleDeadline(tempCard:Card,userValue:userValueDT,cardId:SystemID){
             bodyDeadline.category = tempCard.deadline.category;
             bodyDeadline.toColumnId = tempCard.deadline.toColumnId;
         }
-        console.log(bodyDeadline)
         post_deadline(bodyDeadline,userValue.token,(response)=>response.json().then(()=>{
+            if(response.ok){
+                console.log("CREATE DEADLINE SUCESSS");
+            }
+        }));
+    }else{
+        const newDate = dayjs.utc(tempCard.deadline.date).format('YYYY-MM-DDTHH:mm:ss.SSSX').replace("X","Z")
+        console.log(newDate)
+        const bodyDeadline:{
+            date: string,
+            category: string,
+            toColumnId: SystemID
+        } = {
+            date: newDate,
+            category: tempCard.deadline.category,
+            toColumnId: tempCard.deadline.toColumnId
+        }
+        patch_deadline(bodyDeadline,tempCard.deadline.id,userValue.token,(response)=>response.text().then(()=>{
             if(response.ok){
                 console.log("CREATE DEADLINE SUCESSS");
             }
@@ -283,7 +308,6 @@ export function CreateCard(
                 console.log("CREATE CARD SUCESSS");
 
                 const date = tempCard.deadline.date;
-                console.log(tempCard.deadline)
                 if(date != null && date != undefined && date != ""){
                     handleDeadline(tempCard,userValue,cardId);
                 }
@@ -308,8 +332,10 @@ export function CreateCard(
                     handleComment(tempCard,userValue,cardId);
                 }
 
-                const newKanbanWithCardId = updateCardId(tempKanban,columnId,provCardId,"cardId",cardId);
-                setTempKanban({...newKanbanWithCardId});
+                setTimeout(()=>{
+                    const newKanbanWithCardId = updateCardId(tempKanban,columnId,provCardId,"cardId",cardId);
+                    setTempKanban({...newKanbanWithCardId});
+                },1000)
             }
         }));
 };
@@ -419,7 +445,6 @@ export function EditCard(
     userValue: userValueDT,
     setTempKanban: (newValue:Kanban)=>void,
     setCardManager: (newValue:CardManager)=>void,
-    tempColumn: Column,
     tempCard: Card,
     tempKanban: Kanban,
     cardManager: CardManager

@@ -363,8 +363,16 @@ export function post_deadline(body: POST_deadline, userToken: string,okCallback:
     }).catch((e: any) => console.log(e));
 }
 
+type DELETE_deadline = undefined;
+export function delete_deadline(body: DELETE_deadline, deadlineId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(DEADLINE_ROUTE+"/"+deadlineId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type PATCH_deadline = {
-    date: Date,
+    date: string,
     category?: string,
     toColumnId?: SystemID
 };
@@ -388,6 +396,14 @@ export function post_customField(body: POST_customField, userToken: string,okCal
     }).catch((e: any) => console.log(e));
 }
 
+type DELETE_customField = undefined;
+export function delete_customField(body: DELETE_customField, customFieldId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(CUSTOMFIELD_ROUTE+"/"+customFieldId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type PATCH_customField = {
     value: string
 };
@@ -406,6 +422,14 @@ type POST_tag = {
 export function post_tag(body: POST_tag, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
     fetch(TAG_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_tag = undefined;
+export function delete_tag(body: DELETE_tag, tagId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(TAG_ROUTE+"/"+tagId, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -436,6 +460,14 @@ export function post_checklist(body: POST_checklist, userToken: string,okCallbac
     }).catch((e: any) => console.log(e));
 }
 
+type DELETE_checklist = undefined;
+export function delete_checklist(body: DELETE_checklist, checklistId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(CHECKLIST_ROUTE+"/"+checklistId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type PATCH_checklist = { 
     name: string 
 }
@@ -453,6 +485,14 @@ type POST_checklistItem = {
 export function post_checklistItem(body: POST_checklistItem, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
     fetch(CHECKLIST_ITEM_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_checklistItem = undefined;
+export function delete_checklistItem(body: DELETE_checklistItem, checklistItemId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(CHECKLIST_ITEM_ROUTE+"/"+checklistItemId, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -486,6 +526,14 @@ type POST_comment_answer = {
 export function post_comment_answer(body: POST_comment_answer, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
     fetch(COMMENT_ANSWER_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_comment = undefined;
+export function delete_comment(body: DELETE_comment, commentId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(COMMENT_ROUTE+"/"+commentId, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useUserContext } from "@/app/contexts/userContext";
-import { BellIcon } from "@heroicons/react/24/outline";
+import { BellIcon, ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -48,7 +48,7 @@ export default function Header(props: HeaderProps) {
                         }})
                         router.push("/");
                     }}>
-                        Sair
+                        <ArrowLeftEndOnRectangleIcon className="aspect-square w-6 mr-2 ml-4" />
                     </button>
                 </div>
             </div>

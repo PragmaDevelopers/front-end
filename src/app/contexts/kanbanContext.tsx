@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Card, Column, Kanban } from '../types/KanbanTypes';
+import { Card, Column, Kanban, SystemID } from '../types/KanbanTypes';
 import { KanbanContextProps } from '../interfaces/KanbanInterfaces';
 
 const KanbanContext = createContext<KanbanContextProps | undefined>(undefined);
@@ -45,7 +45,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     customFields: [],
     innerCards: []
   });
-
+  const [deleteTempCardIds,setDeleteTempCardIds] = useState<{type:string,id:SystemID}[]>([]);
   const [cardManager,setCardManager] = useState({
     isSubmit: false,
     isEditElseCreate: false,
@@ -64,6 +64,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
       tempKanban, setTempKanban,
       tempColumn, setTempColumn,
       tempCard, setTempCard,
+      deleteTempCardIds,setDeleteTempCardIds,
       cardManager,setCardManager 
     }}>
       {children}

@@ -19,6 +19,7 @@ import { useModalContext } from "@/app/contexts/modalContext";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { ConfirmDeleteChecklist, ConfirmDeleteChecklistItem, ConfirmDeleteCustomField, ConfirmDeleteDeadline, ConfirmDeleteTag, CreateChecklist, CreateChecklistItem, ShowCreateCustomField, ShowCreateDeadline, ShowCreateTag } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
+import { delete_checklist, delete_checklistItem, delete_customField, delete_deadline, delete_tag } from "@/app/utils/fetchs";
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -58,7 +59,7 @@ function CardDateSection(props: CardDateSectionProps) {
     const [cardDeadline,setCardDeadline] = useState<string | null>(null);
 
     const { userValue } = useUserContext();
-    const { cardManager, setCardManager, kanbanList, tempCard, setTempCard } = useKanbanContext();
+    const { cardManager, setCardManager, kanbanList, tempCard, setTempCard,deleteTempCardIds,setDeleteTempCardIds } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     useEffect(()=>{
@@ -81,6 +82,11 @@ function CardDateSection(props: CardDateSectionProps) {
 
     const handleDeleteDeadline = () => {
         const delDeadline = () => {
+            delete_deadline(undefined,tempCard.deadline.id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("DELETE DEADLINE SUCCESS");
+                }
+            }));
             setTempCard({...tempCard,deadline:{
                 id: "",
                 date: null,
@@ -163,7 +169,8 @@ function CardDateSection(props: CardDateSectionProps) {
                 <div className="flex w-full items-center justify-between">
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Ação ao finalizar prazo:</h1>
-                        <select value={card.deadline?.category} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>
+                        <select disabled={userValue.profileData.permissionLevel.charAt(16) == "0" ? true : false}
+                            value={card.deadline?.category} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>
                             setTempCard({...tempCard,deadline:{
                                 ...tempCard.deadline,
                                 category: e.target.value            
@@ -177,7 +184,8 @@ function CardDateSection(props: CardDateSectionProps) {
                     </div>
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Dashboard de destino:</h1>
-                        <select value={card.deadline?.toKanbanId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
+                        <select disabled={userValue.profileData.permissionLevel.charAt(16) == "0" ? true : false}
+                            value={card.deadline?.toKanbanId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
                             setTempCard({...tempCard,deadline:{
                                 ...tempCard.deadline,
                                 toKanbanId: e.target.value            
@@ -189,7 +197,8 @@ function CardDateSection(props: CardDateSectionProps) {
                     </div>
                     <div className="flex flex-col justify-center items-center w-fit">
                         <h1 className="px-4 py-2 font-semibold">Coluna de destino:</h1>
-                        <select value={card.deadline?.toColumnId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
+                        <select disabled={userValue.profileData.permissionLevel.charAt(16) == "0" ? true : false}
+                            value={card.deadline?.toColumnId} className="w-full form-input bg-neutral-100 border-[1px] border-neutral-200 rounded-md shadow-inner" onChange={(e)=>{
                             setTempCard({...tempCard,deadline:{
                                 ...tempCard.deadline,
                                 toColumnId: e.target.value            
@@ -225,7 +234,7 @@ function CustomFieldsSection(props: CustomFieldSectionProps) {
 
     const { customFieldsArray,noButtonRef,failModalOption } = props;
     const { userValue } = useUserContext();
-    const { cardManager, setCardManager, tempCard, setTempCard } = useKanbanContext();
+    const { cardManager, setCardManager, tempCard, setTempCard,deleteTempCardIds,setDeleteTempCardIds } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     const handleShowCreateField = () => {
@@ -241,6 +250,11 @@ function CustomFieldsSection(props: CustomFieldSectionProps) {
 
     const handleDeleteCustomField = (customFieldIndex:number) => {
         const delCustomField = () => {
+            delete_customField(undefined,customFieldsArray[customFieldIndex].id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("DELETE CUSTOMFIELD SUCCESS");
+                }
+            }));
             const customFields = customFieldsArray;
             customFields.splice(customFieldIndex,1);
             setTempCard({...tempCard,customFields:customFields});
@@ -325,6 +339,7 @@ function CustomFieldsSection(props: CustomFieldSectionProps) {
                             <h1 className="text-nowrap">{item.name}:</h1>
                             <input required className={`bg-neutral-50 min-w-[25%] w-full form-input border-[1px] border-neutral-200 rounded-md shadow-inner`} 
                             type={item.fieldType} name={item.name} defaultValue={item.value}
+                            disabled={userValue.profileData.permissionLevel.charAt(30) == "0" ? true : false}
                             onChange={(e)=>{
                                 const customFields = customFieldsArray;
                                 customFields[idx].value = e.target.value;
@@ -354,7 +369,7 @@ function TagsSection(props: TagsSectionProps) {
     })
 
     const { userValue } = useUserContext();
-    const { cardManager, setCardManager, kanbanList, tempCard, setTempCard } = useKanbanContext();
+    const { cardManager, setCardManager, deleteTempCardIds, setDeleteTempCardIds,kanbanList, tempCard, setTempCard } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     const handleShowCreateTag = () => {
@@ -370,7 +385,12 @@ function TagsSection(props: TagsSectionProps) {
 
     const handleDeleteTag = (tagIndex:number) => {
 
-        const delCustomField = () => {
+        const delTag = () => {
+            delete_tag(undefined,tagsArray[tagIndex].id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("DELETE TAG SUCCESS");
+                }
+            }));
             const tags = tagsArray;
             tags.splice(tagIndex,1);
             setTempCard({...tempCard,tags:tags});
@@ -380,7 +400,7 @@ function TagsSection(props: TagsSectionProps) {
         const successOption: CustomModalButtonAttributes[] = [
             {
                 text: "Sim",
-                onclickfunc: delCustomField,
+                onclickfunc: delTag,
                 type: "button",
                 className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             },
@@ -460,7 +480,7 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
     const { checklistArray, failModalOption, noButtonRef } = props;
 
     const { userValue } = useUserContext();
-    const { cardManager, setCardManager, kanbanList, tempCard, setTempCard } = useKanbanContext();
+    const { cardManager, deleteTempCardIds,setDeleteTempCardIds, kanbanList, tempCard, setTempCard } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     function handleCreateChecklist(){
@@ -476,6 +496,11 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
 
     const handleDeleteChecklist = (checklistIndex:number) => {
         const delChecklist = () => {
+            delete_checklist(undefined,checklistArray[checklistIndex].id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("DELETE CHECKLIST SUCCESS");
+                }
+            }));
             const checklists = checklistArray;
             checklists.splice(checklistIndex,1);
             setTempCard({...tempCard,checklists:checklists});
@@ -526,6 +551,11 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
 
     const handleDeleteChecklistItem = (checklistIndex:number,itemIndex:number) => {
         const delChecklistItem = () => {
+            delete_checklistItem(undefined,checklistArray[checklistIndex].items[itemIndex].id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("DELETE CHECKLIST ITEM SUCCESS");
+                }
+            }));
             const checklists = checklistArray;
             const items = checklists[checklistIndex].items;
             items.splice(itemIndex,1);
@@ -571,6 +601,7 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
                     <div key={listIndex} className='rounded-md bg-neutral-50 drop-shadow-md p-2 w-full h-fit my-2'>
                         <div className='flex items-center mb-4'>
                             <input type='text' required
+                                disabled={userValue.profileData.permissionLevel.charAt(13) == "0" ? true : false}
                                 defaultValue={checklist.name}
                                 className={`bg-neutral-100" form-input border-[1px] border-neutral-200 rounded-md mr-2 shadow-inner w-full`}
                                 placeholder='Digite o nome da lista' onChange={(e) => {
@@ -594,6 +625,7 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
                                 <input
                                     type="checkbox"
                                     checked={item.completed}
+                                    disabled={userValue.profileData.permissionLevel.charAt(34) == "0" ? true : false}
                                     onChange={(e) => {
                                         const checklists = checklistArray;
                                         const items = checklists[listIndex].items;
@@ -604,6 +636,7 @@ function ChecklistsSection(props: ChecklistsSectionProps) {
                                     className="bg-blue-100 border-blue-200 rounded-full focus:ring-blue-300 form-checkbox"
                                 />
                                 <input
+                                    disabled={userValue.profileData.permissionLevel.charAt(34) == "0" ? true : false}
                                     className='form-input shadow-inner border-neutral-200 border-[1px] rounded-md bg-neutral-100 p-0.5 w-full'
                                     type="text"
                                     value={item.name}
@@ -863,7 +896,7 @@ const CreateEditCard = () => {
     const modalContextProps = useModalContext();
 
     const { userValue } = useUserContext();
-    const { tempCard, setTempCard, setTempKanban, tempColumn, tempKanban, cardManager, setCardManager } = useKanbanContext();
+    const { tempCard, setTempCard, setTempKanban, tempColumn, tempKanban, cardManager, deleteTempCardIds,setDeleteTempCardIds,setCardManager } = useKanbanContext();
 
     useEffect(()=>{
         console.log(tempCard)
@@ -876,7 +909,6 @@ const CreateEditCard = () => {
                 userValue,
                 setTempKanban,
                 setCardManager,
-                tempColumn,
                 tempCard,
                 tempKanban,
                 cardManager
@@ -929,10 +961,11 @@ const CreateEditCard = () => {
                     <div className="w-full h-fit flex justify-center items-center relative">
                         <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
                         <button type="button" onClick={() => {
+                            setDeleteTempCardIds([]);
                             setCardManager({
                                 ...cardManager,
                                 isShowCreateCard:false
-                            })
+                            });
                         }}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
                     </div>
                     <CardTitle title={tempCard.title} />

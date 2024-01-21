@@ -32,8 +32,8 @@ export default function Page() {
             </div>
             <div className="mt-4 flex flex-col items-center justify-start">
                 <div className="bg-neutral-50 rounded-lg drop-shadow-md p-4 flex flex-row justify-center items-center">
-                    <ProfilePicture className="aspect-square w-24 mr-4" size={512} source={userValue.profileData?.profilePicture} />
-                    <div>
+                    <ProfilePicture className="aspect-square" size={112} source={userValue.profileData?.profilePicture} />
+                    <div className="ml-3">
                         <h1 className="text-lg font-bold text-neutral-900 mb-1">{userValue.profileData.name}</h1>
                         <h2 className="text-neutral-700 text-sm my-0.5">{userValue.profileData.name}</h2>
                         <Link className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5" href="/dashboard/config/user">Configurar perfil</Link>
@@ -52,7 +52,6 @@ export default function Page() {
                     </form>
                     {userValue.profileData.role === "ROLE_ADMIN" ? <LinkToAdminPage /> : null}
                 </div>
-
             </div>
         </main>
     );

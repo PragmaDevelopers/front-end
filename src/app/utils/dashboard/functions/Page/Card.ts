@@ -42,84 +42,6 @@ function updateCardId(kanban:Kanban,columnId:SystemID,cardId:SystemID,type?:stri
     return kanban;
 }
 
-function addCardInColumn(kanban:Kanban,columnId:SystemID,newCard:Card){
-    const newColumns = kanban.columns.map((column)=>{
-        if(column.id == columnId){
-            newCard.index = column.cards.length;
-            column.cards.push(newCard);
-            return column;
-        }else{
-            return column;
-        }
-    });
-    kanban.columns = newColumns;
-    return kanban;
-}
-
-function handleDeadline(tempCard:Card,userValue:userValueDT,cardId:SystemID){
-    if(tempCard.deadline?.id == ""){
-        const bodyDeadline:{
-            cardId: SystemID,
-            date: string,
-            category?: string,
-            toColumnId?: SystemID
-        } = {
-            cardId: cardId,
-            date: tempCard.deadline.date || ""
-        }
-        if(tempCard.deadline.category != "" && tempCard.deadline.toColumnId != ""){
-            bodyDeadline.category = tempCard.deadline.category;
-            bodyDeadline.toColumnId = tempCard.deadline.toColumnId;
-        }
-        post_deadline(bodyDeadline,userValue.token,(response)=>response.json().then(()=>{
-            if(response.ok){
-                console.log("CREATE DEADLINE SUCESSS");
-            }
-        }));
-    }else{
-        const newDate = dayjs.utc(tempCard.deadline.date).format('YYYY-MM-DDTHH:mm:ss.SSSX').replace("X","Z")
-        console.log(newDate)
-        const bodyDeadline:{
-            date: string,
-            category: string,
-            toColumnId: SystemID
-        } = {
-            date: newDate,
-            category: tempCard.deadline.category,
-            toColumnId: tempCard.deadline.toColumnId
-        }
-        patch_deadline(bodyDeadline,tempCard.deadline.id,userValue.token,(response)=>response.text().then(()=>{
-            if(response.ok){
-                console.log("CREATE DEADLINE SUCESSS");
-            }
-        }));
-    }
-}
-
-function handleCustomField(tempCard:Card,userValue:userValueDT,cardId:SystemID){
-    tempCard.customFields.map((customField)=>{
-        if(customField.id == ""){
-            const bodyCustomField = {
-                cardId: cardId,
-                name: customField.name,
-                fieldType: customField.fieldType,
-                value: customField.value
-            }
-            post_customField(bodyCustomField,userValue.token,(response)=>response.json().then(()=>{
-                if(response.ok){
-                    console.log("CREATE CUSTOMFIELD SUCESSS");
-                }
-            }));
-        }else{
-            patch_customField({value:customField.value},customField.id,userValue.token,(response)=>response.text().then(()=>{
-                if(response.ok){
-                    console.log("UPDATE CUSTOMFIELD SUCCESS");
-                }
-            }));
-        }
-    });
-}
-
 function handleTag(tempCard:Card,userValue:userValueDT,cardId:SystemID){
     tempCard.tags.map((tag)=>{
         if(tag.id == ""){
@@ -157,76 +79,7 @@ function handleChecklist(tempCard:Card,userValue:userValueDT,cardId:SystemID){
                 }
             }));
         }else{ //PATCH CHECKLIST
-            patch_checklist({name:checklist.name},checklist.id,userValue.token,(response)=>response.text().then(()=>{
-                if(response.ok){
-                    console.log("UPDATE CHECKLIST SUCCESS");
-                }
-            }));
-            const items = checklist.items;
-            if(items?.length > 0){
-                items.map((item)=>{
-                    if(item.id == ""){
-                        post_checklistItem({name:item.name,checklistId:checklist.id},userValue.token,(itemResponse)=>itemResponse.json().then(()=>{
-                            if(itemResponse.ok){
-                                console.log("CREATE CHECKLIST ITEM SUCCESS");
-                            }
-                        }));
-                    }else{
-                        patch_checklistItem({name:item.name,completed:item.completed},item.id,userValue.token,(response)=>response.text().then(()=>{
-                            if(response.ok){
-                                console.log("UPDATE CHECKLIST ITEM SUCCESS");
-                            }
-                        }));
-                    }
-                });
-            }
-        }
-    });
-}
-
-function handleComment(tempCard:Card,userValue:userValueDT,cardId:SystemID){
-    tempCard.comments.map((comment)=>{
-        if(comment.id.toString().includes("|")){
-            const bodyComment = {
-                cardId: cardId,
-                content: comment.content
-            }
-            post_comment(bodyComment,userValue.token,(response)=>response.json().then(()=>{
-                if(response.ok){
-                    console.log("CREATE COMMENT SUCCESS");
-                }
-            }));
-        }else{
-            if(comment.answers && comment.answers.length > 0){
-                handleCommentAnswers(comment.answers,userValue,comment.id);
-            }
-        }
-    });
-}
-
-function handleCommentAnswers(
-    commentAnswers:Comment[],
-    userValue:userValueDT,
-    parentCommentId: SystemID
-){
-    commentAnswers.map(comment=>{
-        if(comment.id.toString().includes("|")){
-            const bodyCommentAnsewer = {
-                commentId: parentCommentId,
-                content: comment.content
-            }
-            post_comment_answer(bodyCommentAnsewer,userValue.token,(response)=>response.json().then((commentAnswerId)=>{
-                if(response.ok){
-                    console.log("CREATE COMMENT ANSWER SUCCESS");
-                    if(comment.answers && comment.answers.length > 0){
-                        handleCommentAnswers(comment.answers,userValue,commentAnswerId);
-                    }
-                }
-            }));
-        }else{
-            if(comment.answers && comment.answers.length > 0){
-                handleCommentAnswers(comment.answers,userValue,comment.id);
-            }
+            
         }
     });
 }
@@ -285,59 +138,59 @@ export function ShowCreateCard(
 export function CreateCard(
     userValue: userValueDT,
     setTempKanban: (newValue:Kanban)=>void,
-    setCardManager: (newValue:CardManager)=>void,
-    tempColumn: Column,
-    tempCard: Card,
+    column: Column,
     tempKanban: Kanban,
-    cardManager: CardManager
-    ) {
-        const columnId = tempCard.columnID; // COLUMNID É OBRIGATÓRIO
-        const title = tempCard.title; // TITLE É OBRIGATÓRIO
-        const description = tempCard.description;
-        const members = tempCard.members.map(member=>member.id);
+) {
 
-        const provCardId = "|"+tempColumn.cards.length;
-        tempCard.id = provCardId;
-        const newKanban = addCardInColumn(tempKanban,columnId,tempCard);
-        setTempKanban({...newKanban});
+    const columnId = column.id; // COLUMNID É OBRIGATÓRIO
+    const columnIndex = tempKanban.columns.findIndex(column=>column.id==columnId);
+    const columns = tempKanban.columns;
 
-        setCardManager({...cardManager,isShowCreateCard:false})
+    const title = "Card "+columns[columnIndex].cards.length; // TITLE É OBRIGATÓRIO
+    const description = "";
+    const members:SystemID[] = [];
 
-        post_card({columnId,title,description,members},userValue.token,(response)=>response.json().then((cardId)=>{
-            if(response.ok){
-                console.log("CREATE CARD SUCESSS");
+    const provCardId = "|"+columns[columnIndex].cards.length;
 
-                const date = tempCard.deadline.date;
-                if(date != null && date != undefined && date != ""){
-                    handleDeadline(tempCard,userValue,cardId);
+    columns[columnIndex].cards.push({
+        id: provCardId,
+        columnID: columnId,
+        kanbanID: tempKanban.id,
+        title: title,
+        index: columns[columnIndex].cards.length,
+        description: "",
+        checklists: [],
+        tags: [],
+        members: [],
+        comments: [],
+        dropdowns: [],
+        deadline: {
+            id: "",
+            category: "",
+            date: null,
+            overdue: false,
+            toColumnId: "",
+            toKanbanId: ""
+        },
+        customFields: [],
+        innerCards: []
+    });
+
+    setTempKanban({...tempKanban,columns:columns});
+
+    post_card({columnId,title,description,members},userValue.token,(response)=>response.json().then((cardId)=>{
+        if(response.ok){
+            console.log("CREATE CARD SUCESSS");
+            const newCards = columns[columnIndex].cards.map(card=>{
+                if(card.id == provCardId){
+                    card.id = cardId;
                 }
-
-                const customFields = tempCard.customFields;
-                if(customFields.length > 0){
-                    handleCustomField(tempCard,userValue,cardId);
-                }
-
-                const tags = tempCard.tags;
-                if(tags.length > 0){
-                    handleTag(tempCard,userValue,cardId);
-                }
-
-                const checklists = tempCard.checklists;
-                if(checklists.length > 0){
-                    handleChecklist(tempCard,userValue,cardId);
-                }
-
-                const comments = tempCard.comments;
-                if(comments.length > 0){
-                    handleComment(tempCard,userValue,cardId);
-                }
-
-                setTimeout(()=>{
-                    const newKanbanWithCardId = updateCardId(tempKanban,columnId,provCardId,"cardId",cardId);
-                    setTempKanban({...newKanbanWithCardId});
-                },1000)
-            }
-        }));
+                return card;
+            });
+            columns[columnIndex].cards = newCards;
+            setTempKanban({...tempKanban,columns:columns});
+        }
+    }));
 };
 
 export function ConfirmDeleteCard(
@@ -461,27 +314,53 @@ export function EditCard(
 
     const date = tempCard.deadline?.date;
     if(date != null && date != undefined && date != ""){
-        handleDeadline(tempCard,userValue,cardId);
+        const newDate = dayjs.utc(tempCard.deadline.date).format('YYYY-MM-DDTHH:mm:ss.SSSX').replace("X","Z")
+        const bodyDeadline:{
+            date: string,
+            category: string,
+            toColumnId: SystemID
+        } = {
+            date: newDate,
+            category: tempCard.deadline.category,
+            toColumnId: tempCard.deadline.toColumnId
+        }
+        patch_deadline(bodyDeadline,tempCard.deadline.id,userValue.token,(response)=>response.text().then(()=>{
+            if(response.ok){
+                console.log("UPDATE DEADLINE SUCESSS");
+            }
+        }));
     }
 
     const customFields = tempCard.customFields;
     if(customFields.length > 0){
-        handleCustomField(tempCard,userValue,cardId);
-    }
-    
-    const tags = tempCard.tags;
-    if(tags.length > 0){
-        handleTag(tempCard,userValue,cardId);
+        tempCard.customFields.map((customField)=>{
+            patch_customField({value:customField.value},customField.id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("UPDATE CUSTOMFIELD SUCCESS");
+                }
+            }));
+        });
     }
 
     const checklists = tempCard.checklists;
     if(checklists.length > 0){
-        handleChecklist(tempCard,userValue,cardId);
-    }
-
-    const comments = tempCard.comments;
-    if(comments.length > 0){
-        handleComment(tempCard,userValue,cardId);
+        tempCard.checklists.map((checklist)=>{
+            patch_checklist({name:checklist.name},checklist.id,userValue.token,(response)=>response.text().then(()=>{
+                if(response.ok){
+                    console.log("UPDATE CHECKLIST SUCCESS");
+                }
+            }));
+            const items = checklist.items;
+            if(items?.length > 0){
+                items.map((item)=>{
+                    patch_checklistItem({name:item.name,completed:item.completed},item.id,userValue.token,(response)=>response.text().then(()=>{
+                        if(response.ok){
+                            console.log("UPDATE CHECKLIST ITEM SUCCESS");
+                        }
+                    }));
+                });
+            }
+        });
     }
 
     patch_card({title,description,members},cardId,userValue.token,(response)=>response.text().then(()=>{

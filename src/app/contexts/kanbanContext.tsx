@@ -45,6 +45,29 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     customFields: [],
     innerCards: []
   });
+  const [previousTempCard, setPreviousTempCard] = useState<Card>({
+    id: "",
+    columnID: "",
+    kanbanID: "",
+    title: "",
+    index: 0,
+    description: "",
+    checklists: [],
+    tags: [],
+    members: [],
+    comments: [],
+    dropdowns: [],
+    deadline: {
+      id: "",
+      category: "",
+      date: null,
+      overdue: false,
+      toColumnId: "",
+      toKanbanId: ""
+    },
+    customFields: [],
+    innerCards: []
+  });
   const [deleteTempCardIds,setDeleteTempCardIds] = useState<{type:string,id:SystemID}[]>([]);
   const [cardManager,setCardManager] = useState({
     isSubmit: false,
@@ -64,6 +87,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
       tempKanban, setTempKanban,
       tempColumn, setTempColumn,
       tempCard, setTempCard,
+      previousTempCard,setPreviousTempCard,
       deleteTempCardIds,setDeleteTempCardIds,
       cardManager,setCardManager 
     }}>

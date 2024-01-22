@@ -58,7 +58,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [activeCard, setActiveCard] = useState<Card | null>(null);
-    const [generalLoading,setGeneralLoading] = useState<boolean>(false);
     const { userValue } = useUserContext();
     const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban,setTempCard, tempCard } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
@@ -91,18 +90,9 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         }
         const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
         if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
-            console.log("Encontrou")
             getKanbanValues(kanbanIndex);
         }
     }, []);
-
-    function handleRefleshKanban(){
-        setGeneralLoading(true);
-        get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
-            setKanbanList(dbKanbanList);
-            setGeneralLoading(false);
-        }));
-    }
 
     const optAttrs: CustomModalButtonAttributes[] = [
         {
@@ -157,6 +147,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         CreateNewColumn(
             userValue,
             setTempKanban,
+            setKanbanList,
+            kanbanList,
             tempKanban,
             modalOpt,
             noButtonRef,
@@ -165,14 +157,11 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }
 
     return (
-        <main className={`${generalLoading ? "loading-element" : ""} w-full h-full overflow-x-auto overflow-y-hidden shrink-0`}>
+        <main className={`sw-full h-full overflow-x-auto overflow-y-hidden shrink-0`}>
             { cardManager?.isShowCreateCard && <CreateEditCard />}
             <div className="flex justify-between items-center w-[80%] h-[4%] fixed">
                 <h1>{tempKanban?.title}</h1>
-                <div className="flex items-center gap-3">
-                    <button onClick={handleRefleshKanban} type='button'><CircleStackIcon className="aspect-square w-8" /></button>
-                    <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
-                </div>
+                <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-[92%] mt-[4%] shrink-0">

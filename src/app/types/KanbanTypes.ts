@@ -40,6 +40,7 @@ export type CheckListItem = {
 export type Card = {
     title: string;
     id: SystemID;
+    cardParentId?: SystemID,
     columnID: SystemID,
     kanbanID: SystemID,
     index: number,
@@ -59,7 +60,6 @@ export type Card = {
     };
     customFields: CustomField[];
     innerCards: Card[];
-    outerCardID?: SystemID;
 }
 
 export type Column = {

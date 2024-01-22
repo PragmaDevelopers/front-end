@@ -11,7 +11,7 @@ import { BACKEND_DATE_FORMAT } from "@/app/utils/variables";
 import { CommentEntryProps } from "@/app/interfaces/KanbanInterfaces";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { useUserContext } from "@/app/contexts/userContext";
-import { ConfirmDeleteOtherComment, ConfirmDeleteYourComment, CreateComment, ShowCreateAnsweredComment } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
+import { ConfirmDeleteOtherComment, ConfirmDeleteYourComment, CreateComment, CreateCommentAnswer, ShowCreateAnsweredComment } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { ProfilePicture } from "./user/ProfilePicture";
@@ -199,47 +199,35 @@ export function CommentSection(props: CommentSectionProps) {
         }
     }
 
-    function addCommentToAnswers(comments: Comment[], parentId: SystemID, newComment: Comment): Comment[] {
-        return comments.map(comment => {
-            if (comment.id == parentId) {
-                // Se encontrarmos o comentário com o ID correspondente, adicionamos o novo comentário às respostas
-                return {
-                    ...comment,
-                    answers: comment.answers ? [...comment.answers, newComment] : [newComment],
-                };
-            } else if (comment.answers && comment.answers.length > 0) {
-                // Se o comentário tiver respostas, chamamos recursivamente a função para processar as respostas
-                return {
-                    ...comment,
-                    answers: addCommentToAnswers(comment.answers, parentId, newComment),
-                };
-            } else {
-                return comment;
+    function handleAddComment(isAnswer:boolean){
+        if(!isAnswer){
+            CreateComment(
+                userValue,
+                newComment,
+                setNewComment,
+                setTempCard,
+                tempCard,
+                failModalOption,
+                noButtonRef,
+                modalContextProps
+            );
+        }else{
+            const parentId = answerComment?.parentComment?.id;
+            const newComment = answerComment?.newComment;
+            if(parentId && newComment){
+                CreateCommentAnswer(
+                    userValue,
+                    newComment.content,
+                    parentId,
+                    setTempCard,
+                    tempCard,
+                    failModalOption,
+                    noButtonRef,
+                    modalContextProps
+                );
+                setCardManager({...cardManager,isShowCreateAnsweredComment:false});
             }
-        });
-    }
-
-    function handleAddCommentToAnswers(){
-        const parentId = answerComment?.parentComment?.id;
-        const newComment = answerComment?.newComment;
-        if(parentId && newComment){
-            const commentsWithNewAnswer = addCommentToAnswers(commentsArray,parentId,newComment);
-            setTempCard({...tempCard,comments:commentsWithNewAnswer});
-            setCardManager({...cardManager,isShowCreateAnsweredComment:false});
         }
-    }      
-
-    function handleAddComment(){
-        CreateComment(
-            userValue,
-            newComment,
-            setNewComment,
-            setTempCard,
-            tempCard,
-            failModalOption,
-            noButtonRef,
-            modalContextProps
-        );
     }
 
     function handleShowCreateAnsweredComment(){
@@ -279,7 +267,7 @@ export function CommentSection(props: CommentSectionProps) {
                                     }}>
                                         <ChatBubbleLeftEllipsisIcon className="aspect-square w-5 fill-neutral-500" />
                                     </button>
-                                    <button className="mx-0.5" type="button" onClick={() => {
+                                    <button className={`${comment.id.toString().includes("|") ? "pointer-events-none opacity-20" : ""} mx-0.5`}  type="button" onClick={() => {
                                         handleRemoveComment(comment);
                                     }}>
                                         <XCircleIcon className="aspect-square w-5 fill-neutral-500" />
@@ -323,7 +311,7 @@ export function CommentSection(props: CommentSectionProps) {
                                     answers: []
                                 }})}} placeholder="Digite sua resposta" type="text" />
                                 <div className="flex justify-between">
-                                    <button type="button" onClick={()=>handleAddCommentToAnswers()}
+                                    <button type="button" onClick={()=>handleAddComment(true)}
                                     className="bg-neutral-200 p-2 drop-shadow rounded-md mt-3">Adicionar</button>
                                     <button type="button" onClick={()=>setCardManager({...cardManager,isShowCreateAnsweredComment:false})}
                                     className="bg-neutral-200 p-2 drop-shadow rounded-md mt-3">Voltar</button>
@@ -338,7 +326,7 @@ export function CommentSection(props: CommentSectionProps) {
                     <div className="w-full mt-1 flex flex-col">
                         <textarea value={newComment} onChange={(e)=>setNewComment(e.target.value)} id="commentarea" name="commentarea" className="w-full resize-none shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 mt-1 transition-all" placeholder="Insira um comentário" />
                     </div>
-                    <button type="button" onClick={handleAddComment} className="ml-2" value="commentSend" id="commentSend" name="commentSend">
+                    <button type="button" onClick={()=>handleAddComment(false)} className="ml-2" value="commentSend" id="commentSend" name="commentSend">
                         <PaperAirplaneIcon className="w-8 aspect-square stroke-neutral-950 hover:stroke-green-600 fill-neutral-100 hover:fill-green-100 transition-all" />
                     </button>
                 </div>

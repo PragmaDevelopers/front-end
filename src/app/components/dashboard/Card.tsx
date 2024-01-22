@@ -111,7 +111,7 @@ export function CardElement({card}:{card:Card}) {
             <div className='p-2 w-full h-full' onClick={handleShowEditCard}>
                 <h1 className='font-black font-lg truncate'>{card.title}</h1>
             </div>
-            <button className='absolute top-2 right-2' onClick={()=>handleDeleteCard(card.id)}>
+            <button type="button" className='absolute top-2 right-2' onClick={()=>handleDeleteCard(card.id)}>
                 <XCircleIcon className='w-6 aspect-square' />
             </button>
         </div>

@@ -10,7 +10,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
     const [selectedSection, setSelectedSection] = useState("");
 
     return (
-        <form className="bg-gray-200 w-2/4 p-2 mb-4 border-b-2 border-gray-400 flex flex-col"
+        <form className="mt-3 w-2/4 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col"
             onSubmit={(e: any) => {
                 e.preventDefault();
                 const removeSection = e.target.remove_section.value;
@@ -35,7 +35,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
                     setCurrentTemplate({ pessoa_fisica: currentTemplate.pessoa_fisica, pessoa_juridica: newAccordions });
                 }
             }}>
-            <div className="mb-3 flex gap-2">
+            <div className="mb-3 flex gap-2 items-center">
                 <label htmlFor="remove-section" className="inline-block whitespace-nowrap">Qual seção: </label>
                 <select required onChange={(e) => setSelectedSection(e.target.value)} defaultValue={selectedSection}
                     className="w-full" name="remove_section" id="remove-section">
@@ -45,7 +45,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
                     })}
                 </select>
             </div>
-            <div className="mb-3 flex gap-2">
+            <div className="mb-3 flex gap-2 items-center">
                 <label htmlFor="remove-input" className="whitespace-nowrap">Qual input: </label>
                 <select className="w-full" name="remove_input" id="remove-input">
                 <option value=""> -- Escolha um input/Excluir seção -- </option>
@@ -58,7 +58,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
                     })}
                 </select>
             </div>
-            <button type="submit" className="bg-gray-400 p-2 text-center">Remover</button>
+            <button type="submit" className="bg-neutral-100 drop-shadow rounded-md p-2 text-center">Remover</button>
         </form>     
     )
 }

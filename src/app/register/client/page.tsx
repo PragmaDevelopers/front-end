@@ -124,44 +124,9 @@ export default function SignUpPageB() {
     }
 
     return (
-        <div className="w-full h-full overflow-auto flex justify-center items-start">
-            <div className="px-2 w-full h-full max-w-4xl my-3">
-                <button className="bg-gray-200 p-2 mb-4 border-b-2 me-3 border-gray-400" onClick={() => {
-                    inputCreateModal ? setInputCreateModal(false) : setInputCreateModal(true);
-                    setInputRemoveModal(false);
-                    setUseDraftModal(false)
-                }} type="button">Criar Input</button>
-                <button className="bg-gray-200 p-2 mb-4 border-b-2 me-3 border-gray-400" onClick={() => {
-                    inputRemoveModal ? setInputRemoveModal(false) : setInputRemoveModal(true);
-                    setInputCreateModal(false);
-                    setUseDraftModal(false)
-                }} type="button">Remover Input</button>
-                <button className="bg-gray-200 p-2 mb-4 border-b-2 me-3 border-gray-400" onClick={() => {
-                    useDraftModal ? setUseDraftModal(false) : setUseDraftModal(true);
-                    setInputCreateModal(false);
-                    setInputRemoveModal(false);
-                }} type="button">Rascunhos</button>
-                <div className="flex gap-5">
-                    {
-                        inputCreateModal && <CreateTemplateInput 
-                            typePerson={typePerson}
-                            currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
-                        />
-                    }
-                    {
-                        inputRemoveModal && <DeleteTemplateInput 
-                            typePerson={typePerson}
-                            currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
-                        />
-                    }
-                    {
-                        useDraftModal && <ClientTemplateHandle 
-                            templateList={templateList} setTemplateList={setTemplateList} 
-                            currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
-                        />
-                    }
-                </div>
-                <form className="h-full" onSubmit={(e:any)=>{
+        <div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
+            <div className="p-3 w-full max-w-4xl">
+                <form onSubmit={(e:any)=>{
                     e.preventDefault();
                     let clientSignUp:any = {};
                     for(let i = 0;i < e.target.length;i++){
@@ -185,24 +150,66 @@ export default function SignUpPageB() {
                         },
                         body: JSON.stringify({
                             name: e.target.nome_identificador,
-                            template: JSON.stringify(clientSignUp)
+                            template: clientSignUp
                         })
-    
                     };
                     fetch(`${API_BASE_URL}/api/private/user/signup/client/template?value=true`, requestOptions)
-                    .then(response => response.json()).then((id:number) => {
+                    .then(response => response.json()).then(() => {
                         console.log("CREATE CLIENT SUCCESS");
                     });  
                 }}>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                                inputCreateModal ? setInputCreateModal(false) : setInputCreateModal(true);
+                                setInputRemoveModal(false);
+                                setUseDraftModal(false)
+                            }} type="button">Criar Input</button>
+                            <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                                inputRemoveModal ? setInputRemoveModal(false) : setInputRemoveModal(true);
+                                setInputCreateModal(false);
+                                setUseDraftModal(false)
+                            }} type="button">Remover Input</button>
+                            <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                                useDraftModal ? setUseDraftModal(false) : setUseDraftModal(true);
+                                setInputCreateModal(false);
+                                setInputRemoveModal(false);
+                            }} type="button">Rascunhos</button>
+                        </div>
+                        <div>
+                            <input name="nome_identificador" type="text" placeholder="Nome do cliente"  />
+                            <button className="bg-gray-200 p-2 border-b-2 me-3 border-gray-400" type="submit">Enviar</button>
+                        </div>
+                    </div>
+                    <div className="flex gap-5">
+                        {
+                            inputCreateModal && <CreateTemplateInput 
+                                typePerson={typePerson}
+                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
+                            />
+                        }
+                        {
+                            inputRemoveModal && <DeleteTemplateInput 
+                                typePerson={typePerson}
+                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
+                            />
+                        }
+                        {
+                            useDraftModal && <ClientTemplateHandle 
+                                templateList={templateList} setTemplateList={setTemplateList} 
+                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
+                            />
+                        }
+                    </div>
                     {
                         currentTemplate[typePerson].length != 0 ? (
                             currentTemplate[typePerson].map((accordion: any, accordionIndex) => {
-                                return <div key={accordionIndex} className="bg-gray-200 p-5 border-b-2 border-gray-400">
+                                return <div key={accordionIndex} className="bg-gray-50 drop-shadow rounded-md mt-3 p-5">
                                     <AccordionItem className="flex flex-wrap items-center justify-center" title={accordion.title}>
                                         {
                                             accordion.title === "Cliente" && (
                                                 <>
-                                                    <div className="mb-2 w-2/4 border-x-8">
+                                                    <div className="mb-2 w-2/4 border-x-8 border-neutral-50">
                                                         <label className="block">Tipo Pessoa (conjunto fixo)</label>
                                                         <div onChange={(e: any) => {
                                                             setTypePerson(e.target.value.toLowerCase().replace(" ","_").replace("í","i"))
@@ -213,7 +220,7 @@ export default function SignUpPageB() {
                                                             <label htmlFor="input-tipo-pessoa-juridica">Pessoa jurídica</label>
                                                         </div>
                                                     </div>
-                                                    <div className="mb-2 w-2/4 border-x-8">
+                                                    <div className="mb-2 w-2/4 border-x-8 border-neutral-50">
                                                         <label htmlFor="input-procuracao">Procuração: (conjunto fixo)</label>
                                                         <select required onChange={(e) => { addItem(e.target.value) }} defaultValue="default" name="procuracao" className="w-full" id="input-procuracao">
                                                             <option disabled value="default">-- Escolha um tipo de procuração --</option>
@@ -233,7 +240,7 @@ export default function SignUpPageB() {
                                         }
                                         {accordion.inputs.map((input: any, inputIndex: number) => {
                                             return (
-                                                <div className="mb-2 w-2/4 border-x-8" key={inputIndex}>
+                                                <div className="mb-2 w-2/4 border-x-8 border-neutral-50" key={inputIndex}>
                                                     {
                                                         ["radio", "checkbox"].includes(input.type) && (
                                                             <>
@@ -317,9 +324,7 @@ export default function SignUpPageB() {
                         ) : (
                             <div className="bg-gray-200 p-5 border-b-2 border-gray-400 h-[100%]"></div>
                         )
-                    }
-                    <input name="nome_identificador" type="text" placeholder="Nome de identifição"  />
-                    <button className="bg-gray-200 p-2 my-4 border-b-2 me-3 border-gray-400" type="submit">Salvar</button>
+                    }   
                 </form>
             </div>
         </div>

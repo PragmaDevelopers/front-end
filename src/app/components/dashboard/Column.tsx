@@ -11,7 +11,7 @@ import { isFlagSet } from "@/app/utils/checkers";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { ConfirmRemoveColumn, RemoveColumn, UpdateColumnTitle } from "@/app/utils/dashboard/functions/Page/Column";
 import { delete_column } from "@/app/utils/fetchs";
-import { ShowCreateCard } from "@/app/utils/dashboard/functions/Page/Card";
+import { CreateCard, ShowCreateCard } from "@/app/utils/dashboard/functions/Page/Card";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 
 export function ColumnContainer({column}:{column:Column}) {
@@ -20,7 +20,7 @@ export function ColumnContainer({column}:{column:Column}) {
     const [title, setTitle] = useState<string>(column.title);
     const { userValue } = useUserContext();
     const modalContextProps = useModalContext();
-    const { setTempColumn, setTempCard, tempCard, tempKanban, setTempKanban,cardManager,setCardManager } = useKanbanContext();
+    const { setTempColumn, tempColumn, tempCard, tempKanban, setTempKanban,cardManager,setCardManager } = useKanbanContext();
         
     const cardsIds = useMemo(() => {
         const ids:SystemID[] = [];
@@ -122,18 +122,13 @@ export function ColumnContainer({column}:{column:Column}) {
         );
     }
 
-    function handleShowCreateCard(){
-        ShowCreateCard(
+    function handleCreateCard(){
+        CreateCard(
             userValue,
-            tempKanban.id,
-            column.id,
-            setCardManager,
-            setTempCard,
-            cardManager,
-            failModalOption,
-            noButtonRef,
-            modalContextProps         
-        )
+            setTempKanban,
+            column,
+            tempKanban
+        );
     }
 
     return (
@@ -171,7 +166,7 @@ export function ColumnContainer({column}:{column:Column}) {
                     })}
                 </SortableContext>
             </div>
-            <button onClick={handleShowCreateCard} className='relative rounded-md drop-shadow bg-neutral-50 p-2 flex w-full items-center justify-center'>
+            <button onClick={handleCreateCard} className='relative rounded-md drop-shadow bg-neutral-50 p-2 flex w-full items-center justify-center'>
                 <PlusCircleIcon className='w-6 aspect-square absolute top-1 left-2' />
                 <h1 className='w-full text-center'>Add Card</h1>
             </button>

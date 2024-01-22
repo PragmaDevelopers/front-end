@@ -1,8 +1,12 @@
 "use client";
+import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { useUserContext } from "@/app/contexts/userContext";
-import { BellIcon, ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline";
+import { Kanban } from "@/app/types/KanbanTypes";
+import { get_kanban } from "@/app/utils/fetchs";
+import { BellIcon, ArrowLeftEndOnRectangleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from "react";
 
 interface VercelLogoProps { className: string; }
 function VercelLogo(props: VercelLogoProps) {
@@ -17,8 +21,19 @@ function VercelLogo(props: VercelLogoProps) {
 interface HeaderProps { showNotifications?: any };
 export default function Header(props: HeaderProps) {
     const currentPath: string = usePathname();
-    const { setUserValue } = useUserContext();
+    const { setUserValue,userValue } = useUserContext();
+    const [generalLoading,setGeneralLoading] = useState<boolean>(false);
+    const { setKanbanList } = useKanbanContext();
     const router = useRouter();
+
+    function handleRefleshKanban(){
+        setGeneralLoading(true);
+        get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
+            setKanbanList(dbKanbanList);
+            setGeneralLoading(false);
+        }));
+    }
+
     if (currentPath != '/' && currentPath != '/pdf/view') {
         return (
             <div className='w-full h-[8%] flex flex-row justify-between items-center p-2'>
@@ -26,7 +41,8 @@ export default function Header(props: HeaderProps) {
                     <VercelLogo className="fill-neutral-950 aspect-square w-3.5" />
                 </div>
                 <div className="flex flex-row items-center">
-                    <nav className='flex flex-row'>
+                    <nav className='flex flex-row items-center'>
+                        <button onClick={handleRefleshKanban} type='button' className={generalLoading ? "loading-element" : ""}><CircleStackIcon className="aspect-square w-8" /></button>
                         <Link href="/dashboard" className='text-neutral-950 hover:text-blue-400 mx-2'>Dashboard</Link>
                         <Link href="/register/client" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
                         <Link href="/pdf/create" className='text-neutral-950 hover:text-blue-400 mx-2'>Editor</Link>

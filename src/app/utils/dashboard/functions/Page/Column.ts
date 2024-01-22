@@ -10,6 +10,8 @@ import { RefObject, useRef } from "react";
 export function CreateNewColumn(
     userValue: userValueDT,
     setTempKanban: (newValue:Kanban) => void,
+    setKanbanList: (newValue:Kanban[]) => void,
+    kanbanList: Kanban[] | null,
     tempKanban: Kanban,
     falseModalOptions: any,
     noButtonRef: RefObject<HTMLButtonElement>,
@@ -54,6 +56,15 @@ export function CreateNewColumn(
                 }
             });
             setTempKanban({...tempKanban,columns:newColumnWithId});
+            const newKanbanList = kanbanList?.map((kanban)=>{
+                if(kanban.id == tempKanban.id){
+                    kanban.columns = newColumnWithId;
+                }
+                return kanban;
+            });
+            if(newKanbanList){
+                setKanbanList(newKanbanList);
+            }
         }
     }))
 }

@@ -12,7 +12,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
     const { userValue } = useUserContext();
 
     return (
-        <div className="bg-gray-200 w-2/4 p-2 mb-4 border-b-2 border-gray-400 flex flex-col">
+        <div className="mt-3 bg-gray-200 w-2/4 p-2  border-b-2 border-gray-400 flex flex-col">
             <form onSubmit={(e: any) => {
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;

@@ -76,6 +76,8 @@ export interface KanbanContextProps {
     setTempColumn: (newValue: Column) => void;
     tempCard: Card;
     setTempCard: (newValue: Card) => void;
+    previousTempCard: Card;
+    setPreviousTempCard: (newValue: Card) => void;
     deleteTempCardIds: {type:string,id:SystemID}[],
     setDeleteTempCardIds: (newValue:{type:string,id:SystemID}[]) => void,
     cardManager: CardManager;

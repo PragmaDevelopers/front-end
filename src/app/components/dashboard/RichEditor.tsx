@@ -7,7 +7,7 @@ import { forwardRef, Ref, useEffect, useRef, useState } from "react";
 const RichEditor = (props: RichEditorProps) => {
     const cardDescriptionRef = useRef<MDXEditorMethods>(null);
     useEffect(()=>{
-        cardDescriptionRef.current?.setMarkdown(props.tempCard.description)
+        cardDescriptionRef.current?.setMarkdown(props.tempCard.description || "")
     },[props.tempCard.description])
     return (
         <MDXEditor

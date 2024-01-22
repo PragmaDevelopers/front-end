@@ -99,6 +99,7 @@ const COLUMN_MOVE_ROUTE: string = `${KANBAN_ROUTE}/move/column`;
 const CARD_ROUTE: string = `${COLUMN_ROUTE}/card`;
 const CARD_MOVE_ROUTE: string = `{${COLUMN_ROUTE}/move/card}`
 
+const INNER_CARD_ROUTE: string = `${CARD_ROUTE}/innerCard`;
 const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
 const CUSTOMFIELD_ROUTE: string = `${CARD_ROUTE}/customField`;
 const TAG_ROUTE: string = `${CARD_ROUTE}/tag`;
@@ -314,6 +315,19 @@ type POST_card = {
 export function post_card(body: POST_card, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
     fetch(CARD_ROUTE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_inner_card = {
+    cardId: SystemID,
+    title: string,
+    description?: string,
+    members?: SystemID[]
+};
+export function post_inner_card(body: POST_inner_card, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(INNER_CARD_ROUTE, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

@@ -12,7 +12,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
     const { userValue } = useUserContext();
 
     return (
-        <div className="mt-3 bg-gray-200 w-2/4 p-2  border-b-2 border-gray-400 flex flex-col">
+        <div className="mt-3 w-2/4 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col">
             <form onSubmit={(e: any) => {
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;
@@ -29,9 +29,9 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                         })
                     )}
                 </select>
-                <button className="bg-gray-400 p-2 text-center block mt-2">Usar rascunho selecionado</button>
+                <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center block mt-2">Usar rascunho selecionado</button>
             </form>
-            <div className="bg-gray-300 h-1 rounded-md mt-3 mb-2"></div>
+            <div className="bg-neutral-200 h-1 rounded-md mt-3 mb-2"></div>
             <form onSubmit={(e: any) => {
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;
@@ -62,9 +62,9 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                         })
                     )}
                 </select>
-                <button className="bg-gray-400 p-2 text-center block mt-2">Deletar rascunho selecionado</button>
+                <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center mt-2">Deletar rascunho selecionado</button>
             </form>
-            <div className="bg-gray-300 h-1 rounded-md mt-3 mb-2"></div>
+            <div className="bg-neutral-200 h-1 rounded-md mt-3 mb-2"></div>
             <form onSubmit={(e: any) => {
                 e.preventDefault()
                 const templateName = e.target.draft_name.value;
@@ -96,7 +96,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
             }}>
                 <label htmlFor="draft-name">Nome do rascunho: </label>
                 <input required className="w-full" id="draft-name" type="text" name="draft_name" />
-                <button type="submit" className="bg-gray-400 p-2 text-center block mt-2">Salvar rascunho atual</button>
+                <button type="submit" className="bg-neutral-100 drop-shadow rounded-md p-2 text-center mt-2">Salvar rascunho atual</button>
             </form>
         </div>
     )

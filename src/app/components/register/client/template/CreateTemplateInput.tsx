@@ -133,7 +133,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
     }
 
     return (
-        <form className="mt-3 bg-gray-200 w-3/4 p-2 border-b-2 border-gray-400 flex flex-col"
+        <form className="mt-3 w-2/4 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col"
             onSubmit={(e) => {
                 e.preventDefault();
                 if(handleAlert.isTrue){
@@ -300,7 +300,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                 </div>
             </div>
             <div className="my-3 flex gap-2 justify-between">
-                <button className="bg-gray-300 p-2 border-b-2 me-3 border-gray-400" type="button" onClick={() => {
+                <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center" type="button" onClick={() => {
                     if(["new-radio", "new-checkbox", "new-select","radio", "checkbox", "select"].includes(selectedInputType)){
                         setInputToInsertB({
                             label: inputToInsertB.label,
@@ -322,7 +322,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                 }}>Adiconar</button>
                 {
                     ["new-radio", "new-checkbox", "new-select","radio", "checkbox", "select"].includes(selectedInputType) && inputToInsertB.values.length > 1 ?
-                        <button className="bg-gray-300 p-2 border-b-2 border-gray-400" type="button" onClick={() => {
+                        <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center" type="button" onClick={() => {
                             const newArr = [...inputToInsertB.values];
                             newArr.pop();
                             setInputToInsertB({
@@ -333,7 +333,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                         }}>Remover</button>
                     :
                         inputToInsertA.length > 1 && 
-                            <button className="bg-gray-300 p-2 border-b-2 border-gray-400" type="button" onClick={() => {
+                            <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center" type="button" onClick={() => {
                                 const newArr = [...inputToInsertA];
                                 newArr.pop();
                                 setInputToInsertA(newArr);
@@ -391,7 +391,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                 
                 }
             </div>
-            <button type="submit" className="bg-gray-400 p-2 text-center">Criar</button>
+            <button type="submit" className="bg-neutral-100 drop-shadow rounded-md p-2 text-center">Criar</button>
         </form>
     )
 }

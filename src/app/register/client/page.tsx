@@ -18,20 +18,18 @@ export default function SignUpPageB() {
     });
 
     const [templateList, setTemplateList] = useState<{
-        id:number,
-        name:string,
+        id: number,
+        name: string,
         template: {
             pessoa_fisica: any[],
             pessoa_juridica: any[]
-        } 
+        }
     }[]>([]);
-
-    
 
     const [inputCreateModal, setInputCreateModal] = useState<boolean>(false);
     const [inputRemoveModal, setInputRemoveModal] = useState<boolean>(false);
     const [useDraftModal, setUseDraftModal] = useState<boolean>(false);
-    
+
     const [typePerson, setTypePerson] = useState<"pessoa_fisica" | "pessoa_juridica">("pessoa_fisica");
     const [cepValue, setCepValue] = useState("")
     const [addressValue, setAddressValue] = useState<CepDataProps>({
@@ -69,79 +67,52 @@ export default function SignUpPageB() {
         };
         console.log(userValue)
         fetch(`${API_BASE_URL}/api/private/user/signup/client/templates?value=false`, requestOptions)
-        .then(response => response.json()).then((
-            data: {
-                id:number,
-                name:string,
-                template: {
-                    pessoa_fisica: any[],
-                    pessoa_juridica: any[]
-                } 
-            }[]
-        ) => {
-            setTemplateList(data);
-            console.log(data)
-            if(data.length != 0){
-                setCurrentTemplate(data[0].template)
+        .then(response => response.json()).then((clientTemplates:any) => {
+            setTemplateList(clientTemplates);
+            console.log(clientTemplates)
+            if (clientTemplates.length != 0) {
+                setCurrentTemplate(clientTemplates[0].template)
             }
-        })
+        });
     }, [])
 
-    async function searchCep(cep:string){
-        cep = cep.replace(/\D/g,""); //Substituí o que não é dígito por "", /g é [Global][1]
-        if(cep.length <= 8){
-            setCepValue(cep.replace(/^(\d{5})(\d{3})$/g,"$1-$2"));
-            if(cep.length == 8){
-                const data = await fetch(`https://viacep.com.br/ws/${cep}/json/`).catch(error=>alert(error));
-                if(data){
+    async function searchCep(cep: string) {
+        cep = cep.replace(/\D/g, ""); //Substituí o que não é dígito por "", /g é [Global][1]
+        if (cep.length <= 8) {
+            setCepValue(cep.replace(/^(\d{5})(\d{3})$/g, "$1-$2"));
+            if (cep.length == 8) {
+                const data = await fetch(`https://viacep.com.br/ws/${cep}/json/`).catch(error => alert(error));
+                if (data) {
                     const response = await data.json();
                     setAddressValue({
-                        estado:response.uf || "",
-                        localidade:response.localidade || "",
-                        bairro:response.bairro || "",
-                        logradouro:response.logradouro || ""
+                        estado: response.uf || "",
+                        localidade: response.localidade || "",
+                        bairro: response.bairro || "",
+                        logradouro: response.logradouro || ""
                     })
                 }
-            }else{
+            } else {
                 setAddressValue({
                     ...addressValue,
-                    estado:"" 
+                    estado: ""
                 })
             }
         }
     }
 
-    const [selectedArr, setSelectedArr] = useState<string[]>([]);
-    function addItem(item: string) {
-        if (!selectedArr.includes(item)) {
-            setSelectedArr([item, ...selectedArr]);
-        }
-    }
-
-    function removeItem(item: string) {
-        const selectedFilter = selectedArr.filter(value => value !== item);
-        setSelectedArr(selectedFilter);
-    }
-
     return (
         <div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
             <div className="p-3 w-full max-w-4xl">
-                <form onSubmit={(e:any)=>{
+                <form onSubmit={(e: any) => {
                     e.preventDefault();
-                    let clientSignUp:any = {};
-                    for(let i = 0;i < e.target.length;i++){
-                        if(e.target[i].name == "procuracao"){
-                            if(selectedArr.length != 1){
-                                let words = selectedArr.slice(0,selectedArr.length - 1).join(", ");
-                                clientSignUp[e.target[i].name] = words+" e "+selectedArr[selectedArr.length - 1];
-                            }else{
-                                clientSignUp[e.target[i].name] = selectedArr[0];
-                            }
-                        }else if(e.target[i].name){
+
+                    let clientSignUp: any = {};
+                    for (let i = 0; i < e.target.length; i++) {
+                        if(e.target[i].name != "" && e.target[i].name != "nome_identificador"){
                             clientSignUp[e.target[i].name] = e.target[i].value;
                         }
                     }
-                    sessionStorage.setItem("clientSignUp",JSON.stringify(clientSignUp));   
+                    sessionStorage.setItem("clientSignUp", JSON.stringify(clientSignUp));
                     const requestOptions = {
                         method: 'POST',
                         headers: {
@@ -149,14 +120,18 @@ export default function SignUpPageB() {
                             'Authorization': `Bearer ${userValue.token}`,
                         },
                         body: JSON.stringify({
-                            name: e.target.nome_identificador,
+                            name: e.target.nome_identificador.value,
                             template: clientSignUp
                         })
                     };
                     fetch(`${API_BASE_URL}/api/private/user/signup/client/template?value=true`, requestOptions)
-                    .then(response => response.json()).then(() => {
+                    .then(response => response.json()).then((clientTemplateId) => {
                         console.log("CREATE CLIENT SUCCESS");
-                    });  
+                        alert("Cliente Salvo!");
+                        sessionStorage.setItem("clientTemplateId_editor",clientTemplateId)
+                    });
+
+                    e.target.reset();  
                 }}>
                     <div className="flex justify-between items-center">
                         <div>
@@ -176,28 +151,28 @@ export default function SignUpPageB() {
                                 setInputRemoveModal(false);
                             }} type="button">Rascunhos</button>
                         </div>
-                        <div>
-                            <input name="nome_identificador" type="text" placeholder="Nome do cliente"  />
-                            <button className="bg-gray-200 p-2 border-b-2 me-3 border-gray-400" type="submit">Enviar</button>
+                        <div className="flex items-center">
+                            <input name="nome_identificador" type="text" placeholder="Nome do cliente" />
+                            <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center ms-3 border-gray-400" type="submit">Enviar</button>
                         </div>
                     </div>
                     <div className="flex gap-5">
                         {
-                            inputCreateModal && <CreateTemplateInput 
+                            inputCreateModal && <CreateTemplateInput
                                 typePerson={typePerson}
-                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
+                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
                             />
                         }
                         {
-                            inputRemoveModal && <DeleteTemplateInput 
+                            inputRemoveModal && <DeleteTemplateInput
                                 typePerson={typePerson}
-                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
+                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
                             />
                         }
                         {
-                            useDraftModal && <ClientTemplateHandle 
-                                templateList={templateList} setTemplateList={setTemplateList} 
-                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate} 
+                            useDraftModal && <ClientTemplateHandle
+                                templateList={templateList} setTemplateList={setTemplateList}
+                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
                             />
                         }
                     </div>
@@ -208,34 +183,17 @@ export default function SignUpPageB() {
                                     <AccordionItem className="flex flex-wrap items-center justify-center" title={accordion.title}>
                                         {
                                             accordion.title === "Cliente" && (
-                                                <>
-                                                    <div className="mb-2 w-2/4 border-x-8 border-neutral-50">
-                                                        <label className="block">Tipo Pessoa (conjunto fixo)</label>
-                                                        <div onChange={(e: any) => {
-                                                            setTypePerson(e.target.value.toLowerCase().replace(" ","_").replace("í","i"))
-                                                        }} className="inline-block">
-                                                            <input required className="mx-1" type="radio" id="input-tipo-pessoa-fisica" name="tipo_pessoa" value="Pessoa Física" />
-                                                            <label htmlFor="input-tipo-pessoa-fisica">Pessoa física</label>
-                                                            <input required className="mx-1" type="radio" id="input-tipo-pessoa-juridica" name="tipo_pessoa" value="Pessoa Jurídica" />
-                                                            <label htmlFor="input-tipo-pessoa-juridica">Pessoa jurídica</label>
-                                                        </div>
+                                                <div className="mb-2 w-2/4 border-x-8 border-neutral-50">
+                                                    <label className="block">Tipo Pessoa (conjunto fixo)</label>
+                                                    <div onChange={(e: any) => {
+                                                        setTypePerson(e.target.value.toLowerCase().replace(" ", "_").replace("í", "i"))
+                                                    }} className="inline-block">
+                                                        <input required className="mx-1" type="radio" id="input-tipo-pessoa-fisica" name="tipo_pessoa" value="Pessoa Física" />
+                                                        <label htmlFor="input-tipo-pessoa-fisica">Pessoa física</label>
+                                                        <input required className="mx-1" type="radio" id="input-tipo-pessoa-juridica" name="tipo_pessoa" value="Pessoa Jurídica" />
+                                                        <label htmlFor="input-tipo-pessoa-juridica">Pessoa jurídica</label>
                                                     </div>
-                                                    <div className="mb-2 w-2/4 border-x-8 border-neutral-50">
-                                                        <label htmlFor="input-procuracao">Procuração: (conjunto fixo)</label>
-                                                        <select required onChange={(e) => { addItem(e.target.value) }} defaultValue="default" name="procuracao" className="w-full" id="input-procuracao">
-                                                            <option disabled value="default">-- Escolha um tipo de procuração --</option>
-                                                            <option value="Previdenciário">Previdenciário</option>
-                                                            <option value="Trabalhista">Trabalhista</option>
-                                                            <option value="Administrativo">Administrativo</option>
-                                                            <option value="Cível">Cível</option>
-                                                        </select>
-                                                        <div className="flex gap-2 pt-2 flex-wrap">
-                                                            {selectedArr.map(value => {
-                                                                return <span onClick={() => removeItem(value)} key={value} className="bg-slate-300 inline-block py-1 px-2 cursor-pointer">{value}</span>
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                </>
+                                                </div>
                                             )
                                         }
                                         {accordion.inputs.map((input: any, inputIndex: number) => {
@@ -258,34 +216,34 @@ export default function SignUpPageB() {
                                                     }
                                                     {
                                                         ["select"].includes(input.type) && (
-                                                        <>
-                                                            <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
-                                                            { input.name == "estado" ? 
-                                                                <select onChange={(e)=>{setAddressValue({...addressValue,estado:e.target.value})}} required value={addressValue.estado} className="w-full" id={"input-" + input.name} name={input.name}>
-                                                                    <option disabled value=""> -- Escolha um Estado -- </option>
-                                                                    {input.children?.map((value: any,index:number) => <option key={index} value={value.substring(0,2)}>{value}</option>)}
-                                                                </select>
-                                                                :
-                                                                <select required className="w-full" id={"input-" + input.name} name={input.name}>
-                                                                    <option disabled value=""> -- Escolha um Estado -- </option>
-                                                                    {input.children?.map((value:string,index:number) => <option key={index} value={value}>{value}</option>)}
-                                                                </select>
-                                                            }
-                                                        </>
-                                                    )
+                                                            <>
+                                                                <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
+                                                                {input.name == "estado" ?
+                                                                    <select onChange={(e) => { setAddressValue({ ...addressValue, estado: e.target.value }) }} required value={addressValue.estado} className="w-full" id={"input-" + input.name} name={input.name}>
+                                                                        <option disabled value=""> -- Escolha um Estado -- </option>
+                                                                        {input.children?.map((value: any, index: number) => <option key={index} value={value.substring(0, 2)}>{value}</option>)}
+                                                                    </select>
+                                                                    :
+                                                                    <select required className="w-full" id={"input-" + input.name} name={input.name}>
+                                                                        <option disabled value=""> -- Escolha um Estado -- </option>
+                                                                        {input.children?.map((value: string, index: number) => <option key={index} value={value}>{value}</option>)}
+                                                                    </select>
+                                                                }
+                                                            </>
+                                                        )
                                                     }
                                                     {
                                                         ["search"].includes(input.type) && (
                                                             <>
-                                                                <label htmlFor={"input-" + input.name} className="block">{input.label}</label>      
+                                                                <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
                                                                 {
-                                                                    ["cep"].includes(input.name) ? 
-                                                                    <>
-                                                                        <input onChange={(e)=>{searchCep(e.target.value)}} required value={cepValue} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                    </>
-                                                                    :
-                                                                    <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                } 
+                                                                    ["cep"].includes(input.name) ?
+                                                                        <>
+                                                                            <input onChange={(e) => { searchCep(e.target.value) }} required value={cepValue} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                        </>
+                                                                        :
+                                                                        <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                }
                                                             </>
                                                         )
                                                     }
@@ -295,11 +253,11 @@ export default function SignUpPageB() {
                                                                 <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
                                                                 {
                                                                     input.name == "endereco" ? (
-                                                                        <input onChange={(e)=>setAddressValue({...addressValue,logradouro:e.target.value})} required value={addressValue.logradouro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                        <input onChange={(e) => setAddressValue({ ...addressValue, logradouro: e.target.value })} required value={addressValue.logradouro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                     ) : input.name == "bairro" ? (
-                                                                        <input onChange={(e)=>setAddressValue({...addressValue,bairro:e.target.value})} required value={addressValue.bairro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                        <input onChange={(e) => setAddressValue({ ...addressValue, bairro: e.target.value })} required value={addressValue.bairro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                     ) : input.name == "cidade" ? (
-                                                                        <input onChange={(e)=>setAddressValue({...addressValue,localidade:e.target.value})} required value={addressValue.localidade} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                        <input onChange={(e) => setAddressValue({ ...addressValue, localidade: e.target.value })} required value={addressValue.localidade} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                     ) : (
                                                                         <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                     )
@@ -322,9 +280,9 @@ export default function SignUpPageB() {
                                 </div>
                             })
                         ) : (
-                            <div className="bg-gray-200 p-5 border-b-2 border-gray-400 h-[100%]"></div>
+                            <div className="bg-gray-50 drop-shadow rounded-md mt-3 p-5 h-[100%]"></div>
                         )
-                    }   
+                    }
                 </form>
             </div>
         </div>

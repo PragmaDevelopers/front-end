@@ -11,13 +11,14 @@ interface PdfEditorContextProviderProps {
 }
 
 export const PdfEditorContextProvider: React.FC<PdfEditorContextProviderProps> = ({ children }) => {
-  const [editorLines, setEditorLines] = useState<EditorLinesProps>({formattedLines:[],lines:[],selectedLineIndex:0,selectedLetterIndex:0,selectedWordIndex:0});
+  const [editorLines, setEditorLines] = useState<EditorLinesProps>({lines:[],selectedLineIndex:0,selectedLetterIndex:0,selectedWordIndex:0});
+  const [oldLines,setOldLines] = useState<EditorLine[]>([]);
   const [backgroundImage,setBackgroundImage] = useState<backgroundImageProps>({
     section: "center",
     url: null
   });
   return (
-    <PdfEditorContext.Provider value={{ editorLines, setEditorLines,backgroundImage,setBackgroundImage }}>
+    <PdfEditorContext.Provider value={{ editorLines, setEditorLines,backgroundImage,setBackgroundImage,oldLines,setOldLines }}>
       {children}
     </PdfEditorContext.Provider>
   );

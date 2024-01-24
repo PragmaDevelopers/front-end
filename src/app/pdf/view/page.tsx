@@ -13,7 +13,7 @@ function ViewPdf() {
 
   useEffect(() => {
     async function getPdf() {
-      const data = editorLines.formattedLines.map(line=>{
+      const data = editorLines.lines.map(line=>{
             line.style = line.style.replace("left", "flex-start");
             line.style = line.style.replace("right", "flex-end");
             return {

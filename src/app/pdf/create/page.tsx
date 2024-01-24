@@ -34,7 +34,7 @@ function EditPdf() {
     const [backgroundImageModal, setBackgroundImageModal] = useState<boolean>(false);
 
 	const { userValue } = useUserContext();
-	const { editorLines, setEditorLines,backgroundImage,setBackgroundImage } = usePdfEditorContext();
+	const { oldLines, setOldLines,editorLines, setEditorLines,backgroundImage,setBackgroundImage } = usePdfEditorContext();
 
 	const returnToHome = () => {
 		router.push("/");
@@ -62,15 +62,14 @@ function EditPdf() {
 		.then(response => response.json()).then((clientTemplates: any) => {
 			setTemplateList(clientTemplates)
 		})
-
 		if(editorLines.lines.length > 0){
-			const values = editorLines.lines.map(line=>line.value);
+			const values = oldLines.map(line=>line.value);
 			editorRef.current?.setMarkdown(values.join("\n\n"));
 		}
 	}, [])
 
 	function manipulateProseClass({ restoreIds, submit }: { restoreIds?: boolean,submit?:boolean }) {
-		const newEditorLines = editorLines;
+		setOldLines(editorLines.lines);
 		if (restoreIds) {
 			const editorWrapper = document.querySelectorAll(".prose:not(._placeholder_lug8m_993) p, .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6") as any;
 			const newLines = [];
@@ -86,16 +85,19 @@ function EditPdf() {
 					newLines.push({value:"&#x20;",style:lineStyle});;
 				}
 			}
-			newEditorLines.lines = newLines;
-			setEditorLines(newEditorLines);
+			editorLines.lines = newLines;
+			setEditorLines(editorLines);
 		}
 		if(submit){
-			const formattedLines = newEditorLines.lines.map((line)=>{
-				line.value = Mustache.render(line.value.replace(/`([^`]+)`/g, '$1'), currentTemplate);
+			const formattedLines = editorLines.lines.map((line)=>{
+				if(line.value.substring(line.value.length - 6) == "&#x20;"){
+					line.value = line.value.substring(0,line.value.length - 6);
+				}
+				line.value = Mustache.render(line.value.replace(/\\/g,""), currentTemplate);
 				return line;
 			});
-			newEditorLines.formattedLines = formattedLines;
-			setEditorLines(newEditorLines);
+			editorLines.lines = formattedLines;
+			setEditorLines(editorLines);
 			router.push("./view");
 		}
 	}
@@ -117,6 +119,7 @@ function EditPdf() {
 		const lineIndex = editorLines.selectedLineIndex;
 		const wordIndex = editorLines.selectedWordIndex;
 		const letterIndex = editorLines.selectedLetterIndex;
+	
 		if (lines) {
 			const line = lines[lineIndex];
 			let replacementLine = line;
@@ -126,64 +129,76 @@ function EditPdf() {
 			let lastIsLetter = false;
 			let isPaste = false;
 			let newLine: string[] = [];
-
-			line?.replace("&#x20;", "").replace(/^#{0,6} /, "").replace(/[\\]/g, "").replace(regexBoldUnderlineItalic, (match, p1, p2, p3, p4, p5, p6) => {
+	
+			line?.replace("&#x20;", "").replace(/^#{0,6} /, "").replace(/[\\]/g, "").replace(regexBoldUnderlineItalic, (match, p1, p2, p3, p4, p5, p6,index) => {
+				const isLastMatch = index === line.length;
 				if (p1) {
-					let ajuste = 3;
 					if (lastIsLetter) {
 						dbLetterIndex = 0;
 						lastIsLetter = false;
 						dbWordIndex++;
 					}
-					const letterArr = p1.split("");
+					const letterArr = p1.replace(/\*\*\*([\s\S]*)\*\*\*/,"$1").split("")
 					if (dbWordIndex == wordIndex) {
-						if (letterIndex == letterArr.length - 6) {
-							ajuste = 6;
-						}
-						letterArr.splice(letterIndex + ajuste, 0, " `" + variable + "` ");
+						letterArr.splice(letterIndex, 0, "&#x20;" + variable + "&#x20;");
 						isPaste = true;
 					}
-
 					dbWordIndex++;
-					newLine.push(letterArr.join(""));;
+					newLine.push("***"+letterArr.join("")+"***");
+					if(isLastMatch && isPaste){
+						newLine.push("&#x20;");
+					}
 				}
 				if (p2) {
-					let ajuste = 2;
 					if (lastIsLetter) {
 						dbLetterIndex = 0;
 						lastIsLetter = false;
 						dbWordIndex++;
 					}
-					const letterArr = p2.split("");
+					const letterArr = p2.replace(/\*\*([\s\S]*)\*\*/,"$1").split("");
 					if (dbWordIndex == wordIndex) {
-						if (letterIndex == letterArr.length - 4) {
-							ajuste = 4;
-						}
-						letterArr.splice(letterIndex + ajuste, 0, " `" + variable + "` ");
+						letterArr.splice(letterIndex, 0, "&#x20;" + variable + "&#x20;");
 						isPaste = true;
 					}
-
 					dbWordIndex++;
-					newLine.push(letterArr.join(""));
+					newLine.push("**"+letterArr.join("")+"**");
+					if(isLastMatch && isPaste){
+						newLine.push("&#x20;");
+					}
 				}
 				if (p3) {
-					let ajuste = 1;
 					if (lastIsLetter) {
 						dbLetterIndex = 0;
 						lastIsLetter = false;
 						dbWordIndex++;
 					}
-					const letterArr = p3.split("");
+					const letterArr = p3.replace(/\*([\s\S]*)\*/,"$1").split("");
 					if (dbWordIndex == wordIndex) {
-						if (letterIndex == letterArr.length - 2) {
-							ajuste = 2;
-						}
-						letterArr.splice(letterIndex + ajuste, 0, " `" + variable + "` ");
+						letterArr.splice(letterIndex, 0, "&#x20;" + variable + "&#x20;");
 						isPaste = true;
 					}
-
 					dbWordIndex++;
-					newLine.push(letterArr.join(""));;
+					newLine.push("*"+letterArr.join("")+"*");
+					if(isLastMatch && isPaste){
+						newLine.push("&#x20;");
+					}
+				}
+				if(p4){
+					if (lastIsLetter) {
+						dbLetterIndex = 0;
+						lastIsLetter = false;
+						dbWordIndex++;
+					}
+					const letterArr = p4.replace(/<u>([\s\S]*)<\/u>/,"$1").split("");
+					if (dbWordIndex == wordIndex) {
+						letterArr.splice(letterIndex, 0, "&#x20;" + variable + "&#x20;");
+						isPaste = true;
+					}
+					dbWordIndex++;
+					newLine.push("<u>"+letterArr.join("")+"</u>");
+					if(isLastMatch && isPaste){
+						newLine.push("&#x20;");
+					}
 				}
 				if (p5) {
 					if (lastIsLetter) {
@@ -192,7 +207,11 @@ function EditPdf() {
 						dbWordIndex++;
 					}
 					if (dbWordIndex == wordIndex) {
-						newLine.push(p5 + " `" + variable + "` ")
+						if(letterIndex == 0){
+							newLine.push("&#x20;"+variable+"&#x20;"+p5);
+						}else if(letterIndex == 1){
+							newLine.push(p5+"&#x20;"+variable+"&#x20;");
+						}
 						isPaste = true;
 					} else {
 						newLine.push(p5)
@@ -201,43 +220,46 @@ function EditPdf() {
 				}
 				if (p6) {
 					if (dbLetterIndex == letterIndex && !lastIsLetter && dbWordIndex == wordIndex) {
-						newLine.push(" `" + variable + "` " + p6);
+						newLine.push("&#x20;"+variable+"&#x20;"+p6);
 						isPaste = true;
 					} else if (dbLetterIndex == letterIndex - 1 && dbWordIndex == wordIndex) {
-						newLine.push(p6 + " `" + variable + "` ");
+						newLine.push(p6+"&#x20;"+variable+"&#x20;");
 						isPaste = true;
 					} else {
 						newLine.push(p6);
 					}
-
 					dbLetterIndex++;
 					lastIsLetter = true;
+					if(isLastMatch && isPaste){
+						newLine.push("&#x20;");
+					}
 				}
 				return match;
 			});
-
+	
 			if (!isPaste) {
-				newLine.push(" `" + variable + "` ");
+				newLine.push("&#x20;");
+				newLine.push(variable);
+				newLine.push("&#x20;");
 			}
 			replacementLine = newLine.join("");
-
+	
 			const correspondencias = line?.match(/^#{0,6}/);
-
 			let hashtagsRemovidas = "";
-
+	
 			if (correspondencias && correspondencias[0]) {
 				hashtagsRemovidas = correspondencias[0] + " ";
 			}
-
+	
 			lines.splice(lineIndex, 1, hashtagsRemovidas + replacementLine);
 			const formattedLines = spaceVerification(lines);
 			editorRef.current?.setMarkdown(formattedLines.join("\n\n"));
-
+	
 			setTimeout(() => {
-				//ATUALIZA O CACHE DAS LINHAS APÓS ADICIONAR AS VARIÁVEIS
+				// ATUALIZA O CACHE DAS LINHAS APÓS ADICIONAR AS VARIÁVEIS
 				manipulateProseClass({ restoreIds: true });
 				setEditorOpacity(1);
-			}, 0)
+			}, 0);
 		}
 	}
 
@@ -401,6 +423,7 @@ function EditPdf() {
 
 						const selection = window.getSelection();
 						if (selection?.rangeCount && !isLoadImage) {
+							console.log(editorLines)
 							manipulateProseClass({ restoreIds: true });
 
 							const newEditorLines = editorLines;

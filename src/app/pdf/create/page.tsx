@@ -364,6 +364,7 @@ function EditPdf() {
 								}
 
 								const fileInput = imageInputs[0].children[1] as any;
+								const urlLabel = imageInputs[1].children[0];
 								const urlInput = imageInputs[1].children[1];
 								const altLabel = imageInputs[2]?.children[0];
 								const altInput = imageInputs[2]?.children[2] as any;
@@ -374,7 +375,8 @@ function EditPdf() {
 									altInput.setAttribute("style", "display:none;");
 									titleLabel.setAttribute("style", "display:none;");
 									titleInput.setAttribute("style", "display:none;");
-
+									urlLabel.setAttribute("style", "display:none;");
+									urlInput.setAttribute("style", "display:none;");
 									if (e.target.name == "isBackgroundImage") {
 
 										if (altInput.value == "on") {

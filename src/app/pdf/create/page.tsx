@@ -64,7 +64,10 @@ function EditPdf() {
 			setTemplateList(clientTemplates)
 		})
 
-		console.log(editorLines.lines)
+		if(editorLines.lines.length > 0){
+			const values = editorLines.lines.map(line=>line.value);
+			editorRef.current?.setMarkdown(values.join("\n\n"));
+		}
 	}, [])
 
 	function manipulateProseClass({ restoreIds, submit }: { restoreIds?: boolean,submit?:boolean }) {

@@ -95,12 +95,35 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
   const regexImage = /([^"]*)<img height="([^"]*)" width="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>([^"]*)/;
   const regexBoldItalic = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
 
+  const backgroundImagePosition:any = {
+    position: "absolute",
+    opacity: 0.9
+  }
+
+  if(backgroundImage.section == "top-right"){
+    backgroundImagePosition.top = 10;
+    backgroundImagePosition.right = 10;
+  }else if (backgroundImage.section == "top-left"){
+    backgroundImagePosition.top = 10;
+    backgroundImagePosition.left = 10;
+  }else if (backgroundImage.section == "bottom-right"){
+    backgroundImagePosition.top = 10;
+    backgroundImagePosition.right = 10;
+  }else if (backgroundImage.section == "top-left"){
+    backgroundImagePosition.bottom = 10;
+    backgroundImagePosition.left = 10;
+  }else{
+    backgroundImagePosition.top = "50%";
+    backgroundImagePosition.left = "50%";
+    backgroundImagePosition.transform = "translate(-50%,-50%)";
+  }
+
   return (
       <Document>
         <Page size="A4" style={globalStyle.page}>
           {
             backgroundImage.url && (
-              <View fixed={true} style={{position:"absolute",left:"0",top:"0"}}>
+              <View fixed={true} style={backgroundImagePosition}>
                   <Image style={{width:100,height:100}} src={backgroundImage.url} />
               </View>
             )
@@ -117,7 +140,6 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
                 if(line.content.match(regexImage)){
                   const match = line.content.match(regexImage);
                   if(match){
-                    console.log(match)
                     const previous = {
                       style: line.style,
                       content:match[1]

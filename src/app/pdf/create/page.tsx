@@ -63,6 +63,8 @@ function EditPdf() {
 		.then(response => response.json()).then((clientTemplates: any) => {
 			setTemplateList(clientTemplates)
 		})
+
+		console.log(editorLines.lines)
 	}, [])
 
 	function manipulateProseClass({ restoreIds, submit }: { restoreIds?: boolean,submit?:boolean }) {
@@ -442,7 +444,8 @@ function EditPdf() {
 						}
 					}}
 				>
-					<MDXEditor onChange={()=>manipulateProseClass({restoreIds:true})} contentEditableClassName="prose" ref={editorRef} markdown={""}
+					<MDXEditor onChange={()=>manipulateProseClass({restoreIds:true})} contentEditableClassName="prose" 
+					ref={editorRef} markdown={""}
 						toMarkdownOptions={{
 							handlers: {
 								image: (e) => {

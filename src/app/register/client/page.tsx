@@ -9,7 +9,6 @@ import ClientTemplateHandle from "@/app/components/register/client/template/Clie
 import CreateTemplateInput from "@/app/components/register/client/template/CreateTemplateInput";
 import DeleteTemplateInput from "@/app/components/register/client/template/DeleteTemplateInput";
 import { CepDataProps } from "@/app/interfaces/RegisterClientInterfaces";
-import states from "@/api/states/states";
 
 export default function SignUpPageB() {
     const [currentTemplate, setCurrentTemplate] = useState<{ pessoa_fisica: any[], pessoa_juridica: any[] }>({
@@ -65,11 +64,10 @@ export default function SignUpPageB() {
                 'Authorization': `Bearer ${userValue.token}`,
             }
         };
-        console.log(userValue)
+        
         fetch(`${API_BASE_URL}/api/private/user/signup/client/templates?value=false`, requestOptions)
         .then(response => response.json()).then((clientTemplates:any) => {
             setTemplateList(clientTemplates);
-            console.log(clientTemplates)
             if (clientTemplates.length != 0) {
                 setCurrentTemplate(clientTemplates[0].template)
             }

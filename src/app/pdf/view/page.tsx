@@ -22,8 +22,6 @@ function ViewPdf() {
             }
       }); 
 
-      console.log(data)
-
       const blob = await pdf(pdfGenerator(data,backgroundImage)).toBlob();
       const blobUrl = URL.createObjectURL(blob);
       const iframe = ref.current;

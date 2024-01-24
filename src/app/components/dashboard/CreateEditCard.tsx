@@ -945,16 +945,16 @@ const CreateEditCard = () => {
             ${cardManager.isEditElseCreate && (tempCard.id == "" || tempCard.id.toString().includes("|")) ? "loading-element" : ""}
             ${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} 
             overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
-                <form className='w-full h-fit' onSubmit={handleCreateCardForm}>
+                <form className='w-full h-fit relative' onSubmit={handleCreateCardForm}>
                     <div className="w-full h-fit flex justify-center items-center relative">
-                        {tempCard.cardParentId && <button type="button" onClick={handlePreviousCard}><ArrowLeftCircleIcon className="w-8 aspect-square absolute top-2 left-2" /></button>}
+                        {tempCard.cardParentId && <button type="button" onClick={handlePreviousCard}><ArrowLeftCircleIcon className="w-8 aspect-square absolute top-2 left-0" /></button>}
                         <h1 className="my-2 text-center font-semibold text-xl">Card Creation</h1>
                         <button type="button" onClick={() => {
                             setCardManager({
                                 ...cardManager,
                                 isShowCreateCard:false
                             });
-                        }}><XCircleIcon className='w-8 aspect-square absolute top-2 right-2' /></button>
+                        }}><XCircleIcon className='w-8 aspect-square absolute top-2 right-0' /></button>
                     </div>
                     <CardTitle title={tempCard.title} />
                     <CardDateSection

@@ -1,23 +1,17 @@
+import { usePdfEditorContext } from "@/app/contexts/pdfEditorContext";
 import { Button, JsxEditorProps, corePluginHooks, JsxComponentDescriptor, NestedLexicalEditor, jsxPluginHooks, diffSourcePluginHooks } from "@mdxeditor/editor"
 import { $createRangeSelection, RangeSelection } from "lexical";
 
 // a toolbar button that will insert a JSX element into the editor.
 export const AlignLeftButton = () => {
+    const { editorLines, setEditorLines } = usePdfEditorContext();
     return (
         <Button
             title="Left Align"
             onClick={() => {
-                const lineIndex = Number(sessionStorage.getItem("edit_pdf_line_selected")?.split("-")[1]);
-                const lineStyleJson = sessionStorage.getItem("pdf_style_line_"+lineIndex);
-                if(lineStyleJson){
-                    const lineStyle = JSON.parse(lineStyleJson);
-                    lineStyle.textAlign = "left";
-                    sessionStorage.setItem("pdf_style_line_"+lineIndex, JSON.stringify(lineStyle));
-                }else{
-                    sessionStorage.setItem("pdf_style_line_"+lineIndex, JSON.stringify({
-                        textAlign: "left"
-                    }));
-                }
+                const newLines = editorLines.lines;
+                newLines[editorLines.selectedLineIndex].style = "left";
+                setEditorLines({...editorLines,lines:newLines});
             }}
         >
             &larr;
@@ -26,21 +20,14 @@ export const AlignLeftButton = () => {
 }
 
 export const AlignCenterButton = () => {
+    const { editorLines, setEditorLines } = usePdfEditorContext();
     return (
         <Button
             title="Center Align"
             onClick={() => {
-                const lineIndex = Number(sessionStorage.getItem("edit_pdf_line_selected")?.split("-")[1]);
-                const lineStyleJson = sessionStorage.getItem("pdf_style_line_"+lineIndex);
-                if(lineStyleJson){
-                    const lineStyle = JSON.parse(lineStyleJson);
-                    lineStyle.textAlign = "center";
-                    sessionStorage.setItem("pdf_style_line_"+lineIndex, JSON.stringify(lineStyle));
-                }else{
-                    sessionStorage.setItem("pdf_style_line_"+lineIndex, JSON.stringify({
-                        textAlign: "center"
-                    }));
-                }
+                const newLines = editorLines.lines;
+                newLines[editorLines.selectedLineIndex].style = "center";
+                setEditorLines({...editorLines,lines:newLines});
             }}
         >
             &harr;
@@ -49,21 +36,14 @@ export const AlignCenterButton = () => {
 }
 
 export const AlignRightButton = () => {
+    const { editorLines, setEditorLines } = usePdfEditorContext();
     return (
         <Button
             title="Right Align"
             onClick={() => {
-                const lineIndex = Number(sessionStorage.getItem("edit_pdf_line_selected")?.split("-")[1]);
-                const lineStyleJson = sessionStorage.getItem("pdf_style_line_"+lineIndex);
-                if(lineStyleJson){
-                    const lineStyle = JSON.parse(lineStyleJson);
-                    lineStyle.textAlign = "right";
-                    sessionStorage.setItem("pdf_style_line_"+lineIndex, JSON.stringify(lineStyle));
-                }else{
-                    sessionStorage.setItem("pdf_style_line_"+lineIndex, JSON.stringify({
-                        textAlign: "right"
-                    }));
-                }
+                const newLines = editorLines.lines;
+                newLines[editorLines.selectedLineIndex].style = "right";
+                setEditorLines({...editorLines,lines:newLines});
             }}
         >
             &rarr;

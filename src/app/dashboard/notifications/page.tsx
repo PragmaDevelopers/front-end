@@ -6,6 +6,7 @@ import { User, NotificationUser } from "@/app/types/KanbanTypes";
 import { get_notifications } from "@/app/utils/fetchs";
 import { API_BASE_URL, NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
 import { ArrowTopRightOnSquareIcon, CircleStackIcon, TagIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import dayjs from "dayjs";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -15,6 +16,7 @@ type parsedNotification = {
     category: string;
     viewed: boolean;
     user: User;
+    registrationDate: string
 }
 function parseRawNotificationsArray(notificationsArray: NotificationUser[], userList: User[]): parsedNotification[] {
     let newArray: parsedNotification[] = [];
@@ -29,6 +31,7 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
         let title: string = NOTIFICATION_CATEGORIES_TITLE[notification.category];
         let category: string = notification.category;
         let viewed: boolean = notification.viewed;
+        let registrationDate: string = notification.registrationDate;
 
         let newNotification: parsedNotification = {
             title: title,
@@ -36,6 +39,7 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
             category: category,
             viewed: viewed,
             user: user,
+            registrationDate: registrationDate
         }
 
         newArray.push(newNotification);
@@ -45,21 +49,16 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
 }
 
 
-interface NotificationElementProps {
-    title: string;
-    message: string;
-    profilePicture: string | null;
-}
-function NotificationElement(props: NotificationElementProps) {
-    const { title, message, profilePicture } = props;
+function NotificationElement({notification}:{notification:parsedNotification}) {
     return (
         <Link href="#" className="w-full h-16 bg-neutral-transparent hover:bg-neutral-50/25 transition-all block overflow-x-hidden">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
-                <ProfilePicture className="aspect-square w-12 mr-2" size={512} source={profilePicture} />
+                <ProfilePicture className="aspect-square w-12 mr-2" size={512} source={notification.user.profilePicture} />
                 <div className="flex flex-col mx-2 grow w-12 overflow-hidden">
-                    <h1 className="text-lg font-bold">{title}</h1>
-                    <h2 className="truncate text-sm text-neutral-600">{message}</h2>
+                    <h1 className="text-lg font-bold">{notification.title}</h1>
+                    <h2 className="truncate text-sm text-neutral-600">{notification.message}</h2>
                 </div>
+                <h2 className="text-sm ml-1 text-neutral-500">{dayjs(notification.registrationDate).format('DD [de] MMMM [de] YYYY')}</h2>
                 {/* <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" /> */}
                 {/* <TrashIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" /> */}
             </div>
@@ -149,7 +148,7 @@ export default function Page() {
                     {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement message={element.message} title={element.title} key={index}/>)}
                 </div> */}
                 <div className="w-full shadow-inner border-[1px] border-neutral-300 bg-neutral-200 ml-4 mr-5 mt-4 mb-8 rounded-md divide-y divide-neutral-400">
-                    {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement message={element.message} title={element.title} profilePicture={element.user.profilePicture} key={index}/>)}
+                    {parsedNotifications.map((element: parsedNotification, index: number) => <NotificationElement notification={element} key={index}/>)}
                 </div>
             </div>
         </main>

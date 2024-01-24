@@ -3,9 +3,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { ArrowRightIcon, ClockIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
-import { get_notifications, get_notifications_with_limit } from "@/app/utils/fetchs";
+import { get_notifications } from "@/app/utils/fetchs";
 import { NotificationUser } from "@/app/types/KanbanTypes";
 
 dayjs.locale('pt-br');

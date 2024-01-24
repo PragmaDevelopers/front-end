@@ -3,34 +3,28 @@
 import React, { useEffect, useRef } from 'react';
 import pdfGenerator from '../../utils/pdfGenerator';
 import { pdf } from "@react-pdf/renderer";
+import { usePdfEditorContext } from '@/app/contexts/pdfEditorContext';
 
 function ViewPdf() {
 
   const ref = useRef<HTMLIFrameElement>(null);
 
+  const { backgroundImage, editorLines } = usePdfEditorContext();
+
   useEffect(() => {
     async function getPdf() {
-      let formattedLineLength = sessionStorage.getItem("pdf_formatted_line_length");
-      const data: { content: string; style: { justifyContent: "flex-start" | "center" | "flex-end" } }[] = [];
+      const data = editorLines.formattedLines.map(line=>{
+            line.style = line.style.replace("left", "flex-start");
+            line.style = line.style.replace("right", "flex-end");
+            return {
+              content: line.value,
+              style: {justifyContent: line.style as "flex-start" | "center" | "flex-end"}
+            }
+      }); 
 
-      for (let i = 0; i < Number(formattedLineLength); i++) {
-        const formattedLine = sessionStorage.getItem("pdf_formatted_line_" + i);
+      console.log(data)
 
-        if (formattedLine) {
-          let styleLine = sessionStorage.getItem("pdf_style_line_" + i);
-
-          if (styleLine) {
-            styleLine = styleLine.replace(`"textAlign":"flex-start"`, `"justifyContent":"flex-start"`);
-            styleLine = styleLine.replace(`"textAlign":"center"`, `"justifyContent":"center"`);
-            styleLine = styleLine.replace(`"textAlign":"flex-end"`, `"justifyContent":"flex-end"`);
-            data.push({ content: formattedLine, style: JSON.parse(styleLine) });
-          } else {
-            data.push({ content: formattedLine, style: { justifyContent: "flex-start" } });
-          }
-        }
-      }
-
-      const blob = await pdf(pdfGenerator(data,undefined)).toBlob();
+      const blob = await pdf(pdfGenerator(data,backgroundImage)).toBlob();
       const blobUrl = URL.createObjectURL(blob);
       const iframe = ref.current;
 

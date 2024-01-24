@@ -138,7 +138,14 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.profileData = profileData;
                     setUserValue(newUserValue);
+                }));
+            }
 
+            const getNotificationUser = () => {
+                get_notifications_with_limit(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
+                    const newUserValue = userValue;
+                    newUserValue.notifications = dbNotifications;
+                    setUserValue(newUserValue);
                     setIsloading(false);
                     router.push("/dashboard");
                 }));
@@ -149,16 +156,6 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.userList = userList;
                     setUserValue(newUserValue);
-                    console.log("lista de ususários")
-                }));
-            }
-
-            const getNotificationUser = () => {
-                get_notifications_with_limit(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
-                    const newUserValue = userValue;
-                    newUserValue.notifications = dbNotifications;
-                    setUserValue(newUserValue);
-                    console.log("notificações")
                 }));
             }
 

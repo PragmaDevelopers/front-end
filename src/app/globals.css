@@ -31,6 +31,8 @@
 .prose h5 { @apply font-black text-base }
 .prose h6 { @apply font-black text-sm }
 
+.mdxeditor:has(.prose) { @apply bg-gray-50 drop-shadow rounded-md }
+
 .MDXEditor._editorWrapper_lug8m_138 { 
     @apply p-2 border-[1px] border-neutral-200 rounded-md w-full h-fit my-2 font-poppins relative shadow-inner bg-neutral-100 
 }
@@ -50,6 +52,7 @@
 .MDXEditor._editorWrapper_lug8m_138 ._toolbarRoot_w1wlt_140, ._toolbarRoot_16b3d_141 { @apply w-full font-poppins font-bold bg-neutral-100 top-4 border-neutral-200 border-2 static drop-shadow-md }
 .MDXEditor._editorWrapper_lug8m_138 ._rootContentEditableWrapper_w1wlt_1022 { @apply font-poppins }
 .MDXEditor._editorWrapper_lug8m_138 ._rootContentEditableWrapper_16b3d_991, .MDXEditor ._contentEditable_16b3d_340 { @apply max-h-64 overflow-auto }
+
 
 /*
 ._selectContainer_16b3d_252,._toolbarButtonDropdownContainer_16b3d_250,._toolbarCodeBlockLanguageSelectContent_16b3d_251,._toolbarNodeKindSelectContainer_16b3d_249, ._popupContainer_lug8m_1127, ._tooltipContent_lug8m_619, ._linkDialogAnchor_lug8m_529, span[data-radix-focus-guard=""], ._selectContainer_lug8m_257, ._selectItem_lug8m_271, .MDXEditor ._selectContainer_lug8m_257, ._selectContainer_lug8m_257 {
@@ -517,9 +520,6 @@ div._editorRoot_lug8m_37._popupContainer_lug8m_1127.MDXEditor.block {
 
   font-family: var(--font-body);
   color: var(--baseText);
-}
-
-._editorWrapper_lug8m_138 {
 }
 
 ._nestedListItem_lug8m_141 {
@@ -1382,13 +1382,13 @@ div._editorRoot_lug8m_37._popupContainer_lug8m_1127.MDXEditor.block {
   opacity: 0.5;
 }
 
-._dialogContent_lug8m_543, ._largeDialogContent_lug8m_555 {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: _contentShow_lug8m_1 150ms cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 52;
+._dialogContent_lug8m_543, ._largeDialogContent_lug8m_555,div[data-radix-popper-content-wrapper] {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  animation: _contentShow_lug8m_1 150ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+  z-index: 52 !important;
 }
 
 ._dialogContent_lug8m_543:focus, ._largeDialogContent_lug8m_555:focus {
@@ -1741,8 +1741,7 @@ form._multiFieldForm_lug8m_1101 ._formField_lug8m_1107 label {
 }
 
 ._popupContainer_lug8m_1127 {
-  position: relative;
-      z-index: 99999;
+  z-index: 99999;
 }
 
 :root, ._light-theme_1xkrx_1 {
@@ -1995,5 +1994,3 @@ form._multiFieldForm_lug8m_1101 ._formField_lug8m_1107 label {
   --admonitionBorder: var(--admonitionNoteBorder);
   --admonitionBg: var(--admonitionNoteBg);
 }
-
-

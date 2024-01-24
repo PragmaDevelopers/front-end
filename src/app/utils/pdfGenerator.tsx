@@ -4,6 +4,7 @@ import { renderToString } from 'react-dom/server';
 import { PDFRenderer,pdf, BlobProvider,Document, Page, Image,Text, View, StyleSheet } from '@react-pdf/renderer';
 import { PdfLineStyleProps } from '../interfaces/RegisterClientInterfaces';
 import { useRef } from 'react';
+import { backgroundImageProps } from '../interfaces/PdfEditorInterfaces';
 
 
 type IFont = "Times-Roman" | "Times-Bold" | "Times-Italic" | "Times-BoldItalic";
@@ -52,7 +53,7 @@ function boldItalicValidation(regex:RegExp,line:any){
   return arr;
 }
 
-export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:string|undefined) {
+export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:backgroundImageProps) {
   const globalStyle = StyleSheet.create({
       page: {
         flexDirection: "column",
@@ -92,18 +93,15 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:st
 
   
   const regexImage = /([^"]*)<img height="([^"]*)" width="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>([^"]*)/;
-  const regexBackgroundImage = /<img className="left-([^"]*) top-([^"]*)" height="([^"]*)" width="([^"]*)" src="data:image\/([^"]*);base64,([^"]*)" \/>/;
   const regexBoldItalic = /(?:\*\*\*([\s\S]*?)\*\*\*|\*\*([\s\S]*?)\*\*|\*([\s\S]*?)\*|<u>([\s\S]*?)<\/u>|([^*]+))/g; //GET BOLD AND ITALIC
-
-  const backgroundImageMatch = backgroundImage ? backgroundImage.match(regexBackgroundImage) : null;
 
   return (
       <Document>
         <Page size="A4" style={globalStyle.page}>
           {
-            backgroundImageMatch && (
-              <View fixed={true} style={{position:"absolute",left:backgroundImageMatch[1],top:backgroundImageMatch[2]}}>
-                  <Image style={{height:backgroundImageMatch[3],width:backgroundImageMatch[4]}} src={"data:image/"+backgroundImageMatch[5]+";base64,"+backgroundImageMatch[6]} />
+            backgroundImage.url && (
+              <View fixed={true} style={{position:"absolute",left:"0",top:"0"}}>
+                  <Image style={{width:100,height:100}} src={backgroundImage.url} />
               </View>
             )
           }

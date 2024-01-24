@@ -101,7 +101,7 @@ export default function Page() {
       const newUserPermsVal: Permissions = binaryStringToPermissions(selected.permissionLevel);
       setUsrPermsVal(newUserPermsVal);
     }
-  }, [selected]);
+  }, []);
 
 
   const handleToggleFlag = (flagName: string, value: boolean) => {

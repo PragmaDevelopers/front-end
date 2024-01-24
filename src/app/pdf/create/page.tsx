@@ -47,7 +47,6 @@ function EditPdf() {
 	}, [userValue, router]);
 
 	useEffect(() => {
-
 		if (userValue.token === "") {
 			returnToHome();
 		}
@@ -81,7 +80,6 @@ function EditPdf() {
 				editorWrapper[i].style.textAlign = lineStyle;
 			
 				const content = editorRef.current?.getMarkdown().split(/\n\n/g);
-				
 				if (content && content[i]) {
 					newLines.push({value:content[i],style:lineStyle});
 				} else if (content && content[i] == "") {
@@ -98,7 +96,6 @@ function EditPdf() {
 			});
 			newEditorLines.formattedLines = formattedLines;
 			setEditorLines(newEditorLines);
-
 			router.push("./view");
 		}
 	}
@@ -281,10 +278,7 @@ function EditPdf() {
 			const lineIndex = editorLines.selectedLineIndex;
 
 			if (lines) {
-				const newLine = Mustache.render(lines[lineIndex], {
-					width,
-					height
-				});
+				const newLine = lines[lineIndex].replace('{{height}}', width.toString()).replace('{{width}}', height.toString());
 				lines.splice(lineIndex, 1, newLine);
 				editorRef.current?.setMarkdown(lines.join("\n\n"));
 			}

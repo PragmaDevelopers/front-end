@@ -95,7 +95,7 @@ export function CardElement({card}:{card:Card}) {
     const handleShowEditCard = () => {
         ShowEditCard(
             userValue,
-            card,
+            card.id,
             setCardManager,
             setTempCard,
             cardManager,

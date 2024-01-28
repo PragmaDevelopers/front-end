@@ -333,9 +333,9 @@ export function post_inner_card(body: POST_inner_card, userToken: string,okCallb
 }
 
 type PATCH_card = {
-    title: string,
-    description: string,
-    members: SystemID[]
+    title?: string,
+    description?: string,
+    members?: SystemID[]
 };
 export function patch_card(body: PATCH_card, cardId:SystemID, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);

@@ -133,7 +133,7 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
     }
 
     return (
-        <form className="mt-3 w-2/4 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col"
+        <form className="mt-3 w-2/3 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col"
             onSubmit={(e) => {
                 e.preventDefault();
                 if(handleAlert.isTrue){

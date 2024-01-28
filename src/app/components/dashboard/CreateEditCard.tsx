@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from 'dayjs/plugin/utc';
 import 'dayjs/locale/pt-br';
-import { CreateCard, EditCard, ShowEditCard } from "@/app/utils/dashboard/functions/Page/Card";
+import { CreateCard, EditCard, EditMemberCard, ShowEditCard } from "@/app/utils/dashboard/functions/Page/Card";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
@@ -692,6 +692,7 @@ function MembersSection(props: MembersSectionProps) {
     const [filteredUsers,setFilteredUsers] = useState<User[]>([]);
 
     const { cardManager, setCardManager, tempKanban, tempCard, setTempCard } = useKanbanContext();
+    const { userValue } = useUserContext();
 
     function updateFilteredUsers(){
         const newFilteredUsers = tempKanban.members.filter(user=>{
@@ -699,6 +700,15 @@ function MembersSection(props: MembersSectionProps) {
             return !isMember;
         })
         setFilteredUsers(newFilteredUsers);
+    }
+
+    function handleAddMember(newMember:User){
+        EditMemberCard(
+            userValue,
+            setTempCard,
+            tempCard,
+            newMember
+        );
     }
 
     return (
@@ -771,7 +781,11 @@ function MembersSection(props: MembersSectionProps) {
                             <div className="flex justify-between w-full">
                             <button type='button' onClick={()=>{
                                 if(selectedMember){
-                                    setTempCard({...tempCard,members:[...tempCard.members,selectedMember]});
+                                    if(cardManager.isEditElseCreate){
+                                        handleAddMember(selectedMember);
+                                    }else{
+                                        setTempCard({...tempCard,members:[...tempCard.members,selectedMember]});
+                                    }
                                 }
                             }} className="bg-neutral-50 p-2 drop-shadow rounded-md my-2">Adicionar</button>
                             <button type='button' onClick={()=>{
@@ -789,10 +803,10 @@ function MembersSection(props: MembersSectionProps) {
             <div className="flex flex-col gap-2 p-2 relative z-10 overflow-y-auto max-h-64">
                 {membersList?.map((member: User, index: number) => {
                     return (
-                        <div className="flex flex-col items-center bg-neutral-50 p-2 drop-shadow-md rounded-md" key={index}>
+                        <div className={(member.id.toString().includes("|") ? "loading-element" : "")+" flex flex-col items-center bg-neutral-50 p-2 drop-shadow-md rounded-md"} key={index}>
                             <button type="button" onClick={()=>{
                                 membersList.splice(index,1);
-                                setTempCard(tempCard);
+                                setTempCard({...tempCard});
                             }} className="text-end w-full">
                                <MinusCircleIcon className='w-6 aspect-square' />
                             </button>
@@ -823,7 +837,6 @@ function MoveCardForm() {
         const columnIndex = tempKanban.columns.findIndex((column)=>column.id == tempCard.columnID);
         const cardIndex = tempKanban.columns[columnIndex].cards.findIndex(card=>card.id == tempCard.id);
         const card = tempKanban.columns[columnIndex].cards[cardIndex];
-        
 
         const newKanbanList = kanbanList?.map(kanban=>{
             kanban.columns = kanban.columns.map(column=>{
@@ -892,7 +905,7 @@ const CreateEditCard = () => {
     const modalContextProps = useModalContext();
 
     const { userValue } = useUserContext();
-    const { tempCard, setTempCard, setTempKanban, tempColumn, tempKanban, cardManager, previousTempCard,setCardManager } = useKanbanContext();
+    const { tempCard, setTempCard, setTempKanban, tempKanban, cardManager, setCardManager } = useKanbanContext();
 
     useEffect(()=>{
         // console.log(tempCard)
@@ -911,16 +924,18 @@ const CreateEditCard = () => {
     }
 
     const handlePreviousCard = () => {
-        ShowEditCard(
-            userValue,
-            previousTempCard,
-            setCardManager,
-            setTempCard,
-            cardManager,
-            failModalOption,
-            noButtonRef,
-            modalContextProps
-        );
+        if(tempCard.cardParentId){
+            ShowEditCard(
+                userValue,
+                tempCard.cardParentId,
+                setCardManager,
+                setTempCard,
+                cardManager,
+                failModalOption,
+                noButtonRef,
+                modalContextProps
+            );
+        }
     }
 
     const noButtonRef = useRef<HTMLButtonElement>(null);
@@ -943,8 +958,7 @@ const CreateEditCard = () => {
         <div className={(cardManager?.isShowCreateCard ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-[1] justify-center items-center bg-neutral-950/25'}>
             <div className={`
             ${cardManager.isEditElseCreate && (tempCard.id == "" || tempCard.id.toString().includes("|")) ? "loading-element" : ""}
-            ${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} 
-            overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
+            ${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
                 <form className='w-full h-fit relative' onSubmit={handleCreateCardForm}>
                     <div className="w-full h-fit flex justify-center items-center relative">
                         {tempCard.cardParentId && <button type="button" onClick={handlePreviousCard}><ArrowLeftCircleIcon className="w-8 aspect-square absolute top-2 left-0" /></button>}
@@ -996,12 +1010,18 @@ const CreateEditCard = () => {
                     </div>
                     <h1 className={(cardManager.isEditElseCreate ? 'flex' : 'hidden') + " my-2 font-semibold"}>Mover Card</h1>
                     <MoveCardForm />
-                    <h1 className={(cardManager.isEditElseCreate ? 'flex' : 'hidden') + " mb-2 mt-4 font-semibold"}>Cartões Internos</h1>
-                    <InnerCardSection
-                        innerCardArray={tempCard.innerCards}
-                        failModalOption={failModalOption}
-                        noButtonRef={noButtonRef}
-                    />
+                    {
+                        tempCard.members.findIndex(user=>user.id==userValue.profileData.id) != -1 && (
+                            <>
+                                <h1 className={(cardManager.isEditElseCreate ? 'flex' : 'hidden') + " mb-2 mt-4 font-semibold"}>Cartões Internos</h1>
+                                <InnerCardSection
+                                    innerCardArray={tempCard.innerCards}
+                                    failModalOption={failModalOption}
+                                    noButtonRef={noButtonRef}
+                                />
+                            </>
+                        )
+                    }
                     <div className="w-full mb-3 mt-5 -bottom-80 flex justify-center items-center">
                         <button 
                             className='w-fit p-2 rounded-md bg-neutral-50 drop-shadow'

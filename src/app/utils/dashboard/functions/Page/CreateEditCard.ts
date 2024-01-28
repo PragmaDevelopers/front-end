@@ -664,6 +664,7 @@ export function CreateInnerCard(
         cardId: tempCard.id,
         title: "Inner Card "+tempCard.innerCards.length
     }
+    console.log(tempCard.id)
     post_inner_card(bodyInnerCard,userValue.token,(response)=>response.json().then((innerCardId)=>{
         if(response.ok){
             console.log("CREATE INNER CARD SUCCESS");
@@ -682,8 +683,7 @@ export function EditInnerCard(
     userValue: userValueDT,
     card: Card,
     setTempCard: (newValue: Card) => void,
-    setPreviousCard: (newValue: Card) => void,
-    tempCard: Card, 
+    tempCard: Card,
     failModalOptions: any,
     noButtonRef: RefObject<HTMLButtonElement>,
     modalContextProps: ModalContextProps
@@ -698,8 +698,6 @@ export function EditInnerCard(
         modalContextProps.setModalOpen(true);
         return;
     }
-
-    setPreviousCard(tempCard);
 
     const cardParentId = tempCard.id;
 

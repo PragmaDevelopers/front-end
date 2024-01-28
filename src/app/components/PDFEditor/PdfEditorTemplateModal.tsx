@@ -2,8 +2,8 @@ import { useUserContext } from "@/app/contexts/userContext";
 import { ClientTemplateProps } from "@/app/interfaces/RegisterClientInterfaces";
 import { API_BASE_URL } from "@/app/utils/variables";
 
-export default function ClientTemplateHandle({templateList,setTemplateList,currentTemplate,setCurrentTemplate}:{
-    templateList:ClientTemplateProps[],
+export default function PdfEditorTemplateModal({templateList,setTemplateList,currentTemplate,setCurrentTemplate}:{
+    templateList:any[],
     setTemplateList:any,
     currentTemplate: any,
     setCurrentTemplate:any
@@ -45,7 +45,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                         }
 
                     };
-                    fetch(`${API_BASE_URL}/api/private/user/signup/client/template/${selectedTemplateId}`, requestOptions)
+                    fetch(`${API_BASE_URL}/api/private/user/signup/pdfEditor/template/${selectedTemplateId}`, requestOptions)
                     .then(() => {
                         const newTemplateList = templateList;
                         newTemplateList.splice(templateIndex,1);
@@ -58,7 +58,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     <option disabled value=""> -- Escolha um rascunho -- </option>
                     {templateList && (
                         templateList.map((template) => {
-                            return <option disabled={[1,2,3,4].includes(template.id)} key={template.id} value={template.id}>{template.name}</option>
+                            return <option disabled={[1].includes(template.id)} key={template.id} value={template.id}>{template.name}</option>
                         })
                     )}
                 </select>
@@ -81,7 +81,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     })
 
                 };
-                fetch(`${API_BASE_URL}/api/private/user/signup/client/template?value=false`, requestOptions)
+                fetch(`${API_BASE_URL}/api/private/user/signup/pdfEditor/template`, requestOptions)
                 .then(response => response.json()).then((id:number) => {
                     setTemplateList([
                         ...templateList,

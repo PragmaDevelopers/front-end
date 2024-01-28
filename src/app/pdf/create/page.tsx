@@ -13,6 +13,7 @@ import { API_BASE_URL } from "@/app/utils/variables";
 import ClientPdfTemplateHandle from "@/app/components/PDFEditor/ClientTemplateModal";
 import BackgroundImageModal from "@/app/components/PDFEditor/BackgroundModal";
 import { usePdfEditorContext } from "@/app/contexts/pdfEditorContext";
+import PdfEditorTemplateModal from "@/app/components/PDFEditor/PdfEditorTemplateModal";
 
 function EditPdf() {
 	const [variable, setVariable] = useState<string>("");
@@ -22,16 +23,23 @@ function EditPdf() {
 	const router = useRouter();
 	const editorRef = useRef<MDXEditorMethods>(null)
 
-	const [templateList, setTemplateList] = useState<{
+	const [clientTemplateList, setClientTemplateList] = useState<{
+        id: number,
+        name: string,
+        template: any[]
+    }[]>([]);
+	const [currentClientTemplate, setCurrentClientTemplate] = useState<{} | "">("");
+
+	const [currentPdfEditorTemplate, setCurrentPdfEditorTemplate] = useState<{} | "">("");
+	const [pdfEditorTemplateList, setPdfEditorTemplateList] = useState<{
         id: number,
         name: string,
         template: any[]
     }[]>([]);
 
-	const [currentTemplate, setCurrentTemplate] = useState<{} | "">("");
-
 	const [selectedClientModal, setSelectedClientModal] = useState<boolean>(false);
     const [backgroundImageModal, setBackgroundImageModal] = useState<boolean>(false);
+	const [useDraftModal,setUseDraftModal] = useState<boolean>(false);
 
 	const { userValue } = useUserContext();
 	const { oldLines, setOldLines,editorLines, setEditorLines,backgroundImage,setBackgroundImage } = usePdfEditorContext();
@@ -47,10 +55,10 @@ function EditPdf() {
 	}, [userValue, router]);
 
 	useEffect(() => {
-		if (userValue.token === "") {
-			returnToHome();
+		if(editorLines.lines.length > 0){
+			const values = oldLines.map(line=>line.value);
+			editorRef.current?.setMarkdown(values.join("\n\n"));
 		}
-
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -60,12 +68,12 @@ function EditPdf() {
 		};
 		fetch(`${API_BASE_URL}/api/private/user/signup/client/templates?value=true`, requestOptions)
 		.then(response => response.json()).then((clientTemplates: any) => {
-			setTemplateList(clientTemplates)
+			setClientTemplateList(clientTemplates)
 		})
-		if(editorLines.lines.length > 0){
-			const values = oldLines.map(line=>line.value);
-			editorRef.current?.setMarkdown(values.join("\n\n"));
-		}
+		fetch(`${API_BASE_URL}/api/private/user/signup/pdfEditor/templates`, requestOptions)
+		.then(response => response.json()).then((pdfEditorTemplates: any) => {
+			setPdfEditorTemplateList(pdfEditorTemplates);
+		})
 	}, [])
 
 	function manipulateProseClass({ restoreIds, submit }: { restoreIds?: boolean,submit?:boolean }) {
@@ -93,7 +101,7 @@ function EditPdf() {
 				if(line.value.substring(line.value.length - 6) == "&#x20;"){
 					line.value = line.value.substring(0,line.value.length - 6);
 				}
-				line.value = Mustache.render(line.value.replace(/\\/g,""), currentTemplate);
+				line.value = Mustache.render(line.value.replace(/\\/g,""), currentClientTemplate);
 				return line;
 			});
 			editorLines.lines = formattedLines;
@@ -256,7 +264,6 @@ function EditPdf() {
 			editorRef.current?.setMarkdown(formattedLines.join("\n\n"));
 	
 			setTimeout(() => {
-				// ATUALIZA O CACHE DAS LINHAS APÓS ADICIONAR AS VARIÁVEIS
 				manipulateProseClass({ restoreIds: true });
 				setEditorOpacity(1);
 			}, 0);
@@ -275,53 +282,6 @@ function EditPdf() {
 		return newArr;
 	}
 
-	async function imageParseBase64(image:File,isBackgroundImage?:boolean){
-		// Função para converter uma imagem para base64
-		const imageToBase64 = (file: any) => {
-			return new Promise((resolve, reject) => {
-				const reader = new FileReader();
-				reader.onload = () => resolve(reader.result);
-				reader.onerror = (error) => reject(error);
-				reader.readAsDataURL(file);
-			});
-		};
-
-		// Converta a imagem para base64
-		const base64String = await imageToBase64(image) as string;
-
-		const img = new Image();
-		img.src = base64String;
-
-		img.onload = () => {
-			const width = img.width;
-			const height = img.height;
-
-			const lines = editorRef.current?.getMarkdown().split(/\n\n/g);
-			const lineIndex = editorLines.selectedLineIndex;
-
-			if (lines) {
-				const newLine = lines[lineIndex].replace('{{height}}', width.toString()).replace('{{width}}', height.toString());
-				lines.splice(lineIndex, 1, newLine);
-				editorRef.current?.setMarkdown(lines.join("\n\n"));
-			}
-
-			setTimeout(() => {
-				manipulateProseClass({ restoreIds: true });
-			}, 0)
-
-			setisLoadImage(false);
-		};
-
-		if(isBackgroundImage){
-			setBackgroundImage({...backgroundImage,url:base64String});
-			setBackgroundImageModal(true);
-			setSelectedClientModal(false);
-		}
-
-		// Retorne a string base64
-		return Promise.resolve(base64String);
-	}
-
 	return (
 		<div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
 			<div className="p-3 w-full max-w-4xl">
@@ -329,13 +289,14 @@ function EditPdf() {
 					<div className="flex gap-3 items-center rounded-md p-2">
 						<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
 							setSelectedClientModal(!selectedClientModal);
+							setUseDraftModal(false);
 							setBackgroundImageModal(false);
 						}} type="button">Cliente</button>
-						{currentTemplate != "" && (
+						{currentClientTemplate != "" && (
 							<>
 								<select defaultValue="" className="mx-2" onChange={(e) => setVariable(e.target.value)}>
 									<option disabled value=""> -- Escolha uma opção -- </option>
-									{selectList(currentTemplate).map((option) => {
+									{selectList(currentClientTemplate).map((option) => {
 										return <option key={option} value={`{{${option}}}`}>{option}</option>
 									})}
 								</select>
@@ -351,72 +312,36 @@ function EditPdf() {
 						)}
 						<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
 							setBackgroundImageModal(!backgroundImageModal);
+							setUseDraftModal(false);
 							setSelectedClientModal(false);
 						}} type="button">Papel timbrado</button>
+						<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
+							setUseDraftModal(!useDraftModal);
+							setBackgroundImageModal(false);
+							setSelectedClientModal(false);
+						}} type="button">Rascunhos</button>
 					</div>
 					<button onClick={() => manipulateProseClass({restoreIds:true,submit:true})} type="button" className="bg-neutral-50 drop-shadow rounded-md p-2">Criar PDF</button>
 				</div>
 				<div className="flex gap-5">
 					{
 						selectedClientModal && <ClientPdfTemplateHandle
-							setTemplateList={setTemplateList} templateList={templateList}
-							currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
+							setTemplateList={setClientTemplateList} templateList={clientTemplateList}
+							currentTemplate={currentClientTemplate} setCurrentTemplate={setCurrentClientTemplate}
 						/>
 					}
 					{
 						backgroundImageModal && <BackgroundImageModal />
+					}
+					{
+						useDraftModal && <PdfEditorTemplateModal currentTemplate={currentPdfEditorTemplate} 
+						setCurrentTemplate={setCurrentPdfEditorTemplate} setTemplateList={setPdfEditorTemplateList} templateList={pdfEditorTemplateList}  />
 					}
 				</div>
 				<div
 					className="relative mt-3"
 					style={{ opacity: editorOpacity, transition: "0.3s" }}
 					onClick={(e: any) => {
-						setTimeout(() => {
-							const imageForm = document.body.getElementsByClassName("_multiFieldForm_lug8m_1101");
-							if (imageForm[0]) {
-								setisLoadImage(true);
-								const imageInputs = imageForm[0].getElementsByClassName("_formField_lug8m_1107");
-								const type = imageInputs[2].children[1].getAttribute("type");
-
-								if (type != "checkbox") {
-									imageInputs[2].children[1].insertAdjacentHTML("beforebegin", `<input type="checkbox" name="isBackgroundImage" />`)
-								}
-
-								const fileInput = imageInputs[0].children[1] as any;
-								const urlLabel = imageInputs[1].children[0];
-								const urlInput = imageInputs[1].children[1];
-								const altLabel = imageInputs[2]?.children[0];
-								const altInput = imageInputs[2]?.children[2] as any;
-								const titleLabel = imageInputs[3]?.children[0];
-								const titleInput = imageInputs[3]?.children[1];
-								if (altLabel && altInput && titleLabel && titleInput) {
-									altLabel.textContent = "É uma imagem de fundo?";
-									altInput.setAttribute("style", "display:none;");
-									titleLabel.setAttribute("style", "display:none;");
-									titleInput.setAttribute("style", "display:none;");
-									urlLabel.setAttribute("style", "display:none;");
-									urlInput.setAttribute("style", "display:none;");
-									if (e.target.name == "isBackgroundImage") {
-
-										if (altInput.value == "on") {
-											altInput.value = "off";
-										} else {
-											altInput.value = "on";
-											const confirmBtn = imageForm[0].getElementsByClassName("_primaryButton_lug8m_453")[0];
-											confirmBtn.setAttribute("type", "button");
-										}
-
-									}
-
-									if (e.target.title == "Save" && altInput.value == "on") {
-										document.getElementsByClassName("_dialogContent_lug8m_543")[0].setAttribute("style", "display:none;");
-										document.getElementsByClassName("_dialogOverlay_lug8m_787")[0].setAttribute("style", "display:none;");
-										imageParseBase64(fileInput.files[0],true);
-									}
-								}
-							}
-						}, 0)
-
 						if (["Left Align", "Center Align", "Right Align"].includes(e.target.title) && !isLoadImage) {
 							manipulateProseClass({ restoreIds: true });
 						}
@@ -477,7 +402,45 @@ function EditPdf() {
 						}}
 						plugins={[imagePlugin({
 							imageUploadHandler: async (image) => {
-								return await imageParseBase64(image);
+								setisLoadImage(true);
+								// Função para converter uma imagem para base64
+								const imageToBase64 = (file: any) => {
+									return new Promise((resolve, reject) => {
+										const reader = new FileReader();
+										reader.onload = () => resolve(reader.result);
+										reader.onerror = (error) => reject(error);
+										reader.readAsDataURL(file);
+									});
+								};
+
+								// Converta a imagem para base64
+								const base64String = await imageToBase64(image) as string;
+
+								const img = new Image();
+								img.src = base64String;
+
+								img.onload = () => {
+									const width = img.width;
+									const height = img.height;
+
+									const lines = editorRef.current?.getMarkdown().split(/\n\n/g);
+									const lineIndex = editorLines.selectedLineIndex || 0;
+
+									if (lines) {
+										const newLine = lines[lineIndex].replace('{{height}}', height.toString()).replace('{{width}}', width.toString());
+										lines.splice(lineIndex, 1, newLine);
+										editorRef.current?.setMarkdown(lines.join("\n\n"));
+									}
+
+									setTimeout(() => {
+										manipulateProseClass({ restoreIds: true });
+									}, 0)
+
+									setisLoadImage(false);
+								};
+
+								// Retorne a string base64
+								return Promise.resolve(base64String);
 							},
 						}),
 						headingsPlugin(),

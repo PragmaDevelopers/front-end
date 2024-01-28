@@ -12,7 +12,7 @@ export default function ClientPdfTemplateHandle({templateList,setTemplateList,cu
     const { userValue } = useUserContext();
 
     return (
-        <div className="mt-3 w-2/4 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col">
+        <div className="mt-3 w-2/3 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col">
             <form onSubmit={(e: any) => {
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;
@@ -58,7 +58,7 @@ export default function ClientPdfTemplateHandle({templateList,setTemplateList,cu
                     <option disabled value=""> -- Escolha um cliente -- </option>
                     {templateList && (
                         templateList.map((template:any) => {
-                            return <option disabled={[1].includes(template.id)} key={template.id} value={template.id}>{template.name}</option>
+                            return <option key={template.id} value={template.id}>{template.name}</option>
                         })
                     )}
                 </select>

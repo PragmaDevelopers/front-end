@@ -101,6 +101,49 @@ export default function SignUpPageB() {
     return (
         <div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
             <div className="p-3 w-full max-w-4xl">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                            setInputCreateModal(!inputCreateModal);
+                            setInputRemoveModal(false);
+                            setUseDraftModal(false)
+                        }} type="button">Criar Input</button>
+                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                            setInputRemoveModal(!inputRemoveModal);
+                            setInputCreateModal(false);
+                            setUseDraftModal(false)
+                        }} type="button">Remover Input</button>
+                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                            setUseDraftModal(!useDraftModal);
+                            setInputCreateModal(false);
+                            setInputRemoveModal(false);
+                        }} type="button">Rascunhos</button>
+                    </div>
+                    <div className="flex items-center">
+                        <input name="nome_identificador" type="text" placeholder="Nome do cliente" />
+                        <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center ms-3 border-gray-400" type="submit">Enviar</button>
+                    </div>
+                </div>
+                <div className="flex gap-5">
+                    {
+                        inputCreateModal && <CreateTemplateInput
+                            typePerson={typePerson}
+                            currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
+                        />
+                    }
+                    {
+                        inputRemoveModal && <DeleteTemplateInput
+                            typePerson={typePerson}
+                            currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
+                        />
+                    }
+                    {
+                        useDraftModal && <ClientTemplateHandle
+                            templateList={templateList} setTemplateList={setTemplateList}
+                            currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
+                        />
+                    }
+                </div>
                 <form onSubmit={(e: any) => {
                     e.preventDefault();
 
@@ -131,156 +174,113 @@ export default function SignUpPageB() {
 
                     e.target.reset();  
                 }}>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
-                                setInputCreateModal(!inputCreateModal);
-                                setInputRemoveModal(false);
-                                setUseDraftModal(false)
-                            }} type="button">Criar Input</button>
-                            <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
-                                setInputRemoveModal(!inputRemoveModal);
-                                setInputCreateModal(false);
-                                setUseDraftModal(false)
-                            }} type="button">Remover Input</button>
-                            <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
-                                setUseDraftModal(!useDraftModal);
-                                setInputCreateModal(false);
-                                setInputRemoveModal(false);
-                            }} type="button">Rascunhos</button>
-                        </div>
-                        <div className="flex items-center">
-                            <input name="nome_identificador" type="text" placeholder="Nome do cliente" />
-                            <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center ms-3 border-gray-400" type="submit">Enviar</button>
-                        </div>
-                    </div>
-                    <div className="flex gap-5">
-                        {
-                            inputCreateModal && <CreateTemplateInput
-                                typePerson={typePerson}
-                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
-                            />
-                        }
-                        {
-                            inputRemoveModal && <DeleteTemplateInput
-                                typePerson={typePerson}
-                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
-                            />
-                        }
-                        {
-                            useDraftModal && <ClientTemplateHandle
-                                templateList={templateList} setTemplateList={setTemplateList}
-                                currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
-                            />
-                        }
-                    </div>
-                    {
-                        currentTemplate[typePerson].length != 0 ? (
-                            currentTemplate[typePerson].map((accordion: any, accordionIndex) => {
-                                return <div key={accordionIndex} className="bg-gray-50 drop-shadow rounded-md mt-3 p-5">
-                                    <AccordionItem className="flex flex-wrap items-center justify-center" title={accordion.title}>
-                                        {
-                                            accordion.title === "Cliente" && (
-                                                <div className="mb-2 w-2/4 border-x-8 border-neutral-50">
-                                                    <label className="block">Tipo Pessoa (conjunto fixo)</label>
-                                                    <div onChange={(e: any) => {
-                                                        setTypePerson(e.target.value.toLowerCase().replace(" ", "_").replace("í", "i"))
-                                                    }} className="inline-block">
-                                                        <input required className="mx-1" type="radio" id="input-tipo-pessoa-fisica" name="tipo_pessoa" value="Pessoa Física" />
-                                                        <label htmlFor="input-tipo-pessoa-fisica">Pessoa física</label>
-                                                        <input required className="mx-1" type="radio" id="input-tipo-pessoa-juridica" name="tipo_pessoa" value="Pessoa Jurídica" />
-                                                        <label htmlFor="input-tipo-pessoa-juridica">Pessoa jurídica</label>
-                                                    </div>
+                {
+                    currentTemplate[typePerson].length != 0 ? (
+                        currentTemplate[typePerson].map((accordion: any, accordionIndex) => {
+                            return <div key={accordionIndex} className="bg-gray-50 drop-shadow rounded-md mt-3 p-5">
+                                <AccordionItem className="flex flex-wrap items-center justify-center" title={accordion.title}>
+                                    {
+                                        accordion.title === "Cliente" && (
+                                            <div className="mb-2 w-2/4 border-x-8 border-neutral-50">
+                                                <label className="block">Tipo Pessoa (conjunto fixo)</label>
+                                                <div onChange={(e: any) => {
+                                                    setTypePerson(e.target.value.toLowerCase().replace(" ", "_").replace("í", "i"))
+                                                }} className="inline-block">
+                                                    <input required className="mx-1" type="radio" id="input-tipo-pessoa-fisica" name="tipo_pessoa" value="Pessoa Física" />
+                                                    <label htmlFor="input-tipo-pessoa-fisica">Pessoa física</label>
+                                                    <input required className="mx-1" type="radio" id="input-tipo-pessoa-juridica" name="tipo_pessoa" value="Pessoa Jurídica" />
+                                                    <label htmlFor="input-tipo-pessoa-juridica">Pessoa jurídica</label>
                                                 </div>
-                                            )
-                                        }
-                                        {accordion.inputs.map((input: any, inputIndex: number) => {
-                                            return (
-                                                <div className="mb-2 w-2/4 border-x-8 border-neutral-50" key={inputIndex}>
-                                                    {
-                                                        ["radio", "checkbox"].includes(input.type) && (
-                                                            <>
-                                                                <label className="block">{input.label}</label>
-                                                                {
-                                                                    input.children?.map((value: string, index: number) => {
-                                                                        return <div key={index} className="inline-block">
-                                                                            <input required className="mx-1" type={input.type} id={"input-" + input.name} value={value} />
-                                                                            <label htmlFor={"input-" + input.name}>{value}</label>
-                                                                        </div>
-                                                                    })
-                                                                }
-                                                            </>
-                                                        )
-                                                    }
-                                                    {
-                                                        ["select"].includes(input.type) && (
-                                                            <>
-                                                                <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
-                                                                {input.name == "estado" ?
-                                                                    <select onChange={(e) => { setAddressValue({ ...addressValue, estado: e.target.value }) }} required value={addressValue.estado} className="w-full" id={"input-" + input.name} name={input.name}>
-                                                                        <option disabled value=""> -- Escolha um Estado -- </option>
-                                                                        {input.children?.map((value: any, index: number) => <option key={index} value={value.substring(0, 2)}>{value}</option>)}
-                                                                    </select>
+                                            </div>
+                                        )
+                                    }
+                                    {accordion.inputs.map((input: any, inputIndex: number) => {
+                                        return (
+                                            <div className="mb-2 w-2/4 border-x-8 border-neutral-50" key={inputIndex}>
+                                                {
+                                                    ["radio", "checkbox"].includes(input.type) && (
+                                                        <>
+                                                            <label className="block">{input.label}</label>
+                                                            {
+                                                                input.children?.map((value: string, index: number) => {
+                                                                    return <div key={index} className="inline-block">
+                                                                        <input required className="mx-1" type={input.type} id={"input-" + input.name} value={value} />
+                                                                        <label htmlFor={"input-" + input.name}>{value}</label>
+                                                                    </div>
+                                                                })
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    ["select"].includes(input.type) && (
+                                                        <>
+                                                            <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
+                                                            {input.name == "estado" ?
+                                                                <select onChange={(e) => { setAddressValue({ ...addressValue, estado: e.target.value }) }} required value={addressValue.estado} className="w-full" id={"input-" + input.name} name={input.name}>
+                                                                    <option disabled value=""> -- Escolha um Estado -- </option>
+                                                                    {input.children?.map((value: any, index: number) => <option key={index} value={value.substring(0, 2)}>{value}</option>)}
+                                                                </select>
+                                                                :
+                                                                <select required className="w-full" id={"input-" + input.name} name={input.name}>
+                                                                    <option disabled value=""> -- Escolha um Estado -- </option>
+                                                                    {input.children?.map((value: string, index: number) => <option key={index} value={value}>{value}</option>)}
+                                                                </select>
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    ["search"].includes(input.type) && (
+                                                        <>
+                                                            <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
+                                                            {
+                                                                ["cep"].includes(input.name) ?
+                                                                    <>
+                                                                        <input onChange={(e) => { searchCep(e.target.value) }} required value={cepValue} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                    </>
                                                                     :
-                                                                    <select required className="w-full" id={"input-" + input.name} name={input.name}>
-                                                                        <option disabled value=""> -- Escolha um Estado -- </option>
-                                                                        {input.children?.map((value: string, index: number) => <option key={index} value={value}>{value}</option>)}
-                                                                    </select>
-                                                                }
-                                                            </>
-                                                        )
-                                                    }
-                                                    {
-                                                        ["search"].includes(input.type) && (
-                                                            <>
-                                                                <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
-                                                                {
-                                                                    ["cep"].includes(input.name) ?
-                                                                        <>
-                                                                            <input onChange={(e) => { searchCep(e.target.value) }} required value={cepValue} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                        </>
-                                                                        :
-                                                                        <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                }
-                                                            </>
-                                                        )
-                                                    }
-                                                    {
-                                                        ["text", "email", "number", "date", "tel"].includes(input.type) && (
-                                                            <>
-                                                                <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
-                                                                {
-                                                                    input.name == "endereco" ? (
-                                                                        <input onChange={(e) => setAddressValue({ ...addressValue, logradouro: e.target.value })} required value={addressValue.logradouro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                    ) : input.name == "bairro" ? (
-                                                                        <input onChange={(e) => setAddressValue({ ...addressValue, bairro: e.target.value })} required value={addressValue.bairro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                    ) : input.name == "cidade" ? (
-                                                                        <input onChange={(e) => setAddressValue({ ...addressValue, localidade: e.target.value })} required value={addressValue.localidade} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                    ) : (
-                                                                        <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                    )
-                                                                }
-                                                            </>
-                                                        )
-                                                    }
-                                                    {
-                                                        ["textarea"].includes(input.type) && (
-                                                            <>
-                                                                <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
-                                                                <textarea required className="w-full" id={"input-" + input.name} name={input.name}></textarea>
-                                                            </>
-                                                        )
-                                                    }
-                                                </div>
-                                            )
-                                        })}
-                                    </AccordionItem>
-                                </div>
-                            })
-                        ) : (
-                            <div className="bg-gray-50 drop-shadow rounded-md mt-3 p-5 h-[100%]"></div>
-                        )
-                    }
+                                                                    <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    ["text", "email", "number", "date", "tel"].includes(input.type) && (
+                                                        <>
+                                                            <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
+                                                            {
+                                                                input.name == "endereco" ? (
+                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, logradouro: e.target.value })} required value={addressValue.logradouro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                ) : input.name == "bairro" ? (
+                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, bairro: e.target.value })} required value={addressValue.bairro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                ) : input.name == "cidade" ? (
+                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, localidade: e.target.value })} required value={addressValue.localidade} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                ) : (
+                                                                    <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                )
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    ["textarea"].includes(input.type) && (
+                                                        <>
+                                                            <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
+                                                            <textarea required className="w-full" id={"input-" + input.name} name={input.name}></textarea>
+                                                        </>
+                                                    )
+                                                }
+                                            </div>
+                                        )
+                                    })}
+                                </AccordionItem>
+                            </div>
+                        })
+                    ) : (
+                        <div className="bg-gray-50 drop-shadow rounded-md mt-3 p-5 h-[100%]"></div>
+                    )
+                }
                 </form>
             </div>
         </div>

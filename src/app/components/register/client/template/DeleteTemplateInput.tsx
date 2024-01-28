@@ -10,7 +10,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
     const [selectedSection, setSelectedSection] = useState("");
 
     return (
-        <form className="mt-3 w-2/4 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col"
+        <form className="mt-3 w-2/3 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col"
             onSubmit={(e: any) => {
                 e.preventDefault();
                 const removeSection = e.target.remove_section.value;

@@ -1,6 +1,6 @@
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
-import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment } from "@/app/types/KanbanTypes";
+import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment, User } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
 import { delete_card, delete_checklist, delete_checklistItem, delete_customField, delete_deadline, delete_tag, get_card_by_id, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { RefObject } from "react";
@@ -243,7 +243,7 @@ export function DeleteCard(
 
 export function ShowEditCard(
     userValue: userValueDT,
-    card: Card,
+    cardId: SystemID,
     setCardManager: (newValue: CardManager) => void,
     setTempCard: (newValue: Card) => void,
     cardManager: CardManager,
@@ -286,7 +286,7 @@ export function ShowEditCard(
         innerCards: []
     })
 
-    get_card_by_id(undefined,card.id,userValue.token,(response)=>response.json().then((card:Card)=>{
+    get_card_by_id(undefined,cardId,userValue.token,(response)=>response.json().then((card:Card)=>{
         setTempCard({...card});
     }));
 
@@ -370,4 +370,28 @@ export function EditCard(
             setTempKanban({...newKanbanWithNewCard});
         }
     }));
+}
+
+export function EditMemberCard(
+    userValue: userValueDT,
+    setTempCard: (newValue:Card)=>void,
+    tempCard: Card,
+    selectedMember: User
+){
+    const members = [...tempCard.members,selectedMember];
+    const membersId = members.map(member=>member.id) || [];
+    patch_card({members:membersId},tempCard.id,userValue.token,(response)=>response.text().then(()=>{
+        if(response.ok){
+            console.log("PATCH CARD SUCCESS");
+            const newMembers = members.map((member)=>{
+                if(member.id == selectedMember.id){
+                    member.id = member.id.toString().replace("|","");
+                }
+                return member;
+            });
+            setTempCard({...tempCard,members:newMembers});
+        }
+    }));
+    selectedMember.id = "|"+selectedMember.id as SystemID;
+    setTempCard({...tempCard,members:[...tempCard.members,selectedMember]});
 }

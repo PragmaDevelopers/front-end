@@ -10,37 +10,6 @@ import { RefObject } from "react";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { delete_card } from "@/app/utils/fetchs";
 
-function InnerCardElement(props: InnerCardElementProps) {
-    const {
-        card,
-        addInnerCard,
-        createInnerCard,
-        tempCardsArr,
-        isCreatingInnerCard,
-        setIsCreatingInnerCard,
-        setIsEdittingInnerCard,
-        isEdittingInnerCard,
-        _appendToTempCardsArray,
-        _popFromTempCardsArray,
-        tempCard,
-        setTempCard,
-        setTempCardsArr,
-    } = props;
-
-    const handleEditCard = (): void => {
-        // EditCard(card, setIsEdittingInnerCard, _appendToTempCardsArray, tempCard, tempCardsArr, setTempCard, setTempCardsArr);
-    }
-
-    return (
-        <button type='submit' className='mx-2 bg-neutral-50 drop-shadow rounded-md relative' onClick={handleEditCard}>
-            <div className='p-2 w-full h-full'>
-                <h1 className='font-black font-lg truncate'>{card.title}</h1>
-            </div>
-        </button>
-    );
-
-}
-
 interface InnerCardsSectionProps {
     innerCardArray: Card[];
     failModalOption: any;
@@ -54,7 +23,7 @@ export function InnerCardSection(props: InnerCardsSectionProps) {
     } = props;
 
     const { userValue } = useUserContext();
-    const { setTempCard, setPreviousTempCard,tempCard,cardManager } = useKanbanContext();
+    const { setTempCard, tempCard,cardManager } = useKanbanContext();
     const modalContextProps = useModalContext();
 
     const handleCreateInnerCard = () => {
@@ -73,7 +42,6 @@ export function InnerCardSection(props: InnerCardsSectionProps) {
             userValue,
             card,
             setTempCard,
-            setPreviousTempCard,
             tempCard,
             failModalOption,
             noButtonRef,

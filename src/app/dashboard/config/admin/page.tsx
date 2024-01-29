@@ -45,10 +45,12 @@ function ToggleBitFlag(
 ): void {
   let tempUsr: User = { ...selectedUser };
 
-  let binaryNumber = parseInt(tempUsr.permissionLevel, 2);
-  const bitmask: number = SYSTEM_PERMISSIONS[flag];
-  binaryNumber = setBit ? binaryNumber | bitmask : binaryNumber & ~bitmask;
-  tempUsr.permissionLevel = binaryNumber.toString(2);
+  // let binaryNumber = parseInt(tempUsr.permissionLevel, 2);
+  // const bitmask: number = SYSTEM_PERMISSIONS[flag];
+  // binaryNumber = setBit ? binaryNumber | bitmask : binaryNumber & ~bitmask;
+  // tempUsr.permissionLevel = binaryNumber.toString(2);
+
+  Object.keys(SYSTEM_PERMISSIONS_BOOLEAN).findIndex(permission=>permission)
 
   console.log(`SETTING FLAG: ${flag} to ${setBit} for user ${tempUsr.name}; current PermsValue: ${tempUsr.permissionLevel}`);
   setUserValue(tempUsr);
@@ -101,6 +103,7 @@ export default function Page() {
       const newUserPermsVal: Permissions = binaryStringToPermissions(selected.permissionLevel);
       setUsrPermsVal(newUserPermsVal);
     }
+    console.log(Object.keys(SYSTEM_PERMISSIONS_BOOLEAN))
   }, []);
 
 
@@ -246,16 +249,18 @@ export default function Page() {
                       Permissões para {selectedMember?.name}
                     </h3>
                     <div className="mt-2">
-                      {Object.keys(SYSTEM_PERMISSIONS_BOOLEAN).map(permission => (
-                        <ToggleOption
-                          key={permission}
-                          optionText={permission}
-                          srText={`Toggle ${permission} permission`}
-                          onFunction={() => handleToggleFlag(permission, true)}
-                          offFunction={() => handleToggleFlag(permission, false)}
-                          defaultValue={selectedUserPermissions[permission]}
-                        />
-                      ))}
+                      {Object.keys(SYSTEM_PERMISSIONS_BOOLEAN).map(permission => {
+                        return (
+                          <ToggleOption
+                            key={permission}
+                            optionText={permission}
+                            srText={`Toggle ${permission} permission`}
+                            onFunction={() => handleToggleFlag(permission, true)}
+                            offFunction={() => handleToggleFlag(permission, false)}
+                            defaultValue={selectedUserPermissions[permission]}
+                          />
+                        )
+                      })}
                     </div>
                   </div>
                 </div>

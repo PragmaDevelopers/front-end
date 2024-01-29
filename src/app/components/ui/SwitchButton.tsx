@@ -14,7 +14,10 @@ interface SwitchButtonProps {
 export default function SwitchButton(props: SwitchButtonProps) {
     const { srText, onFunction, offFunction, defaultValue } = props;
     const [enabled, setEnabled] = useState<boolean>(false);
-    setEnabled(defaultValue);
+
+    useEffect(() => {
+        setEnabled(defaultValue); // Define o estado inicial apenas uma vez
+    }, [defaultValue]); //
 
     const handleSwitch = () => {
         setEnabled(!enabled);
@@ -27,7 +30,7 @@ export default function SwitchButton(props: SwitchButtonProps) {
 
     return (
         <Switch
-            checked={enabled}
+            checked={enabled || false}
             onChange={handleSwitch}
             className={`${enabled ? 'bg-red-100' : 'bg-green-200'
                 } relative inline-flex h-6 w-11 items-center rounded-full shadow-inner border-[1px] border-neutral-200`}

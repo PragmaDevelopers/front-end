@@ -1,12 +1,14 @@
 import { useUserContext } from "@/app/contexts/userContext";
+import { EditorLinesProps } from "@/app/interfaces/PdfEditorInterfaces";
 import { ClientTemplateProps } from "@/app/interfaces/RegisterClientInterfaces";
+import { EditorLine, pdfEditorTemplate } from "@/app/types/PdfEditorTypes";
 import { API_BASE_URL } from "@/app/utils/variables";
 
 export default function PdfEditorTemplateModal({templateList,setTemplateList,currentTemplate,setCurrentTemplate}:{
     templateList:any[],
     setTemplateList:any,
-    currentTemplate: any,
-    setCurrentTemplate:any
+    currentTemplate: EditorLinesProps,
+    setCurrentTemplate: (newValue:EditorLinesProps)=>void
 }){
 
     const { userValue } = useUserContext();
@@ -18,7 +20,8 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
                 const selectedTemplateId = e.target.selected_draft.value;
                 const templateIndex = templateList.findIndex((template) => template.id == selectedTemplateId)
                 if (templateIndex !== -1) {
-                    setCurrentTemplate(templateList[templateIndex].template);
+                    console.log(templateList[templateIndex])
+                    setCurrentTemplate({...currentTemplate,lines:templateList[templateIndex].template});
                 }
             }}>
                 <select required defaultValue="" className="w-full" name="selected_draft">
@@ -58,7 +61,7 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
                     <option disabled value=""> -- Escolha um rascunho -- </option>
                     {templateList && (
                         templateList.map((template) => {
-                            return <option disabled={[1].includes(template.id)} key={template.id} value={template.id}>{template.name}</option>
+                            return <option key={template.id} value={template.id}>{template.name}</option>
                         })
                     )}
                 </select>
@@ -77,18 +80,19 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
                     },
                     body: JSON.stringify({
                         name: templateName,
-                        template: currentTemplate
+                        template: currentTemplate.lines
                     })
 
                 };
                 fetch(`${API_BASE_URL}/api/private/user/signup/pdfEditor/template`, requestOptions)
                 .then(response => response.json()).then((id:number) => {
+                    console.log("CREATE PDF EDITOR DRAFT")
                     setTemplateList([
                         ...templateList,
                         {
                             id,
                             name: templateName,
-                            template: currentTemplate
+                            template: currentTemplate.lines
                         }
                     ])
                     alert("Rascunho salvo!");

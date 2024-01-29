@@ -1,4 +1,4 @@
-import { EditorLine } from "../types/PdfEditorTypes";
+import { EditorLine, pdfEditorTemplate } from "../types/PdfEditorTypes";
 
 export interface EditorLinesProps {
     lines: EditorLine[],
@@ -17,6 +17,6 @@ export interface PdfEditorContextProps {
     editorLines: EditorLinesProps,
     setBackgroundImage: (newValue:backgroundImageProps)=>void,
     backgroundImage: backgroundImageProps,
-    oldLines: EditorLine[],
-    setOldLines: (newValue:EditorLine[])=>void
+    currentPdfEditorTemplate: pdfEditorTemplate,
+    setCurrentPdfEditorTemplate: (newValue:pdfEditorTemplate)=>void
 }

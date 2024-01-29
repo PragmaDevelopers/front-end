@@ -103,17 +103,17 @@ export default function SignUpPageB() {
             <div className="p-3 w-full max-w-4xl">
                 <div className="flex justify-between items-center">
                     <div>
-                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-3" onClick={() => {
                             setInputCreateModal(!inputCreateModal);
                             setInputRemoveModal(false);
                             setUseDraftModal(false)
                         }} type="button">Criar Input</button>
-                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-3" onClick={() => {
                             setInputRemoveModal(!inputRemoveModal);
                             setInputCreateModal(false);
                             setUseDraftModal(false)
                         }} type="button">Remover Input</button>
-                        <button className="bg-neutral-50 drop-shadow rounded-md p-2 me-5" onClick={() => {
+                        <button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
                             setUseDraftModal(!useDraftModal);
                             setInputCreateModal(false);
                             setInputRemoveModal(false);

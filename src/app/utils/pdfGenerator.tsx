@@ -20,7 +20,7 @@ function boldItalicValidation(regex:RegExp,line:any){
   }
 
   if(line.content.match(/^[#]{1,6} ([\s\S]*?)/)){
-    line = line.replace(/^[#]{1,6} ([\s\S]*?)/,"$1")
+    line.content = line.content.replace(/^[#]{1,6} ([\s\S]*?)/,"$1")
   }
   
   let wordSplit = line.content.match(regex);

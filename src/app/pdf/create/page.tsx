@@ -18,7 +18,6 @@ import PdfEditorTemplateModal from "@/app/components/PDFEditor/PdfEditorTemplate
 function EditPdf() {
 	const [variable, setVariable] = useState<string>("");
 	const [editorOpacity, setEditorOpacity] = useState<number>(1);
-	const [isLoadImage, setisLoadImage] = useState<boolean>(false)
 
 	const router = useRouter();
 	const editorRef = useRef<MDXEditorMethods>(null)
@@ -28,9 +27,8 @@ function EditPdf() {
         name: string,
         template: any[]
     }[]>([]);
-	const [currentClientTemplate, setCurrentClientTemplate] = useState<{} | "">("");
+	const [currentClientTemplate, setCurrentClientTemplate] = useState<any>({});
 
-	const [currentPdfEditorTemplate, setCurrentPdfEditorTemplate] = useState<{} | "">("");
 	const [pdfEditorTemplateList, setPdfEditorTemplateList] = useState<{
         id: number,
         name: string,
@@ -42,7 +40,7 @@ function EditPdf() {
 	const [useDraftModal,setUseDraftModal] = useState<boolean>(false);
 
 	const { userValue } = useUserContext();
-	const { oldLines, setOldLines,editorLines, setEditorLines,backgroundImage,setBackgroundImage } = usePdfEditorContext();
+	const { editorLines, setEditorLines } = usePdfEditorContext();
 
 	const returnToHome = () => {
 		router.push("/");
@@ -55,10 +53,6 @@ function EditPdf() {
 	}, [userValue, router]);
 
 	useEffect(() => {
-		if(editorLines.lines.length > 0){
-			const values = oldLines.map(line=>line.value);
-			editorRef.current?.setMarkdown(values.join("\n\n"));
-		}
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -76,8 +70,13 @@ function EditPdf() {
 		})
 	}, [])
 
+	useEffect(()=>{
+		const lines = editorLines.lines.map(line=>line.value);
+		editorRef.current?.setMarkdown(lines.join("\n\n"));
+		manipulateProseClass({restoreIds:true});
+	},[editorLines]);
+
 	function manipulateProseClass({ restoreIds, submit }: { restoreIds?: boolean,submit?:boolean }) {
-		setOldLines(editorLines.lines);
 		if (restoreIds) {
 			const editorWrapper = document.querySelectorAll(".prose:not(._placeholder_lug8m_993) p, .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6") as any;
 			const newLines = [];
@@ -96,6 +95,7 @@ function EditPdf() {
 			editorLines.lines = newLines;
 			setEditorLines(editorLines);
 		}
+
 		if(submit){
 			const formattedLines = editorLines.lines.map((line)=>{
 				if(line.value.substring(line.value.length - 6) == "&#x20;"){
@@ -285,43 +285,43 @@ function EditPdf() {
 	return (
 		<div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
 			<div className="p-3 w-full max-w-4xl">
-				<div className="flex justify-between items-center">
-					<div className="flex gap-3 items-center rounded-md p-2">
+				<div className="flex flex-col gap-3 justify-center rounded-md">
+					<div className="flex gap-3 items-center rounded-md">
 						<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
 							setSelectedClientModal(!selectedClientModal);
 							setUseDraftModal(false);
 							setBackgroundImageModal(false);
 						}} type="button">Cliente</button>
-						{currentClientTemplate != "" && (
-							<>
-								<select defaultValue="" className="mx-2" onChange={(e) => setVariable(e.target.value)}>
-									<option disabled value=""> -- Escolha uma opção -- </option>
-									{selectList(currentClientTemplate).map((option) => {
-										return <option key={option} value={`{{${option}}}`}>{option}</option>
-									})}
-								</select>
-								<button onClick={() => {
-									if (variable != "") {
-										setEditorOpacity(0);
-										setTimeout(() => {
-											addVariable();
-										}, 500)
-									}
-								}} className="bg-neutral-50 drop-shadow rounded-md p-2" type="button">Adicionar Variável</button>
-							</>
-						)}
-						<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
-							setBackgroundImageModal(!backgroundImageModal);
-							setUseDraftModal(false);
-							setSelectedClientModal(false);
-						}} type="button">Papel timbrado</button>
-						<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
-							setUseDraftModal(!useDraftModal);
-							setBackgroundImageModal(false);
-							setSelectedClientModal(false);
-						}} type="button">Rascunhos</button>
+						<select defaultValue="" onChange={(e) => setVariable(e.target.value)}>
+							<option disabled value=""> -- Escolha uma opção -- </option>
+							{selectList(currentClientTemplate).map((option) => {
+								return <option key={option} value={`{{${option}}}`}>{option}</option>
+							})}
+						</select>
+						<button onClick={() => {
+							if (variable != "") {
+								setEditorOpacity(0);
+								setTimeout(() => {
+									addVariable();
+								}, 500)
+							}
+						}} className="bg-neutral-50 drop-shadow rounded-md p-2" type="button">Adicionar Variável</button>
 					</div>
-					<button onClick={() => manipulateProseClass({restoreIds:true,submit:true})} type="button" className="bg-neutral-50 drop-shadow rounded-md p-2">Criar PDF</button>
+					<div className="flex gap-3 items-center justify-between rounded-md">
+						<div className="flex gap-3 items-center rounded-md">
+							<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
+								setBackgroundImageModal(!backgroundImageModal);
+								setUseDraftModal(false);
+								setSelectedClientModal(false);
+							}} type="button">Papel timbrado</button>
+							<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
+								setUseDraftModal(!useDraftModal);
+								setBackgroundImageModal(false);
+								setSelectedClientModal(false);
+							}} type="button">Rascunhos</button>
+						</div>
+						<button onClick={() => manipulateProseClass({restoreIds:true,submit:true})} type="button" className="bg-neutral-50 drop-shadow rounded-md p-2">Criar PDF</button>
+					</div>
 				</div>
 				<div className="flex gap-5">
 					{
@@ -334,21 +334,22 @@ function EditPdf() {
 						backgroundImageModal && <BackgroundImageModal />
 					}
 					{
-						useDraftModal && <PdfEditorTemplateModal currentTemplate={currentPdfEditorTemplate} 
-						setCurrentTemplate={setCurrentPdfEditorTemplate} setTemplateList={setPdfEditorTemplateList} templateList={pdfEditorTemplateList}  />
+						useDraftModal && <PdfEditorTemplateModal currentTemplate={editorLines} 
+						setCurrentTemplate={setEditorLines} setTemplateList={setPdfEditorTemplateList} templateList={pdfEditorTemplateList}  />
 					}
 				</div>
 				<div
 					className="relative mt-3"
 					style={{ opacity: editorOpacity, transition: "0.3s" }}
 					onClick={(e: any) => {
-						if (["Left Align", "Center Align", "Right Align"].includes(e.target.title) && !isLoadImage) {
+						const form = document.getElementsByClassName("_multiFieldForm_lug8m_1101");
+
+						if (["Left Align", "Center Align", "Right Align"].includes(e.target.title) && form.length == 0) {
 							manipulateProseClass({ restoreIds: true });
 						}
 
 						const selection = window.getSelection();
-						if (selection?.rangeCount && !isLoadImage) {
-							console.log(editorLines)
+						if (selection?.rangeCount && form.length == 0) {
 							manipulateProseClass({ restoreIds: true });
 
 							const newEditorLines = editorLines;
@@ -373,6 +374,7 @@ function EditPdf() {
 
 							if (targetElement) {
 								const lineIndex = Number(targetElement.id.split("-")[1]);
+								console.log(lineIndex)
 								newEditorLines.selectedLineIndex = lineIndex;
 								setEditorLines(newEditorLines);
 							}
@@ -402,7 +404,6 @@ function EditPdf() {
 						}}
 						plugins={[imagePlugin({
 							imageUploadHandler: async (image) => {
-								setisLoadImage(true);
 								// Função para converter uma imagem para base64
 								const imageToBase64 = (file: any) => {
 									return new Promise((resolve, reject) => {
@@ -425,7 +426,6 @@ function EditPdf() {
 
 									const lines = editorRef.current?.getMarkdown().split(/\n\n/g);
 									const lineIndex = editorLines.selectedLineIndex || 0;
-
 									if (lines) {
 										const newLine = lines[lineIndex].replace('{{height}}', height.toString()).replace('{{width}}', width.toString());
 										lines.splice(lineIndex, 1, newLine);
@@ -435,8 +435,6 @@ function EditPdf() {
 									setTimeout(() => {
 										manipulateProseClass({ restoreIds: true });
 									}, 0)
-
-									setisLoadImage(false);
 								};
 
 								// Retorne a string base64

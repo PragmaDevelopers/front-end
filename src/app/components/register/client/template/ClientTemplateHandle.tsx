@@ -58,7 +58,7 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                     <option disabled value=""> -- Escolha um rascunho -- </option>
                     {templateList && (
                         templateList.map((template) => {
-                            return <option disabled={[1,2,3,4].includes(template.id)} key={template.id} value={template.id}>{template.name}</option>
+                            return <option disabled={[1].includes(template.id)} key={template.id} value={template.id}>{template.name}</option>
                         })
                     )}
                 </select>

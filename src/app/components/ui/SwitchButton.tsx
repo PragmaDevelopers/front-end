@@ -20,27 +20,27 @@ export default function SwitchButton(props: SwitchButtonProps) {
     }, [defaultValue]); //
 
     const handleSwitch = () => {
-        setEnabled(!enabled);
         if (enabled) {
-            onFunction();
-        } else {
             offFunction();
+        } else {
+            onFunction();
         }
+        setEnabled(!enabled);
     }
 
     return (
         <Switch
-            checked={enabled || false}
+            checked={enabled}
             onChange={handleSwitch}
-            className={`${enabled ? 'bg-red-100' : 'bg-green-200'
+            className={`${!enabled ? 'bg-red-100' : 'bg-green-200'
                 } relative inline-flex h-6 w-11 items-center rounded-full shadow-inner border-[1px] border-neutral-200`}
         >
             <span className="sr-only">{srText}</span>
             <span
-                className={`${enabled ? 'translate-x-6' : 'translate-x-1'
+                className={`${!enabled ? 'translate-x-6' : 'translate-x-1'
                     } h-4 w-4 transform rounded-full bg-white transition flex justify-center items-center drop-shadow-sm`}>
-                <CheckIcon className={`${enabled ? 'hidden' : 'block'} transition-all h-3 w-3 aspect-square full-green-500 stroke-green-500`} />
-                <XMarkIcon className={`${enabled ? 'block' : 'hidden'} transition-all h-3 w-3 aspect-square full-red-500 stroke-red-500`} />
+                <CheckIcon className={`${!enabled ? 'hidden' : 'block'} transition-all h-3 w-3 aspect-square full-green-500 stroke-green-500`} />
+                <XMarkIcon className={`${!enabled ? 'block' : 'hidden'} transition-all h-3 w-3 aspect-square full-red-500 stroke-red-500`} />
             </span>
         </Switch>
     );

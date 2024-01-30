@@ -187,6 +187,17 @@ export function get_user(body: GET_user, userToken: string,okCallback: (response
     }).catch((e: any) => console.log(e));
 }
 
+type PATCH_user_config = {
+    permissionLevel: string,
+    isSupervisor: boolean
+};
+export function patch_user_config(body: PATCH_user_config, userId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(USER_ROUTE+"/"+userId+"/config", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type GET_kanban_members = undefined;
 export function get_kanban_members(body: GET_kanban_members, kanbanId: SystemID, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);

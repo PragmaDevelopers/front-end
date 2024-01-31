@@ -2,7 +2,7 @@ import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment, User } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { delete_card, delete_checklist, delete_checklistItem, delete_customField, delete_deadline, delete_tag, get_card_by_id, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
+import { delete_card, get_card_by_id, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { RefObject } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -261,7 +261,6 @@ export function ShowEditCard(
         modalContextProps.setModalOpen(true);
         return;
     }
-
     setTempCard({
         id: "",
         columnID: "",
@@ -296,8 +295,9 @@ export function ShowEditCard(
 
 export function EditCard(
     userValue: userValueDT,
+    setTempCard: (newValue:Card)=>void,
     setTempKanban: (newValue:Kanban)=>void,
-    setCardManager: (newValue:CardManager)=>void,
+    setCardManager: (newValue: CardManager)=>void,
     tempCard: Card,
     tempKanban: Kanban,
     cardManager: CardManager
@@ -307,11 +307,14 @@ export function EditCard(
     const description = tempCard.description;
     const members = tempCard.members?.map(member=>member.id) || [];
 
-    const newKanbanWithNewCard = updateCardId(tempKanban,tempCard.columnID,cardId,"card",{id:"|"+cardId,title,description,members});
-    setTempKanban(newKanbanWithNewCard);
-
-    setCardManager({...cardManager,isShowCreateCard:false})
-
+    if(!tempCard.cardParentId){
+        const newKanbanWithNewCard = updateCardId(tempKanban,tempCard.columnID,cardId,"card",{id:"|"+cardId,title,description,members});
+        setTempKanban(newKanbanWithNewCard);
+        setCardManager({...cardManager,isShowCreateCard:false})
+    }else{
+        setTempCard({...tempCard,id:"|"+tempCard.id});
+    }
+    
     const date = tempCard.deadline?.date;
     if(date != null && date != undefined && date != ""){
         const newDate = dayjs.utc(tempCard.deadline.date).format('YYYY-MM-DDTHH:mm:ss.SSSX').replace("X","Z")
@@ -362,12 +365,19 @@ export function EditCard(
             }
         });
     }
-
+    
     patch_card({title,description,members},cardId,userValue.token,(response)=>response.text().then(()=>{
         if(response.ok){
-            console.log("PATCH CARD SUCCESS");
-            const newKanbanWithNewCard = updateCardId(tempKanban,tempCard.columnID,"|"+cardId,"card",{id:cardId,title,description,members});
-            setTempKanban({...newKanbanWithNewCard});
+            if(tempCard.cardParentId){
+                console.log("PATCH INNER CARD SUCCESS");
+                get_card_by_id(undefined,tempCard.cardParentId,userValue.token,(response)=>response.json().then((card:Card)=>{
+                    setTempCard({...card});
+                }));
+            }else{
+                console.log("PATCH CARD SUCCESS");
+                const newKanbanWithNewCard = updateCardId(tempKanban,tempCard.columnID,"|"+cardId,"card",{id:cardId,title,description,members});
+                setTempKanban({...newKanbanWithNewCard});
+            }
         }
     }));
 }

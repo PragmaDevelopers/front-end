@@ -26,15 +26,13 @@ dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
-interface CardTitleProps { title: string; }
-function CardTitle(props: CardTitleProps) {
-    const {title} = props;
+function CardTitle() {
     const { tempCard,setTempCard } = useKanbanContext();
     return (
         <input
             id="CardTitle" 
             type='text' 
-            defaultValue={title}
+            defaultValue={tempCard.title}
             onChange={(e)=>setTempCard({
                 ...tempCard,
                 title: e.target.value
@@ -871,7 +869,7 @@ function MoveCardForm() {
     }
 
     return (
-        <div className={(cardManager.isEditElseCreate ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col'}>
+        <div className={(cardManager.isEditElseCreate && !tempCard.cardParentId ? 'flex' : 'hidden') + ' bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col'}>
             <div className='flex flex-col'>
                 <div className="flex w-full items-center justify-evenly">
                     <div className="flex flex-col justify-center items-center w-fit">
@@ -908,13 +906,14 @@ const CreateEditCard = () => {
     const { tempCard, setTempCard, setTempKanban, tempKanban, cardManager, setCardManager } = useKanbanContext();
 
     useEffect(()=>{
-        // console.log(tempCard)
+        console.log(tempCard)
     },[tempCard])
 
     const handleCreateCardForm = (e: any) => {
         e.preventDefault();
         EditCard(
             userValue,
+            setTempCard,
             setTempKanban,
             setCardManager,
             tempCard,
@@ -970,7 +969,7 @@ const CreateEditCard = () => {
                             });
                         }}><XCircleIcon className='w-8 aspect-square absolute top-2 right-0' /></button>
                     </div>
-                    <CardTitle title={tempCard.title} />
+                    <CardTitle />
                     <CardDateSection
                         failModalOption={failModalOption}
                         noButtonRef={noButtonRef}
@@ -1008,7 +1007,7 @@ const CreateEditCard = () => {
                             />
                         </div>
                     </div>
-                    <h1 className={(cardManager.isEditElseCreate ? 'flex' : 'hidden') + " my-2 font-semibold"}>Mover Card</h1>
+                    <h1 className={(cardManager.isEditElseCreate && !tempCard.cardParentId ? 'flex' : 'hidden') + " my-2 font-semibold"}>Mover Card</h1>
                     <MoveCardForm />
                     {
                         tempCard.members.findIndex(user=>user.id==userValue.profileData.id) != -1 && (

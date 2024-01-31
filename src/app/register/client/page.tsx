@@ -119,10 +119,6 @@ export default function SignUpPageB() {
                             setInputRemoveModal(false);
                         }} type="button">Rascunhos</button>
                     </div>
-                    <div className="flex items-center">
-                        <input name="nome_identificador" type="text" placeholder="Nome do cliente" />
-                        <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center ms-3 border-gray-400" type="submit">Enviar</button>
-                    </div>
                 </div>
                 <div className="flex gap-5">
                     {
@@ -174,6 +170,10 @@ export default function SignUpPageB() {
 
                     e.target.reset();  
                 }}>
+                    <div className="flex items-center justify-end mt-3">
+                        <input name="nome_identificador" type="text" placeholder="Nome do cliente" />
+                        <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center ms-3 border-gray-400" type="submit">Enviar</button>
+                    </div>
                 {
                     currentTemplate[typePerson].length != 0 ? (
                         currentTemplate[typePerson].map((accordion: any, accordionIndex) => {

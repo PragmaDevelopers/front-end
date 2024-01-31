@@ -143,7 +143,7 @@ function CardDateSection(props: CardDateSectionProps) {
         <div>
             {
                 cardManager.isShowCreateDeadline && (
-                    <div className='absolute top-0 left-0 w-full h-full z-[99999] flex justify-center items-center bg-neutral-950/25'>
+                    <div className='flex justify-center items-center'>
                         <div className='flex bg-neutral-50 p-2 drop-shadow-md rounded-md flex-col items-center'>
                             <Calendar minDate={new Date()} value={cardDeadline} onChange={(date)=>{
                                 setCardDeadline(date?.toString() || cardDeadline);
@@ -957,7 +957,7 @@ const CreateEditCard = () => {
         <div className={(cardManager?.isShowCreateCard ? 'flex ' : 'hidden ') + 'absolute top-0 left-0 w-screen h-screen z-[1] justify-center items-center bg-neutral-950/25'}>
             <div className={`
             ${cardManager.isEditElseCreate && (tempCard.id == "" || tempCard.id.toString().includes("|")) ? "loading-element" : ""}
-            ${(cardManager.isShowCreateDeadline) ? "overflow-hidden" : "overflow-y-auto"} overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
+            overflow-x-hidden w-[80%] h-[80%] bg-neutral-50 rounded-lg px-8 drop-shadow-lg`}>
                 <form className='w-full h-fit relative' onSubmit={handleCreateCardForm}>
                     <div className="w-full h-fit flex justify-center items-center relative">
                         {tempCard.cardParentId && <button type="button" onClick={handlePreviousCard}><ArrowLeftCircleIcon className="w-8 aspect-square absolute top-2 left-0" /></button>}

@@ -140,8 +140,15 @@ export default function Page() {
         }
         return user;
       });
-      console.log(newFilteredUsers)
       setFilteredUsers([...newFilteredUsers]);
+      const newUserList = userValue.userList.map((user)=>{
+        if(user.id = selectedUser.id){
+          user.permissionLevel = selectedUser.permissionLevel;
+          user.role = selectedUser.role;
+        }
+        return user;
+      });
+      setUserValue({...userValue,userList:newUserList});
     }
   }
 

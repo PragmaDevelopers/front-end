@@ -21,17 +21,6 @@ interface ToggleOptionProps {
   defaultValue: boolean;
 }
 
-// function binaryStringToPermissions(binaryString: string): Permissions {
-//   let permissions: Permissions = { ...SYSTEM_PERMISSIONS_BOOLEAN };
-
-//   for (let i = 0; i < binaryString.length; i++) {
-//     const key = Object.keys(permissions)[i];
-//     permissions[key] = binaryString[i] === '1';
-//   }
-
-//   return permissions;
-// }
-
 function isFlagSet(userValue: User, flag: string): boolean {
   let bitMask: number = SYSTEM_PERMISSIONS[flag];
   let binaryValue: number = parseInt(userValue.permissionLevel, 2);
@@ -45,11 +34,7 @@ function ToggleBitFlag(
   selectedUser: User
 ): void {
   let tempUsr: User = { ...selectedUser };
-  // let binaryNumber = parseInt(tempUsr.permissionLevel, 2);
-  // const bitmask: number = SYSTEM_PERMISSIONS[flag];
-  // binaryNumber = setBit ? binaryNumber | bitmask : binaryNumber & ~bitmask;
-  // tempUsr.permissionLevel = binaryNumber.toString(2);
-  const keys = Object.keys(SYSTEM_PERMISSIONS_BOOLEAN); // Obtém todas as chaves do objeto
+  const keys = Object.keys(SYSTEM_PERMISSIONS_BOOLEAN); 
   const index = keys.indexOf(flag);
   if(index !== -1){
     const permission = tempUsr.permissionLevel.split("");
@@ -164,7 +149,6 @@ export default function Page() {
         <div className="w-[75%] flex flex-row justify-center items-center">
           <h1 className="mr-2">Editando permissões para o usuário: </h1>
           <div className="w-96 ml-2">
-            {/* <Combobox onChange={(user: User) => setSelectedMember(user)}>  */}
             <Combobox onChange={(user: User) => {
               handleModalConfig(true,user);
             }}>
@@ -261,16 +245,6 @@ export default function Page() {
                   >
                     Salvar
                   </button>
-                  {/* <button
-                    type="button"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-neutral-50 hover:bg-red-700 focus:outline-none transition-all sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={() => {
-                      handleModalConfig(true);
-                      setIsModalOpen(false);
-                    }}
-                  >
-                    Fechar
-                  </button> */}
                 </div>
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">

@@ -95,13 +95,13 @@ function EditPdf() {
 			editorLines.lines = newLines;
 			setEditorLines(editorLines);
 		}
-
 		if(submit){
 			const formattedLines = editorLines.lines.map((line)=>{
-				if(line.value.substring(line.value.length - 6) == "&#x20;"){
-					line.value = line.value.substring(0,line.value.length - 6);
+				if (line.value.replace(/&#x20;/g, '').trim().length > 0) {
+					// Remove "&#x20;" e "\" da string
+					line.value = line.value.replace(/&#x20;|\\/g, '');
 				}
-				line.value = Mustache.render(line.value.replace(/\\/g,""), currentClientTemplate);
+				line.value = Mustache.render(line.value, currentClientTemplate);
 				return line;
 			});
 			editorLines.lines = formattedLines;

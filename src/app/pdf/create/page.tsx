@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 const Mustache = require('mustache');
 
 import '@mdxeditor/editor/style.css'
@@ -14,12 +14,15 @@ import ClientPdfTemplateHandle from "@/app/components/PDFEditor/ClientTemplateMo
 import BackgroundImageModal from "@/app/components/PDFEditor/BackgroundModal";
 import { usePdfEditorContext } from "@/app/contexts/pdfEditorContext";
 import PdfEditorTemplateModal from "@/app/components/PDFEditor/PdfEditorTemplateModal";
+import { set } from "zod";
+import { EditorLine } from "@/app/types/PdfEditorTypes";
 
 function EditPdf() {
 	const [variable, setVariable] = useState<string>("");
 	const [editorOpacity, setEditorOpacity] = useState<number>(1);
 
 	const router = useRouter();
+	const pathname = usePathname()
 	const editorRef = useRef<MDXEditorMethods>(null)
 
 	const [clientTemplateList, setClientTemplateList] = useState<{
@@ -49,6 +52,7 @@ function EditPdf() {
 	useEffect(() => {
 		if (userValue.token === "") {
 			returnToHome();
+			sessionStorage.removeItem("backup_pdf_editor_template");
 		}
 	}, [userValue, router]);
 
@@ -71,15 +75,25 @@ function EditPdf() {
 	}, [])
 
 	useEffect(()=>{
-		const lines = editorLines.lines.map(line=>line.value);
-		editorRef.current?.setMarkdown(lines.join("\n\n"));
+		const backupPdfEditorTempalte = sessionStorage.getItem("backup_pdf_editor_template");
+		if(backupPdfEditorTempalte){
+			const pdfEditorTempalte = JSON.parse(backupPdfEditorTempalte);
+			if(pdfEditorTempalte.length > 0){
+				const lines = pdfEditorTempalte.map((line:EditorLine)=>line.value);
+				editorRef.current?.setMarkdown(lines.join("\n\n"));
+				sessionStorage.removeItem("backup_pdf_editor_template");
+			}
+		}else{
+			const lines = editorLines.lines.map(line=>line.value);
+			editorRef.current?.setMarkdown(lines.join("\n\n"));
+		}
 		manipulateProseClass({restoreIds:true});
 	},[editorLines]);
 
 	function manipulateProseClass({ restoreIds, submit }: { restoreIds?: boolean,submit?:boolean }) {
+		const newLines = [];
 		if (restoreIds) {
 			const editorWrapper = document.querySelectorAll(".prose:not(._placeholder_lug8m_993) p, .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6") as any;
-			const newLines = [];
 			for (let i = 0; i < editorWrapper.length; i++) {
 				editorWrapper[i].id = "line-" + i;
 				const lineStyle = editorLines.lines[i]?.style || "left";
@@ -96,7 +110,8 @@ function EditPdf() {
 			setEditorLines(editorLines);
 		}
 		if(submit){
-			const formattedLines = editorLines.lines.map((line)=>{
+			sessionStorage.setItem("backup_pdf_editor_template",JSON.stringify(editorLines.lines));
+			const formattedLines = newLines.map((line)=>{
 				if (line.value.replace(/&#x20;/g, '').trim().length > 0) {
 					// Remove "&#x20;" e "\" da string
 					line.value = line.value.replace(/&#x20;|\\/g, '');

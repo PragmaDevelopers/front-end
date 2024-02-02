@@ -43,7 +43,7 @@ function EditPdf() {
 	const [useDraftModal,setUseDraftModal] = useState<boolean>(false);
 
 	const { userValue } = useUserContext();
-	const { editorLines, setEditorLines } = usePdfEditorContext();
+	const { editorLines, setEditorLines, backupPdfEditorTemplate, setBackupPdfEditorTemplate } = usePdfEditorContext();
 
 	const returnToHome = () => {
 		router.push("/");
@@ -52,7 +52,6 @@ function EditPdf() {
 	useEffect(() => {
 		if (userValue.token === "") {
 			returnToHome();
-			sessionStorage.removeItem("backup_pdf_editor_template");
 		}
 	}, [userValue, router]);
 
@@ -75,25 +74,14 @@ function EditPdf() {
 	}, [])
 
 	useEffect(()=>{
-		const backupPdfEditorTempalte = sessionStorage.getItem("backup_pdf_editor_template");
-		if(backupPdfEditorTempalte){
-			const pdfEditorTempalte = JSON.parse(backupPdfEditorTempalte);
-			if(pdfEditorTempalte.length > 0){
-				const lines = pdfEditorTempalte.map((line:EditorLine)=>line.value);
-				editorRef.current?.setMarkdown(lines.join("\n\n"));
-				sessionStorage.removeItem("backup_pdf_editor_template");
-			}
-		}else{
-			const lines = editorLines.lines.map(line=>line.value);
-			editorRef.current?.setMarkdown(lines.join("\n\n"));
-		}
-		manipulateProseClass({restoreIds:true});
+		const lines = editorLines.lines.map(line=>line.value);
+		editorRef.current?.setMarkdown(lines.join("\n\n"));
 	},[editorLines]);
 
-	function manipulateProseClass({ restoreIds, submit }: { restoreIds?: boolean,submit?:boolean }) {
-		const newLines = [];
+	function manipulateProseClass({ restoreIds, submit,noUpdate }: { noUpdate?:boolean,restoreIds?: boolean,submit?:boolean }) {
 		if (restoreIds) {
 			const editorWrapper = document.querySelectorAll(".prose:not(._placeholder_lug8m_993) p, .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6") as any;
+			const newLines = [];
 			for (let i = 0; i < editorWrapper.length; i++) {
 				editorWrapper[i].id = "line-" + i;
 				const lineStyle = editorLines.lines[i]?.style || "left";
@@ -106,12 +94,12 @@ function EditPdf() {
 					newLines.push({value:"&#x20;",style:lineStyle});;
 				}
 			}
-			editorLines.lines = newLines;
-			setEditorLines(editorLines);
+			if(noUpdate == undefined){
+				setEditorLines({...editorLines,lines:newLines});
+			}
 		}
 		if(submit){
-			sessionStorage.setItem("backup_pdf_editor_template",JSON.stringify(editorLines.lines));
-			const formattedLines = newLines.map((line)=>{
+			const formattedLines = editorLines.lines.map((line)=>{
 				if (line.value.replace(/&#x20;/g, '').trim().length > 0) {
 					// Remove "&#x20;" e "\" da string
 					line.value = line.value.replace(/&#x20;|\\/g, '');
@@ -119,8 +107,7 @@ function EditPdf() {
 				line.value = Mustache.render(line.value, currentClientTemplate);
 				return line;
 			});
-			editorLines.lines = formattedLines;
-			setEditorLines(editorLines);
+			setBackupPdfEditorTemplate(formattedLines);
 			router.push("./view");
 		}
 	}
@@ -408,12 +395,12 @@ function EditPdf() {
 						}
 					}}
 				>
-					<MDXEditor onChange={()=>manipulateProseClass({restoreIds:true})} contentEditableClassName="prose" 
+					<MDXEditor onChange={()=>{manipulateProseClass({restoreIds:true,noUpdate:false})}} onBlur={()=>manipulateProseClass({restoreIds:true})} contentEditableClassName="prose" 
 					ref={editorRef} markdown={""}
 						toMarkdownOptions={{
 							handlers: {
 								image: (e) => {
-									return `<img height="{{height}}" width="{{width}}" title="${e.title}" src="${e.url}" />`;
+									return `<img height="{{height}}" width="{{width}}" src="${e.url}" />`;
 								}
 							}
 						}}

@@ -9,11 +9,11 @@ function ViewPdf() {
 
   const ref = useRef<HTMLIFrameElement>(null);
 
-  const { backgroundImage, editorLines } = usePdfEditorContext();
+  const { backgroundImage, backupPdfEditorTemplate } = usePdfEditorContext();
 
   useEffect(() => {
     async function getPdf() {
-      const data = editorLines.lines.map(line=>{
+      const data = backupPdfEditorTemplate.map(line=>{
             line.style = line.style.replace("left", "flex-start");
             line.style = line.style.replace("right", "flex-end");
             return {

@@ -16,5 +16,7 @@ export interface PdfEditorContextProps {
     setEditorLines: (newValue:EditorLinesProps)=>void,
     editorLines: EditorLinesProps,
     setBackgroundImage: (newValue:backgroundImageProps)=>void,
-    backgroundImage: backgroundImageProps
+    backgroundImage: backgroundImageProps,
+    backupPdfEditorTemplate: EditorLine[],
+    setBackupPdfEditorTemplate: (newValue:EditorLine[])=>void
 }

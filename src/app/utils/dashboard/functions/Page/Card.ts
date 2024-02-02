@@ -2,7 +2,7 @@ import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment, User } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { delete_card, get_card_by_id, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
+import { delete_card, get_card_by_id, get_card_comment, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { RefObject } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -41,99 +41,6 @@ function updateCardId(kanban:Kanban,columnId:SystemID,cardId:SystemID,type?:stri
     kanban.columns = newColumns;
     return kanban;
 }
-
-function handleTag(tempCard:Card,userValue:userValueDT,cardId:SystemID){
-    tempCard.tags.map((tag)=>{
-        if(tag.id == ""){
-            const bodyTag = {
-                cardId: cardId,
-                name: tag.name,
-                color: tag.color
-            }
-            post_tag(bodyTag,userValue.token,(response)=>response.json().then((tagId)=>{
-                if(response.ok){
-                    console.log("CREATE TAG SUCESSS");
-                }
-            }));
-        }
-    });
-}
-
-function handleChecklist(tempCard:Card,userValue:userValueDT,cardId:SystemID){
-    tempCard.checklists.map((checklist)=>{
-        if(checklist.id == ""){ //CREATE CHECKLIST
-            post_checklist({name:checklist.name,cardId:cardId},userValue.token,(checklistResponse)=>checklistResponse.json().then((checklistId)=>{
-                if(checklistResponse.ok){
-                    console.log("CREATE CHECKLIST SUCESSS");
-
-                    const items = checklist.items;
-                    if(items?.length > 0){
-                        items.map((item)=>{
-                            post_checklistItem({name:item.name,checklistId:checklistId},userValue.token,(itemResponse)=>itemResponse.json().then((itemId)=>{
-                                if(itemResponse.ok){
-                                    console.log("CREATE CHECKLIST ITEM SUCCESS");
-                                }
-                            }));
-                        });
-                    }
-                }
-            }));
-        }else{ //PATCH CHECKLIST
-            
-        }
-    });
-}
-
-export function ShowCreateCard(
-        userData: userValueDT,
-        kanbanId: SystemID,
-        columnId: SystemID,
-        setCardManager: (newValue: CardManager) => void,
-        setTempCard: (newValue: Card) => void,
-        cardManager: CardManager,
-        failModalOptions: any,
-        noButtonRef: RefObject<HTMLButtonElement>,
-        modalContextProps: ModalContextProps
-    ) {
-    if (!isFlagSet(userData.profileData, "CRIAR_CARDS")) {
-        modalContextProps.setModalTitle("Ação Negada.");
-        modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-        modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
-        modalContextProps.setModalBorderColor("border-red-500");
-        modalContextProps.setModalFocusRef(noButtonRef);
-        modalContextProps.setModalOptions(failModalOptions);
-        modalContextProps.setModalOpen(true);
-        return;
-    }
-    
-    setTempCard({
-        id: "",
-        columnID: columnId,
-        kanbanID: kanbanId,
-        title: "",
-        index: 0,
-        description: "",
-        checklists: [],
-        tags: [],
-        members: [],
-        comments: [],
-        dropdowns: [],
-        deadline: {
-            id: "",
-            category: "",
-            date: null,
-            overdue: false,
-            toColumnId: "",
-            toKanbanId: ""
-        },
-        customFields: [],
-        innerCards: []
-    })
-
-    setCardManager({...cardManager,isEditElseCreate:false,isShowCreateCard:true})
-
-    console.log("CREATING CARD");
-};
 
 export function CreateCard(
     userValue: userValueDT,
@@ -261,6 +168,7 @@ export function ShowEditCard(
         modalContextProps.setModalOpen(true);
         return;
     }
+
     setTempCard({
         id: "",
         columnID: "",
@@ -287,6 +195,9 @@ export function ShowEditCard(
 
     get_card_by_id(undefined,cardId,userValue.token,(response)=>response.json().then((card:Card)=>{
         setTempCard({...card});
+        get_card_comment(undefined,cardId,userValue.token,(response)=>response.json().then((comments:Comment[])=>{
+            setTempCard({...card,comments:comments});
+        }));
     }));
 
     setCardManager({...cardManager,isEditElseCreate:true,isShowCreateCard:true})

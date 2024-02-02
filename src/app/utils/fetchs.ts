@@ -95,9 +95,9 @@ const USER_SEARCH_ROUTE: string = `${USER_ROUTE}/search`
 
 const KANBAN_ROUTE: string = `${USER_ROUTE}/kanban`;
 const COLUMN_ROUTE: string = `${KANBAN_ROUTE}/column`;
-const COLUMN_MOVE_ROUTE: string = `${KANBAN_ROUTE}/move/column`;
+const COLUMN_MOVE_ROUTE: string = `${COLUMN_ROUTE}/move`;
 const CARD_ROUTE: string = `${COLUMN_ROUTE}/card`;
-const CARD_MOVE_ROUTE: string = `{${COLUMN_ROUTE}/move/card}`
+const CARD_MOVE_ROUTE: string = `{${CARD_ROUTE}/move}`
 
 const INNER_CARD_ROUTE: string = `${CARD_ROUTE}/innerCard`;
 const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
@@ -304,7 +304,7 @@ type MOVE_column = {
 };
 export function move_column(body: MOVE_column, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
-    fetch(COLUMN_ROUTE+"/move", requestObject).then((response: Response) => {
+    fetch(COLUMN_MOVE_ROUTE, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -313,6 +313,14 @@ type GET_card_by_id = undefined;
 export function get_card_by_id(body: GET_card_by_id, cardId:SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
     fetch(CARD_ROUTE+"/"+cardId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type GET_card_comment = undefined;
+export function get_card_comment(body: GET_card_comment, cardId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(CARD_ROUTE+"/"+cardId+"/comments", requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -370,7 +378,7 @@ type MOVE_card = {
 };
 export function move_card(body: MOVE_card, userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
-    fetch(CARD_ROUTE+"/move", requestObject).then((response: Response) => {
+    fetch(CARD_MOVE_ROUTE, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

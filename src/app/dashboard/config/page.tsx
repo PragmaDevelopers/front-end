@@ -8,10 +8,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-function LinkToAdminPage() {
+function LinkToAdminPage({role}:{role:string}) {
     return (
         <Link href="/dashboard/config/admin" className="font-bold p-2 bg-neutral-50 drop-shadow-md rounded-md text-red-600 hover:bg-red-600 hover:text-neutral-50 hover:scale-110 transition-all">
-            Acessar Painel do Administrador
+            Acessar Painel do {role == "ROLE_ADMIN" ? "Administrador" : "Supervisor"}
         </Link>
     );
 }
@@ -50,7 +50,7 @@ export default function Page() {
                             </div>
                         </div>
                     </form>
-                    {userValue.profileData.role === "ROLE_ADMIN" ? <LinkToAdminPage /> : null}
+                    {["ROLE_ADMIN","ROLE_SUPERVISOR"].includes(userValue.profileData.role) ? <LinkToAdminPage role={userValue.profileData.role} /> : null}
                 </div>
             </div>
         </main>

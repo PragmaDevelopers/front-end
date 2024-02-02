@@ -98,12 +98,11 @@ export default function Page() {
     setIsModalOpen(isShow);
     if(user){
       setSelectedUser(user);
-      Object.keys(SYSTEM_PERMISSIONS_BOOLEAN).forEach((permission,index)=>{
+      const newPermissions = Object.keys(SYSTEM_PERMISSIONS_BOOLEAN).map((permission,index)=>{
         const isPermission = user.permissionLevel.charAt(index).includes("1");
-        const newPermissions = permissionLevel;
-        newPermissions.push({key:permission,value:isPermission});
-        setPermissionLevel(newPermissions);
+        return {key:permission,value:isPermission};
       });
+      setPermissionLevel(newPermissions);
     }
   }
 
@@ -140,8 +139,9 @@ export default function Page() {
           user.role = selectedUser.role;
         }
         return user;
-      })
-      setFilteredUsers(newFilteredUsers);
+      });
+      console.log(newFilteredUsers)
+      setFilteredUsers([...newFilteredUsers]);
     }
   }
 
@@ -182,12 +182,12 @@ export default function Page() {
                   afterLeave={() => { }}
                 >
                   <Combobox.Options className="form-select absolute z-50 mt-1 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                    {filteredUsers.length === 0 ? (
+                    {filteredUsers?.length === 0 ? (
                       <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                         Nothing found.
                       </div>
                     ) : (
-                      filteredUsers.map((person: any) => (
+                      filteredUsers?.map((person: any) => (
                         <Combobox.Option
                           key={person.id}
                           className={({ active }) =>
@@ -271,18 +271,22 @@ export default function Page() {
                       Permissões para {selectedUser?.name}
                     </h3>
                     <div className="mt-2">
-                    <div className={`my-1 flex justify-between items-center w-full h-fit`}>
-                      <div className="flex flex-row justify-between items-center w-fit h-fit">
-                        <SwitchButton defaultValue={selectedUser?.role == "ROLE_SUPERVISOR"} srText={`Toggle SUPERVISOR permission`} onFunction={()=>handleToggleIsSupervisor(true)} offFunction={()=>handleToggleIsSupervisor(false)} />
-                        <p className="ml-4">{`SUPERVISOR`}</p>
-                      </div>
-                      <div className="p-2 w-fit h-fit">
-                        <div className="group relative flex flex-row justify-between items-center">
-                          <span className="text-sm text-neutral-600 group-hover:opacity-100 opacity-0 mr-2 transition-all">{`Toggle SUPERVISOR permission`}</span>
-                          <InformationCircleIcon className="aspect-square w-6 stroke-blue-300" />
-                        </div>
-                      </div>
-                    </div>
+                      {
+                        userValue.profileData.role == "ROLE_ADMIN" && (
+                          <div className={`my-1 flex justify-between items-center w-full h-fit`}>
+                            <div className="flex flex-row justify-between items-center w-fit h-fit">
+                              <SwitchButton defaultValue={selectedUser?.role == "ROLE_SUPERVISOR"} srText={`Toggle SUPERVISOR permission`} onFunction={()=>handleToggleIsSupervisor(true)} offFunction={()=>handleToggleIsSupervisor(false)} />
+                              <p className="ml-4">{`SUPERVISOR`}</p>
+                            </div>
+                            <div className="p-2 w-fit h-fit">
+                              <div className="group relative flex flex-row justify-between items-center">
+                                <span className="text-sm text-neutral-600 group-hover:opacity-100 opacity-0 mr-2 transition-all">{`Toggle SUPERVISOR permission`}</span>
+                                <InformationCircleIcon className="aspect-square w-6 stroke-blue-300" />
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      }
                       {permissionLevel.map((permission,index) => {
                         return (
                           <ToggleOption

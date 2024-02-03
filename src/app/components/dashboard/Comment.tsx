@@ -113,7 +113,7 @@ function ChatBubbleLeftEllipsisIcon(props: IconsProps) {
 // }
 
 interface CommentSectionProps {
-    commentsArray: Comment[];
+    commentsArray: Comment[] | null;
     failModalOption: any;
     noButtonRef: RefObject<HTMLButtonElement>;
 }
@@ -148,14 +148,16 @@ export function CommentSection(props: CommentSectionProps) {
 
     function handleRemoveComment(comment:Comment){
         const delComment = () => {
-            delete_comment(undefined,comment.id,userValue.token,(response)=>response.text().then(()=>{
-                if(response.ok){
-                    console.log("DELETE COMMENT SUCCESS");
-                }
-            }));
-            const commentsAfterDeletion = deleteCommentById(commentsArray,comment.id);
-            setTempCard({...tempCard,comments:commentsAfterDeletion});
-            modalContextProps.setModalOpen(false);
+            if(commentsArray){
+                delete_comment(undefined,comment.id,userValue.token,(response)=>response.text().then(()=>{
+                    if(response.ok){
+                        console.log("DELETE COMMENT SUCCESS");
+                    }
+                }));
+                const commentsAfterDeletion = deleteCommentById(commentsArray,comment.id);
+                setTempCard({...tempCard,comments:commentsAfterDeletion});
+                modalContextProps.setModalOpen(false);
+            }
         }
 
         const successOption: CustomModalButtonAttributes[] = [
@@ -296,7 +298,7 @@ export function CommentSection(props: CommentSectionProps) {
     return (
         <div className="flex flex-col justify-start overflow-y-auto relative max-h-96 items-start h-full w-full">
             <div className="h-full overflow-auto shadow-inner bg-neutral-100 border-[1px] border-neutral-100 rounded-md p-2 w-full">
-                {processComments(commentsArray)}
+                {commentsArray ? processComments(commentsArray) : <div>Carregando...</div>}
                 { 
                     cardManager.isShowCreateAnsweredComment && (
                         <div className="p-3 w-full h-full flex justify-center items-center absolute top-0 left-0">
@@ -305,7 +307,7 @@ export function CommentSection(props: CommentSectionProps) {
                                 <input className="w-full" onChange={(e)=>{setAnswerComment({...answerComment,newComment:{
                                     content: e.target.value,
                                     edited: false,
-                                    id: "|"+answerComment?.parentComment?.id+"|"+tempCard.comments.length,
+                                    id: "|"+answerComment?.parentComment?.id+"|"+(tempCard.comments?.length || "0"),
                                     user: userValue.profileData,
                                     registrationDate: new Date().toDateString(),
                                     answers: []

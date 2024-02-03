@@ -48,7 +48,7 @@ export type Card = {
     checklists: CheckList[];
     tags: Tag[];
     members: User[];
-    comments: Comment[];
+    comments: Comment[] | null;
     dropdowns: Dropdown[];
     deadline: {
         id: SystemID,
@@ -59,7 +59,7 @@ export type Card = {
         toKanbanId: SystemID
     };
     customFields: CustomField[];
-    innerCards: Card[];
+    innerCards: Card[] | null;
 }
 
 export type Column = {

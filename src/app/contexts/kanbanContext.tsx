@@ -32,7 +32,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     checklists: [],
     tags: [],
     members: [],
-    comments: [],
+    comments: null,
     dropdowns: [],
     deadline: {
       id: "",
@@ -43,7 +43,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
       toKanbanId: ""
     },
     customFields: [],
-    innerCards: []
+    innerCards: null
   });
   const [deleteTempCardIds,setDeleteTempCardIds] = useState<{type:string,id:SystemID}[]>([]);
   const [cardManager,setCardManager] = useState({

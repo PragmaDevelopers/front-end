@@ -179,7 +179,7 @@ export function ShowEditCard(
         checklists: [],
         tags: [],
         members: [],
-        comments: [],
+        comments: null,
         dropdowns: [],
         deadline: {
             id: "",
@@ -190,7 +190,7 @@ export function ShowEditCard(
             toKanbanId: ""
         },
         customFields: [],
-        innerCards: []
+        innerCards: null
     })
 
     get_card_by_id(undefined,cardId,userValue.token,(response)=>response.json().then((card:Card)=>{

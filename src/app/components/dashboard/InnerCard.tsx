@@ -11,7 +11,7 @@ import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { delete_card } from "@/app/utils/fetchs";
 
 interface InnerCardsSectionProps {
-    innerCardArray: Card[];
+    innerCardArray: Card[] | null;
     failModalOption: any;
     noButtonRef: RefObject<HTMLButtonElement>
 }
@@ -51,15 +51,17 @@ export function InnerCardSection(props: InnerCardsSectionProps) {
 
     const handleDeleteInnerCard = (innerCardIndex:number) => {
         const delInnerCard = () => {
-            delete_card(undefined,tempCard.innerCards[innerCardIndex].id,userValue.token,(response)=>response.text().then(()=>{
-                if(response.ok){
-                    console.log("DELETE INNER CARD SUCCCESS");
-                }
-            }))
-            const innerCards = innerCardArray;
-            innerCards.splice(innerCardIndex,1);
-            setTempCard({...tempCard,innerCards:innerCards})
-            modalContextProps.setModalOpen(false);
+            if(tempCard.innerCards && innerCardArray){
+                delete_card(undefined,tempCard.innerCards[innerCardIndex].id,userValue.token,(response)=>response.text().then(()=>{
+                    if(response.ok){
+                        console.log("DELETE INNER CARD SUCCCESS");
+                    }
+                }))
+                const innerCards = innerCardArray;
+                innerCards.splice(innerCardIndex,1);
+                setTempCard({...tempCard,innerCards:innerCards})
+                modalContextProps.setModalOpen(false);
+            }
         }
 
         const successOption: CustomModalButtonAttributes[] = [
@@ -97,18 +99,24 @@ export function InnerCardSection(props: InnerCardsSectionProps) {
                 <PlusCircleIcon className='aspect-square w-6 mr-2' />
             </button>
             <div className='overflow-x-auto flex'>
-                {innerCardArray?.map((innerCard,index)=>{
-                    return (
-                        <div key={innerCard.id} className={`${innerCard.id == "" || innerCard.id.toString().includes("|") ? "loading-element" : ""} m-2 min-w-[25%] w-[25%] bg-neutral-50 drop-shadow rounded-md relative`}>
-                            <div onClick={()=>handleEditInnerCard(innerCard)} className='p-2 w-[90%] h-full cursor-pointer'>
-                                <h1 className='font-black font-lg truncate'>{innerCard.title}</h1>
-                            </div>
-                            <button onClick={()=>handleDeleteInnerCard(index)} type="button" className='absolute top-2 right-1'>
-                                <XCircleIcon className='w-6 aspect-square' />
-                            </button>
-                        </div>
-                    )
-                })}
+                {
+
+                    innerCardArray ? (
+                        innerCardArray.map((innerCard,index)=>{
+                            return (
+                                <div key={innerCard.id} className={`${innerCard.id == "" || innerCard.id.toString().includes("|") ? "loading-element" : ""} m-2 min-w-[25%] w-[25%] bg-neutral-50 drop-shadow rounded-md relative`}>
+                                    <div onClick={()=>handleEditInnerCard(innerCard)} className='p-2 w-[90%] h-full cursor-pointer'>
+                                        <h1 className='font-black font-lg truncate'>{innerCard.title}</h1>
+                                    </div>
+                                    <button onClick={()=>handleDeleteInnerCard(index)} type="button" className='absolute top-2 right-1'>
+                                        <XCircleIcon className='w-6 aspect-square' />
+                                    </button>
+                                </div>
+                            )
+                        })
+                    ) :
+                    <div className="m-2">Carregando...</div>
+                }
             </div>
         </div>
     );

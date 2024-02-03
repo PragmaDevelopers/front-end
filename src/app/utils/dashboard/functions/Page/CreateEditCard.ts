@@ -437,8 +437,8 @@ export function CreateComment(
         modalContextProps.setModalOpen(true);
         return;
     }
-    const provCommentId  = "|"+tempCard.comments.length;
-    const comments = tempCard.comments;
+    const provCommentId  = "|"+(tempCard.comments?.length || "0");
+    const comments = tempCard.comments || [];
     comments.push({
         content: content,
         edited: false,
@@ -458,7 +458,7 @@ export function CreateComment(
     post_comment(bodyComment,userValue.token,(response)=>response.json().then((commentId)=>{
         if(response.ok){
             console.log("CREATE COMMENT SUCCESS");
-            const newComments = tempCard.comments.map((comment)=>{
+            const newComments = comments.map((comment)=>{
                 if(comment.id == provCommentId){
                     comment.id = commentId;
                 }
@@ -489,7 +489,7 @@ export function CreateCommentAnswer(
         modalContextProps.setModalOpen(true);
         return;
     }
-    const provCommentId  = "|"+parentCommentId+"|"+tempCard.comments.length
+    const provCommentId  = "|"+parentCommentId+"|"+(tempCard.comments?.length||"0")
     const newCommentAnswer = {
         content: content,
         edited: false,
@@ -498,7 +498,7 @@ export function CreateCommentAnswer(
         user: userValue.profileData,
         answers: []
     };
-    const newComments = addCommentToAnswersWithoutId(tempCard.comments,parentCommentId,newCommentAnswer);
+    const newComments = addCommentToAnswersWithoutId(tempCard.comments||[],parentCommentId,newCommentAnswer);
     setTempCard({...tempCard,comments:newComments});
 
     const bodyComment = {
@@ -633,15 +633,15 @@ export function CreateInnerCard(
         modalContextProps.setModalOpen(true);
         return;
     }
-    const provInnerCardId = "|"+tempCard.innerCards?.length || "|0";
-    const innerCards = tempCard.innerCards;
+    const provInnerCardId = "|"+(tempCard.innerCards?.length || "0");
+    const innerCards = tempCard.innerCards||[];
     innerCards.push({
         id: provInnerCardId,
         cardParentId: tempCard.id,
         columnID: tempCard.columnID,
         kanbanID: tempCard.kanbanID,
-        title: "Inner Card "+tempCard.innerCards.length,
-        index: tempCard.innerCards.length,
+        title: "Inner Card "+(tempCard.innerCards?.length||"0"),
+        index: tempCard.innerCards?.length||0,
         description: "",
         checklists: [],
         tags: [],
@@ -663,13 +663,13 @@ export function CreateInnerCard(
 
     const bodyInnerCard = {
         cardId: tempCard.id,
-        title: "Inner Card "+tempCard.innerCards.length
+        title: "Inner Card "+(tempCard.innerCards?.length||"0")
     }
     console.log(tempCard.id)
     post_inner_card(bodyInnerCard,userValue.token,(response)=>response.json().then((innerCardId)=>{
         if(response.ok){
             console.log("CREATE INNER CARD SUCCESS");
-            const newInnerCards = tempCard.innerCards.map(innerCard=>{
+            const newInnerCards = innerCards.map(innerCard=>{
                 if(innerCard.id == provInnerCardId){
                     innerCard.id = innerCardId;
                 }

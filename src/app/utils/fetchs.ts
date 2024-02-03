@@ -317,6 +317,14 @@ export function get_card_by_id(body: GET_card_by_id, cardId:SystemID,userToken: 
     }).catch((e: any) => console.log(e));
 }
 
+type GET_inner_card = undefined;
+export function get_inner_card(body: GET_inner_card, cardId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(CARD_ROUTE+"/"+cardId+"/innerCards", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type GET_card_comment = undefined;
 export function get_card_comment(body: GET_card_comment, cardId:SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);

@@ -1,7 +1,8 @@
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Comment, SystemID, userValueDT } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { get_card_by_id, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_inner_card, post_tag } from "@/app/utils/fetchs";
+import { get_card_by_id, get_card_comment, get_inner_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_inner_card, post_tag } from "@/app/utils/fetchs";
+import { System } from "@mdxeditor/editor";
 import { RefObject } from "react";
 
 export async function ShowCreateDeadline(
@@ -199,7 +200,7 @@ export function CreateTag(
     setTempCard: (newValue:Card)=>void,
     tempCard: Card
 ){
-    const provTagId = tempCard.tags.length;
+    const provTagId = "|"+tempCard.tags.length;
     const tags = tempCard.tags;
     tags.push({
         id: provTagId,
@@ -632,7 +633,7 @@ export function CreateInnerCard(
         modalContextProps.setModalOpen(true);
         return;
     }
-    const provInnerCardId = "|"+tempCard.innerCards.length;
+    const provInnerCardId = "|"+tempCard.innerCards?.length || "|0";
     const innerCards = tempCard.innerCards;
     innerCards.push({
         id: provInnerCardId,
@@ -679,9 +680,9 @@ export function CreateInnerCard(
     }));
 }
 
-export function EditInnerCard(
+export function ShowEditInnerCard(
     userValue: userValueDT,
-    card: Card,
+    cardId: SystemID,
     setTempCard: (newValue: Card) => void,
     tempCard: Card,
     failModalOptions: any,
@@ -726,9 +727,15 @@ export function EditInnerCard(
         innerCards: []
     });
 
-    get_card_by_id(undefined,card.id,userValue.token,(response)=>response.json().then((dbCard:Card)=>{
+    get_card_by_id(undefined,cardId,userValue.token,(response)=>response.json().then((dbCard:Card)=>{
         if(response.ok){
-            setTempCard({...dbCard,cardParentId:cardParentId});
+            const newCard = {...dbCard,cardParentId:cardParentId};
+            setTempCard({...newCard});
+            get_inner_card(undefined,cardId,userValue.token,(response)=>response.json().then((innerCards:Card[])=>{
+                get_card_comment(undefined,cardId,userValue.token,(response)=>response.json().then((comments:Comment[])=>{
+                    setTempCard({...newCard,innerCards:innerCards,comments:comments});
+                }));
+            }));
         }
     }));
 }

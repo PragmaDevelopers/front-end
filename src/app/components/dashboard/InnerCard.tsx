@@ -4,7 +4,7 @@ import { useUserContext } from "@/app/contexts/userContext";
 import { InnerCardElementProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, SystemID } from "@/app/types/KanbanTypes";
 import { ConfirmDeleteCard, DeleteCard } from "@/app/utils/dashboard/functions/Page/Card";
-import { CreateInnerCard, EditInnerCard } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
+import { CreateInnerCard, ShowEditInnerCard } from "@/app/utils/dashboard/functions/Page/CreateEditCard";
 import { PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { RefObject } from "react";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
@@ -38,9 +38,9 @@ export function InnerCardSection(props: InnerCardsSectionProps) {
     }
 
     const handleEditInnerCard = (card:Card) => {
-        EditInnerCard(
+        ShowEditInnerCard(
             userValue,
-            card,
+            card.id,
             setTempCard,
             tempCard,
             failModalOption,
@@ -97,10 +97,10 @@ export function InnerCardSection(props: InnerCardsSectionProps) {
                 <PlusCircleIcon className='aspect-square w-6 mr-2' />
             </button>
             <div className='overflow-x-auto flex'>
-                {innerCardArray.map((innerCard,index)=>{
+                {innerCardArray?.map((innerCard,index)=>{
                     return (
                         <div key={innerCard.id} className={`${innerCard.id == "" || innerCard.id.toString().includes("|") ? "loading-element" : ""} m-2 min-w-[25%] w-[25%] bg-neutral-50 drop-shadow rounded-md relative`}>
-                            <div onClick={()=>handleEditInnerCard(innerCard)} className='p-2 w-full h-full cursor-pointer'>
+                            <div onClick={()=>handleEditInnerCard(innerCard)} className='p-2 w-[90%] h-full cursor-pointer'>
                                 <h1 className='font-black font-lg truncate'>{innerCard.title}</h1>
                             </div>
                             <button onClick={()=>handleDeleteInnerCard(index)} type="button" className='absolute top-2 right-1'>

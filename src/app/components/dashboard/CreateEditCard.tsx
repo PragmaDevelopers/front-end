@@ -64,6 +64,8 @@ function CardDateSection(props: CardDateSectionProps) {
         if(tempCard.deadline && tempCard.deadline?.id != "" && tempCard.deadline?.date){
             setDateExists(true);
             setCardDeadline(tempCard.deadline.date);
+        }else{
+            setDateExists(false);
         }
     },[tempCard.deadline?.id])
 
@@ -470,7 +472,7 @@ function TagsSection(props: TagsSectionProps) {
             </button>
             <div className='gap-3 overflow-auto flex px-2'>
                 {tagsArray?.map((item: Tag, index: number) => (
-                    <div key={index} className='text-nowrap my-2 py-2 ps-1 pe-2 rounded-md flex justify-center items-center drop-shadow-md transition-all' style={{ backgroundColor: item?.color } as CSSProperties}>
+                    <div key={index} className={(item.id.toString().includes("|") ? "loading-element" : "")+' text-nowrap my-2 py-2 ps-1 pe-2 rounded-md flex justify-center items-center drop-shadow-md transition-all'} style={{ backgroundColor: item?.color } as CSSProperties}>
                         <button type='button' onClick={() => {handleDeleteTag(index)}}><MinusCircleIcon className='w-6 aspect-square p-0 m-0' /></button>
                         <h1 style={{ backgroundColor: item?.color } as CSSProperties} className="p-0 m-0">{item?.name}</h1>
                     </div>
@@ -905,20 +907,20 @@ const CreateEditCard = () => {
     const { userValue } = useUserContext();
     const { tempCard, setTempCard, setTempKanban, tempKanban, cardManager, setCardManager } = useKanbanContext();
 
-    useEffect(()=>{
-        console.log(tempCard)
-    },[tempCard])
+    // useEffect(()=>{
+    //     console.log(tempCard)
+    // },[tempCard])
 
     const handleCreateCardForm = (e: any) => {
         e.preventDefault();
         EditCard(
             userValue,
-            setTempCard,
             setTempKanban,
             setCardManager,
             tempCard,
             tempKanban,
-            cardManager
+            cardManager,
+            handlePreviousCard
         );
     }
 

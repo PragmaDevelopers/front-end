@@ -11,7 +11,7 @@ import { isFlagSet } from "@/app/utils/checkers";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { ConfirmRemoveColumn, RemoveColumn, UpdateColumnTitle } from "@/app/utils/dashboard/functions/Page/Column";
 import { delete_column } from "@/app/utils/fetchs";
-import { CreateCard, ShowCreateCard } from "@/app/utils/dashboard/functions/Page/Card";
+import { CreateCard } from "@/app/utils/dashboard/functions/Page/Card";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 
 export function ColumnContainer({column}:{column:Column}) {

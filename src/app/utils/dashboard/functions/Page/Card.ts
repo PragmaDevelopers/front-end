@@ -2,7 +2,7 @@ import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { CardManager, ModalContextProps } from "@/app/interfaces/KanbanInterfaces";
 import { Card, Kanban, CheckList, CheckListItem, SystemID, userValueDT, Tag, DateValue, Column, Comment, User } from "@/app/types/KanbanTypes";
 import { isFlagSet } from "@/app/utils/checkers";
-import { delete_card, get_card_by_id, get_card_comment, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
+import { delete_card, get_card_by_id, get_card_comment, get_inner_card, patch_card, patch_checklist, patch_checklistItem, patch_customField, patch_deadline, post_card, post_checklist, post_checklistItem, post_comment, post_comment_answer, post_customField, post_deadline, post_tag } from "@/app/utils/fetchs";
 import { RefObject } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -195,8 +195,10 @@ export function ShowEditCard(
 
     get_card_by_id(undefined,cardId,userValue.token,(response)=>response.json().then((card:Card)=>{
         setTempCard({...card});
-        get_card_comment(undefined,cardId,userValue.token,(response)=>response.json().then((comments:Comment[])=>{
-            setTempCard({...card,comments:comments});
+        get_inner_card(undefined,cardId,userValue.token,(response)=>response.json().then((innerCards:Card[])=>{
+            get_card_comment(undefined,cardId,userValue.token,(response)=>response.json().then((comments:Comment[])=>{
+                setTempCard({...card,innerCards:innerCards,comments:comments});
+            }));
         }));
     }));
 
@@ -206,16 +208,16 @@ export function ShowEditCard(
 
 export function EditCard(
     userValue: userValueDT,
-    setTempCard: (newValue:Card)=>void,
     setTempKanban: (newValue:Kanban)=>void,
     setCardManager: (newValue: CardManager)=>void,
     tempCard: Card,
     tempKanban: Kanban,
-    cardManager: CardManager
+    cardManager: CardManager,
+    handlePreviousCard: ()=>void
 ){
     const cardId = tempCard.id;
     const title = tempCard.title;
-    const description = tempCard.description;
+    const description = tempCard.description || "";
     const members = tempCard.members?.map(member=>member.id) || [];
 
     if(!tempCard.cardParentId){
@@ -223,7 +225,7 @@ export function EditCard(
         setTempKanban(newKanbanWithNewCard);
         setCardManager({...cardManager,isShowCreateCard:false})
     }else{
-        setTempCard({...tempCard,id:"|"+tempCard.id});
+        handlePreviousCard();
     }
     
     const date = tempCard.deadline?.date;
@@ -248,44 +250,45 @@ export function EditCard(
     const customFields = tempCard.customFields;
     if(customFields.length > 0){
         tempCard.customFields.map((customField)=>{
-            patch_customField({value:customField.value},customField.id,userValue.token,(response)=>response.text().then(()=>{
-                if(response.ok){
-                    console.log("UPDATE CUSTOMFIELD SUCCESS");
-                }
-            }));
+            if(customField.id != "" && !customField.id.toString().includes("|")){
+                patch_customField({value:customField.value},customField.id,userValue.token,(response)=>response.text().then(()=>{
+                    if(response.ok){
+                        console.log("UPDATE CUSTOMFIELD SUCCESS");
+                    }
+                }));
+            }
         });
     }
 
     const checklists = tempCard.checklists;
     if(checklists.length > 0){
         tempCard.checklists.map((checklist)=>{
-            patch_checklist({name:checklist.name},checklist.id,userValue.token,(response)=>response.text().then(()=>{
-                if(response.ok){
-                    console.log("UPDATE CHECKLIST SUCCESS");
-                }
-            }));
-            const items = checklist.items;
-            if(items?.length > 0){
-                items.map((item)=>{
-                    patch_checklistItem({name:item.name,completed:item.completed},item.id,userValue.token,(response)=>response.text().then(()=>{
-                        if(response.ok){
-                            console.log("UPDATE CHECKLIST ITEM SUCCESS");
+            if(checklist.id != "" && !checklist.id.toString().includes("|")){
+                patch_checklist({name:checklist.name},checklist.id,userValue.token,(response)=>response.text().then(()=>{
+                    if(response.ok){
+                        console.log("UPDATE CHECKLIST SUCCESS");
+                    }
+                }));
+                const items = checklist.items;
+                if(items?.length > 0){
+                    items.map((item)=>{
+                        if(item.id != "" && !item.id.toString().includes("|")){
+                            patch_checklistItem({name:item.name,completed:item.completed},item.id,userValue.token,(response)=>response.text().then(()=>{
+                                if(response.ok){
+                                    console.log("UPDATE CHECKLIST ITEM SUCCESS");
+                                }
+                            }));
                         }
-                    }));
-                });
+                    });
+                }
             }
         });
     }
     
     patch_card({title,description,members},cardId,userValue.token,(response)=>response.text().then(()=>{
         if(response.ok){
-            if(tempCard.cardParentId){
-                console.log("PATCH INNER CARD SUCCESS");
-                get_card_by_id(undefined,tempCard.cardParentId,userValue.token,(response)=>response.json().then((card:Card)=>{
-                    setTempCard({...card});
-                }));
-            }else{
-                console.log("PATCH CARD SUCCESS");
+            console.log("PATCH CARD SUCCESS");
+            if(!tempCard.cardParentId){
                 const newKanbanWithNewCard = updateCardId(tempKanban,tempCard.columnID,"|"+cardId,"card",{id:cardId,title,description,members});
                 setTempKanban({...newKanbanWithNewCard});
             }

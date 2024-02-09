@@ -151,7 +151,9 @@ export function post_login(body: POST_loginBody, responseCallback: (response: Re
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST');
     fetch(LOGIN_ROUTE, requestObject).then((response: Response) => {
         responseCallback(response);
-    }).catch((e: any) => console.log(e));
+    }).catch((e: any) =>{
+        responseCallback(e)
+    });
 }
 
 /* Essa função é usada em @/app/page.tsx */

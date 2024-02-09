@@ -29,14 +29,16 @@ function InfoScreen({isFailLogin,isFailPassword,isEmailExists,isVerifyEmail}:Inf
             </div>
         );
     } else if (isVerifyEmail) {
-        <div className={baseStyle}>
-            <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
-            <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
-            <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
-                <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
-                <h3>Verifique o seu email para fazer a validação da conta.</h3>
+        return (
+            <div className={baseStyle}>
+                <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
+                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
+                    <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
+                    <h3>Verifique o seu email para fazer a validação da conta.</h3>
+                </div>
             </div>
-        </div>
+        )
     } else if (isFailPassword) {
         return (
             <div className={baseStyle}>
@@ -131,25 +133,29 @@ export default function Page() {
                 password: userpassword,
             }
 
-            post_login(responseBody,(response)=>response.json().then((json:any)=>{
-                if (response.ok) {
-                    const newUserValue = userValue;
-                    newUserValue.token = json.token;
-                    setUserValue(newUserValue);
-
-                    getUserProfile();
-                    getNotificationUser();
-                    getUserList();
-                    
-                    setIsloading(true);
-                }
-            }).catch((response=>{
+            post_login(responseBody,(response)=>{
                 if(response.status == 403){
                     setIsFailLogin(true);
                 }else{
-                    setIsVerifyEmail(true);
+                    response.json().then((json:any)=>{
+                        if (response.ok) {
+                            const newUserValue = userValue;
+                            newUserValue.token = json.token;
+                            setUserValue(newUserValue);
+        
+                            getUserProfile();
+                            getNotificationUser();
+                            getUserList();
+                            
+                            setIsloading(true);
+                        }else{
+                            if (json.status === 420) {
+                                setIsVerifyEmail(true);
+                            }
+                        }
+                    });
                 }
-            })));
+            });
 
             const getUserProfile = () => {
                 get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{

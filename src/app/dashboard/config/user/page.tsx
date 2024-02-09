@@ -20,7 +20,6 @@ export default function Page() {
 
     const handleProfilePictureSource = (arg0: string) => {
         setProfilePictureSource(arg0);
-        console.log(arg0);
     }
 
     const checkNationality = (value: string): boolean => {
@@ -35,40 +34,51 @@ export default function Page() {
 
     const handleFormSubmit = (e: any) => {
         e.preventDefault();
-        let subPfp: string = profilePictureSource;
+        let subPfp: string | null = profilePictureSource;
         let subEmail: string = e.target.emailPessoal.value;
         let subPasswd: string = e.target.senhaPessoal.value;
-        let subRePasswd: string = e.target.reSenhaPessoal.value;
         let subNat: string = e.target.nationality.value;
         let subGender: string = e.target.generoPessoal.value;
         let subName: string = e.target.namePessoal.value;
+        let subReceiveNotification: string = e.target.receberNotificacoes.checked;
 
-        console.log(profilePictureSource);
         console.log("subPfp",subPfp);
         console.log("subEmail",subEmail);
         console.log("subPasswd",subPasswd);
-        console.log("subRePasswd",subRePasswd);
         console.log("subNat",subNat);
         console.log("subGender",subGender);
         console.log("subName",subName);
+        console.log("subReceiveNotification",subReceiveNotification);
 
-        let sendObj: {[Key: string]: string} = {}
-
-        const compareObj: {[Key: string]: string} = {
-            "name": subName,
-            "email": subEmail,
-            "password": subPasswd,
-            "nationality": subNat,
-            "gender": subGender,
-            "profilePicture": subPfp,
+        const userUpdate:any = {
+            isReceiveNotification: subReceiveNotification
         }
 
-        for (let [key, value] of Object.entries(userValue.profileData)) {
-            if (compareObj[key] !== value) {
-                sendObj[key] = compareObj[key]
-                console.log(sendObj);
-            }
+        if(subName != ""){
+            userUpdate.name = subName;
         }
+
+        if(subEmail != ""){
+            userUpdate.email = subEmail;
+        }
+
+        if(subPasswd != ""){
+            userUpdate.password = subPasswd;
+        }
+
+        if(subNat != ""){
+            userUpdate.nationality = subNat;
+        }
+
+        if(subGender != ""){
+            userUpdate.gender = subNat;
+        }
+
+        if(subPfp != null){
+            userUpdate.profilePicture = subNat;
+        }
+
+        console.log(userUpdate);
 
         const headers = {
             method: 'PATCH',
@@ -76,7 +86,7 @@ export default function Page() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${userValue.token}`,
             },
-            body: JSON.stringify(sendObj),
+            body: JSON.stringify(userUpdate)
         }
 
         fetch(`${API_BASE_URL}/api/private/user/profile`, headers);
@@ -118,6 +128,17 @@ export default function Page() {
                         <div className="flex w-full justify-center items-center my-4">
                             <hr className="w-[90%] bg-neutral-100" />
                         </div>
+                        <div className="w-full">
+                            <span className="text-left font-bold mb-1 me-2">Notifiçãoes no email</span>
+                            <input defaultChecked={userValue.profileData.isReceiveNotification} name="receberNotificacoes" id="receberNotificacoes" type="checkbox" />
+                            <button type="submit"
+                                className="my-2 mx-auto p-2 block bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">
+                                Salvar
+                            </button>
+                        </div>
+                        <div className="flex w-full justify-center items-center my-4">
+                            <hr className="w-[90%] bg-neutral-100" />
+                        </div>
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Nome</h2>
                             <input defaultValue={userValue.profileData.name} name="namePessoal" id="namePessoal" type="text" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira seu nome" />
@@ -129,7 +150,6 @@ export default function Page() {
                         <div className="flex w-full justify-center items-center my-4">
                             <hr className="w-[90%] bg-neutral-100" />
                         </div>
-
                         <div className="flex flex-col justify-center items-center w-full">
                             <h2 className="w-full text-left font-bold mb-1">Email</h2>
                             <input defaultValue={userValue.profileData.email} name="emailPessoal" id="emailPessoal" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
@@ -145,8 +165,6 @@ export default function Page() {
                             <h2 className="w-full text-left font-bold mb-1">Senha</h2>
                             <input name="senhaPessoal" id="senhaPessoal" type="password" autoComplete="new-password"
                                 className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Insira sua senha" />
-                            <input name="reSenhaPessoal" id="reSenhaPessoal" type="password" autoComplete="new-password"
-                                className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full my-1" placeholder="Re-insira sua senha" />
                             <button type="submit"
                                 className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">
                                 Salvar

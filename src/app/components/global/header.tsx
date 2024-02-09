@@ -60,7 +60,8 @@ export default function Header(props: HeaderProps) {
                             profilePicture: "",
                             pushEmail: "",
                             registrationDate: "",
-                            role: ""
+                            role: "",
+                            isReceiveNotification: false
                         }})
                         router.push("/");
                     }}>

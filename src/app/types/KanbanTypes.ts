@@ -95,6 +95,7 @@ export type User = {
     role: string;
     permissionLevel: string;
     profilePicture: string | null;
+    isReceiveNotification: boolean
 }
 
 export type userValueDT = {

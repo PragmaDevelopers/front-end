@@ -22,6 +22,7 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
       pushEmail: null,
       registrationDate: '',
       role: '',
+      isReceiveNotification: false
     },
     notifications: [],
     userList: [],

@@ -101,17 +101,17 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
   }
 
   if(backgroundImage.section == "top-right"){
-    backgroundImagePosition.top = 10;
-    backgroundImagePosition.right = 10;
+    backgroundImagePosition.top = 0;
+    backgroundImagePosition.right = 0;
   }else if (backgroundImage.section == "top-left"){
-    backgroundImagePosition.top = 10;
-    backgroundImagePosition.left = 10;
+    backgroundImagePosition.top = 0;
+    backgroundImagePosition.left = 0;
   }else if (backgroundImage.section == "bottom-right"){
-    backgroundImagePosition.top = 10;
-    backgroundImagePosition.right = 10;
-  }else if (backgroundImage.section == "top-left"){
-    backgroundImagePosition.bottom = 10;
-    backgroundImagePosition.left = 10;
+    backgroundImagePosition.top = 0;
+    backgroundImagePosition.right = 0;
+  }else if (backgroundImage.section == "bottom-left"){
+    backgroundImagePosition.bottom = 0;
+    backgroundImagePosition.left = 0;
   }else{
     backgroundImagePosition.top = "50%";
     backgroundImagePosition.left = "50%";
@@ -124,7 +124,7 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
           {
             backgroundImage.url && (
               <View fixed={true} style={backgroundImagePosition}>
-                  <Image style={{width:100,height:100}} src={backgroundImage.url} />
+                  <Image style={{width:"100vw",height:"100vh"}} src={backgroundImage.url} />
               </View>
             )
           }

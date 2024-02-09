@@ -61,13 +61,13 @@ function CardDateSection(props: CardDateSectionProps) {
     const modalContextProps = useModalContext();
 
     useEffect(()=>{
-        if(tempCard.deadline && tempCard.deadline?.id != "" && tempCard.deadline?.date){
+        if(tempCard.deadline && tempCard.deadline.id != "" && tempCard.deadline.date){
             setDateExists(true);
             setCardDeadline(tempCard.deadline.date);
         }else{
             setDateExists(false);
         }
-    },[tempCard.deadline?.id])
+    },[tempCard.deadline])
 
     const handleShowCreateDeadline = () => {
         ShowCreateDeadline(
@@ -968,6 +968,29 @@ const CreateEditCard = () => {
                             setCardManager({
                                 ...cardManager,
                                 isShowCreateCard:false
+                            });
+                            setTempCard({
+                                id: "",
+                                columnID: "",
+                                kanbanID: "",
+                                title: "",
+                                index: 0,
+                                description: "",
+                                checklists: [],
+                                tags: [],
+                                members: [],
+                                comments: null,
+                                dropdowns: [],
+                                deadline: {
+                                id: "",
+                                category: "",
+                                date: null,
+                                overdue: false,
+                                toColumnId: "",
+                                toKanbanId: ""
+                                },
+                                customFields: [],
+                                innerCards: null
                             });
                         }}><XCircleIcon className='w-8 aspect-square absolute top-2 right-0' /></button>
                     </div>

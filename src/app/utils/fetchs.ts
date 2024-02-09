@@ -97,7 +97,7 @@ const KANBAN_ROUTE: string = `${USER_ROUTE}/kanban`;
 const COLUMN_ROUTE: string = `${KANBAN_ROUTE}/column`;
 const COLUMN_MOVE_ROUTE: string = `${COLUMN_ROUTE}/move`;
 const CARD_ROUTE: string = `${COLUMN_ROUTE}/card`;
-const CARD_MOVE_ROUTE: string = `{${CARD_ROUTE}/move}`
+const CARD_MOVE_ROUTE: string = `${CARD_ROUTE}/move`
 
 const INNER_CARD_ROUTE: string = `${CARD_ROUTE}/innerCard`;
 const DEADLINE_ROUTE: string = `${CARD_ROUTE}/deadline`;
@@ -144,8 +144,6 @@ function generateRequestObject(body: string, method: 'POST' | 'GET' | 'PATCH' | 
 
     return requestObject;
 }
-
-
 
 /* Essa função é usada em @/app/page.tsx */
 type POST_loginBody = { email: string; password: string; }

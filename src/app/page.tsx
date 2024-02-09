@@ -5,14 +5,16 @@ import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
 import { NotificationUser, User, userValueDT } from "./types/KanbanTypes";
 import { post_login, get_profile, get_user, post_signup, get_notifications_with_limit } from "./utils/fetchs";
+import Link from "next/link";
 
 interface InfoScreenProps {
     isFailLogin: boolean,
     isFailPassword: boolean,
-    isEmailExists: boolean
+    isEmailExists: boolean,
+    isVerifyEmail: boolean
 }
 
-function InfoScreen({isFailLogin,isFailPassword,isEmailExists}:InfoScreenProps) {
+function InfoScreen({isFailLogin,isFailPassword,isEmailExists,isVerifyEmail}:InfoScreenProps) {
     const baseStyle: string = "w-max absolute top-0 z-10 select-none";
 
     if (isFailLogin) {
@@ -26,6 +28,8 @@ function InfoScreen({isFailLogin,isFailPassword,isEmailExists}:InfoScreenProps) 
                 </div>
             </div>
         );
+    } else if (isVerifyEmail) {
+
     } else if (isFailPassword) {
         return (
             <div className={baseStyle}>
@@ -65,6 +69,7 @@ function InfoScreen({isFailLogin,isFailPassword,isEmailExists}:InfoScreenProps) 
 export default function Page() {
     const [cadastrarSe, setCadastrarSe] = useState<boolean>(false);
     const [isFailLogin, setIsFailLogin] = useState<boolean>(false);
+    const [isVerifyEmail, setIsVerifyEmail] = useState<boolean>(false);
     const [isFailPassword, setIsFailPassword] = useState<boolean>(false);
     const [isEmailExists, setEmailExists] = useState<boolean>(false);
     const switchCadastrarSe = () => setCadastrarSe(!cadastrarSe);
@@ -78,6 +83,8 @@ export default function Page() {
         setIsFailLogin(false);
         setIsFailPassword(false);
         setEmailExists(false);
+        setIsVerifyEmail(false);
+        
         if (cadastrarSe) {
             const email: string = e?.target?.email?.value;
             const userpassword: string = e?.target?.userpassword?.value;
@@ -117,10 +124,10 @@ export default function Page() {
                 password: userpassword,
             }
 
-            post_login(responseBody,(response)=>response.text().then((token:string)=>{
-                if (response.status == 200 || response.ok) {
+            post_login(responseBody,(response)=>response.json().then((json:any)=>{
+                if (response.ok) {
                     const newUserValue = userValue;
-                    newUserValue.token = token;
+                    newUserValue.token = json.token;
                     setUserValue(newUserValue);
 
                     getUserProfile();
@@ -129,7 +136,11 @@ export default function Page() {
                     
                     setIsloading(true);
                 }else{
-                    setIsFailLogin(true);
+                    if(json.status == 420){
+                        setIsVerifyEmail(true);
+                    }else{
+                        setIsFailLogin(true);
+                    }
                 }
             }));
 
@@ -172,7 +183,7 @@ export default function Page() {
     return (
         <main className="bg-neutral-50 text-neutral-950 flex flex-row justify-center items-center w-screen h-screen transition-all">
             <div className="h-[90%] w-[60%] relative flex justify-center items-center">
-                <InfoScreen isEmailExists={isEmailExists} isFailPassword={isFailPassword} isFailLogin={isFailLogin} />
+                <InfoScreen isEmailExists={isEmailExists} isFailPassword={isFailPassword} isFailLogin={isFailLogin} isVerifyEmail={isVerifyEmail}  />
                 <form method="POST" className={`${isLoading ? "loading-element" : ""} flex flex-col items-center mb-4 h-48`} onSubmit={loginUser}>
                     {cadastrarSe ? (
                         <div className="h-fit bg-neutral-50 drop-shadow-md rounded-md p-2 border-neutral-200 border-[1px]">
@@ -388,8 +399,11 @@ export default function Page() {
                         </div>
                     )}
                     <div className="w-96 flex flex-row justify-between items-center mt-4">
-                        <button className="border-neutral-200 border-[1px] text-neutral-950 bg-neutral-50 p-2 drop-shadow-md rounded-md ml-2 hover:bg-neutral-100 hover:text-neutral-950 hover:scale-110 transition-all" type="submit">{cadastrarSe ? 'Finalizar Cadastro' : 'Entrar'}</button>
-                        <button className="border-neutral-200 border-[1px] text-neutral-950 bg-neutral-50 p-2 drop-shadow-md rounded-md ml-2 hover:bg-neutral-100 hover:text-neutral-950 hover:scale-110 transition-all" type="button" onClick={switchCadastrarSe}>{cadastrarSe ? 'Voltar' : 'Cadastrar-se'}</button>
+                        <button className="border-neutral-200 border-[1px] text-neutral-950 bg-neutral-50 p-2 drop-shadow-md rounded-md hover:bg-neutral-100 hover:text-neutral-950 hover:scale-110 transition-all" type="submit">{cadastrarSe ? 'Finalizar Cadastro' : 'Entrar'}</button>
+                        <button className="border-neutral-200 border-[1px] text-neutral-950 bg-neutral-50 p-2 drop-shadow-md rounded-md hover:bg-neutral-100 hover:text-neutral-950 hover:scale-110 transition-all" type="button" onClick={switchCadastrarSe}>{cadastrarSe ? 'Voltar' : 'Cadastrar-se'}</button>
+                    </div>
+                    <div className="w-96 flex flex-row justify-between items-center mt-5">
+                        <Link href="/account/forgot" className="text-blue-600">Esqueceu a senha?</Link>
                     </div>
                 </form>
             </div>

@@ -36,22 +36,25 @@ export async function CreateDeadline(
     setDateExists: (newValue:boolean)=>void,
 ){
 
-    setTempCard({...tempCard,deadline:{
+    const newDeadline = {
         id: "|",
         category: "",
         date: date,
         overdue: false,
         toColumnId: "",
         toKanbanId: ""
-    }});
+    }
+
+    setTempCard({...tempCard,deadline:newDeadline});
 
     setDateExists(true);
     setCardManager({...cardManager,isShowCreateDeadline:false})
 
-    post_deadline({cardId:tempCard.id,date:date},userValue.token,(response)=>response.json().then((deadlineId)=>{
+    post_deadline({cardId:tempCard.id,date:date},userValue.token,(response)=>response.json().then((deadlineId:string)=>{
         if(response.ok){
             console.log("CREATE DEADLINE SUCCESS");
-            setTempCard({...tempCard,deadline:{...tempCard.deadline,id:deadlineId}});
+            newDeadline.id = deadlineId;
+            setTempCard({...tempCard,deadline:newDeadline});
         }
     }));
 }

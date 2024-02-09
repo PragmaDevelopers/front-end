@@ -32,7 +32,7 @@ function InfoScreen({isFailLogin,isFailPassword,isEmailExists,isVerifyEmail}:Inf
         return (
             <div className={baseStyle}>
                 <h1 className="text-2xl font-semibold text-neutral-950">Ops...</h1>
-                <h2 className="text-lg text-neutral-500">Algo de ruim aconteceu.</h2>
+                <h2 className="text-lg text-neutral-500">Etapa de verifição.</h2>
                 <div className="fill-red-300 flex flex-row justify-start items-center mt-2 bg-red-50 border-l-2 border-red-300">
                     <ExclamationCircleIcon className="stroke-red-400 fill-red-100 aspect-square w-6 mr-2" />
                     <h3>Verifique o seu email para fazer a validação da conta.</h3>
@@ -120,6 +120,7 @@ export default function Page() {
                 post_signup(responseBody,(response)=>{
                     if (response.status == 200) {
                         setCadastrarSe(false);
+                        setIsVerifyEmail(true);
                     }else{
                         setEmailExists(true);
                     }

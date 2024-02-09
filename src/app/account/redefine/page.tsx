@@ -21,7 +21,10 @@ export default function Page() {
         e.preventDefault();
         const requestOptions = {
             method: 'PATCH',
-            Authorization: "Bearer "+searchParams.get("token"),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${searchParams.get("token")}`,
+            },
             body: JSON.stringify({
                 password: e.target.userpassword.value
             })

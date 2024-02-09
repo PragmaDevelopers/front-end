@@ -30,7 +30,7 @@ export default function Page() {
                     isValid ?
                     <>
                         <h1 className="text-neutral-400 text-xl font-semibold my-1">Verifique o seu email!</h1>
-                        <Link href="/" className="border-neutral-200 border-[1px] text-neutral-950 bg-neutral-50 p-2 drop-shadow-md rounded-md mt-3 hover:bg-neutral-100 hover:text-neutral-950 hover:scale-110 transition-all">Tela inicial</Link>
+                        <Link href="/" className="border-neutral-200 border-[1px] text-neutral-950 bg-neutral-50 p-2 mx-auto drop-shadow-md rounded-md mt-3 hover:bg-neutral-100 hover:text-neutral-950 hover:scale-110 transition-all">Tela inicial</Link>
                     </>
                     :
                     <form onSubmit={handleSubmit} className="flex flex-col items-center">

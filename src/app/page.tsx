@@ -138,10 +138,10 @@ export default function Page() {
                 }else{
                     if(json.status == 420){
                         setIsVerifyEmail(true);
-                    }else{
-                        setIsFailLogin(true);
                     }
                 }
+            }).catch(()=>{
+                setIsFailLogin(true);
             }));
 
             const getUserProfile = () => {

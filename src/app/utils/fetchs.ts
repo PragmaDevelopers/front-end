@@ -108,7 +108,8 @@ const COMMENT_ANSWER_ROUTE: string = `${CARD_ROUTE}/comment/answer`;
 const CHECKLIST_ROUTE: string = `${CARD_ROUTE}/checklist`;
 const CHECKLIST_ITEM_ROUTE: string = `${CHECKLIST_ROUTE}/checklistItem`;
 
-
+const CLIENT_TEMPLATE = `${USER_ROUTE}/signup/client/template`;
+const PDF_TEMPLATE = `${USER_ROUTE}/signup/pdfEditor/template`;
 
 /* Essa é uma função local que retorna a rota com ID de um dado elemento */
 type elementType = 'columncards' | 'card' | 'cardchecklists'
@@ -575,6 +576,44 @@ type DELETE_comment = undefined;
 export function delete_comment(body: DELETE_comment, commentId:SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
     fetch(COMMENT_ROUTE+"/"+commentId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_client_template = {
+    name: string,
+    template: object
+};
+export function post_client_template(body: POST_client_template, value:boolean,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(CLIENT_TEMPLATE+"?value="+value, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_client_template = undefined;
+export function delete_client_template(body: DELETE_client_template, clientTemplateId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(CLIENT_TEMPLATE+"/"+clientTemplateId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type POST_pdf_template = {
+    name: string,
+    template: object
+};
+export function post_pdf_template(body: POST_pdf_template, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'POST', `Bearer ${userToken}`);
+    fetch(PDF_TEMPLATE, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type DELETE_pdf_template = undefined;
+export function delete_pdf_template(body: DELETE_pdf_template, pdfTemplateId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(PDF_TEMPLATE+"/"+pdfTemplateId, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

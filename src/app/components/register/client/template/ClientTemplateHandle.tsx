@@ -1,6 +1,11 @@
+import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { useModalContext } from "@/app/contexts/modalContext";
 import { useUserContext } from "@/app/contexts/userContext";
 import { ClientTemplateProps } from "@/app/interfaces/RegisterClientInterfaces";
+import { delete_client_template } from "@/app/utils/fetchs";
+import { ConfirmDeleteClientTemplate, CreateClientTemplate } from "@/app/utils/register/client/ClientTemplateModal";
 import { API_BASE_URL } from "@/app/utils/variables";
+import { useRef } from "react";
 
 export default function ClientTemplateHandle({templateList,setTemplateList,currentTemplate,setCurrentTemplate}:{
     templateList:ClientTemplateProps[],
@@ -10,6 +15,23 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
 }){
 
     const { userValue } = useUserContext();
+    const modalContextProps = useModalContext();
+
+    const noButtonRef = useRef<HTMLButtonElement>(null);
+
+    const failOption: CustomModalButtonAttributes[] = [
+        {
+            text: "Entendido.",
+            onclickfunc: () => modalContextProps.setModalOpen(false),
+            ref: noButtonRef,
+            type: "button",
+            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+        }
+    ];
+
+    const failModalOption: any = failOption.map(
+        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+    );
 
     return (
         <div className="mt-3 w-2/3 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col">
@@ -36,22 +58,47 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;
                 const templateIndex = templateList.findIndex((template) => template.id == selectedTemplateId)
-                if (templateIndex !== -1) {
-                    const requestOptions = {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${userValue.token}`,
-                        }
 
-                    };
-                    fetch(`${API_BASE_URL}/api/private/user/signup/client/template/${selectedTemplateId}`, requestOptions)
-                    .then(() => {
-                        const newTemplateList = templateList;
-                        newTemplateList.splice(templateIndex,1);
-                        setTemplateList([...newTemplateList]);
-                        alert("Rascunho deletado!");
-                    })
+                const delClientTemplate = () => {
+                    delete_client_template(undefined,selectedTemplateId,userValue.token,(response)=>response.text().then(()=>{
+                        if(response.ok){
+                            console.log("DELETE CLIENT TEMPLATE SUCCESS");
+                        }
+                    }));
+                    const newTemplateList = templateList;
+                    newTemplateList.splice(templateIndex,1);
+                    setTemplateList([...newTemplateList]);
+                    modalContextProps.setModalOpen(false);
+                }
+        
+                const successOption: CustomModalButtonAttributes[] = [
+                    {
+                        text: "Sim",
+                        onclickfunc: delClientTemplate,
+                        type: "button",
+                        className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                    },
+                    {
+                        text: "Não",
+                        onclickfunc: () => modalContextProps.setModalOpen(false),
+                        ref: noButtonRef,
+                        type: "button",
+                        className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+                    }
+                ]
+        
+                const successModalOption: any = successOption.map(
+                    (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+                );
+
+                if (templateIndex !== -1) {
+                    ConfirmDeleteClientTemplate(
+                        userValue,
+                        successModalOption,
+                        failModalOption,
+                        noButtonRef,
+                        modalContextProps
+                    )
                 }
             }}>
                 <select required defaultValue="" className="w-full" name="selected_draft">
@@ -68,31 +115,19 @@ export default function ClientTemplateHandle({templateList,setTemplateList,curre
             <form onSubmit={(e: any) => {
                 e.preventDefault()
                 const templateName = e.target.draft_name.value;
-
-                const requestOptions = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userValue.token}`,
-                    },
-                    body: JSON.stringify({
+                CreateClientTemplate(
+                    false,
+                    userValue,
+                    {
                         name: templateName,
                         template: currentTemplate
-                    })
-
-                };
-                fetch(`${API_BASE_URL}/api/private/user/signup/client/template?value=false`, requestOptions)
-                .then(response => response.json()).then((id:number) => {
-                    setTemplateList([
-                        ...templateList,
-                        {
-                            id,
-                            name: templateName,
-                            template: currentTemplate
-                        }
-                    ])
-                    alert("Rascunho salvo!");
-                })
+                    },
+                    templateList,
+                    setTemplateList,
+                    failModalOption,
+                    noButtonRef,
+                    modalContextProps
+                );
             }}>
                 <label htmlFor="draft-name">Nome do rascunho: </label>
                 <input required className="w-full" id="draft-name" type="text" name="draft_name" />

@@ -2,6 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import Main from './components/global/Main';
+import { CustomModal } from './components/ui/CustomModal';
+import { useModalContext } from './contexts/modalContext';
 
 const interFont = Inter({
     subsets: ['latin'],

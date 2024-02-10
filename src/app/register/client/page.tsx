@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AccordionItem } from "@/app/components/register/client/form/Accordion/Accordion";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/app/utils/variables";
@@ -9,6 +9,9 @@ import ClientTemplateHandle from "@/app/components/register/client/template/Clie
 import CreateTemplateInput from "@/app/components/register/client/template/CreateTemplateInput";
 import DeleteTemplateInput from "@/app/components/register/client/template/DeleteTemplateInput";
 import { CepDataProps } from "@/app/interfaces/RegisterClientInterfaces";
+import { CustomModal, CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
+import { useModalContext } from "@/app/contexts/modalContext";
+import { CreateClientTemplate } from "@/app/utils/register/client/ClientTemplateModal";
 
 export default function SignUpPageB() {
     const [currentTemplate, setCurrentTemplate] = useState<{ pessoa_fisica: any[], pessoa_juridica: any[] }>({
@@ -20,8 +23,8 @@ export default function SignUpPageB() {
         id: number,
         name: string,
         template: {
-            pessoa_fisica: any[],
-            pessoa_juridica: any[]
+            pessoa_fisica: {title:string,inputs:any[]}[],
+            pessoa_juridica: {title:string,inputs:any[]}[]
         }
     }[]>([]);
 
@@ -40,6 +43,7 @@ export default function SignUpPageB() {
 
     const router = useRouter();
     const { userValue } = useUserContext();
+    const modalContextProps = useModalContext();
 
     const returnToHome = () => {
         router.push("/");
@@ -98,8 +102,28 @@ export default function SignUpPageB() {
         }
     }
 
+    const noButtonRef = useRef<HTMLButtonElement>(null);
+
+    const failOption: CustomModalButtonAttributes[] = [
+        {
+            text: "Entendido.",
+            onclickfunc: () => modalContextProps.setModalOpen(false),
+            ref: noButtonRef,
+            type: "button",
+            className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
+        }
+    ];
+
+    const failModalOption: any = failOption.map(
+        (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>
+    );
+
     return (
         <div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
+            <CustomModal description={modalContextProps.modalDescription} focusRef={modalContextProps.modalFocusRef} 
+                isOpen={modalContextProps.modalOpen} options={modalContextProps.modalOptions} 
+                setIsOpen={modalContextProps.setModalOpen} text={modalContextProps.modalText} title={modalContextProps.modalTitle} borderColor={modalContextProps.modalBorderColor} 
+            />
             <div className="p-3 w-full max-w-4xl">
                 <div className="flex justify-between items-center">
                     <div>
@@ -149,24 +173,20 @@ export default function SignUpPageB() {
                             clientSignUp[e.target[i].name] = e.target[i].value;
                         }
                     }
-                    sessionStorage.setItem("clientSignUp", JSON.stringify(clientSignUp));
-                    const requestOptions = {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${userValue.token}`,
-                        },
-                        body: JSON.stringify({
+
+                    CreateClientTemplate(
+                        true,
+                        userValue,
+                        {
                             name: e.target.nome_identificador.value,
                             template: clientSignUp
-                        })
-                    };
-                    fetch(`${API_BASE_URL}/api/private/user/signup/client/template?value=true`, requestOptions)
-                    .then(response => response.json()).then((clientTemplateId) => {
-                        console.log("CREATE CLIENT SUCCESS");
-                        alert("Cliente Salvo!");
-                        sessionStorage.setItem("clientTemplateId_editor",clientTemplateId)
-                    });
+                        },
+                        templateList,
+                        setTemplateList,
+                        failModalOption,
+                        noButtonRef,
+                        modalContextProps
+                    );
 
                     e.target.reset();  
                 }}>
@@ -236,9 +256,7 @@ export default function SignUpPageB() {
                                                             <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
                                                             {
                                                                 ["cep"].includes(input.name) ?
-                                                                    <>
-                                                                        <input onChange={(e) => { searchCep(e.target.value) }} required value={cepValue} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
-                                                                    </>
+                                                                    <input onChange={(e) => { searchCep(e.target.value) }} required value={cepValue} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                     :
                                                                     <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                             }
@@ -251,11 +269,11 @@ export default function SignUpPageB() {
                                                             <label htmlFor={"input-" + input.name} className="block">{input.label}</label>
                                                             {
                                                                 input.name == "endereco" ? (
-                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, logradouro: e.target.value })} required value={addressValue.logradouro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, logradouro: e.target.value })} required defaultValue={addressValue.logradouro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                 ) : input.name == "bairro" ? (
-                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, bairro: e.target.value })} required value={addressValue.bairro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, bairro: e.target.value })} required defaultValue={addressValue.bairro} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                 ) : input.name == "cidade" ? (
-                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, localidade: e.target.value })} required value={addressValue.localidade} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
+                                                                    <input onChange={(e) => setAddressValue({ ...addressValue, localidade: e.target.value })} required defaultValue={addressValue.localidade} className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                 ) : (
                                                                     <input required className="w-full" id={"input-" + input.name} type={input.type} name={input.name} />
                                                                 )

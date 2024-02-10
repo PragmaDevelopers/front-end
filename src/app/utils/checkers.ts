@@ -47,6 +47,10 @@ export function getUserPerms(userPerms: string): { [Key: string]: boolean } {
         "CRIAR_CHECKLISTITEMS": false,
         "DELETAR_CHECKLISTITEMS": false,
         "EDITAR_CHECKLISTITEMS": false,
+        "CRIAR_TEMPLATES_CLIENTE": false,
+        "DELETAR_TEMPLATES_CLIENTE": false,
+        "CRIAR_TEMPLATES_PDF": false,
+        "DELETAR_TEMPLATES_PDF": false
     }
     let permsList: string[] = PERMISSIONS_LIST;
 

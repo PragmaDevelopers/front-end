@@ -124,15 +124,7 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 export default function Layout({ children }: any) {
     const { userValue } = useUserContext();
     const { kanbanList, setKanbanList, tempKanban,setTempKanban } = useKanbanContext();
-    const { 
-        modalTitle, setModalTitle,
-        modalDescription, setModalDescription,
-        modalText, setModalText,
-        modalOptions, setModalOptions,
-        modalOpen, setModalOpen,
-        modalBorderColor, setModalBorderColor,
-        modalFocusRef, setModalFocusRef 
-    } = useModalContext();
+    const modalContextProps = useModalContext();
 
     const noButtonRef = useRef<any>(null);
 
@@ -149,7 +141,7 @@ export default function Layout({ children }: any) {
     useLayoutEffect(() => {
         function getKanbanList(){
             get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
-                setKanbanList(dbKanbanList.length > 0 ? dbKanbanList : null);
+                setKanbanList(dbKanbanList);
             }));
         }
 
@@ -164,11 +156,13 @@ export default function Layout({ children }: any) {
     }, []);
 
     const addDashBoard = (event: any) => {
+        event.preventDefault();
+        
         if (!isFlagSet(userValue.profileData, "CRIAR_DASHBOARDS")) {
             const optAttrs: CustomModalButtonAttributes[] = [
                 {
                     text: "Entendido.",
-                    onclickfunc: () => setModalOpen(false),
+                    onclickfunc: () => modalContextProps.setModalOpen(false),
                     ref: noButtonRef,
                     type: "button",
                     className: "rounded-md border border-transparent bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
@@ -178,13 +172,13 @@ export default function Layout({ children }: any) {
             const modalOpt: any = optAttrs.map(
                 (el: CustomModalButtonAttributes, idx: number) => <button className={el?.className} type={el.type} key={idx} onClick={el.onclickfunc} ref={el?.ref}>{el.text}</button>);
 
-            setModalTitle("Ação Negada.");
-            setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
-            setModalText("Fale com seu administrador se isto é um engano.");
-            setModalBorderColor("border-red-500");
-            setModalFocusRef(noButtonRef);
-            setModalOptions(modalOpt);
-            setModalOpen(true);
+            modalContextProps.setModalTitle("Ação Negada.");
+            modalContextProps.setModalDescription("Você não tem as permissões necessárias para realizar esta ação.");
+            modalContextProps.setModalText("Fale com seu administrador se isto é um engano.");
+            modalContextProps.setModalBorderColor("border-red-500");
+            modalContextProps.setModalFocusRef(noButtonRef);
+            modalContextProps.setModalOptions(modalOpt);
+            modalContextProps.setModalOpen(true);
             return;
         } else {
 
@@ -218,9 +212,10 @@ export default function Layout({ children }: any) {
 
     return (
         <main className="w-full h-full flex flex-row items-start justify-between overflow-y-hidden">
-            <CustomModal description={modalDescription} focusRef={modalFocusRef} 
-            isOpen={modalOpen} options={modalOptions} 
-            setIsOpen={setModalOpen} text={modalText} title={modalTitle} borderColor={modalBorderColor} />
+            <CustomModal description={modalContextProps.modalDescription} focusRef={modalContextProps.modalFocusRef} 
+                isOpen={modalContextProps.modalOpen} options={modalContextProps.modalOptions} 
+                setIsOpen={modalContextProps.setModalOpen} text={modalContextProps.modalText} title={modalContextProps.modalTitle} borderColor={modalContextProps.modalBorderColor} 
+            />
             <div className="grow relative w-[20%] h-full flex flex-col justify-start items-start shrink-0">
                 <details className="p-2 hidden">
                     <summary>Seções</summary>
@@ -248,22 +243,22 @@ export default function Layout({ children }: any) {
                         <summary>Areas de Trabalho</summary>
                         <div className="">
                             { 
-                                    kanbanList && kanbanList.length > 0  ? 
+                                    kanbanList ? 
                                         kanbanList?.map((kanban, index) => <BoardMenuEntry
-                                        setModalOptions={setModalOptions}
-                                        setModalOpen={setModalOpen}
-                                        setModalDescription={setModalDescription}
-                                        setModalFocusRef={setModalFocusRef}
-                                        setModalBorderColor={setModalBorderColor}
-                                        setModalTitle={setModalTitle}
-                                        setModalText={setModalText}
+                                        setModalOptions={modalContextProps.setModalOptions}
+                                        setModalOpen={modalContextProps.setModalOpen}
+                                        setModalDescription={modalContextProps.setModalDescription}
+                                        setModalFocusRef={modalContextProps.setModalFocusRef}
+                                        setModalBorderColor={modalContextProps.setModalBorderColor}
+                                        setModalTitle={modalContextProps.setModalTitle}
+                                        setModalText={modalContextProps.setModalText}
                                         kanbanID={kanban.id}
                                         key={index}
                                         href={`/dashboard/board/${kanban.id}`}
                                         name={kanban.title}
                                         deleteKanban={deleteKanban} />)
                                     :
-                                    kanbanList?.length == 0 && <div className="ps-2">Carregando...</div> 
+                                    <div className="ps-2">Carregando...</div> 
                             }
                         </div>
                         <div>

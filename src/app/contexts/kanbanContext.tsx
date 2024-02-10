@@ -9,7 +9,7 @@ interface KanbanContextProviderProps {
 }
 
 export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ children }) => {
-  const [kanbanList, setKanbanList] = useState<Kanban[] | null>([]);
+  const [kanbanList, setKanbanList] = useState<Kanban[] | null>(null);
   const [tempKanban, setTempKanban] = useState<Kanban>({
     id: 0,
     title: "",

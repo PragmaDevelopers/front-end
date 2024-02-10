@@ -57,7 +57,7 @@ export default function Header(props: HeaderProps) {
                             gender: "",
                             name: "",
                             nationality: "",permissionLevel:"",
-                            profilePicture: "",
+                            profilePicture: null,
                             pushEmail: "",
                             registrationDate: "",
                             role: "",

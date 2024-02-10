@@ -2,13 +2,9 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 import Header from "./header";
-import Link from "next/link";
-import { ArrowRightIcon } from "@heroicons/react/24/solid";
-import { ClockIcon } from "@heroicons/react/24/outline";
-import { UserContextProvider, useUserContext } from "@/app/contexts/userContext";
+import { UserContextProvider } from "@/app/contexts/userContext";
 import { KanbanContextProvider } from "@/app/contexts/kanbanContext";
 import { ModalContextProvider } from "@/app/contexts/modalContext";
-import { get_notifications } from "@/app/utils/fetchs";
 import Notification from "./Notification";
 import { PdfEditorContextProvider } from "@/app/contexts/pdfEditorContext";
 

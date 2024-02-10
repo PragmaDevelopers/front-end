@@ -16,7 +16,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
                 const removeSection = e.target.remove_section.value;
                 const removeInput = e.target.remove_input.value;
                 const newAccordions = currentTemplate[typePerson];
-
+                console.log(newAccordions)
                 const accordionIndex = currentTemplate[typePerson].findIndex(accordion => accordion.title === removeSection);
 
                 if (removeInput === "") {
@@ -26,7 +26,7 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
                         return input.name === removeInput;
                     })
                     if (inputIndex !== -1) {
-                        currentTemplate[typePerson][accordionIndex].inputs.splice(inputIndex, 1);
+                        newAccordions[accordionIndex].inputs.splice(inputIndex, 1);
                     }
                 }
                 if (typePerson === "pessoa_fisica") {

@@ -16,6 +16,8 @@ import { usePdfEditorContext } from "@/app/contexts/pdfEditorContext";
 import PdfEditorTemplateModal from "@/app/components/PDFEditor/PdfEditorTemplateModal";
 import { set } from "zod";
 import { EditorLine } from "@/app/types/PdfEditorTypes";
+import { CustomModal } from "@/app/components/ui/CustomModal";
+import { useModalContext } from "@/app/contexts/modalContext";
 
 function EditPdf() {
 	const [variable, setVariable] = useState<string>("");
@@ -43,6 +45,7 @@ function EditPdf() {
 	const [useDraftModal,setUseDraftModal] = useState<boolean>(false);
 
 	const { userValue } = useUserContext();
+	const modalContextProps = useModalContext();
 	const { editorLines, setEditorLines, backupPdfEditorTemplate, setBackupPdfEditorTemplate } = usePdfEditorContext();
 
 	const returnToHome = () => {
@@ -286,6 +289,10 @@ function EditPdf() {
 
 	return (
 		<div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
+			<CustomModal description={modalContextProps.modalDescription} focusRef={modalContextProps.modalFocusRef} 
+                isOpen={modalContextProps.modalOpen} options={modalContextProps.modalOptions} 
+                setIsOpen={modalContextProps.setModalOpen} text={modalContextProps.modalText} title={modalContextProps.modalTitle} borderColor={modalContextProps.modalBorderColor} 
+            />
 			<div className="p-3 w-full max-w-4xl">
 				<div className="flex flex-col gap-3 justify-center rounded-md">
 					<div className="flex gap-3 items-center rounded-md">

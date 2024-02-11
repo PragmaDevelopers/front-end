@@ -9,7 +9,20 @@ export interface EditorLinesProps {
 
 export interface backgroundImageProps {
     url: string | null,
-    section: string
+    section: string,
+    margin: {
+        left: number,
+        right: number,
+        top: number,
+        bottom: number,
+    },
+    backgroundMargin: {
+        left: number,
+        right: number,
+        top: number,
+        bottom: number,
+    },
+    opacity: number
 }
 
 export interface PdfEditorContextProps {
@@ -18,5 +31,7 @@ export interface PdfEditorContextProps {
     setBackgroundImage: (newValue:backgroundImageProps)=>void,
     backgroundImage: backgroundImageProps,
     backupPdfEditorTemplate: EditorLine[],
-    setBackupPdfEditorTemplate: (newValue:EditorLine[])=>void
+    setBackupPdfEditorTemplate: (newValue:EditorLine[])=>void,
+    currentClientTemplate: any, 
+    setCurrentClientTemplate: (newValue:any)=>void,
 }

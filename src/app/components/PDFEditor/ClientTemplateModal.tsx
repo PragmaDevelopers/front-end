@@ -47,7 +47,7 @@ export default function ClientPdfTemplateHandle({templateList,setTemplateList,cu
                     setCurrentTemplate(templateList[templateIndex].template);
                 }
             }}>
-                <select required defaultValue="" className="w-full" name="selected_draft">
+                <select required defaultValue={currentTemplate.id ? currentTemplate.id : ""} className="w-full" name="selected_draft">
                     <option disabled value=""> -- Escolha um cliente -- </option>
                     {templateList && (
                         templateList.map((template:any) => {

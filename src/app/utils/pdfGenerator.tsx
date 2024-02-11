@@ -60,8 +60,10 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
         backgroundColor: "#FFFFFF"
       },
       section: {
-        margin: 10,
-        padding: 10,
+        paddingBottom: backgroundImage.margin.bottom,
+        paddingTop: backgroundImage.margin.top,
+        paddingLeft: backgroundImage.margin.left,
+        paddingRight: backgroundImage.margin.right,
         flexGrow: 1,
         gap: 15
       },
@@ -101,17 +103,17 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
   }
 
   if(backgroundImage.section == "top-right"){
-    backgroundImagePosition.top = 0;
-    backgroundImagePosition.right = 0;
+    backgroundImagePosition.top = backgroundImage.backgroundMargin.top;
+    backgroundImagePosition.right = backgroundImage.backgroundMargin.right;
   }else if (backgroundImage.section == "top-left"){
-    backgroundImagePosition.top = 0;
-    backgroundImagePosition.left = 0;
+    backgroundImagePosition.top = backgroundImage.backgroundMargin.top;
+    backgroundImagePosition.left = backgroundImage.backgroundMargin.left;
   }else if (backgroundImage.section == "bottom-right"){
-    backgroundImagePosition.top = 0;
-    backgroundImagePosition.right = 0;
+    backgroundImagePosition.bottom = backgroundImage.backgroundMargin.bottom;
+    backgroundImagePosition.right = backgroundImage.backgroundMargin.right;
   }else if (backgroundImage.section == "bottom-left"){
-    backgroundImagePosition.bottom = 0;
-    backgroundImagePosition.left = 0;
+    backgroundImagePosition.bottom = backgroundImage.backgroundMargin.bottom;
+    backgroundImagePosition.left = backgroundImage.backgroundMargin.left;
   }else{
     backgroundImagePosition.top = "50%";
     backgroundImagePosition.left = "50%";

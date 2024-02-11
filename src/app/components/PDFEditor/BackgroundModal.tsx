@@ -1,10 +1,11 @@
 import { usePdfEditorContext } from "@/app/contexts/pdfEditorContext";
-import { ClientTemplateChildrenProps,CreateTemplateInputProps } from "@/app/interfaces/RegisterClientInterfaces";
 import { useEffect, useState } from "react";
 
 export default function BackgroundImageModal(){
 
     const { backgroundImage,setBackgroundImage } = usePdfEditorContext();
+
+    const [selectBackground,setSelectBackground] = useState<"first"|"second"|string>("first");
 
     const handleDrop = (e:any) => {
         e.preventDefault();
@@ -47,12 +48,76 @@ export default function BackgroundImageModal(){
                 <label htmlFor="border" className="inline-block whitespace-nowrap">Canto: </label>
                 <select required onChange={(e) => setBackgroundImage({...backgroundImage,section:e.target.value})} defaultValue={backgroundImage.section}
                     className="w-full" name="border" id="border">
-                    <option value="center">Centralizado</option>
+                    <option value="center">Centralizado (sem margin de segundo plano)</option>
                     <option value="top-right">Superior direito</option>
                     <option value="top-left">Superior esquerdo</option>
                     <option value="bottom-right">Inferior direito</option>
                     <option value="bottom-left">Inferior esquerdo</option>
                 </select>
+            </div>
+            <select className="mb-3" onChange={(e)=>setSelectBackground(e.target.value)} defaultValue={selectBackground}>
+                <option value="first">Margin do primeiro plano</option>
+                {backgroundImage.section != "center" && <option value="second">Margin do segundo plano</option>}
+            </select>
+            { 
+                selectBackground == "first" && <div>
+                    <div className="mb-3 flex gap-2 items-center text-center">
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin esquerda</label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,margin:{...backgroundImage.margin,left:value}})
+                        }} defaultValue={backgroundImage.margin.left} />
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin direita: </label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,margin:{...backgroundImage.margin,right:value}})
+                        }} defaultValue={backgroundImage.margin.right} />
+                    </div>
+                    <div className="mb-3 flex gap-2 items-center text-center">
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin cima</label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,margin:{...backgroundImage.margin,top:value}})
+                        }} defaultValue={backgroundImage.margin.top} />
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin baixo: </label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,margin:{...backgroundImage.margin,bottom:value}})
+                        }} defaultValue={backgroundImage.margin.bottom} />
+                    </div>
+                </div>
+            }
+            {
+                selectBackground == "second" && <div>
+                    <div className="mb-3 flex gap-2 items-center text-center">
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin esquerda</label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,backgroundMargin:{...backgroundImage.backgroundMargin,left:value}})
+                        }} defaultValue={backgroundImage.backgroundMargin.left} />
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin direita: </label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,backgroundMargin:{...backgroundImage.backgroundMargin,right:value}})
+                        }} defaultValue={backgroundImage.backgroundMargin.right} />
+                    </div>
+                    <div className="mb-3 flex gap-2 items-center text-center">
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin cima</label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,backgroundMargin:{...backgroundImage.backgroundMargin,top:value}})
+                        }} defaultValue={backgroundImage.backgroundMargin.top} />
+                        <label htmlFor="border" className="inline-block w-[15%]">Margin baixo: </label>
+                        <input className="w-[35%]" required type="number" onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setBackgroundImage({...backgroundImage,backgroundMargin:{...backgroundImage.backgroundMargin,bottom:value}})
+                        }} defaultValue={backgroundImage.backgroundMargin.bottom} />
+                    </div>
+                </div>
+            }
+            <div>
+                <label htmlFor="opacity" className="block">Opacidade ({backgroundImage.opacity}):</label>
+                <input className="w-full" defaultValue={backgroundImage.opacity * 10} type="range" min="0" max="10" onChange={(e)=>setBackgroundImage({...backgroundImage,opacity:Number(e.target.value) / 10})} />
             </div>
             <div className="mb-3 flex justify-center items-center"
                 onDrop={handleDrop}

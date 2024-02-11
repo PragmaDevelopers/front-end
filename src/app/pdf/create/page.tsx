@@ -32,7 +32,6 @@ function EditPdf() {
         name: string,
         template: any[]
     }[]>([]);
-	const [currentClientTemplate, setCurrentClientTemplate] = useState<any>({});
 
 	const [pdfEditorTemplateList, setPdfEditorTemplateList] = useState<{
         id: number,
@@ -46,7 +45,7 @@ function EditPdf() {
 
 	const { userValue } = useUserContext();
 	const modalContextProps = useModalContext();
-	const { editorLines, setEditorLines, backupPdfEditorTemplate, setBackupPdfEditorTemplate } = usePdfEditorContext();
+	const { editorLines, setEditorLines, setBackupPdfEditorTemplate, currentClientTemplate, setCurrentClientTemplate } = usePdfEditorContext();
 
 	const returnToHome = () => {
 		router.push("/");
@@ -322,7 +321,7 @@ function EditPdf() {
 								setBackgroundImageModal(!backgroundImageModal);
 								setUseDraftModal(false);
 								setSelectedClientModal(false);
-							}} type="button">Papel timbrado</button>
+							}} type="button">Papel timbrado/Margin</button>
 							<button className="bg-neutral-50 drop-shadow rounded-md p-2" onClick={() => {
 								setUseDraftModal(!useDraftModal);
 								setBackgroundImageModal(false);

@@ -103,7 +103,8 @@ export default function Page() {
                 <h1 className="font-bold text-2xl text-neutral-900">Configurações</h1>
             </div>
             <div className={`${showChangeWarning ? 'flex' : 'hidden'} w-full h-fit justify-center items-center my-2`}>
-                <h1 className="w-fit h-fit text-lg">Você verá as mudanças na próxima vez que fizer login.</h1>
+                <h1 className="w-fit h-fit text-lg text-center">Você verá as mudanças na próxima vez que fizer login.<br />
+                Caso tenha mudado o email, verifique no endereço para fazer a validação!</h1>
             </div>
             <div className="mt-4 flex flex-col items-center justify-between relative p-4">
                 <div className="bg-neutral-50 rounded-lg drop-shadow-md p-4 flex flex-row justify-center items-center ml-4">

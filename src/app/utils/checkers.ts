@@ -43,6 +43,7 @@ export function getUserPerms(userPerms: string): { [Key: string]: boolean } {
         "EDITAR_TAG": false,
         "DELETAR_TAG": false,
         "CRIAR_CAMPO": false,
+        "EDITAR_CAMPO": false,
         "DELETAR_CAMPO": false,
         "CRIAR_CHECKLISTITEMS": false,
         "DELETAR_CHECKLISTITEMS": false,

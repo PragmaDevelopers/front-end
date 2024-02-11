@@ -24,7 +24,6 @@ function EditPdf() {
 	const [editorOpacity, setEditorOpacity] = useState<number>(1);
 
 	const router = useRouter();
-	const pathname = usePathname()
 	const editorRef = useRef<MDXEditorMethods>(null)
 
 	const [clientTemplateList, setClientTemplateList] = useState<{

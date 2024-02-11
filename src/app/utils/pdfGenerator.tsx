@@ -99,7 +99,7 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
 
   const backgroundImagePosition:any = {
     position: "absolute",
-    opacity: 0.9
+    opacity: backgroundImage.opacity
   }
 
   if(backgroundImage.section == "top-right"){

@@ -4,12 +4,26 @@ import React, { useEffect, useRef } from 'react';
 import pdfGenerator from '../../utils/pdfGenerator';
 import { pdf } from "@react-pdf/renderer";
 import { usePdfEditorContext } from '@/app/contexts/pdfEditorContext';
+import { useRouter } from 'next/navigation';
+import { useUserContext } from '@/app/contexts/userContext';
 
 function ViewPdf() {
 
   const ref = useRef<HTMLIFrameElement>(null);
 
+  const router = useRouter();
+  const { userValue } = useUserContext();
   const { backgroundImage, backupPdfEditorTemplate } = usePdfEditorContext();
+
+  const returnToHome = () => {
+		router.push("/");
+	}
+
+	useEffect(() => {
+		if (userValue.token === "") {
+			returnToHome();
+		}
+	}, [userValue, router]);
 
   useEffect(() => {
     async function getPdf() {

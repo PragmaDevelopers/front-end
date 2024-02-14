@@ -35,7 +35,7 @@ export default function Page() {
                     <ProfilePicture className="aspect-square" size={112} source={userValue.profileData?.profilePicture} />
                     <div className="ml-3">
                         <h1 className="text-lg font-bold text-neutral-900 mb-1">{userValue.profileData.name}</h1>
-                        <h2 className="text-neutral-700 text-sm my-0.5">{userValue.profileData.name}</h2>
+                        <h2 className="text-neutral-700 text-sm my-0.5">{userValue.profileData.email}</h2>
                         <Link className="text-blue-500 hover:text-blue-700 transition-all text-sm my-0.5" href="/dashboard/config/user">Configurar perfil</Link>
                     </div>
                 </div>

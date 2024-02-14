@@ -75,9 +75,9 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    const newFilteredUsers = userValue.userList.filter(user => user.id != userValue.profileData.id);
+    const newFilteredUsers = userValue.userList.filter(user => user.id != userValue.profileData.id && user.role != "ROLE_ADMIN");
     setFilteredUsers(newFilteredUsers);
-  }, []);
+  }, [isModalOpen]);
 
   function handleModalConfig(isShow:boolean,user?:User){
     setIsModalOpen(isShow);

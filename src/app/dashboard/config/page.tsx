@@ -46,7 +46,7 @@ export default function Page() {
                             <div className="flex flex-row justify-center items-center w-full">
                                 <label htmlFor="emailPush" className="mr-2">Email:</label>
                                 <input id="emailPush" type="email" className="bg-neutral-100 border-none outline-none p-2 shadow-inner rounded-md w-full" placeholder="Insira um email" />
-                                <button className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
+                                <button type="button" className="m-2 p-2 bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">Salvar</button>
                             </div>
                         </div>
                     </form>

@@ -130,7 +130,7 @@ export default function Page() {
                             <hr className="w-[90%] bg-neutral-100" />
                         </div>
                         <div className="w-full">
-                            <span className="text-left font-bold mb-1 me-2">Notifiçãoes no email</span>
+                            <span className="text-left font-bold mb-1 me-2">Notificações no email</span>
                             <input defaultChecked={userValue.profileData.isReceiveNotification} name="receberNotificacoes" id="receberNotificacoes" type="checkbox" />
                             <button type="submit"
                                 className="my-2 mx-auto p-2 block bg-neutral-50 drop-shadow-md rounded-md text-green-600 hover:bg-green-600 hover:text-neutral-50 hover:scale-110 transition-all">

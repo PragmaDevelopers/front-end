@@ -145,8 +145,6 @@ export default function Page() {
                             setUserValue(newUserValue);
         
                             getUserProfile();
-                            getNotificationUser();
-                            getUserList();
                             
                             setIsloading(true);
                         }else{
@@ -163,6 +161,7 @@ export default function Page() {
                     const newUserValue = userValue;
                     newUserValue.profileData = profileData;
                     setUserValue(newUserValue);
+                    getNotificationUser();
                 }));
             }
 
@@ -172,6 +171,7 @@ export default function Page() {
                     newUserValue.notifications = dbNotifications;
                     setUserValue(newUserValue);
                     setIsloading(false);
+                    getUserList();
                     router.push("/dashboard");
                 }));
             }

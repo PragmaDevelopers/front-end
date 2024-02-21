@@ -56,7 +56,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [activeCard, setActiveCard] = useState<Card | null>(null);
     const { userValue } = useUserContext();
-    const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban,setTempCard, tempCard } = useKanbanContext();
+    const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {

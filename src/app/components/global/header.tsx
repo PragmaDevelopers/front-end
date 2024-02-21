@@ -1,8 +1,8 @@
 "use client";
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { useUserContext } from "@/app/contexts/userContext";
-import { Kanban } from "@/app/types/KanbanTypes";
-import { get_kanban } from "@/app/utils/fetchs";
+import { Kanban, NotificationUser, User } from "@/app/types/KanbanTypes";
+import { get_kanban, get_kanban_members, get_notifications_with_limit, get_profile, get_user } from "@/app/utils/fetchs";
 import { BellIcon, ArrowLeftEndOnRectangleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
@@ -23,15 +23,46 @@ export default function Header(props: HeaderProps) {
     const currentPath: string = usePathname();
     const { setUserValue,userValue } = useUserContext();
     const [generalLoading,setGeneralLoading] = useState<boolean>(false);
-    const { setKanbanList } = useKanbanContext();
+    const { setKanbanList,setTempKanban,tempKanban } = useKanbanContext();
     const router = useRouter();
 
     function handleRefleshKanban(){
         setGeneralLoading(true);
         get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
             setKanbanList(dbKanbanList);
-            setGeneralLoading(false);
+            const kanbanIndex = dbKanbanList?.findIndex(kanban=>kanban.id==tempKanban.id);
+            if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
+                const kanban = dbKanbanList[kanbanIndex];
+                setTempKanban(kanban);
+                get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+                    setTempKanban({...kanban,members:members});
+                    setGeneralLoading(false);
+                })));
+            }else{
+                setGeneralLoading(false);
+            }
         }));
+        get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{
+            const newUserValue = userValue;
+            newUserValue.profileData = profileData;
+            setUserValue(newUserValue);
+            getNotificationUser();
+        }));
+        const getNotificationUser = () => {
+            get_notifications_with_limit(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
+                const newUserValue = userValue;
+                newUserValue.notifications = dbNotifications;
+                setUserValue(newUserValue);
+                getUserList();
+            }));
+        }
+        const getUserList = () => {
+            get_user(undefined,userValue.token,(response)=>response.json().then((userList:User[])=>{
+                const newUserValue = userValue;
+                newUserValue.userList = userList;
+                setUserValue(newUserValue);
+            }));
+        }
     }
 
     if (currentPath != '/' && currentPath != "/account/verify" && currentPath != "/account/redefine" && currentPath != "/account/forgot" && currentPath != "/account/switch") {
@@ -63,6 +94,12 @@ export default function Header(props: HeaderProps) {
                             role: "",
                             isReceiveNotification: false
                         }})
+                        setTempKanban({
+                            id: "",
+                            title: "",
+                            members: [],
+                            columns: []
+                        })
                         router.push("/");
                     }}>
                         <ArrowLeftEndOnRectangleIcon className="aspect-square w-6 mr-2 ml-4" />

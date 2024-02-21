@@ -11,13 +11,13 @@ interface KanbanContextProviderProps {
 export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ children }) => {
   const [kanbanList, setKanbanList] = useState<Kanban[] | null>(null);
   const [tempKanban, setTempKanban] = useState<Kanban>({
-    id: 0,
+    id: "",
     title: "",
     members: [],
     columns: []
   });
   const [tempColumn, setTempColumn] = useState<Column>({
-    id: 0,
+    id: "",
     title: "",
     index: 0,
     cards: []

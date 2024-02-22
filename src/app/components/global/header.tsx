@@ -3,7 +3,7 @@ import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { useUserContext } from "@/app/contexts/userContext";
 import { Kanban, NotificationUser, User } from "@/app/types/KanbanTypes";
 import { get_kanban, get_kanban_members, get_notification_count, get_notifications_with_limit, get_profile, get_user } from "@/app/utils/fetchs";
-import { BellIcon, ArrowLeftEndOnRectangleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
+import { BellIcon, ArrowLeftEndOnRectangleIcon, CircleStackIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from "react";
@@ -81,7 +81,7 @@ export default function Header(props: HeaderProps) {
                 </div>
                 <div className="flex flex-row items-center">
                     <nav className='flex flex-row items-center'>
-                        <button onClick={handleRefleshKanban} type='button' className={generalLoading ? "loading-element" : ""}><CircleStackIcon className="aspect-square w-8" /></button>
+                        <button onClick={handleRefleshKanban} type='button' className={generalLoading ? "loading-element" : ""}><ArrowPathIcon className="aspect-square w-5" /></button>
                         <Link href="/dashboard" className='text-neutral-950 hover:text-blue-400 mx-2'>Dashboard</Link>
                         <Link href="/register/client" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
                         <Link href="/pdf/create" className='text-neutral-950 hover:text-blue-400 mx-2'>Editor</Link>

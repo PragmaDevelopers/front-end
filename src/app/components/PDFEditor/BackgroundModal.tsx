@@ -45,10 +45,10 @@ export default function BackgroundImageModal(){
                 sessionStorage.removeItem("background_image_url");
             }}>
             <div className="mb-3 flex gap-2 items-center">
-                <label htmlFor="border" className="inline-block whitespace-nowrap">Canto: </label>
+                <label htmlFor="border" className="inline-block text-center">Posição da imagem de fundo: </label>
                 <select required onChange={(e) => setBackgroundImage({...backgroundImage,section:e.target.value})} defaultValue={backgroundImage.section}
                     className="w-full" name="border" id="border">
-                    <option value="center">Centralizado (sem margin de segundo plano)</option>
+                    <option value="center">Centralizado (imagem de fundo fica sem margin)</option>
                     <option value="top-right">Superior direito</option>
                     <option value="top-left">Superior esquerdo</option>
                     <option value="bottom-right">Inferior direito</option>
@@ -56,8 +56,8 @@ export default function BackgroundImageModal(){
                 </select>
             </div>
             <select className="mb-3" onChange={(e)=>setSelectBackground(e.target.value)} defaultValue={selectBackground}>
-                <option value="first">Margin do primeiro plano</option>
-                {backgroundImage.section != "center" && <option value="second">Margin do segundo plano</option>}
+                <option value="first">Margin do texto</option>
+                {backgroundImage.section != "center" && <option value="second">Margin da imagem de fundo</option>}
             </select>
             { 
                 selectBackground == "first" && <div>
@@ -115,6 +115,11 @@ export default function BackgroundImageModal(){
                     </div>
                 </div>
             }
+            <div>
+                <label htmlFor="opacity" className="block">Largura da imagem de fundo: </label>
+                <span className="block text-sm opacity-75 mb-1">* Valor 0 para imagem cobrir a página inteira</span>
+                <input className="w-full mb-1" defaultValue={backgroundImage.width} type="number" onChange={(e)=>setBackgroundImage({...backgroundImage,width:Number(e.target.value)})} />
+            </div>
             <div>
                 <label htmlFor="opacity" className="block">Opacidade ({backgroundImage.opacity}):</label>
                 <input className="w-full" defaultValue={backgroundImage.opacity * 10} type="range" min="0" max="10" onChange={(e)=>setBackgroundImage({...backgroundImage,opacity:Number(e.target.value) / 10})} />

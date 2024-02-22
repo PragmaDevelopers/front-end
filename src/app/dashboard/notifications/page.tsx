@@ -5,7 +5,7 @@ import { useUserContext } from "@/app/contexts/userContext";
 import { User, NotificationUser, SystemID } from "@/app/types/KanbanTypes";
 import { get_notification_count, get_notifications, patch_notification_viewed } from "@/app/utils/fetchs";
 import { NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
-import { ArchiveBoxArrowDownIcon, ArrowTopRightOnSquareIcon, CircleStackIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxArrowDownIcon, ArrowPathIcon, ArrowTopRightOnSquareIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -140,7 +140,7 @@ export default function Page() {
         <main className={`${isLoading ? "loading-element" : ""} w-full h-full flex flex-col overflow-y-auto`}>
             <h1 className="font-bold text-xl mt-4 text-center">Central de notificações do sistema.</h1>
             <div className="w-full text-end">
-                <button onClick={handleRefleshNotification} type='button'><CircleStackIcon className="aspect-square w-8" /></button>
+                <button onClick={handleRefleshNotification} type='button'><ArrowPathIcon className="aspect-square w-5" /></button>
             </div>
             <div className="w-full h-full flex flex-row justify-start items-start">
                 {/* FILTRAGEM DE NOTIFICAÇÕES FICA PRA DPS PQ POR ENQUANTO SÓ EXISTE NOTIFICAÇÃO DE SISTEMA */}

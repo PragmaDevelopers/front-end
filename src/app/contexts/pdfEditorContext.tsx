@@ -27,6 +27,7 @@ export const PdfEditorContextProvider: React.FC<PdfEditorContextProviderProps> =
       top: 0,
       bottom: 0,
     },
+    width: 0,
     opacity: 1
   });
   // CRIAR A MARGIN DE TEXTO E BACKGROUND

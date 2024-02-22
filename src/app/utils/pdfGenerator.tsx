@@ -126,7 +126,7 @@ export default function pdfGenerator(data:PdfLineStyleProps[],backgroundImage:ba
           {
             backgroundImage.url && (
               <View fixed={true} style={backgroundImagePosition}>
-                  <Image style={{width:"100vw",height:"100vh"}} src={backgroundImage.url} />
+                  <Image style={{width:backgroundImage.width == 0 ? "100vw" : backgroundImage.width,height:backgroundImage.width == 0 ? "100vh" : "auto"}} src={backgroundImage.url} />
               </View>
             )
           }

@@ -22,6 +22,7 @@ export interface backgroundImageProps {
         top: number,
         bottom: number,
     },
+    width: number,
     opacity: number
 }
 

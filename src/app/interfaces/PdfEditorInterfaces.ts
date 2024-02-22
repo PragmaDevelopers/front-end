@@ -32,6 +32,6 @@ export interface PdfEditorContextProps {
     backgroundImage: backgroundImageProps,
     backupPdfEditorTemplate: EditorLine[],
     setBackupPdfEditorTemplate: (newValue:EditorLine[])=>void,
-    currentClientTemplate: any, 
-    setCurrentClientTemplate: (newValue:any)=>void,
+    currentClientTemplateList: any, 
+    setCurrentClientTemplateList: (newValue:any)=>void,
 }

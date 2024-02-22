@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { userValueDT } from '../types/KanbanTypes';
-import { UserContextProps } from '../interfaces/KanbanInterfaces';
 import { EditorLinesProps, PdfEditorContextProps, backgroundImageProps } from '../interfaces/PdfEditorInterfaces';
 import { EditorLine, pdfEditorTemplate } from '../types/PdfEditorTypes';
 
@@ -13,7 +11,7 @@ interface PdfEditorContextProviderProps {
 export const PdfEditorContextProvider: React.FC<PdfEditorContextProviderProps> = ({ children }) => {
   const [editorLines, setEditorLines] = useState<EditorLinesProps>({lines:[],selectedLineIndex:0,selectedLetterIndex:0,selectedWordIndex:0});
   const [backupPdfEditorTemplate,setBackupPdfEditorTemplate] = useState<EditorLine[]>([]);
-	const [currentClientTemplate, setCurrentClientTemplate] = useState<any>({});
+	const [currentClientTemplateList, setCurrentClientTemplateList] = useState<any[]>([]);
   const [backgroundImage,setBackgroundImage] = useState<backgroundImageProps>({
     section: "center",
     url: null,
@@ -33,7 +31,7 @@ export const PdfEditorContextProvider: React.FC<PdfEditorContextProviderProps> =
   });
   // CRIAR A MARGIN DE TEXTO E BACKGROUND
   return (
-    <PdfEditorContext.Provider value={{ currentClientTemplate, setCurrentClientTemplate,editorLines, setEditorLines,backgroundImage,setBackgroundImage,backupPdfEditorTemplate,setBackupPdfEditorTemplate }}>
+    <PdfEditorContext.Provider value={{ currentClientTemplateList, setCurrentClientTemplateList,editorLines, setEditorLines,backgroundImage,setBackgroundImage,backupPdfEditorTemplate,setBackupPdfEditorTemplate }}>
       {children}
     </PdfEditorContext.Provider>
   );

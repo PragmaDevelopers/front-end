@@ -22,7 +22,7 @@ import { useModalContext } from "@/app/contexts/modalContext";
 function EditPdf() {
 	const [variable, setVariable] = useState<string>("");
 	const [editorOpacity, setEditorOpacity] = useState<number>(1);
-
+	const [currentClientTemplate,setCurrentClientTemplate] = useState<any>({});
 	const router = useRouter();
 	const editorRef = useRef<MDXEditorMethods>(null)
 
@@ -44,7 +44,7 @@ function EditPdf() {
 
 	const { userValue } = useUserContext();
 	const modalContextProps = useModalContext();
-	const { editorLines, setEditorLines, setBackupPdfEditorTemplate, currentClientTemplate, setCurrentClientTemplate } = usePdfEditorContext();
+	const { editorLines, setEditorLines, setBackupPdfEditorTemplate, currentClientTemplateList, setCurrentClientTemplateList } = usePdfEditorContext();
 
 	const returnToHome = () => {
 		router.push("/");
@@ -100,12 +100,19 @@ function EditPdf() {
 			}
 		}
 		if(submit){
+			let novoObjeto:any = {};
+			currentClientTemplateList.map((current:any)=>{
+				for (let chave in current.template) {
+					novoObjeto[current.id + "_" + chave] = current.template[chave];
+				}
+			});
+			console.log(novoObjeto)
 			const formattedLines = editorLines.lines.map((line)=>{
 				if (line.value.replace(/&#x20;/g, '').trim().length > 0) {
 					// Remove "&#x20;" e "\" da string
 					line.value = line.value.replace(/&#x20;|\\/g, '');
 				}
-				line.value = Mustache.render(line.value, currentClientTemplate);
+				line.value = Mustache.render(line.value, novoObjeto);
 				return line;
 			});
 			setBackupPdfEditorTemplate(formattedLines);
@@ -113,11 +120,11 @@ function EditPdf() {
 		}
 	}
 
-	function selectList(list: object | undefined) {
-		if (list) {
+	function selectList(list: any) {
+		if (list != undefined) {
 			const arr = []
-			for (const item in list) {
-				arr.push(item)
+			for (const item in list.template) {
+				arr.push(list.id+"_"+item);
 			}
 			return arr;
 		} else {
@@ -141,7 +148,7 @@ function EditPdf() {
 			let isPaste = false;
 			let newLine: string[] = [];
 	
-			line?.replace("&#x20;", "").replace(/^#{0,6} /, "").replace(/[\\]/g, "").replace(regexBoldUnderlineItalic, (match, p1, p2, p3, p4, p5, p6,index) => {
+			line?.replace(/&#x20;/g, "").replace(/^#{0,6} /, "").replace(/[\\]/g, "").replace(regexBoldUnderlineItalic, (match, p1, p2, p3, p4, p5, p6,index) => {
 				const isLastMatch = index === line.length;
 				if (p1) {
 					if (lastIsLetter) {
@@ -332,9 +339,9 @@ function EditPdf() {
 				</div>
 				<div className="flex gap-5">
 					{
-						selectedClientModal && <ClientPdfTemplateHandle
+						selectedClientModal && <ClientPdfTemplateHandle currentTemplate={currentClientTemplate} setCurrentTemplate={setCurrentClientTemplate}
 							setTemplateList={setClientTemplateList} templateList={clientTemplateList}
-							currentTemplate={currentClientTemplate} setCurrentTemplate={setCurrentClientTemplate}
+							currentTemplateList={currentClientTemplateList} setCurrentTemplateList={setCurrentClientTemplateList}
 						/>
 					}
 					{
@@ -381,7 +388,6 @@ function EditPdf() {
 
 							if (targetElement) {
 								const lineIndex = Number(targetElement.id.split("-")[1]);
-								console.log(lineIndex)
 								newEditorLines.selectedLineIndex = lineIndex;
 								setEditorLines(newEditorLines);
 							}

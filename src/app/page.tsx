@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "./contexts/userContext";
 import { NotificationUser, User, userValueDT } from "./types/KanbanTypes";
-import { post_login, get_profile, get_user, post_signup, get_notifications_with_limit } from "./utils/fetchs";
+import { post_login, get_profile, get_user, post_signup, get_notifications_with_limit, get_notification_count } from "./utils/fetchs";
 import Link from "next/link";
 
 interface InfoScreenProps {
@@ -160,6 +160,15 @@ export default function Page() {
                 get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{
                     const newUserValue = userValue;
                     newUserValue.profileData = profileData;
+                    setUserValue(newUserValue);
+                    getNotificationUserCount();
+                }));
+            }
+
+            const getNotificationUserCount = () => {
+                get_notification_count(undefined,userValue.token,(response)=>response.json().then((dbNotificationCount:number)=>{
+                    const newUserValue = userValue;
+                    newUserValue.notificationCount = dbNotificationCount;
                     setUserValue(newUserValue);
                     getNotificationUser();
                 }));

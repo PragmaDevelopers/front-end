@@ -2,7 +2,7 @@
 import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { useUserContext } from "@/app/contexts/userContext";
 import { Kanban, NotificationUser, User } from "@/app/types/KanbanTypes";
-import { get_kanban, get_kanban_members, get_notifications_with_limit, get_profile, get_user } from "@/app/utils/fetchs";
+import { get_kanban, get_kanban_members, get_notification_count, get_notifications_with_limit, get_profile, get_user } from "@/app/utils/fetchs";
 import { BellIcon, ArrowLeftEndOnRectangleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
@@ -46,13 +46,21 @@ export default function Header(props: HeaderProps) {
             const newUserValue = userValue;
             newUserValue.profileData = profileData;
             setUserValue(newUserValue);
-            getNotificationUser();
+            getNotificationUserCount();
         }));
+        const getNotificationUserCount = () => {
+            get_notification_count(undefined,userValue.token,(response)=>response.json().then((dbNotificationCount:number)=>{
+                const newUserValue = userValue;
+                newUserValue.notificationCount = dbNotificationCount;
+                setUserValue({...newUserValue});
+                getNotificationUser();
+            }));
+        }
         const getNotificationUser = () => {
             get_notifications_with_limit(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
                 const newUserValue = userValue;
                 newUserValue.notifications = dbNotifications;
-                setUserValue(newUserValue);
+                setUserValue({...newUserValue});
                 getUserList();
             }));
         }
@@ -60,7 +68,7 @@ export default function Header(props: HeaderProps) {
             get_user(undefined,userValue.token,(response)=>response.json().then((userList:User[])=>{
                 const newUserValue = userValue;
                 newUserValue.userList = userList;
-                setUserValue(newUserValue);
+                setUserValue({...newUserValue});
             }));
         }
     }
@@ -78,11 +86,12 @@ export default function Header(props: HeaderProps) {
                         <Link href="/register/client" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
                         <Link href="/pdf/create" className='text-neutral-950 hover:text-blue-400 mx-2'>Editor</Link>
                     </nav>
-                    <button type="button" onClick={props?.showNotifications}>
+                    <button className="relative" type="button" onClick={props?.showNotifications}>
+                        {userValue.notificationCount > 0 && <div className="absolute truncate bg-red-800 rounded-[50%] w-6 h-6 leading-6 text-center text-white text-sm -right-1 -top-1">{userValue.notificationCount}</div>}
                         <BellIcon className="aspect-square w-6 mr-2 ml-4" />
                     </button>
                     <button type="button" onClick={()=>{
-                        setUserValue({token:"",notifications:[],userList:[],profileData:{
+                        setUserValue({token:"",notifications:[],notificationCount:0,userList:[],profileData:{
                             email: "",
                             id: "",
                             gender: "",

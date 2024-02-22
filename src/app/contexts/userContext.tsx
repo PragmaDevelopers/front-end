@@ -25,6 +25,7 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
       isReceiveNotification: false
     },
     notifications: [],
+    notificationCount: 0,
     userList: [],
   });
 

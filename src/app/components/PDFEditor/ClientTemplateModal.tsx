@@ -7,15 +7,21 @@ import { delete_client_template } from "@/app/utils/fetchs";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { useRef } from "react";
 
-export default function ClientPdfTemplateHandle({templateList,setTemplateList,currentTemplate,setCurrentTemplate}:{
+export default function ClientPdfTemplateHandle({templateList,setTemplateList,currentTemplateList,setCurrentTemplateList,currentTemplate,setCurrentTemplate}:{
     templateList:{
         id: number,
         name: string,
         template: any[]
     }[],
-    setTemplateList:any,
+    setTemplateList:(newValue:{
+        id: number,
+        name: string,
+        template: any[]
+    }[])=>void,
+    currentTemplateList: any[],
+    setCurrentTemplateList:(newValue:any[])=>void,
     currentTemplate: any,
-    setCurrentTemplate:any
+    setCurrentTemplate:(newValue:any)=>void
 }){
 
     const { userValue } = useUserContext();
@@ -43,11 +49,12 @@ export default function ClientPdfTemplateHandle({templateList,setTemplateList,cu
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;
                 const templateIndex = templateList.findIndex((template:any) => template.id == selectedTemplateId)
-                if (templateIndex !== -1) {
-                    setCurrentTemplate(templateList[templateIndex].template);
+                if (templateIndex !== -1 && !currentTemplateList.some(currentTemplate=>currentTemplate.id==templateList[templateIndex].id)) {
+                    setCurrentTemplateList([...currentTemplateList,templateList[templateIndex]]);
                 }
+                setCurrentTemplate(templateList[templateIndex]);
             }}>
-                <select required defaultValue={currentTemplate.id ? currentTemplate.id : ""} className="w-full" name="selected_draft">
+                <select required defaultValue={currentTemplate ? currentTemplate.id : ""} className="w-full" name="selected_draft">
                     <option disabled value=""> -- Escolha um cliente -- </option>
                     {templateList && (
                         templateList.map((template:any) => {
@@ -55,9 +62,27 @@ export default function ClientPdfTemplateHandle({templateList,setTemplateList,cu
                         })
                     )}
                 </select>
-                <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center block mt-2">Usar cliente selecionado</button>
+                <button className="bg-neutral-100 drop-shadow rounded-md p-2 text-center block mt-2 mb-3">Usar cliente selecionado</button>
+                {
+                    currentTemplateList.length > 0 && (
+                        <>
+                            <div className="overflow-y-scroll flex w-full mt-3 gap-3 pb-2 mb-2">
+                                {
+                                    currentTemplateList.map((currentTemplate:any)=>{
+                                        return <div className="bg-neutral-200 text-nowrap inline-block p-2 cursor-pointer" key={currentTemplate.id} onClick={()=>{
+                                            const templateIndex = currentTemplateList.findIndex(template=>template.id==currentTemplate.id);
+                                            if(templateIndex !== -1){
+                                                currentTemplateList.splice(templateIndex,1);
+                                                setCurrentTemplateList([...currentTemplateList]);
+                                            }
+                                        }}>{currentTemplate.name}</div>
+                                    })
+                                }
+                            </div>
+                        </>
+                    )
+                }
             </form>
-            <div className="bg-neutral-200 h-1 rounded-md mt-3 mb-2"></div>
             <form onSubmit={(e: any) => {
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;
@@ -70,8 +95,8 @@ export default function ClientPdfTemplateHandle({templateList,setTemplateList,cu
                         }
                     }));
                     const newTemplateList = templateList;
-                        newTemplateList.splice(templateIndex,1);
-                        setTemplateList([...newTemplateList]);
+                    newTemplateList.splice(templateIndex,1);
+                    setTemplateList([...newTemplateList]);
                     modalContextProps.setModalOpen(false);
                 }
         

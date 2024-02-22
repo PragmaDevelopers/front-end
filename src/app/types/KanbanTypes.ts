@@ -102,7 +102,8 @@ export type userValueDT = {
     token: string;
     profileData: User;
     userList: User[];
-    notifications: NotificationUser[]
+    notifications: NotificationUser[],
+    notificationCount: number
 };
 
 export type Kanban = {

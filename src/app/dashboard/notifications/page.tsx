@@ -2,15 +2,16 @@
 
 import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
 import { useUserContext } from "@/app/contexts/userContext";
-import { User, NotificationUser } from "@/app/types/KanbanTypes";
-import { get_notifications } from "@/app/utils/fetchs";
+import { User, NotificationUser, SystemID } from "@/app/types/KanbanTypes";
+import { get_notification_count, get_notifications, patch_notification_viewed } from "@/app/utils/fetchs";
 import { NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
-import { CircleStackIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxArrowDownIcon, ArrowTopRightOnSquareIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type parsedNotification = {
+    id: SystemID,
     title: string;
     message: string;
     category: string;
@@ -27,6 +28,7 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
             }
         })[0];
 
+        let id: SystemID = notification.id;
         let message: string = notification.message;
         let title: string = NOTIFICATION_CATEGORIES_TITLE[notification.category];
         let category: string = notification.category;
@@ -34,6 +36,7 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
         let registrationDate: string = notification.registrationDate;
 
         let newNotification: parsedNotification = {
+            id,
             title: title,
             message: message,
             category: category,
@@ -50,6 +53,16 @@ function parseRawNotificationsArray(notificationsArray: NotificationUser[], user
 
 
 function NotificationElement({notification}:{notification:parsedNotification}) {
+    const {userValue} = useUserContext();
+    const handleViewedNotification = () => {
+        notification.viewed = true;
+        userValue.notificationCount--;
+        patch_notification_viewed(undefined,notification.id,userValue.token,(response)=>response.text().then(()=>{
+            if(response.ok){
+                console.log("PATCH VIEWED NOTIFICATION SUCCESS");
+            }
+        }));
+    }
     return (
         <Link href="#" className="w-full h-16 bg-neutral-transparent hover:bg-neutral-50/25 transition-all block overflow-x-hidden">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
@@ -59,6 +72,7 @@ function NotificationElement({notification}:{notification:parsedNotification}) {
                     <h2 className="truncate text-sm text-neutral-600">{notification.message}</h2>
                 </div>
                 <h2 className="text-sm ml-1 text-neutral-500">{dayjs(notification.registrationDate).format('DD [de] MMMM [de] YYYY')}</h2>
+                {!notification.viewed && <ArchiveBoxArrowDownIcon onClick={handleViewedNotification} className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" />}
                 {/* <ArrowTopRightOnSquareIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" /> */}
                 {/* <TrashIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" /> */}
             </div>
@@ -102,14 +116,19 @@ export default function Page() {
     const [notificationsArray, setNotificationsArray] = useState<Notification[]>([]);
     const [parsedNotifications, setParsedNotifications] = useState<parsedNotification[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { userValue } = useUserContext();
+    const { userValue,setUserValue } = useUserContext();
     useEffect(() => {
-            let pNot: parsedNotification[] = parseRawNotificationsArray(userValue.notifications, userValue.userList);
-            setParsedNotifications(pNot);
+        let pNot: parsedNotification[] = parseRawNotificationsArray(userValue.notifications, userValue.userList);
+        setParsedNotifications(pNot);
     }, [userValue]);
 
     function handleRefleshNotification(){
         setIsLoading(true);
+        get_notification_count(undefined,userValue.token,(response)=>response.json().then((dbNotificationCount:number)=>{
+            const newUserValue = userValue;
+            newUserValue.notificationCount = dbNotificationCount;
+            setUserValue({...newUserValue});
+        }));
         get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
             let pNot: parsedNotification[] = parseRawNotificationsArray(dbNotifications, userValue.userList);
             setParsedNotifications(pNot);

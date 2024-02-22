@@ -491,6 +491,20 @@ export function get_notifications_with_limit(body: GET_notification, userToken: 
     }).catch((e: any) => console.log(e));
 }
 
+export function get_notification_count(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(USER_ROUTE+"/notifications/count", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+export function patch_notification_viewed(body: GET_notification, notificationId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(USER_ROUTE+"/notification/"+notificationId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type POST_checklist = { 
     cardId: SystemID, 
     name: string 

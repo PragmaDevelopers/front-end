@@ -11,17 +11,8 @@ import { NotificationUser } from "@/app/types/KanbanTypes";
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-export default function Notification({isShow}:{isShow:boolean}) {
-    const { userValue,setUserValue } = useUserContext();
-    useEffect(()=>{
-        if(userValue.token != ""){
-            get_notifications(undefined,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
-                const newUserValue = userValue;
-                newUserValue.notifications = dbNotifications;
-                setUserValue(newUserValue);
-            }));
-        }
-    },[isShow])
+export default function Notification() {
+    const { userValue } = useUserContext();
     return (
         <div className="bg-transparent w-full h-full relative">
             <div className="bg-neutral-50 drop-shadow-lg rounded-md w-96 m-4 absolute top-0 right-4 p-2">
@@ -35,7 +26,7 @@ export default function Notification({isShow}:{isShow:boolean}) {
                                         <h1 className="font-semibold">{NOTIFICATION_CATEGORIES_TITLE[notification.category]}</h1>
                                         <div className="flex flex-row absolute top-1 right-1 w-fit h-fit p-0.5">
                                             <h2 className="text-neutral-400 font-xs">Há {dayjs(notification.registrationDate).toNow(true)}.</h2>
-                                            <ClockIcon className="stoke-neutral-200 w-4 aspect-square ml-1" />
+                                            {!notification.viewed && <ClockIcon className="stoke-neutral-200 w-4 aspect-square ml-1" />}
                                         </div>
                                     </div>
                                     <div className="w-full h-fit truncate">

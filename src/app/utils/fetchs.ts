@@ -477,16 +477,10 @@ export function delete_tag(body: DELETE_tag, tagId:SystemID,userToken: string,ok
 }
 
 type GET_notification = undefined;
-export function get_notifications(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
-    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
-    fetch(USER_ROUTE+"/notifications", requestObject).then((response: Response) => {
-        okCallback(response);
-    }).catch((e: any) => console.log(e));
-}
 
-export function get_notifications_with_limit(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
+export function get_notifications(body: GET_notification, page: number,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
-    fetch(USER_ROUTE+"/notifications?isLimit=true", requestObject).then((response: Response) => {
+    fetch(USER_ROUTE+"/notifications?page="+page, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

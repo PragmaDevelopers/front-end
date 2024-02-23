@@ -121,8 +121,10 @@ export type NotificationUser = {
     category: string;
     sender_user_id: SystemID;
     sender_user_name: string;
+    sender_user_profilePicture: string | null; 
     recipient_user_id?: SystemID;
     recipient_user_name?: string;
+    recipient_user_profilePicture?: string | null; 
     changed_id: SystemID;
 }
 

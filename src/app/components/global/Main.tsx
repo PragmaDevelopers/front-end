@@ -7,11 +7,16 @@ import { KanbanContextProvider } from "@/app/contexts/kanbanContext";
 import { ModalContextProvider } from "@/app/contexts/modalContext";
 import Notification from "./Notification";
 import { PdfEditorContextProvider } from "@/app/contexts/pdfEditorContext";
+import { boolean } from "zod";
 
 export default function Main({ children }: any) {
     const [showNotification, setShowNotifications] = useState<boolean>(false);
-    const handleShowNotifications = () => {
-        setShowNotifications(!showNotification);
+    const handleShowNotifications = (is:boolean|undefined) => {
+        if(is != undefined){
+            setShowNotifications(is);
+        }else{
+            setShowNotifications(!showNotification);
+        }
     }
     return (
         <UserContextProvider>
@@ -19,7 +24,7 @@ export default function Main({ children }: any) {
                 <div className="w-full h-full relative">
                     <Header showNotifications={handleShowNotifications} />
                     <div className={(showNotification ? "block" : "hidden") + " w-full h-full bg-transparent z-10 absolute top-[4.5rem] left-0"}>
-                        <Notification isShow={showNotification} />
+                        <Notification />
                     </div>
                     <div className='w-full h-[92%]'>
                         <ModalContextProvider>

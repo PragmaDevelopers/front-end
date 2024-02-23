@@ -33,7 +33,7 @@ export default function Header(props: HeaderProps) {
             const kanbanIndex = dbKanbanList?.findIndex(kanban=>kanban.id==tempKanban.id);
             if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
                 const kanban = dbKanbanList[kanbanIndex];
-                setTempKanban(kanban);
+                setTempKanban({...kanban});
                 get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
                     setTempKanban({...kanban,members:members});
                     setGeneralLoading(false);

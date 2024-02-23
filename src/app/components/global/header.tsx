@@ -45,7 +45,7 @@ export default function Header(props: HeaderProps) {
         get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{
             const newUserValue = userValue;
             newUserValue.profileData = profileData;
-            setUserValue(newUserValue);
+            setUserValue({...newUserValue});
             getNotificationUserCount();
         }));
         const getNotificationUserCount = () => {

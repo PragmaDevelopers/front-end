@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { userValueDT } from '../types/KanbanTypes';
+import { NotificationUser, userValueDT } from '../types/KanbanTypes';
 import { UserContextProps } from '../interfaces/KanbanInterfaces';
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -24,13 +24,14 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
       role: '',
       isReceiveNotification: false
     },
-    notifications: [],
-    notificationCount: 0,
     userList: [],
   });
 
+  const [notificationCount,setNotificationCount] = useState<number>(0);
+  const [notifications,setNotifications] = useState<NotificationUser[]>([]);
+
   return (
-    <UserContext.Provider value={{ userValue, setUserValue }}>
+    <UserContext.Provider value={{ userValue, setUserValue,notificationCount,setNotificationCount,notifications,setNotifications }}>
       {children}
     </UserContext.Provider>
   );

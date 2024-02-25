@@ -8,7 +8,9 @@ import { CheckIcon, ChevronUpDownIcon, InformationCircleIcon } from "@heroicons/
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import SwitchButton from "@/app/components/ui/SwitchButton";
 import { useRouter } from "next/navigation";
-import { patch_user_config } from "@/app/utils/fetchs";
+import { get_user, get_user_by_name, patch_user_config } from "@/app/utils/fetchs";
+import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
+import dayjs from "dayjs";
 
 type Permissions = { [Key: string]: boolean };
 
@@ -69,15 +71,41 @@ export default function Page() {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isUserSupervisor, setIsUserSupervisor] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [search, setSearch] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [permissionLevel,setPermissionLevel] = useState<{key:string,value:boolean}[]>([]);
 
   const router = useRouter();
 
   useEffect(() => {
+    get_user(undefined,1,userValue.token,(response)=>response.json().then((userList:User[])=>{
+        const newUserValue = userValue;
+        newUserValue.userList = userList;
+        setUserValue({...newUserValue});
+    }));
+  },[])
+
+  useEffect(() => {
     const newFilteredUsers = userValue.userList.filter(user => user.id != userValue.profileData.id && user.role != "ROLE_ADMIN");
     setFilteredUsers(newFilteredUsers);
-  }, [isModalOpen]);
+  }, [isModalOpen,userValue]);
+
+  const handleSearchUsers = (e:any) => {
+    e.preventDefault();
+    if(e.target.search_name.value != ""){
+      get_user_by_name(undefined,e.target.search_name.value,Number(e.target.search_page.value),userValue.token,(response)=>response.json().then((userList:User[])=>{
+          const newUserValue = userValue;
+          newUserValue.userList = userList;
+          setUserValue({...newUserValue});
+      }));
+    }else{
+      get_user(undefined,Number(e.target.search_page.value),userValue.token,(response)=>response.json().then((userList:User[])=>{
+          const newUserValue = userValue;
+          newUserValue.userList = userList;
+          setUserValue({...newUserValue});
+      }));
+    }
+  }
 
   function handleModalConfig(isShow:boolean,user?:User){
     setIsModalOpen(isShow);
@@ -118,16 +146,8 @@ export default function Page() {
           console.log("UPDATE PERMISSION USER");
         }
       }));
-      const newFilteredUsers = filteredUsers.map((user)=>{
-        if(user.id = selectedUser.id){
-          user.permissionLevel = selectedUser.permissionLevel;
-          user.role = selectedUser.role;
-        }
-        return user;
-      });
-      setFilteredUsers([...newFilteredUsers]);
       const newUserList = userValue.userList.map((user)=>{
-        if(user.id = selectedUser.id){
+        if(user.id == selectedUser.id){
           user.permissionLevel = selectedUser.permissionLevel;
           user.role = selectedUser.role;
         }
@@ -145,8 +165,8 @@ export default function Page() {
         </button>
         <h1 className="font-bold text-2xl text-neutral-900">Admin</h1>
       </div>
-      <div className="w-full flex flex-row justify-center items-center">
-        <div className="w-[75%] flex flex-row justify-center items-center">
+      <div className="w-full mt-3">
+        <div className="w-full flex flex-row justify-center items-center">
           <h1 className="mr-2">Editando permissões para o usuário: </h1>
           <div className="w-96 ml-2">
             <Combobox onChange={(user: User) => {
@@ -157,6 +177,8 @@ export default function Page() {
                   <Combobox.Input
                     className="form-input w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
                     displayValue={(user: User) => user.name}
+                    onChange={(e)=>setSearch(e.target.value)}
+                    value={search}
                   />
                   <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
                     <ChevronUpDownIcon
@@ -215,7 +237,54 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="mt-4 flex flex-col items-center justify-start relative p-4 w-full h-[85%] overflow-hidden">
+      <div className="p-4 flex flex-col items-center">
+        <form onSubmit={handleSearchUsers} className="flex gap-3 justify-center items-center">
+          <input required type="text" name="search_name" placeholder="Busque pelo nome" className="border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+          <input required type="number" name="search_page" min="1" defaultValue="1" placeholder="Página de busca" className="border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+          <button type="submit" className="rounded-md my-5 bg-neutral-50 p-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
+            Buscar
+          </button>
+        </form>
+        <div className="overflow-x-auto w-full text-center">
+          <table className="table-auto min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+                <tr>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Push Email</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Registration Date</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Nationality</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Permission Level</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Receive Notification</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
+                </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+                {filteredUsers.map(user=>{
+                  return (
+                    <tr key={user.id}>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.id}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.name}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.email}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.pushEmail}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3 text-nowrap">{dayjs(user.registrationDate).format('DD [de] MMMM [de] YYYY')}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.nationality}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.gender}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.role}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.permissionLevel}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.isReceiveNotification}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3"><ProfilePicture className="aspect-square inline-block" size={50} source={userValue.profileData.profilePicture} /></td>
+                  </tr>
+                  )
+                })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-col items-center justify-center relative p-4 w-full h-[85%] overflow-hidden">
         <Transition
           show={isModalOpen}
           as={Fragment}

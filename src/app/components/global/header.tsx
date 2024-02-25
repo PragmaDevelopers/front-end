@@ -6,7 +6,7 @@ import { get_kanban, get_kanban_members, get_notification_count, get_notificatio
 import { BellIcon, ArrowLeftEndOnRectangleIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 interface VercelLogoProps { className: string; }
 function VercelLogo(props: VercelLogoProps) {
@@ -21,57 +21,32 @@ function VercelLogo(props: VercelLogoProps) {
 interface HeaderProps { showNotifications: (newValue:boolean|undefined)=>void };
 export default function Header(props: HeaderProps) {
     const currentPath: string = usePathname();
-    const { setUserValue,userValue } = useUserContext();
-    const [generalLoading,setGeneralLoading] = useState<boolean>(false);
-    const { setKanbanList,setTempKanban,tempKanban } = useKanbanContext();
+    const { setUserValue,userValue,notificationCount,setNotificationCount } = useUserContext();
+    const { setTempKanban } = useKanbanContext();
+    const [tempIntervalId,setTempIntervalId] = useState<any|null>(null);
     const router = useRouter();
-
-    function handleRefleshKanban(){
-        setGeneralLoading(true);
-        get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
-            setKanbanList(dbKanbanList);
-            const kanbanIndex = dbKanbanList?.findIndex(kanban=>kanban.id==tempKanban.id);
-            if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
-                const kanban = dbKanbanList[kanbanIndex];
-                setTempKanban({...kanban});
-                get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-                    setTempKanban({...kanban,members:members});
-                    setGeneralLoading(false);
-                })));
-            }else{
-                setGeneralLoading(false);
-            }
-        }));
-        get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{
-            const newUserValue = userValue;
-            newUserValue.profileData = profileData;
-            setUserValue({...newUserValue});
-            getNotificationUserCount();
-        }));
-        const getNotificationUserCount = () => {
-            get_notification_count(undefined,userValue.token,(response)=>response.json().then((dbNotificationCount:number)=>{
-                const newUserValue = userValue;
-                newUserValue.notificationCount = dbNotificationCount;
-                setUserValue({...newUserValue});
-                getNotificationUser();
-            }));
+    useEffect(()=>{
+        if(currentPath != '/' && currentPath != "/account/verify" && currentPath != "/account/redefine" && currentPath != "/account/forgot" && currentPath != "/account/switch"){
+            const intervalId = setInterval(()=>{
+                console.log("Tempo real: Lista do perfil e notificações")
+                get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{
+                    const newUserValue = userValue;
+                    newUserValue.profileData = profileData;
+                    setUserValue({...newUserValue});
+                    getNotificationUserCount();
+                }));
+                const getNotificationUserCount = () => {
+                    get_notification_count(undefined,userValue.token,(response)=>response.json().then((dbNotificationCount:number)=>{
+                        setNotificationCount(dbNotificationCount);
+                    }));
+                }
+            },10000);
+            setTempIntervalId(intervalId);
+            return () => clearInterval(intervalId);
+        }else{
+            clearInterval(tempIntervalId);
         }
-        const getNotificationUser = () => {
-            get_notifications(undefined,1,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
-                const newUserValue = userValue;
-                newUserValue.notifications = dbNotifications;
-                setUserValue({...newUserValue});
-                getUserList();
-            }));
-        }
-        const getUserList = () => {
-            get_user(undefined,userValue.token,(response)=>response.json().then((userList:User[])=>{
-                const newUserValue = userValue;
-                newUserValue.userList = userList;
-                setUserValue({...newUserValue});
-            }));
-        }
-    }
+    },[currentPath])
 
     if (currentPath != '/' && currentPath != "/account/verify" && currentPath != "/account/redefine" && currentPath != "/account/forgot" && currentPath != "/account/switch") {
         return (
@@ -81,17 +56,16 @@ export default function Header(props: HeaderProps) {
                 </div>
                 <div className="flex flex-row items-center">
                     <nav className='flex flex-row items-center'>
-                        <button onClick={handleRefleshKanban} type='button' className={generalLoading ? "loading-element" : ""}><ArrowPathIcon className="aspect-square w-5 hover:rotate-180 transition-all rotate-0" /></button>
                         <Link href="/dashboard" className='text-neutral-950 hover:text-blue-400 mx-2'>Dashboard</Link>
                         <Link href="/register/client" className='text-neutral-950 hover:text-blue-400 mx-2'>Cadastrar</Link>
                         <Link href="/pdf/create" className='text-neutral-950 hover:text-blue-400 mx-2'>Editor</Link>
                     </nav>
                     <button className="relative" type="button" onClick={()=>props.showNotifications(undefined)}>
-                        {userValue.notificationCount > 0 && <div className="absolute truncate bg-red-800 rounded-[50%] w-6 h-6 leading-6 text-center text-white text-sm -right-1 -top-1">{userValue.notificationCount}</div>}
+                        {notificationCount > 0 && <div className="absolute truncate bg-red-800 rounded-[50%] w-6 h-6 leading-6 text-center text-white text-sm -right-1 -top-1">{notificationCount}</div>}
                         <BellIcon className="aspect-square w-6 mr-2 ml-4" />
                     </button>
                     <button type="button" onClick={()=>{
-                        setUserValue({token:"",notifications:[],notificationCount:0,userList:[],profileData:{
+                        setUserValue({token:"",userList:[],profileData:{
                             email: "",
                             id: "",
                             gender: "",

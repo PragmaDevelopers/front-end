@@ -181,9 +181,23 @@ export function get_profile(body: GET_profile, userToken: string,okCallback: (re
 }
 
 type GET_user = undefined;
-export function get_user(body: GET_user, userToken: string,okCallback: (response: Response) => void) {
+export function get_user(body: GET_user, page:number,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
-    fetch(USER_SEARCH_ROUTE, requestObject).then((response: Response) => {
+    fetch(USER_SEARCH_ROUTE+"?page="+page, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+export function get_user_by_name(body: GET_user, name:string, page:number,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(USER_SEARCH_ROUTE+"?name="+name+"&page="+page, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+export function get_user_by_email(body: GET_user, email:string,page:number,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(USER_SEARCH_ROUTE+"?email="+email+"&page="+page, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -208,9 +222,9 @@ export function get_kanban_members(body: GET_kanban_members, kanbanId: SystemID,
 }
 
 type GET_kanban = undefined;
-export function get_kanban(body: GET_kanban, userToken: string,okCallback: (response: Response) => void) {
+export function get_kanban(body: GET_kanban, page: number,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
-    fetch(KANBAN_ROUTE+"?columns=true", requestObject).then((response: Response) => {
+    fetch(KANBAN_ROUTE+"?columns=true&page="+page, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }
@@ -495,6 +509,13 @@ export function get_notification_count(body: GET_notification, userToken: string
 export function patch_notification_viewed(body: GET_notification, notificationId:SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
     fetch(USER_ROUTE+"/notification/"+notificationId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+export function patch_notification_all_viewed(body: GET_notification, userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'PATCH', `Bearer ${userToken}`);
+    fetch(USER_ROUTE+"/notification/all", requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

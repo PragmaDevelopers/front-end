@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { Card, Column, User, SystemID, Comment, userValueDT, Kanban } from "../types/KanbanTypes";
+import { Card, Column, User, SystemID, Comment, userValueDT, Kanban, NotificationUser } from "../types/KanbanTypes";
 
 export interface ColumnContainerProps {
     column: Column;
@@ -53,6 +53,10 @@ export interface CommentEntryProps extends Comment {
 export interface UserContextProps {
     userValue: userValueDT;
     setUserValue: (newValue: userValueDT) => void;
+    notificationCount: number,
+    setNotificationCount: (newValue:number)=>void,
+    notifications: NotificationUser[],
+    setNotifications: (newValue:NotificationUser[])=>void
 }
 
 export interface CardManager{

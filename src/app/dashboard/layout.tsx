@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BuildingOffice2Icon } from "@heroicons/react/24/solid";
 import { generateRandomString } from "../utils/generators";
-import { Cog6ToothIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, Cog6ToothIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { useUserContext } from "../contexts/userContext";
 import { useKanbanContext } from "../contexts/kanbanContext";
 import { API_BASE_URL } from "../utils/variables";
@@ -124,7 +124,10 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 export default function Layout({ children }: any) {
     const { userValue } = useUserContext();
     const { kanbanList, setKanbanList, tempKanban,setTempKanban } = useKanbanContext();
+    const [createDashboard,setCreateDashboard] = useState<boolean>(false);
+    const [page, setPage] = useState(1);
     const modalContextProps = useModalContext();
+    const [generalLoading,setGeneralLoading] = useState<boolean>(false);
 
     const noButtonRef = useRef<any>(null);
 
@@ -139,20 +142,9 @@ export default function Layout({ children }: any) {
     }, [userValue, router]);
 
     useLayoutEffect(() => {
-        function getKanbanList(){
-            get_kanban(undefined,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
-                setKanbanList(dbKanbanList);
-            }));
-        }
-
-        getKanbanList();
-
-        // const intervalId = setInterval(()=>{
-            // console.log("Tempo real: Lista de Kanban")
-            // getKanbanList();
-        // },5000)
-
-        // return () => clearInterval(intervalId);
+        get_kanban(undefined,1,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
+            setKanbanList(dbKanbanList);
+        }));
     }, []);
 
     const addDashBoard = (event: any) => {
@@ -210,6 +202,27 @@ export default function Layout({ children }: any) {
         }));
     }
 
+    const handleMoreKanban = () => {
+        if(kanbanList){
+            setCreateDashboard(true);
+            get_kanban(undefined,page + 1,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
+                if(dbKanbanList.length != 0){
+                    setKanbanList([...kanbanList,...dbKanbanList]);
+                    setPage(prevPage => prevPage + 1);
+                }
+                setCreateDashboard(false);
+            }));
+        }
+    }
+
+    const handleRefleshKanbanList = () => {
+        setGeneralLoading(true);
+        get_kanban(undefined,1,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
+            setKanbanList(dbKanbanList);
+            setGeneralLoading(false);
+        }));
+    }
+
     return (
         <main className="w-full h-full flex flex-row items-start justify-between overflow-y-hidden">
             <CustomModal description={modalContextProps.modalDescription} focusRef={modalContextProps.modalFocusRef} 
@@ -217,6 +230,9 @@ export default function Layout({ children }: any) {
                 setIsOpen={modalContextProps.setModalOpen} text={modalContextProps.modalText} title={modalContextProps.modalTitle} borderColor={modalContextProps.modalBorderColor} 
             />
             <div className="grow relative w-[20%] h-full flex flex-col justify-start items-start shrink-0">
+                <div className="flex justify-end w-full pt-2 pe-2">
+                    <button onClick={handleRefleshKanbanList} type='button' className={generalLoading ? "loading-element" : ""}><ArrowPathIcon className="aspect-square w-5 hover:rotate-180 transition-all rotate-0" /></button>
+                </div>
                 <details className="p-2 hidden">
                     <summary>Seções</summary>
                     <div className="">
@@ -263,9 +279,10 @@ export default function Layout({ children }: any) {
                         </div>
                         <div>
                             <form onSubmit={addDashBoard} className="flex flex-row justify-center items-center">
-                                <input className="form-input border-none outline-none p-1 w-full mr-1 bg-neutral-50" name="boardname" placeholder="Adicionar nova area" type="text" />
+                                <input className="form-input border-none outline-none p-1 w-full mr-1 bg-neutral-100 rounded-md" name="boardname" placeholder="Adicionar nova area" type="text" />
                                 <button type="submit" className="ml-1"><PlusCircleIcon className="aspect-square w-6" /></button>
                             </form>
+                            {createDashboard ? <p className="text-center bg-neutral-200 transition-all drop-shadow font-bold rounded-md p-2 border-gray-400 mt-2">Carregando...</p> : <button onClick={handleMoreKanban} type="button" className="bg-neutral-200 hover:bg-neutral-300 transition-all drop-shadow font-bold rounded-md p-2 text-center border-gray-400 mx-auto w-full mt-2">Carregar mais</button>}
                         </div>
                     </details>
                     <Link href="/dashboard/config" className="bg-neutral-50 h-[5%] px-2 pt-2 pb-5 flex flex-row items-center">

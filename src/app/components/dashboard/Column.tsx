@@ -158,12 +158,12 @@ export function ColumnContainer({column}:{column:Column}) {
             </div>
             <div>
                 <SortableContext items={cardsIds}>
-                    {column?.cards.sort((a,b)=>a.index-b.index).map((card: Card) => {
+                    {column.cards ? column.cards.sort((a,b)=>a.index-b.index).map((card: Card) => {
                         return <CardElement
                             key={card.id}
                             card={card}
                         />
-                    })}
+                    }) : <div className="ps-2 mb-3">Carregando...</div>}
                 </SortableContext>
             </div>
             <button onClick={handleCreateCard} className='relative rounded-md drop-shadow bg-neutral-50 p-2 flex w-full items-center justify-center'>

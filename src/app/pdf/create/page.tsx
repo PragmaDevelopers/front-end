@@ -103,10 +103,9 @@ function EditPdf() {
 			let novoObjeto:any = {};
 			currentClientTemplateList.map((current:any)=>{
 				for (let chave in current.template) {
-					novoObjeto[current.id + "_" + chave] = current.template[chave];
+					novoObjeto[current.name.substring(0,3)+current.id + "_" + chave] = current.template[chave];
 				}
 			});
-			console.log(novoObjeto)
 			const formattedLines = editorLines.lines.map((line)=>{
 				if (line.value.replace(/&#x20;/g, '').trim().length > 0) {
 					// Remove "&#x20;" e "\" da string
@@ -124,7 +123,7 @@ function EditPdf() {
 		if (list != undefined) {
 			const arr = []
 			for (const item in list.template) {
-				arr.push(list.id+"_"+item);
+				arr.push(list.name.substring(0,3)+list.id+"_"+item);
 			}
 			return arr;
 		} else {

@@ -22,6 +22,7 @@ import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { InviteToKanban, RenameTitleKanban, UninviteFromKanban } from "@/app/utils/dashboard/functions/Page/Kanban";
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { useModalContext } from "@/app/contexts/modalContext";
+import { get_kanban_members } from "@/app/utils/fetchs";
 
 // interface SelectTagsSectionProps {
 //   tags: Tag[],
@@ -228,6 +229,12 @@ function InviteToKanbanSection(props: InviteToKanbanSectionProps) {
   const { userValue } = useUserContext();
   const { tempKanban, setTempKanban } = useKanbanContext();
   const modalContextProps = useModalContext();
+
+  useEffect(()=>{
+    get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+        setTempKanban({...tempKanban,members:members});
+    })));
+  },[])
 
   useEffect(() => {
     const newFilteredUsers = userValue.userList.filter(user => {

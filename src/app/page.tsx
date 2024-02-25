@@ -84,7 +84,7 @@ export default function Page() {
     const switchCadastrarSe = () => setCadastrarSe(!cadastrarSe);
     const [isLoading,setIsloading] = useState<boolean>(false);
     const router = useRouter();
-    const { userValue, setUserValue } = useUserContext();
+    const { userValue, setUserValue,setNotifications,setNotificationCount } = useUserContext();
 
     const loginUser = async (e: any) => {
         e.preventDefault();
@@ -167,18 +167,14 @@ export default function Page() {
 
             const getNotificationUserCount = () => {
                 get_notification_count(undefined,userValue.token,(response)=>response.json().then((dbNotificationCount:number)=>{
-                    const newUserValue = userValue;
-                    newUserValue.notificationCount = dbNotificationCount;
-                    setUserValue(newUserValue);
+                    setNotificationCount(dbNotificationCount);
                     getNotificationUser();
                 }));
             }
 
             const getNotificationUser = () => {
                 get_notifications(undefined,1,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
-                    const newUserValue = userValue;
-                    newUserValue.notifications = dbNotifications;
-                    setUserValue(newUserValue);
+                    setNotifications(dbNotifications);
                     setIsloading(false);
                     getUserList();
                     router.push("/dashboard");
@@ -186,7 +182,7 @@ export default function Page() {
             }
             
             const getUserList = () => {
-                get_user(undefined,userValue.token,(response)=>response.json().then((userList:User[])=>{
+                get_user(undefined,1,userValue.token,(response)=>response.json().then((userList:User[])=>{
                     const newUserValue = userValue;
                     newUserValue.userList = userList;
                     setUserValue(newUserValue);

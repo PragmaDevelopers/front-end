@@ -12,14 +12,14 @@ dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
 export default function Notification() {
-    const { userValue } = useUserContext();
+    const { notifications } = useUserContext();
     return (
         <div className="bg-transparent w-full h-full relative">
             <div className="bg-neutral-50 drop-shadow-lg rounded-md w-96 m-4 absolute top-0 right-4 p-2">
                 <h1 className="font-bold text-lg">Notificações</h1>
                 <div className="divide-y divide-neutral-200 my-4 max-h-64 overflow-auto">
                     {
-                        userValue.notifications.map(notification=>{
+                        notifications.map(notification=>{
                             return (
                                 <div key={notification.id} className="w-full p-2 h-16 relative flex flex-col justify-start items-start">
                                     <div className="relative w-full h-fit flex flex-row items-center justify-start">

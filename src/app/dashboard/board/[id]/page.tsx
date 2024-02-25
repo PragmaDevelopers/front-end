@@ -23,6 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { createPortal } from 'react-dom';
 import {
+    ArrowPathIcon,
     CircleStackIcon,
     Cog6ToothIcon,
     PlusCircleIcon,
@@ -35,28 +36,27 @@ import {
     SystemID,
     User,
 } from '@/app/types/KanbanTypes';
-import { MDXEditorMethods } from "@mdxeditor/editor";
 import { CustomModal, CustomModalButtonAttributes } from '@/app/components/ui/CustomModal';
 import Link from 'next/link';
 import { useUserContext } from '@/app/contexts/userContext';
-import { isFlagSet } from '@/app/utils/checkers';
 import { ColumnContainer } from '@/app/components/dashboard/Column';
 import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
 import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
-import { UpdateColumnTitle, RemoveColumn, CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
-import { API_BASE_URL } from '@/app/utils/variables';
+import { CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
 import { useKanbanContext } from '@/app/contexts/kanbanContext';
-import { get_columns, get_kanban, get_kanban_members } from '@/app/utils/fetchs';
+import { get_columns, get_kanban_members } from '@/app/utils/fetchs';
 import { useModalContext } from '@/app/contexts/modalContext';
 import { CardElement } from '@/app/components/dashboard/Card';
-
+import { usePathname, useSearchParams } from 'next/navigation';
+import { ShowEditCard } from '@/app/utils/dashboard/functions/Page/Card';
 
 export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [activeCard, setActiveCard] = useState<Card | null>(null);
+    const searchParams = useSearchParams();
     const { userValue } = useUserContext();
-    const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban } = useKanbanContext();
+    const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban, tempCard, setTempCard, setCardManager } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
@@ -76,19 +76,44 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     }, [tempKanban]);
 
     useEffect(() => {
+        if(searchParams.get("card") != null){
+            ShowEditCard(
+                userValue,
+                searchParams.get("card") as SystemID,
+                setCardManager,
+                setTempCard,
+                cardManager,
+                modalOpt,
+                noButtonRef,
+                modalContextProps
+            );
+        }
         function getKanbanValues(kanbanIndex:number){
             if(kanbanList){
                 const kanban = kanbanList[kanbanIndex];
-                setTempKanban(kanban);
-                get_kanban_members(undefined,params.id,userValue.token,(response=>response.json().then((members:User[])=>{
-                    setTempKanban({...kanban,members:members});
-                })));
+                setTempKanban({...kanban});
+                get_columns(undefined,kanban.id,userValue.token,(response)=>response.json().then((dbColumns:Column[])=>{
+                    if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                        setTempKanban({...kanban,columns:dbColumns});
+                        kanbanList[kanbanIndex].columns = dbColumns;
+                        setKanbanList(kanbanList);
+                    }
+                }));
             }
         }
         const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
         if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
             getKanbanValues(kanbanIndex);
+            sessionStorage.setItem("previous_dashboard_id",params.id.toString());
         }
+        const intervalId = setInterval(()=>{
+            const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
+            if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
+                console.log("Tempo real: Lista das colunas e cards "+params.id)
+                getKanbanValues(kanbanIndex);
+            }
+        },10000)
+        return () => clearInterval(intervalId);
     }, []);
 
     const optAttrs: CustomModalButtonAttributes[] = [

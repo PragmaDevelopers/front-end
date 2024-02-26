@@ -44,7 +44,7 @@ import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
 import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
 import { CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
 import { useKanbanContext } from '@/app/contexts/kanbanContext';
-import { get_cards, get_columns, get_kanban_members } from '@/app/utils/fetchs';
+import { get_columns, get_kanban_members } from '@/app/utils/fetchs';
 import { useModalContext } from '@/app/contexts/modalContext';
 import { CardElement } from '@/app/components/dashboard/Card';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -52,11 +52,12 @@ import { ShowEditCard } from '@/app/utils/dashboard/functions/Page/Card';
 
 export default function Page({ params }: { params: { id: SystemID } }) {
     const [tempDragState, setTempDragState] = useState<any>(null);
+    const [generalLoading,setGeneralLoading] = useState<any|null>(null);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [activeCard, setActiveCard] = useState<Card | null>(null);
     const searchParams = useSearchParams();
     const { userValue } = useUserContext();
-    const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban, tempKanbanIntervalId,setTempKanbanIntervalId, setTempCard, setCardManager } = useKanbanContext();
+    const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban, tempCard, setTempCard, setCardManager } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
@@ -75,7 +76,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         return ids;
     }, [tempKanban]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if(searchParams.get("card") != null){
             ShowEditCard(
                 userValue,
@@ -89,42 +90,41 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             );
         }
         const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
-        if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1 && kanbanList){
-            getKanbanValues(kanbanList,kanbanIndex,true,true);
+        if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
+            getKanbanValues(kanbanIndex);
             sessionStorage.setItem("previous_dashboard_id",params.id.toString());
         }
+        // const intervalId = setInterval(()=>{
+        //     const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
+        //     if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
+        //         console.log("Tempo real: Lista das colunas e cards "+params.id)
+        //         getKanbanValues(kanbanIndex);
+        //     }
+        // },10000)
+        // return () => clearInterval(intervalId);
     }, []);
 
-    function getKanbanValues(dbKanbanList:Kanban[],kanbanIndex:number,isInterval:boolean,isInit?:boolean){
+    function getKanbanValues(kanbanIndex:number){
         if(kanbanList){
-            const kanban = dbKanbanList[kanbanIndex];
-            if(isInit){
-                setTempKanban(kanban);
-            }
+            const kanban = kanbanList[kanbanIndex];
+            setTempKanban({...kanban});
             get_columns(undefined,kanban.id,userValue.token,(response)=>response.json().then((dbColumns:Column[])=>{
                 if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
                     setTempKanban({...kanban,columns:dbColumns});
                     kanbanList[kanbanIndex].columns = dbColumns;
                     setKanbanList(kanbanList);
-                    if(isInterval){
-                        resetSetInverval(kanbanList);
-                    }
+                    setGeneralLoading(false)
                 }
             }));
         }
     }
 
-    const resetSetInverval = (dbKanban:Kanban[]) => {
-        clearInterval(tempKanbanIntervalId);
-        const intervalId = setInterval(()=>{
-            const kanbanIndex = dbKanban.findIndex(kanban=>kanban.id==params.id);
-            if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
-                console.log("Tempo real: Lista das colunas e cards "+params.id)
-                getKanbanValues(dbKanban,kanbanIndex,false);
-            }
-        },10000);
-        setTempKanbanIntervalId(intervalId);
-        return () => clearInterval(intervalId);
+    const handleRefleshKanban = () => {
+        const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
+        if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
+            setGeneralLoading(true);
+            getKanbanValues(kanbanIndex);
+        }
     }
 
     const optAttrs: CustomModalButtonAttributes[] = [
@@ -148,28 +148,21 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             noButtonRef,
             setActiveCard,
             setActiveColumn,
-            setTempDragState
+            setTempDragState,
         );
     }
 
     const onDragEnd = (event: DragEndEvent) => {
-        const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
-        if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1 && kanbanList){
-            OnDragEnd(
-                event,
-                userValue,
-                modalContextProps,
-                noButtonRef,
-                setTempKanban,
-                setActiveColumn,
-                setActiveCard,
-                tempDragState,
-                getKanbanValues,
-                tempKanbanIntervalId,
-                kanbanList,
-                kanbanIndex
-            );
-        }
+        OnDragEnd(
+            event,
+            userValue,
+            modalContextProps,
+            noButtonRef,
+            setTempKanban,
+            setActiveColumn,
+            setActiveCard,
+            tempDragState,
+        );
     }
 
     const onDragOver = (event: DragOverEvent) => {
@@ -178,7 +171,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             userValue,
             modalContextProps,
             noButtonRef,
-            setTempKanban
+            setTempKanban,
         );
     }
 
@@ -200,7 +193,10 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             { cardManager?.isShowCreateCard && <CreateEditCard />}
             <div className="flex justify-between items-center w-[80%] h-[4%] fixed">
                 <h1>{tempKanban?.title}</h1>
-                <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
+                <div className="flex gap-3">
+                    <button onClick={handleRefleshKanban} type='button' className={generalLoading ? "loading-element" : ""}><ArrowPathIcon className="aspect-square w-5 hover:rotate-180 transition-all rotate-0" /></button>
+                    <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
+                </div>
             </div>
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-[92%] mt-[4%] shrink-0">

@@ -135,11 +135,7 @@ export function OnDragEnd(
     setKanban: any,
     setActiveColumn: (arg0: Column | null | any) => void,
     setActiveCard: (arg0: Card | null | any) => void,
-    tempDragState: any,
-    getKanbanValues: (dbKanbanList:Kanban[],kanbanIndex:number,isInterval:boolean)=>void,
-    tempKanbanIntervalId:any,
-    kanbanList: Kanban[],
-    kanbanIndex: number
+    tempDragState: any
     ) {
    
         setActiveColumn(null);
@@ -151,8 +147,6 @@ export function OnDragEnd(
         const activeColumnID = active.id;
         const overColumnID = over.id;
         if (activeColumnID == overColumnID) return;
-
-        clearInterval(tempKanbanIntervalId);
 
         //console.log("ON DRAG END EVENT", event);
         if (active.data.current?.type === "COLUMN") {
@@ -172,8 +166,6 @@ export function OnDragEnd(
                     },userValue.token,(response)=>response.text().then(()=>{
                         if(response.ok){
                             console.log("MOVE COLUMN SUCCESS");
-                            kanbanList[kanbanIndex].columns = newColumnsArray;
-                            getKanbanValues(kanbanList,kanbanIndex,true);
                         }
                     }))
 
@@ -253,8 +245,6 @@ export function OnDragEnd(
                     move_card({cardId:cardEl.id,toColumnId:destCol.id,toIndex:destIndex},userValue.token,(response)=>response.text().then(()=>{
                         if(response.ok){
                             console.log("MOVE CARD SUCCESS");
-                            kanbanList[kanbanIndex].columns = prevKanban.columns;
-                            getKanbanValues(kanbanList,kanbanIndex,true);
                         }
                     }));
 

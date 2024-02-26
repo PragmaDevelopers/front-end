@@ -5,9 +5,9 @@ import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { useUserContext } from "@/app/contexts/userContext";
 import { User, NotificationUser, SystemID, Kanban, Column, Card } from "@/app/types/KanbanTypes";
 import { CreateCard } from "@/app/utils/dashboard/functions/Page/Card";
-import { get_notification_count, get_notifications, patch_notification_all_viewed, patch_notification_viewed, post_card, post_checklist } from "@/app/utils/fetchs";
+import { delete_notification, get_notification_count, get_notifications, patch_notification_all_viewed, patch_notification_viewed, post_card, post_checklist } from "@/app/utils/fetchs";
 import { NOTIFICATION_CATEGORIES_TITLE } from "@/app/utils/variables";
-import { ArchiveBoxArrowDownIcon, ArrowPathIcon, ArrowTopRightOnSquareIcon, CircleStackIcon, EyeIcon, EyeSlashIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxArrowDownIcon, ArrowPathIcon, ArrowTopRightOnSquareIcon, CircleStackIcon, EyeIcon, EyeSlashIcon, TrashIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { useState } from "react";
@@ -29,6 +29,23 @@ function NotificationElement({notification,handleShowEdit}:{notification:Notific
             }
         }));
     }
+    const handleDeleteNotification = () => {
+        const newNotifications = notifications.filter((n)=>{
+            if(n.id == notification.id){
+                if(n.viewed == false){
+                    setNotificationCount(notificationCount - 1);
+                }
+                return false;
+            }
+            return true;
+        })
+        setNotifications(newNotifications);
+        delete_notification(undefined,notification.id,userValue.token,(response)=>response.text().then(()=>{
+            if(response.ok){
+                console.log("DELETE NOTIFICATION SUCCESS");
+            }
+        }));
+    }
     return (
         <Link href="#" className="w-full h-16 bg-neutral-transparent hover:bg-neutral-50/25 transition-all block">
             <div className="w-full h-full px-4 py-2 flex flex-row justify-between items-center">
@@ -40,7 +57,7 @@ function NotificationElement({notification,handleShowEdit}:{notification:Notific
                 <h2 className="text-sm ml-1 text-neutral-500">{dayjs(notification.registrationDate).format('DD [de] MMMM [de] YYYY')}</h2>
                 {!notification.viewed && <EyeIcon onClick={handleViewedNotification} className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" />}
                 <ArrowTopRightOnSquareIcon onClick={()=>handleShowEdit(notification)} className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-blue-500" />
-                {/* <TrashIcon className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" /> */}
+                <TrashIcon onClick={handleDeleteNotification} className="w-6 ml-2 aspect-square stroke-neutral-950 hover:stroke-red-500" />
             </div>
         </Link>
     );

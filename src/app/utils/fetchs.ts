@@ -528,6 +528,13 @@ export function patch_notification_all_viewed(body: GET_notification, userToken:
     }).catch((e: any) => console.log(e));
 }
 
+export function delete_notification(body: GET_notification, notificationId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'DELETE', `Bearer ${userToken}`);
+    fetch(USER_ROUTE+"/notification/"+notificationId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type POST_checklist = { 
     cardId: SystemID, 
     name: string 

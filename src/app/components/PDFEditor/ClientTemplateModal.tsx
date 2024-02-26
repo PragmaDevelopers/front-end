@@ -5,7 +5,9 @@ import { API_BASE_URL } from "@/app/utils/variables";
 import { CustomModalButtonAttributes } from "../ui/CustomModal";
 import { delete_client_template } from "@/app/utils/fetchs";
 import { useModalContext } from "@/app/contexts/modalContext";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
+import { Combobox, Transition } from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 
 export default function ClientPdfTemplateHandle({templateList,setTemplateList,currentTemplateList,setCurrentTemplateList,currentTemplate,setCurrentTemplate}:{
     templateList:{
@@ -45,6 +47,16 @@ export default function ClientPdfTemplateHandle({templateList,setTemplateList,cu
 
     return (
         <div className="mt-3 w-2/3 bg-neutral-50 drop-shadow rounded-md p-2 flex flex-col">
+            {/* <form onSubmit={(e:any)=>{
+                e.preventDefault();
+                const name = e.target.search_name.value;
+                console.log(name)
+            }} className="w-full">
+                <input required type="text" name="search_name" placeholder="Busque pelo nome" className="w-full border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+                <button type="submit" className="rounded-md my-5 bg-neutral-50 p-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
+                    Buscar
+                </button>
+            </form> */}
             <form onSubmit={(e: any) => {
                 e.preventDefault();
                 const selectedTemplateId = e.target.selected_draft.value;

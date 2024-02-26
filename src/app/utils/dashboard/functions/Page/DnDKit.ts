@@ -136,6 +136,10 @@ export function OnDragEnd(
     setActiveColumn: (arg0: Column | null | any) => void,
     setActiveCard: (arg0: Card | null | any) => void,
     tempDragState: any,
+    getKanbanValues: (dbKanbanList:Kanban[],kanbanIndex:number,isInterval:boolean)=>void,
+    tempKanbanIntervalId:any,
+    kanbanList: Kanban[],
+    kanbanIndex: number
     ) {
    
         setActiveColumn(null);
@@ -148,6 +152,8 @@ export function OnDragEnd(
         const overColumnID = over.id;
         if (activeColumnID == overColumnID) return;
 
+        clearInterval(tempKanbanIntervalId);
+
         //console.log("ON DRAG END EVENT", event);
         if (active.data.current?.type === "COLUMN") {
             if (isFlagSet(userValue.profileData, "MOVER_COLUNAS")) {
@@ -155,7 +161,10 @@ export function OnDragEnd(
                 setKanban((prevKanban: Kanban) => {
                     const activeColumnIndex = prevKanban.columns.findIndex((col: Column) => col?.id === activeColumnID);
                     const overColumnIndex = prevKanban.columns.findIndex((col: Column) => col?.id === overColumnID);
-                    const newColumnsArray: Column[] = arrayMove(prevKanban.columns, activeColumnIndex, overColumnIndex);
+                    const newColumnsArray: Column[] = arrayMove(prevKanban.columns, activeColumnIndex, overColumnIndex).map((column,index)=>{
+                        column.index = index;
+                        return column;
+                    });
 
                     move_column({
                         columnId: prevKanban.columns[activeColumnIndex].id,
@@ -163,15 +172,14 @@ export function OnDragEnd(
                     },userValue.token,(response)=>response.text().then(()=>{
                         if(response.ok){
                             console.log("MOVE COLUMN SUCCESS");
+                            kanbanList[kanbanIndex].columns = newColumnsArray;
+                            getKanbanValues(kanbanList,kanbanIndex,true);
                         }
                     }))
 
                     return {
                         ...prevKanban,
-                        columns: newColumnsArray.map((column,index)=>{
-                            column.index = index;
-                            return column;
-                        })
+                        columns: newColumnsArray
                     };
                 });
             } else {
@@ -225,7 +233,6 @@ export function OnDragEnd(
                         });
                         prevKanban.columns[destCol.index] = srcCol;
                     }else{
-                        console.log(cardEl)
                         const newSrcCol = srcCol;
                         newSrcCol.cards = newSrcCol.cards.filter((card) => card.id != cardEl?.id);
                         newSrcCol.cards = newSrcCol.cards.map((card,index)=>{
@@ -246,6 +253,8 @@ export function OnDragEnd(
                     move_card({cardId:cardEl.id,toColumnId:destCol.id,toIndex:destIndex},userValue.token,(response)=>response.text().then(()=>{
                         if(response.ok){
                             console.log("MOVE CARD SUCCESS");
+                            kanbanList[kanbanIndex].columns = prevKanban.columns;
+                            getKanbanValues(kanbanList,kanbanIndex,true);
                         }
                     }));
 
@@ -288,8 +297,7 @@ export function OnDragOver(
     userValue: userValueDT,
     modalContextProps: ModalContextProps,
     noButtonRef: RefObject<HTMLButtonElement>,
-    setKanban: any,
-    setTempDragState: any,
+    setKanban: any
     ) {
     if (!(isFlagSet(userValue.profileData, "MOVER_COLUNAS") && isFlagSet(userValue.profileData, "MOVER_CARDS"))) {
         const optAttrs: CustomModalButtonAttributes[] = [

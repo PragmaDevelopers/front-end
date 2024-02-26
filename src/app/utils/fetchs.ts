@@ -324,6 +324,14 @@ export function move_column(body: MOVE_column, userToken: string,okCallback: (re
     }).catch((e: any) => console.log(e));
 }
 
+type GET_cards = undefined;
+export function get_cards(body: GET_cards, columnId:SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(COLUMN_ROUTE+"/"+columnId+"/cards", requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type GET_card_by_id = undefined;
 export function get_card_by_id(body: GET_card_by_id, cardId:SystemID,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);

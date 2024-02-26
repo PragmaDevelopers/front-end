@@ -411,7 +411,6 @@ function UninviteFromKanbanSection(props: UninviteToKanbanSectionProps) {
         Remover Membro
       </button>
     </div>
-
   );
 }
 

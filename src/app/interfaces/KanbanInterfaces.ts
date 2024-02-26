@@ -83,7 +83,9 @@ export interface KanbanContextProps {
     deleteTempCardIds: {type:string,id:SystemID}[],
     setDeleteTempCardIds: (newValue:{type:string,id:SystemID}[]) => void,
     cardManager: CardManager;
-    setCardManager:  (newValue: CardManager) => void
+    setCardManager:  (newValue: CardManager) => void,
+    tempKanbanIntervalId:any|null,
+    setTempKanbanIntervalId: (newValue:any|null)=>void
 };
 
 export interface ModalContextProps {

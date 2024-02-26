@@ -22,11 +22,14 @@ interface HeaderProps { showNotifications: (newValue:boolean|undefined)=>void };
 export default function Header(props: HeaderProps) {
     const currentPath: string = usePathname();
     const { setUserValue,userValue,notificationCount,setNotificationCount } = useUserContext();
-    const { setTempKanban } = useKanbanContext();
+    const { setTempKanban, tempKanbanIntervalId } = useKanbanContext();
     const [tempIntervalId,setTempIntervalId] = useState<any|null>(null);
     const router = useRouter();
     useEffect(()=>{
-        if(currentPath != '/' && currentPath != "/account/verify" && currentPath != "/account/redefine" && currentPath != "/account/forgot" && currentPath != "/account/switch"){
+        if(currentPath != '/' && !currentPath.includes("/account/")){
+            if(!currentPath.includes("/dashboard/board/")){
+                clearInterval(tempKanbanIntervalId);
+            }
             const intervalId = setInterval(()=>{
                 console.log("Tempo real: Lista do perfil e notificações")
                 get_profile(undefined,userValue.token,(response)=>response.json().then((profileData:User)=>{

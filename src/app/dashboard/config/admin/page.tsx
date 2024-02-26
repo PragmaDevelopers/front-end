@@ -81,6 +81,7 @@ export default function Page() {
     get_user(undefined,1,userValue.token,(response)=>response.json().then((userList:User[])=>{
         const newUserValue = userValue;
         newUserValue.userList = userList;
+        console.log(userList)
         setUserValue({...newUserValue});
     }));
   },[])
@@ -275,7 +276,7 @@ export default function Page() {
                       <td className="bg-white divide-y divide-gray-200 p-3">{user.gender}</td>
                       <td className="bg-white divide-y divide-gray-200 p-3">{user.role}</td>
                       <td className="bg-white divide-y divide-gray-200 p-3">{user.permissionLevel}</td>
-                      <td className="bg-white divide-y divide-gray-200 p-3">{user.isReceiveNotification}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.isReceiveNotification.toString()}</td>
                       <td className="bg-white divide-y divide-gray-200 p-3"><ProfilePicture className="aspect-square inline-block" size={50} source={userValue.profileData.profilePicture} /></td>
                   </tr>
                   )

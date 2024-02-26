@@ -259,7 +259,7 @@ export default function Layout({ children }: any) {
                         <summary>Areas de Trabalho</summary>
                         <div className="">
                             { 
-                                    kanbanList ? 
+                                    typeof kanbanList == "object" ? 
                                         kanbanList?.map((kanban, index) => <BoardMenuEntry
                                         setModalOptions={modalContextProps.setModalOptions}
                                         setModalOpen={modalContextProps.setModalOpen}

@@ -57,6 +57,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     isShowCreateAnsweredComment: false,
     isShowCreateInnerCard: false
   });
+  const [tempKanbanIntervalId,setTempKanbanIntervalId] = useState<any|null>(null);
 
   return (
     <KanbanContext.Provider value={{ 
@@ -65,7 +66,8 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
       tempColumn, setTempColumn,
       tempCard, setTempCard,
       deleteTempCardIds,setDeleteTempCardIds,
-      cardManager,setCardManager 
+      cardManager,setCardManager,
+      tempKanbanIntervalId,setTempKanbanIntervalId
     }}>
       {children}
     </KanbanContext.Provider>

@@ -20,7 +20,7 @@ export function ColumnContainer({column}:{column:Column}) {
     const [title, setTitle] = useState<string>(column.title);
     const { userValue } = useUserContext();
     const modalContextProps = useModalContext();
-    const { setTempColumn, tempColumn, tempCard, tempKanban, setTempKanban,cardManager,setCardManager } = useKanbanContext();
+    const { setTempColumn, tempKanban, setTempKanban } = useKanbanContext();
         
     const cardsIds = useMemo(() => {
         const ids:SystemID[] = [];

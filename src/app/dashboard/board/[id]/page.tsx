@@ -94,14 +94,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             getKanbanValues(kanbanIndex);
             sessionStorage.setItem("previous_dashboard_id",params.id.toString());
         }
-        // const intervalId = setInterval(()=>{
-        //     const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
-        //     if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
-        //         console.log("Tempo real: Lista das colunas e cards "+params.id)
-        //         getKanbanValues(kanbanIndex);
-        //     }
-        // },10000)
-        // return () => clearInterval(intervalId);
     }, []);
 
     function getKanbanValues(kanbanIndex:number){
@@ -113,9 +105,14 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                     setTempKanban({...kanban,columns:dbColumns});
                     kanbanList[kanbanIndex].columns = dbColumns;
                     setKanbanList(kanbanList);
-                    setGeneralLoading(false)
+                    setGeneralLoading(false);
                 }
             }));
+            get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+                if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                    setTempKanban({...kanban,members:members});
+                }
+            })));
         }
     }
 

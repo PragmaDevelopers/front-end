@@ -94,7 +94,7 @@ export async function UninviteFromKanban(
         if(memberIndex != -1){
             const newKanban = tempKanban;
             newKanban.members.splice(memberIndex,1);
-            setTempKanban(newKanban);
+            setTempKanban({...newKanban});
             delete_uninvite_kanban(undefined,tempKanban.id,uninviteUser.id,userValue.token,(response)=>response.text().then(()=>{
                 if(response.ok){
                     console.log("UNINVITE FROM KANBAN SUCCESS");

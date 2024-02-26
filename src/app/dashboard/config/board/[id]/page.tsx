@@ -13,7 +13,7 @@ import { CustomFieldsTemplate, SystemID, Tag, User } from "@/app/types/KanbanTyp
 import { API_BASE_URL } from "@/app/utils/variables";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, Fragment, RefObject, useRef } from "react";
+import { useEffect, useState, Fragment, RefObject, useRef, useLayoutEffect } from "react";
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { XCircleIcon } from "@heroicons/react/24/outline";
@@ -22,7 +22,9 @@ import { useKanbanContext } from "@/app/contexts/kanbanContext";
 import { InviteToKanban, RenameTitleKanban, UninviteFromKanban } from "@/app/utils/dashboard/functions/Page/Kanban";
 import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { useModalContext } from "@/app/contexts/modalContext";
-import { get_kanban_members } from "@/app/utils/fetchs";
+import { get_kanban_members, get_user, get_user_by_name } from "@/app/utils/fetchs";
+import dayjs from "dayjs";
+import { ProfilePicture } from "@/app/components/dashboard/user/ProfilePicture";
 
 // interface SelectTagsSectionProps {
 //   tags: Tag[],
@@ -216,6 +218,7 @@ function RenameKanbanSection(props: RenameKanbanSectionProps) {
 }
 
 interface InviteToKanbanSectionProps {
+  filteredUsers:User[];
   failModalOption: any;
   noButtonRef: RefObject<HTMLButtonElement>;
 }
@@ -224,26 +227,10 @@ function InviteToKanbanSection(props: InviteToKanbanSectionProps) {
   const { failModalOption, noButtonRef } = props;
 
   const [selectedMember, setSelectedMember] = useState<User | undefined>();
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
   const { userValue } = useUserContext();
   const { tempKanban, setTempKanban } = useKanbanContext();
   const modalContextProps = useModalContext();
-
-  useEffect(()=>{
-    get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-        setTempKanban({...tempKanban,members:members});
-    })));
-  },[])
-
-  useEffect(() => {
-    const newFilteredUsers = userValue.userList.filter(user => {
-      const isMember = tempKanban.members?.some((member: User) => member.id == user.id);
-      return !isMember;
-    })
-    setFilteredUsers(newFilteredUsers);
-    setSelectedMember(undefined);
-  }, [tempKanban])
 
   const handleInviteToKanban = () => {
     InviteToKanban(
@@ -281,7 +268,7 @@ function InviteToKanbanSection(props: InviteToKanbanSectionProps) {
           >
             <Combobox.Options className="z-50 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {
-                filteredUsers?.map((person) => (
+                props.filteredUsers?.map((person) => (
                   <Combobox.Option
                     key={person.id}
                     className={({ active }) =>
@@ -336,8 +323,6 @@ function UninviteFromKanbanSection(props: UninviteToKanbanSectionProps) {
   const modalContextProps = useModalContext();
 
   const handleUninviteFromKanban = () => {
-    tempKanban.title;
-    setTempKanban(tempKanban);
     UninviteFromKanban(
       userValue,
       selectedMember,
@@ -415,10 +400,57 @@ function UninviteFromKanbanSection(props: UninviteToKanbanSectionProps) {
 }
 
 export default function Page() {
-  const { tempKanban } = useKanbanContext();
+  const { tempKanban,setTempKanban } = useKanbanContext();
+  const { userValue,setUserValue } = useUserContext();
   const modalContextProps = useModalContext();
+  const [filteredUsers, setFilteredUsers] = useState<User[]|null>(null);
 
   const router = useRouter();
+
+  useLayoutEffect(() => {
+    get_user(undefined,1,userValue.token,(response)=>response.json().then((userList:User[])=>{
+        const newUserValue = userValue;
+        newUserValue.userList = userList;
+        setUserValue({...newUserValue});
+        get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+            setTempKanban({...tempKanban,members:members});
+        })));
+    }));
+  },[])
+
+  useEffect(() => {
+    const newFilteredUsers = userValue.userList.filter(user => {
+      if(user.id != userValue.profileData.id && tempKanban.members){
+        return tempKanban.members.every(member=>member.id!=user.id);
+      }else{
+        return false;
+      }
+    });
+    setFilteredUsers([...newFilteredUsers]);
+  }, [tempKanban]);
+
+  const handleSearchUsers = (e:any) => {
+    e.preventDefault();
+    if(e.target.search_name.value != ""){
+      get_user_by_name(undefined,e.target.search_name.value,Number(e.target.search_page.value),userValue.token,(response)=>response.json().then((userList:User[])=>{
+          const newUserValue = userValue;
+          newUserValue.userList = userList;
+          setUserValue({...newUserValue});
+          get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+              setTempKanban({...tempKanban,members:members});
+          })));
+      }));
+    }else{
+      get_user(undefined,Number(e.target.search_page.value),userValue.token,(response)=>response.json().then((userList:User[])=>{
+          const newUserValue = userValue;
+          newUserValue.userList = userList;
+          setUserValue({...newUserValue});
+          get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+              setTempKanban({...tempKanban,members:members});
+          })));
+      }));
+    }
+  }
 
   const noButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -456,6 +488,7 @@ export default function Page() {
           <h1 className="text-lg text-center w-full font-semibold">Gerenciar Membros da Dashboard</h1>
           <div className="flex flex-col justify-center items-center w-full">
             <InviteToKanbanSection
+              filteredUsers={filteredUsers!=null?filteredUsers:[]}
               failModalOption={failModalOption}
               noButtonRef={noButtonRef}
             />
@@ -483,7 +516,53 @@ export default function Page() {
           </div>
         </div>
       </div>
-
+      <form onSubmit={handleSearchUsers} className="flex gap-3 justify-center items-center">
+        <input required type="text" name="search_name" placeholder="Busque pelo nome" className="border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+        <input required type="number" name="search_page" min="1" defaultValue="1" placeholder="Página de busca" className="border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+        <button type="submit" className="rounded-md my-5 bg-neutral-50 p-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
+          Buscar
+        </button>
+      </form>
+      <div className="overflow-x-auto w-full text-center">
+          <table className="table-auto min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+                <tr>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Nationality</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
+                </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+                {filteredUsers!=null ? filteredUsers.map(user=>{
+                  return (
+                    <tr key={user.id}>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.id}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.name}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.email}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.nationality}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.gender}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3">{user.role}</td>
+                      <td className="bg-white divide-y divide-gray-200 p-3"><ProfilePicture className="aspect-square inline-block" size={50} source={userValue.profileData.profilePicture} /></td>
+                  </tr>
+                  )
+                }):
+                <tr>
+                    <td className="bg-white divide-y divide-gray-200 p-3">Carregando...</td>
+                    <td className="bg-white divide-y divide-gray-200 p-3">Carregando...</td>
+                    <td className="bg-white divide-y divide-gray-200 p-3">Carregando...</td>
+                    <td className="bg-white divide-y divide-gray-200 p-3">Carregando...</td>
+                    <td className="bg-white divide-y divide-gray-200 p-3">Carregando...</td>
+                    <td className="bg-white divide-y divide-gray-200 p-3">Carregando...</td>
+                    <td className="bg-white divide-y divide-gray-200 p-3">Carregando...</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       {/* <h1 className="text-lg font-semibold mt-2 mb-1">Templates de Campos Customizados</h1>
             <div className="flex items-center">
                 <RemoveCustomFieldTemplateSection

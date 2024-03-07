@@ -22,7 +22,7 @@ interface HeaderProps { showNotifications: (newValue:boolean|undefined)=>void };
 export default function Header(props: HeaderProps) {
     const currentPath: string = usePathname();
     const { setUserValue,userValue,notificationCount,setNotificationCount } = useUserContext();
-    const { setTempKanban, tempKanbanIntervalId } = useKanbanContext();
+    const { setTempKanban, setTempKanbanMembers,tempKanbanIntervalId } = useKanbanContext();
     const [tempIntervalId,setTempIntervalId] = useState<any|null>(null);
     const router = useRouter();
     useEffect(()=>{
@@ -83,9 +83,9 @@ export default function Header(props: HeaderProps) {
                         setTempKanban({
                             id: "",
                             title: "",
-                            members: [],
                             columns: []
-                        })
+                        });
+                        setTempKanbanMembers([]);
                         props.showNotifications(false);
                         router.push("/");
                     }}>

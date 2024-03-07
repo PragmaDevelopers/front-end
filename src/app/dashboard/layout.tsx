@@ -44,7 +44,7 @@ interface BoardMenuEntryProps {
 function BoardMenuEntry(props: BoardMenuEntryProps) {
 
     const { userValue } = useUserContext();
-    const { setTempKanban,tempKanban } = useKanbanContext();
+    const { setTempKanban,tempKanban,setTempKanbanMembers } = useKanbanContext();
 
     const deleteCurrEntry = () => {
         props.deleteKanban(props.kanbanID);
@@ -110,7 +110,8 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
         <div className="flex flex-row items-center relative">
             <Link href={props.href} onClick={()=>{
                 if(tempKanban.id != props.kanbanID){
-                    setTempKanban({id:"",columns:[],members:[],title:""});
+                    setTempKanban({id:"",columns:[],title:""});
+                    setTempKanbanMembers([]);
                 }
             }} className="my-2 flex flex-row items-center">
                 <BuildingOffice2Icon className="w-6 aspect-square mr-2" />
@@ -123,7 +124,7 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
 
 export default function Layout({ children }: any) {
     const { userValue } = useUserContext();
-    const { kanbanList, setKanbanList, tempKanban,setTempKanban } = useKanbanContext();
+    const { kanbanList, setKanbanList, tempKanban,setTempKanban,setTempKanbanMembers } = useKanbanContext();
     const [createDashboard,setCreateDashboard] = useState<boolean>(false);
     const [page, setPage] = useState(1);
     const modalContextProps = useModalContext();
@@ -182,7 +183,6 @@ export default function Layout({ children }: any) {
                 setKanbanList([...kanbanList || [],{
                     id: id,
                     title: boardname,
-                    members: [],
                     columns: []
                 }]);
             }));
@@ -193,7 +193,8 @@ export default function Layout({ children }: any) {
         const filteredKanbanList = kanbanList?.filter(kanban=>kanban.id!=kanbanID) || [];
         setKanbanList(filteredKanbanList);
         if(tempKanban.id == kanbanID){
-            setTempKanban({id:"",columns:[],members:[],title:""});
+            setTempKanban({id:"",columns:[],title:""});
+            setTempKanbanMembers([]);
         }
         delete_kanban(undefined,kanbanID,userValue.token,(response=>{
             if(response.ok){

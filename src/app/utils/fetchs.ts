@@ -284,6 +284,14 @@ export function get_columns(body: GET_column, kanbanId: SystemID,userToken: stri
     }).catch((e: any) => console.log(e));
 }
 
+type GET_column_by_id = undefined;
+export function get_column_id(body: GET_column_by_id, columnId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(COLUMN_ROUTE+"/"+columnId, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type POST_column = {
     kanbanId: SystemID,
     title: string

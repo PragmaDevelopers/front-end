@@ -44,7 +44,7 @@ import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
 import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
 import { CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
 import { useKanbanContext } from '@/app/contexts/kanbanContext';
-import { get_columns, get_kanban_members } from '@/app/utils/fetchs';
+import { get_column_id, get_columns, get_kanban_members } from '@/app/utils/fetchs';
 import { useModalContext } from '@/app/contexts/modalContext';
 import { CardElement } from '@/app/components/dashboard/Card';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -57,7 +57,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
     const [activeCard, setActiveCard] = useState<Card | null>(null);
     const searchParams = useSearchParams();
     const { userValue } = useUserContext();
-    const { kanbanList,setKanbanList, cardManager, tempKanban, setTempKanban, tempCard, setTempCard, setCardManager } = useKanbanContext();
+    const { kanbanList,setKanbanList, cardManager, setTempKanbanMembers, tempKanban, setTempKanban, setTempCard, setCardManager } = useKanbanContext();
     const noButtonRef = useRef<HTMLButtonElement>(null);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
@@ -72,7 +72,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             return [];
         }
         const ids:SystemID[] = [];
-        tempKanban?.columns.forEach(col=>ids.push(col.id));
+        tempKanban?.columns.sort((a,b)=>a.index-b.index).forEach(col=>ids.push(col.id));
         return ids;
     }, [tempKanban]);
 
@@ -100,19 +100,26 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         if(kanbanList){
             const kanban = kanbanList[kanbanIndex];
             setTempKanban({...kanban});
-            get_columns(undefined,kanban.id,userValue.token,(response)=>response.json().then((dbColumns:Column[])=>{
-                if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
-                    console.log("GET COLUMNS SUCCESS");
-                    setTempKanban({...kanban,columns:dbColumns});
-                    kanbanList[kanbanIndex].columns = dbColumns;
-                    setKanbanList(kanbanList);
-                    setGeneralLoading(false);
-                }
-            }));
+            kanban.columns.forEach(column=>{
+                get_column_id(undefined,column.id,userValue.token,(response)=>response.json().then((dbColumn:Column)=>{
+                    if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                        console.log("GET COLUMN SUCCESS");
+                        
+                        const columnIndex = kanban.columns.findIndex(col=>col.id==column.id);
+                        kanban.columns[columnIndex] = dbColumn;
+                        setTempKanban({...kanban});
+
+                        setGeneralLoading(false);
+
+                        kanbanList[kanbanIndex] = kanban;
+                        setKanbanList([...kanbanList]);
+                    }
+                })); 
+            });
             get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
                 if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
                     console.log("GET MEMBERS SUCCESS");
-                    setTempKanban({...kanban,members:members});
+                    setTempKanbanMembers({...members});
                 }
             })));
         }

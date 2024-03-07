@@ -25,7 +25,7 @@ export function ColumnContainer({column}:{column:Column}) {
     const cardsIds = useMemo(() => {
         const ids:SystemID[] = [];
         if(column.cards && column.cards.length > 0){
-            column.cards.forEach(card=>ids.push(card?.id));
+            column.cards.sort((a,b)=>a.index-b.index).forEach(card=>ids.push(card?.id));
         }
         return ids;
     }, [tempKanban]);

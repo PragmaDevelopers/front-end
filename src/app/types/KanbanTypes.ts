@@ -107,8 +107,7 @@ export type userValueDT = {
 export type Kanban = {
     id: SystemID,
     title: string,
-    columns: Column[],
-    members: User[]
+    columns: Column[]
 }
 
 export type NotificationUser = {

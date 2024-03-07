@@ -1,6 +1,6 @@
-export const API_BASE_URL: string = "https://sistema-rc-e0ef46aabaec.herokuapp.com";
+// export const API_BASE_URL: string = "https://sistema-rc-e0ef46aabaec.herokuapp.com";
 
-// export const API_BASE_URL: string = "http://localhost:8000";
+export const API_BASE_URL: string = "http://localhost:8000";
 
 export const BACKEND_DATE_FORMAT: string = 'YYYY-MM-DDTHH:mm:ss.SSSSSS';
 

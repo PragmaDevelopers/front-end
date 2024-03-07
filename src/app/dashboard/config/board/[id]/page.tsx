@@ -229,14 +229,15 @@ function InviteToKanbanSection(props: InviteToKanbanSectionProps) {
   const [selectedMember, setSelectedMember] = useState<User | undefined>();
 
   const { userValue } = useUserContext();
-  const { tempKanban, setTempKanban } = useKanbanContext();
+  const { tempKanban, setTempKanbanMembers, tempKanbanMembers } = useKanbanContext();
   const modalContextProps = useModalContext();
 
   const handleInviteToKanban = () => {
     InviteToKanban(
       userValue,
       selectedMember,
-      setTempKanban,
+      setTempKanbanMembers,
+      tempKanbanMembers,
       tempKanban,
       failModalOption,
       noButtonRef,
@@ -319,14 +320,15 @@ function UninviteFromKanbanSection(props: UninviteToKanbanSectionProps) {
   const [selectedMember, setSelectedMember] = useState<User>();
 
   const { userValue } = useUserContext();
-  const { tempKanban, setTempKanban } = useKanbanContext();
+  const { tempKanban,tempKanbanMembers,setTempKanbanMembers } = useKanbanContext();
   const modalContextProps = useModalContext();
 
   const handleUninviteFromKanban = () => {
     UninviteFromKanban(
       userValue,
       selectedMember,
-      setTempKanban,
+      setTempKanbanMembers,
+      tempKanbanMembers,
       tempKanban,
       failModalOption,
       noButtonRef,
@@ -358,7 +360,7 @@ function UninviteFromKanbanSection(props: UninviteToKanbanSectionProps) {
           >
             <Combobox.Options className="z-50 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {
-                tempKanban.members?.map((person) => (
+                tempKanbanMembers?.map((person) => (
                   <Combobox.Option
                     key={person.id}
                     className={({ active }) =>
@@ -400,7 +402,7 @@ function UninviteFromKanbanSection(props: UninviteToKanbanSectionProps) {
 }
 
 export default function Page() {
-  const { tempKanban,setTempKanban } = useKanbanContext();
+  const { tempKanban,tempKanbanMembers,setTempKanbanMembers } = useKanbanContext();
   const { userValue,setUserValue } = useUserContext();
   const modalContextProps = useModalContext();
   const [filteredUsers, setFilteredUsers] = useState<User[]|null>(null);
@@ -413,15 +415,15 @@ export default function Page() {
         newUserValue.userList = userList;
         setUserValue({...newUserValue});
         get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-            setTempKanban({...tempKanban,members:members});
+            setTempKanbanMembers({...members});
         })));
     }));
   },[])
 
   useEffect(() => {
     const newFilteredUsers = userValue.userList.filter(user => {
-      if(user.id != userValue.profileData.id && tempKanban.members){
-        return tempKanban.members.every(member=>member.id!=user.id);
+      if(user.id != userValue.profileData.id){
+        return tempKanbanMembers.every(member=>member.id!=user.id);
       }else{
         return false;
       }
@@ -437,7 +439,7 @@ export default function Page() {
           newUserValue.userList = userList;
           setUserValue({...newUserValue});
           get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-              setTempKanban({...tempKanban,members:members});
+              setTempKanbanMembers({...members});
           })));
       }));
     }else{
@@ -446,7 +448,7 @@ export default function Page() {
           newUserValue.userList = userList;
           setUserValue({...newUserValue});
           get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-              setTempKanban({...tempKanban,members:members});
+            setTempKanbanMembers({...members});
           })));
       }));
     }
@@ -501,7 +503,7 @@ export default function Page() {
         <div className="w-96 h-fit p-2">
           <h1 className="w-full text-center font-semibold">Membros da Dashboard</h1>
           <div className="bg-neutral-200 border-[1px] border-neutral-200 rounded-md shadow-inner w-full p-2 flex flex-col gap-2 mt-2">
-            {tempKanban.members?.map((member: User, index) => {
+            {tempKanbanMembers?.map((member: User, index) => {
               return (
                 <div key={index} className="bg-neutral-50 p-2 drop-shadow-md rounded-md">
                   <div className="w-full text-center">

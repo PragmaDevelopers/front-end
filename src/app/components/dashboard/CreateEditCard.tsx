@@ -691,11 +691,11 @@ function MembersSection(props: MembersSectionProps) {
     const [selectedMember,setSelectedMember] = useState<User>();
     const [filteredUsers,setFilteredUsers] = useState<User[]>([]);
 
-    const { cardManager, setCardManager, tempKanban, tempCard, setTempCard } = useKanbanContext();
+    const { cardManager, setCardManager, tempKanbanMembers, tempCard, setTempCard } = useKanbanContext();
     const { userValue } = useUserContext();
 
     function updateFilteredUsers(){
-        const newFilteredUsers = tempKanban.members.filter(user=>{
+        const newFilteredUsers = tempKanbanMembers.filter(user=>{
             const isMember = membersList?.some((member:User)=>member.id==user.id);
             return !isMember;
         })

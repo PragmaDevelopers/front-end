@@ -76,6 +76,8 @@ export interface KanbanContextProps {
     setKanbanList: (newValue: Kanban[] | null) => void;
     tempKanban: Kanban;
     setTempKanban: (newValue: Kanban) => void;
+    tempKanbanMembers: User[];
+    setTempKanbanMembers: (newValue: User[]) => void;
     tempColumn: Column;
     setTempColumn: (newValue: Column) => void;
     tempCard: Card;

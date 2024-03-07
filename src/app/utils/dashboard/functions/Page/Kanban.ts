@@ -38,7 +38,8 @@ export async function RenameTitleKanban (
 export async function InviteToKanban(
     userValue: userValueDT,
     inviteUser: User | undefined,
-    setTempKanban: (newValue:Kanban) => void,
+    setTempKanbanMembers: (newValue:User[]) => void,
+    tempKanbanMembers: User[],
     tempKanban: Kanban,
     falseModalOptions: any,
     noButtonRef: RefObject<HTMLButtonElement>,
@@ -56,7 +57,7 @@ export async function InviteToKanban(
             return;
         }
 
-        setTempKanban({...tempKanban,members:[...tempKanban.members,inviteUser]});
+        setTempKanbanMembers([...tempKanbanMembers,inviteUser]);
 
         post_invite_kanban({
             kanbanId: tempKanban.id,
@@ -72,7 +73,8 @@ export async function InviteToKanban(
 export async function UninviteFromKanban(
     userValue: userValueDT,
     uninviteUser: User | undefined,
-    setTempKanban: (newValue:Kanban) => void,
+    setTempKanbanMembers: (newValue:User[]) => void,
+    tempKanbanMembers: User[],
     tempKanban: Kanban,
     falseModalOptions: any,
     noButtonRef: RefObject<HTMLButtonElement>,
@@ -90,11 +92,11 @@ export async function UninviteFromKanban(
             return;
         }
 
-        const memberIndex = tempKanban.members.findIndex(member=>member.id==uninviteUser.id)
+        const memberIndex = tempKanbanMembers.findIndex(member=>member.id==uninviteUser.id)
         if(memberIndex != -1){
-            const newKanban = tempKanban;
-            newKanban.members.splice(memberIndex,1);
-            setTempKanban({...newKanban});
+            const newKanbanMembers = tempKanbanMembers;
+            newKanbanMembers.splice(memberIndex,1);
+            setTempKanbanMembers({...newKanbanMembers});
             delete_uninvite_kanban(undefined,tempKanban.id,uninviteUser.id,userValue.token,(response)=>response.text().then(()=>{
                 if(response.ok){
                     console.log("UNINVITE FROM KANBAN SUCCESS");

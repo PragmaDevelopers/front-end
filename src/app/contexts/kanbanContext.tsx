@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Card, Column, Kanban, SystemID } from '../types/KanbanTypes';
+import { Card, Column, Kanban, SystemID, User } from '../types/KanbanTypes';
 import { KanbanContextProps } from '../interfaces/KanbanInterfaces';
 
 const KanbanContext = createContext<KanbanContextProps | undefined>(undefined);
@@ -13,9 +13,9 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
   const [tempKanban, setTempKanban] = useState<Kanban>({
     id: "",
     title: "",
-    members: [],
     columns: []
   });
+  const [tempKanbanMembers,setTempKanbanMembers] = useState<User[]>([]);
   const [tempColumn, setTempColumn] = useState<Column>({
     id: "",
     title: "",
@@ -63,6 +63,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
     <KanbanContext.Provider value={{ 
       kanbanList, setKanbanList,
       tempKanban, setTempKanban,
+      tempKanbanMembers, setTempKanbanMembers,
       tempColumn, setTempColumn,
       tempCard, setTempCard,
       deleteTempCardIds,setDeleteTempCardIds,

@@ -5,7 +5,7 @@ import { AccordionItem } from "@/app/components/register/client/form/Accordion/A
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/app/utils/variables";
 import { useUserContext } from "@/app/contexts/userContext";
-import ClientTemplateHandle from "@/app/components/register/client/template/ClientTemplateHandle";
+import FormTemplateModal from "@/app/components/register/client/template/FormTemplateModal";
 import CreateTemplateInput from "@/app/components/register/client/template/CreateTemplateInput";
 import DeleteTemplateInput from "@/app/components/register/client/template/DeleteTemplateInput";
 import { CepDataProps } from "@/app/interfaces/RegisterClientInterfaces";
@@ -56,7 +56,6 @@ export default function SignUpPageB() {
     }, [userValue, router]);
 
     useEffect(() => {
-
         if (userValue.token === "") {
             returnToHome();
         }
@@ -65,7 +64,7 @@ export default function SignUpPageB() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userValue.token}`,
+                'Authorization': `Bearer ${userValue.token}`
             }
         };
         
@@ -119,7 +118,7 @@ export default function SignUpPageB() {
     );
 
     return (
-        <div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
+        <main className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
             <CustomModal description={modalContextProps.modalDescription} focusRef={modalContextProps.modalFocusRef} 
                 isOpen={modalContextProps.modalOpen} options={modalContextProps.modalOptions} 
                 setIsOpen={modalContextProps.setModalOpen} text={modalContextProps.modalText} title={modalContextProps.modalTitle} borderColor={modalContextProps.modalBorderColor} 
@@ -158,7 +157,7 @@ export default function SignUpPageB() {
                         />
                     }
                     {
-                        useDraftModal && <ClientTemplateHandle
+                        useDraftModal && <FormTemplateModal
                             templateList={templateList} setTemplateList={setTemplateList}
                             currentTemplate={currentTemplate} setCurrentTemplate={setCurrentTemplate}
                         />
@@ -301,6 +300,6 @@ export default function SignUpPageB() {
                 }
                 </form>
             </div>
-        </div>
+        </main>
     );
 }

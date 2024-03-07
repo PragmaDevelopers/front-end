@@ -18,7 +18,7 @@ const poppinsFont = Poppins({
 
 export const metadata: Metadata = {
     title: 'Sistema da Rafael do Canto Advocacia e Socidade',
-    description: 'Sistema de gerenciamento',
+    description: 'Sistema de gerenciamento'
 }
 
 export default function RootLayout({

@@ -16,7 +16,6 @@ export default function DeleteTemplateInput({typePerson,currentTemplate,setCurre
                 const removeSection = e.target.remove_section.value;
                 const removeInput = e.target.remove_input.value;
                 const newAccordions = currentTemplate[typePerson];
-                console.log(newAccordions)
                 const accordionIndex = currentTemplate[typePerson].findIndex(accordion => accordion.title === removeSection);
 
                 if (removeInput === "") {

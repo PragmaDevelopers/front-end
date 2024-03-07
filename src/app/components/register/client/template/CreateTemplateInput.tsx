@@ -112,7 +112,6 @@ export default function CreateTemplateInput({typePerson,currentTemplate,setCurre
                                 name: input.name
                             });
                         });
-                        console.log(selectedWichBefore)
                     if(inputIndex != -1){
                         newPersonTemplate[templateIndex].inputs.splice(inputIndex,0,...newArr);
                     }else{

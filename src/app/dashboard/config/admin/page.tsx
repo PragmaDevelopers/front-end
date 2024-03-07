@@ -241,7 +241,7 @@ export default function Page() {
       <div className="p-4 flex flex-col items-center">
         <form onSubmit={handleSearchUsers} className="flex gap-3 justify-center items-center">
           <input required type="text" name="search_name" placeholder="Busque pelo nome" className="border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
-          <input required type="number" name="search_page" min="1" defaultValue="1" placeholder="Página de busca" className="border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+          <input required type="number" name="search_page" min="1" defaultValue="1" placeholder="Página de busca" className="border-none max-w-24 py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
           <button type="submit" className="rounded-md my-5 bg-neutral-50 p-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
             Buscar
           </button>

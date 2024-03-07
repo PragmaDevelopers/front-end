@@ -292,7 +292,7 @@ function EditPdf() {
 	}
 
 	return (
-		<div className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
+		<main className="w-full h-full overflow-auto flex justify-center items-start bg-neutral-100">
 			<CustomModal description={modalContextProps.modalDescription} focusRef={modalContextProps.modalFocusRef} 
                 isOpen={modalContextProps.modalOpen} options={modalContextProps.modalOptions} 
                 setIsOpen={modalContextProps.setModalOpen} text={modalContextProps.modalText} title={modalContextProps.modalTitle} borderColor={modalContextProps.modalBorderColor} 
@@ -461,7 +461,7 @@ function EditPdf() {
 					/>
 				</div>
 			</div>
-		</div>
+		</main>
 	);
 }
 

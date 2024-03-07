@@ -102,6 +102,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             setTempKanban({...kanban});
             get_columns(undefined,kanban.id,userValue.token,(response)=>response.json().then((dbColumns:Column[])=>{
                 if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                    console.log("GET COLUMNS SUCCESS");
                     setTempKanban({...kanban,columns:dbColumns});
                     kanbanList[kanbanIndex].columns = dbColumns;
                     setKanbanList(kanbanList);
@@ -110,6 +111,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             }));
             get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
                 if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                    console.log("GET MEMBERS SUCCESS");
                     setTempKanban({...kanban,members:members});
                 }
             })));

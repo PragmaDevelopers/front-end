@@ -1,21 +1,19 @@
+import { CustomModalButtonAttributes } from "@/app/components/ui/CustomModal";
 import { useModalContext } from "@/app/contexts/modalContext";
 import { useUserContext } from "@/app/contexts/userContext";
-import { EditorLinesProps } from "@/app/interfaces/PdfEditorInterfaces";
 import { ClientTemplateProps } from "@/app/interfaces/RegisterClientInterfaces";
-import { EditorLine, pdfEditorTemplate } from "@/app/types/PdfEditorTypes";
+import { delete_client_template } from "@/app/utils/fetchs";
+import { ConfirmDeleteClientTemplate, CreateClientTemplate } from "@/app/utils/register/client/ClientTemplateModal";
 import { API_BASE_URL } from "@/app/utils/variables";
-import { Fragment, useRef, useState } from "react";
-import { CustomModalButtonAttributes } from "../ui/CustomModal";
-import { ConfirmDeletePDFTemplate, CreatePDFTemplate } from "@/app/utils/pdf/PdfEditorTemplateModal";
-import { delete_pdf_template } from "@/app/utils/fetchs";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import { Fragment, useRef, useState } from "react";
 
-export default function PdfEditorTemplateModal({templateList,setTemplateList,currentTemplate,setCurrentTemplate}:{
-    templateList:any[],
+export default function FormTemplateModal({templateList,setTemplateList,currentTemplate,setCurrentTemplate}:{
+    templateList:ClientTemplateProps[],
     setTemplateList:any,
-    currentTemplate: EditorLinesProps,
-    setCurrentTemplate: (newValue:EditorLinesProps)=>void
+    currentTemplate: any,
+    setCurrentTemplate:any
 }){
 
     const { userValue } = useUserContext();
@@ -51,12 +49,12 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
                         'Authorization': `Bearer ${userValue.token}`
                     }
                 };
-                fetch(`${API_BASE_URL}/api/private/user/signup/pdfEditor/templates?name=${name}&page=${page}`, requestOptions)
-                .then(response => response.json()).then((pdfTemplates:any) => {
-                    setTemplateList([...pdfTemplates]);
+                fetch(`${API_BASE_URL}/api/private/user/signup/client/templates?value=false&name=${name}&page=${page}`, requestOptions)
+                .then(response => response.json()).then((clientTemplates:any) => {
+                    setTemplateList([...clientTemplates]);
                 });
             }} className="w-full flex gap-3 items-center">
-                <input required type="text" name="search_name" placeholder="Busque o PDF pelo nome" className="w-full shadow-md border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+                <input required type="text" name="search_name" placeholder="Busque o cliente pelo nome" className="w-full shadow-md border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
                 <input required type="number" name="search_page" min="1" defaultValue="1" placeholder="Página de busca" className="shadow-md border-none max-w-24 py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
                 <button type="submit" className="rounded-md bg-neutral-50 p-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
                     Buscar
@@ -66,7 +64,7 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
             <form onSubmit={(e: any) => {
                 e.preventDefault();
                 if (selectedTemplate?.id != undefined) {
-                    setCurrentTemplate({...currentTemplate,lines:selectedTemplate.template});
+                    setCurrentTemplate(selectedTemplate.template);
                 }
             }}>
                 <div className="w-full flex gap-3 items-center">
@@ -137,11 +135,11 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
             <div className="bg-neutral-200 h-1 rounded-md mt-3 mb-2"></div>
             <form onSubmit={(e: any) => {
                 e.preventDefault();
-                if (selectedTemplate?.id != undefined){
-                    const templateIndex = templateList.findIndex((template) => template.id == selectedTemplate.id);
-                
-                    const delPDFTemplate = () => {
-                        delete_pdf_template(undefined,selectedTemplate.id,userValue.token,(response)=>response.text().then(()=>{
+                if(selectedTemplate?.id != undefined){
+                    const templateIndex = templateList.findIndex((template) => template.id == selectedTemplate.id)
+
+                    const delClientTemplate = () => {
+                        delete_client_template(undefined,selectedTemplate.id,userValue.token,(response)=>response.text().then(()=>{
                             if(response.ok){
                                 console.log("DELETE CLIENT TEMPLATE SUCCESS");
                             }
@@ -155,7 +153,7 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
                     const successOption: CustomModalButtonAttributes[] = [
                         {
                             text: "Sim",
-                            onclickfunc: delPDFTemplate,
+                            onclickfunc: delClientTemplate,
                             type: "button",
                             className: "rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                         },
@@ -173,7 +171,7 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
                     );
 
                     if (templateIndex !== -1) {
-                        ConfirmDeletePDFTemplate(
+                        ConfirmDeleteClientTemplate(
                             userValue,
                             successModalOption,
                             failModalOption,
@@ -252,11 +250,12 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
             <form onSubmit={(e: any) => {
                 e.preventDefault()
                 const templateName = e.target.draft_name.value;
-                CreatePDFTemplate(
+                CreateClientTemplate(
+                    false,
                     userValue,
                     {
                         name: templateName,
-                        template: currentTemplate.lines
+                        template: currentTemplate
                     },
                     templateList,
                     setTemplateList,
@@ -265,11 +264,11 @@ export default function PdfEditorTemplateModal({templateList,setTemplateList,cur
                     modalContextProps
                 );
             }} className="w-full flex gap-3 items-center">
-                <input required type="text" name="draft_name" placeholder="Nome do rascunho atual" className="w-full shadow-md border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
-                <button type="submit" className="rounded-md bg-neutral-50 p-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
-                    Salvar
-                </button>
-            </form>
+            <input required type="text" name="draft_name" placeholder="Nome do rascunho atual" className="w-full shadow-md border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0" />
+            <button type="submit" className="rounded-md bg-neutral-50 p-2 shadow-md transition-all hover:scale-110 text-neutral-950 hover:text-green-600">
+                Salvar
+            </button>
+        </form>
         </div>
     )
 }

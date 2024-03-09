@@ -107,6 +107,7 @@ export type userValueDT = {
 export type Kanban = {
     id: SystemID,
     title: string,
+    version: string | number,
     columns: Column[]
 }
 

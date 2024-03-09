@@ -83,6 +83,7 @@ export default function Header(props: HeaderProps) {
                         setTempKanban({
                             id: "",
                             title: "",
+                            version: "",
                             columns: []
                         });
                         setTempKanbanMembers([]);

@@ -110,7 +110,7 @@ function BoardMenuEntry(props: BoardMenuEntryProps) {
         <div className="flex flex-row items-center relative">
             <Link href={props.href} onClick={()=>{
                 if(tempKanban.id != props.kanbanID){
-                    setTempKanban({id:"",columns:[],title:""});
+                    setTempKanban({id:"",columns:[],title:"",version:""});
                     setTempKanbanMembers([]);
                 }
             }} className="my-2 flex flex-row items-center">
@@ -183,7 +183,8 @@ export default function Layout({ children }: any) {
                 setKanbanList([...kanbanList || [],{
                     id: id,
                     title: boardname,
-                    columns: []
+                    columns: [],
+                    version: ""
                 }]);
             }));
         }
@@ -193,7 +194,7 @@ export default function Layout({ children }: any) {
         const filteredKanbanList = kanbanList?.filter(kanban=>kanban.id!=kanbanID) || [];
         setKanbanList(filteredKanbanList);
         if(tempKanban.id == kanbanID){
-            setTempKanban({id:"",columns:[],title:""});
+            setTempKanban({id:"",columns:[],title:"",version:""});
             setTempKanbanMembers([]);
         }
         delete_kanban(undefined,kanbanID,userValue.token,(response=>{

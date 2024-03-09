@@ -7,24 +7,18 @@ import Link from "next/link";
 
 export default function Page() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const [isValid,setIsValid] = useState<boolean | null>(null);
     useEffect(()=>{
-        if(searchParams.get("token") && searchParams.get("key") && searchParams.get("email")){
+        if(searchParams.get("code")){
             const requestOptions = {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${searchParams.get("token")}`,
-                },
                 body: JSON.stringify({
-                    email: searchParams.get("email"),
-                    key: searchParams.get("key")
+                    code: searchParams.get("code")
                 })
             };
-            fetch(`${API_BASE_URL}/api/private/user/new/email`, requestOptions)
+            fetch(`${API_BASE_URL}/api/public/user/new/email`, requestOptions)
             .then(response => response.text()).then(() => {
-                console.log("SWITCH EMAIL");
+                console.log("SWITCH EMAIL SUCCESS");
                 setIsValid(true);
             }).catch(()=>setIsValid(false));
         }else{

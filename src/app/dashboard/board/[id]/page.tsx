@@ -44,7 +44,7 @@ import CreateEditCard from '@/app/components/dashboard/CreateEditCard';
 import { OnDragEnd, OnDragOver, OnDragStart } from '@/app/utils/dashboard/functions/Page/DnDKit';
 import { CreateNewColumn } from '@/app/utils/dashboard/functions/Page/Column';
 import { useKanbanContext } from '@/app/contexts/kanbanContext';
-import { get_column_id, get_columns, get_kanban_members } from '@/app/utils/fetchs';
+import { get_column_id, get_columns, get_kanban_id, get_kanban_members, get_kanban_version } from '@/app/utils/fetchs';
 import { useModalContext } from '@/app/contexts/modalContext';
 import { CardElement } from '@/app/components/dashboard/Card';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -90,38 +90,67 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             );
         }
         const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
-        if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
-            getKanbanValues(kanbanIndex);
+        if(kanbanList && kanbanIndex != undefined && kanbanIndex != -1){
+            setTempKanban(kanbanList[kanbanIndex]);
+            getKanbanValues(kanbanIndex,false);
             sessionStorage.setItem("previous_dashboard_id",params.id.toString());
         }
+
+        const intervalId = setInterval(() => {
+            if (kanbanIndex != undefined && kanbanIndex != -1) {
+                getKanbanValues(kanbanIndex,true);
+            }
+        }, 10000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
-    function getKanbanValues(kanbanIndex:number){
+    function getKanbanValues(kanbanIndex:number,isInterval:boolean){
         if(kanbanList){
             const kanban = kanbanList[kanbanIndex];
-            setTempKanban({...kanban});
-            kanban.columns.forEach(column=>{
-                get_column_id(undefined,column.id,userValue.token,(response)=>response.json().then((dbColumn:Column)=>{
-                    if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
-                        console.log("GET COLUMN SUCCESS");
-                        
-                        const columnIndex = kanban.columns.findIndex(col=>col.id==column.id);
-                        kanban.columns[columnIndex] = dbColumn;
-                        setTempKanban({...kanban});
-
-                        setGeneralLoading(false);
-
-                        kanbanList[kanbanIndex] = kanban;
-                        setKanbanList([...kanbanList]);
+            if(isInterval){
+                get_kanban_version(undefined,kanban.id,kanban.version,userValue.token,(response)=>response.json().then((isEqual:boolean)=>{
+                    if(!isEqual){
+                        console.log("PRECISA ATUALIZAR");
+                        get_kanban_id(undefined,kanban.id,userValue.token,(response)=>response.json().then((dbKanban:Kanban)=>{
+                            if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                                setTempKanban(dbKanban);
+                                kanbanList[kanbanIndex] = dbKanban;
+                                setKanbanList(kanbanList);
+                                setGeneralLoading(false);
+                            }
+                        }));
+                        get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+                            if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                                console.log("GET MEMBERS SUCCESS");
+                                setTempKanbanMembers(members);
+                            }
+                        })));
                     }
-                })); 
-            });
-            get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-                if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
-                    console.log("GET MEMBERS SUCCESS");
-                    setTempKanbanMembers({...members});
-                }
-            })));
+                }));
+            }else{
+                kanban.columns.forEach(column=>{
+                    get_column_id(undefined,column.id,userValue.token,(response)=>response.json().then((dbColumn:Column)=>{
+                        if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                            console.log("GET COLUMN SUCCESS");
+                            
+                            const columnIndex = kanban.columns.findIndex(col=>col.id==column.id);
+                            kanban.columns[columnIndex] = dbColumn;
+                            setTempKanban(kanban);
+
+                            kanbanList[kanbanIndex] = kanban;
+                            setKanbanList(kanbanList);
+                        }
+                    })); 
+                });
+                get_kanban_members(undefined,kanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
+                    if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                        console.log("GET MEMBERS SUCCESS");
+                        setTempKanbanMembers(members);
+                    }
+                })));
+            }
+            
         }
     }
 
@@ -129,7 +158,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
         const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
         if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
             setGeneralLoading(true);
-            getKanbanValues(kanbanIndex);
+            getKanbanValues(kanbanIndex,true);
         }
     }
 

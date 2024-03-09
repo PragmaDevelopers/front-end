@@ -13,6 +13,7 @@ export const KanbanContextProvider: React.FC<KanbanContextProviderProps> = ({ ch
   const [tempKanban, setTempKanban] = useState<Kanban>({
     id: "",
     title: "",
+    version: "",
     columns: []
   });
   const [tempKanbanMembers,setTempKanbanMembers] = useState<User[]>([]);

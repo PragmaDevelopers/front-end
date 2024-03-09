@@ -125,6 +125,8 @@ export default function Page() {
                         setEmailExists(true);
                     }
                 });
+
+                e.target.reset();
             }
         } else {
             const email: string = e?.target?.email?.value;

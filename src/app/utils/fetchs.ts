@@ -221,10 +221,26 @@ export function get_kanban_members(body: GET_kanban_members, kanbanId: SystemID,
     }).catch((e: any) => console.log(e));
 }
 
+type GET_kanban_version = undefined;
+export function get_kanban_version(body: GET_kanban_version, kanbanId: SystemID, version: string | number | null,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/"+kanbanId+"/version/"+version, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
 type GET_kanban = undefined;
 export function get_kanban(body: GET_kanban, page: number,userToken: string,okCallback: (response: Response) => void) {
     let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
     fetch(KANBAN_ROUTE+"?columns=true&page="+page, requestObject).then((response: Response) => {
+        okCallback(response);
+    }).catch((e: any) => console.log(e));
+}
+
+type GET_kanban_id = undefined;
+export function get_kanban_id(body: GET_kanban_id, KanbanId: SystemID,userToken: string,okCallback: (response: Response) => void) {
+    let requestObject: RequestInit = generateRequestObject(JSON.stringify(body), 'GET', `Bearer ${userToken}`);
+    fetch(KANBAN_ROUTE+"/"+KanbanId, requestObject).then((response: Response) => {
         okCallback(response);
     }).catch((e: any) => console.log(e));
 }

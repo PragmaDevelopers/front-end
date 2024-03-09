@@ -15,6 +15,7 @@ export default function Page() {
         if(searchParams.get("code")){
             fetch(`${API_BASE_URL}/api/public/user/verify/`+searchParams.get("code"), requestOptions)
             .then(response => response.text()).then(() => {
+                console.log("VERIFY EMAIL SUCCESS");
                 setIsValid(true);
             }).catch(()=>setIsValid(false));;
         }else{

@@ -114,6 +114,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                         console.log("PRECISA ATUALIZAR");
                         get_kanban_id(undefined,kanban.id,userValue.token,(response)=>response.json().then((dbKanban:Kanban)=>{
                             if(sessionStorage.getItem("previous_dashboard_id") == kanban.id){
+                                console.log("GET KANBAN BY ID SUCCESS");
                                 setTempKanban(dbKanban);
                                 kanbanList[kanbanIndex] = dbKanban;
                                 setKanbanList(kanbanList);
@@ -151,14 +152,6 @@ export default function Page({ params }: { params: { id: SystemID } }) {
                 })));
             }
             
-        }
-    }
-
-    const handleRefleshKanban = () => {
-        const kanbanIndex = kanbanList?.findIndex(kanban=>kanban.id==params.id);
-        if(kanbanIndex != undefined && kanbanIndex != null && kanbanIndex != -1){
-            setGeneralLoading(true);
-            getKanbanValues(kanbanIndex,true);
         }
     }
 
@@ -228,10 +221,7 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             { cardManager?.isShowCreateCard && <CreateEditCard />}
             <div className="flex justify-between items-center w-[80%] h-[4%] fixed">
                 <h1>{tempKanban?.title}</h1>
-                <div className="flex gap-3">
-                    <button onClick={handleRefleshKanban} type='button' className={generalLoading ? "loading-element" : ""}><ArrowPathIcon className="aspect-square w-5 hover:rotate-180 transition-all rotate-0" /></button>
-                    <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
-                </div>
+                <Link className='me-3' href={`/dashboard/config/board/${params.id}`}><Cog6ToothIcon className='aspect-square w-8 hover:rotate-180 transition-all rotate-0' /></Link>
             </div>
             <DndContext autoScroll={true} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
                 <div className="flex flex-row justify-start items-start gap-x-2 w-full h-[92%] mt-[4%] shrink-0">

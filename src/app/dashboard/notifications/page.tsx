@@ -191,6 +191,7 @@ export default function Page() {
         setRefreshLoading(true);
         get_notifications(undefined,1,userValue.token,(response)=>response.json().then((dbNotifications:NotificationUser[])=>{
             setNotifications(dbNotifications);
+            setPage(1);
             setRefreshLoading(false);
         }));
     }

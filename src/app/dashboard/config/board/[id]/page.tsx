@@ -415,7 +415,7 @@ export default function Page() {
         newUserValue.userList = userList;
         setUserValue({...newUserValue});
         get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-            setTempKanbanMembers({...members});
+            setTempKanbanMembers(members);
         })));
     }));
   },[])
@@ -428,7 +428,7 @@ export default function Page() {
         return false;
       }
     });
-    setFilteredUsers([...newFilteredUsers]);
+    setFilteredUsers(newFilteredUsers);
   }, [tempKanban]);
 
   const handleSearchUsers = (e:any) => {
@@ -439,7 +439,7 @@ export default function Page() {
           newUserValue.userList = userList;
           setUserValue({...newUserValue});
           get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-              setTempKanbanMembers({...members});
+              setTempKanbanMembers(members);
           })));
       }));
     }else{
@@ -448,7 +448,7 @@ export default function Page() {
           newUserValue.userList = userList;
           setUserValue({...newUserValue});
           get_kanban_members(undefined,tempKanban.id,userValue.token,(response=>response.json().then((members:User[])=>{
-            setTempKanbanMembers({...members});
+            setTempKanbanMembers(members);
           })));
       }));
     }

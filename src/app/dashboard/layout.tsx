@@ -221,6 +221,7 @@ export default function Layout({ children }: any) {
         setGeneralLoading(true);
         get_kanban(undefined,1,userValue.token,(response)=>response.json().then((dbKanbanList:Kanban[])=>{
             setKanbanList(dbKanbanList);
+            setPage(1);
             setGeneralLoading(false);
         }));
     }

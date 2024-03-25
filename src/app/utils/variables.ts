@@ -1,4 +1,4 @@
-export const API_BASE_URL: string = "https://sistema-rc-e9b89a43a562.herokuapp.com/";
+export const API_BASE_URL: string = "https://sistema-rc-e9b89a43a562.herokuapp.com";
 
 // export const API_BASE_URL: string = "http://localhost:8000";
 

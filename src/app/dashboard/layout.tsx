@@ -16,6 +16,7 @@ import { isFlagSet } from "../utils/checkers";
 import { Column, Kanban, SystemID } from "../types/KanbanTypes";
 import { delete_kanban, get_kanban, post_kanban } from "../utils/fetchs";
 import { useModalContext } from "../contexts/modalContext";
+import { version } from "os";
 
 interface BoardMenuEntryProps {
     href: string;
@@ -178,13 +179,13 @@ export default function Layout({ children }: any) {
             event.preventDefault();
             let boardname: string = event.target.boardname.value;
 
-            post_kanban({title:boardname},userValue.token,(response)=>response.json().then((id)=>{
+            post_kanban({title:boardname},userValue.token,(response)=>response.json().then(({id,version}:{id:SystemID,version:string})=>{
                 console.log("CREATE KANBAN SUCCESS");
                 setKanbanList([...kanbanList || [],{
                     id: id,
                     title: boardname,
                     columns: [],
-                    version: ""
+                    version: version
                 }]);
             }));
         }

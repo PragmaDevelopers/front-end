@@ -96,6 +96,8 @@ export default function Page({ params }: { params: { id: SystemID } }) {
             sessionStorage.setItem("previous_dashboard_id",params.id.toString());
         }
 
+        console.log(kanbanList)
+
         const intervalId = setInterval(() => {
             if (kanbanIndex != undefined && kanbanIndex != -1) {
                 getKanbanValues(kanbanIndex,true);
